@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="button">
+        <item name="android:textColor">@color/light_blue</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/phone_perfed_paper</item>
+    </style>
+    <style name="field">
+        <item name="android:textColor">@color/gray7</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="label">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:background">@drawable/phone_grey_tab</item>
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:paddingLeft">15dp</item>
+    </style>
+    <style name="text">
+        <item name="android:textColor">@color/gray7</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="text_blue">
+        <item name="android:textColor">@color/light_blue</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+</resources>

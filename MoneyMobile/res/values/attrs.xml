@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ShadowLayout">
+        <attr name="yOffset" format="float" />
+        <attr name="xOffset" format="float" />
+        <attr name="shadowColor" format="color" />
+        <attr name="radius" format="float" />
+        <attr name="android:background" />
+    </declare-styleable>
+</resources>
