@@ -31,6 +31,9 @@ public class DataController {
 	
 	private static Map<String, Object> pendingCache = new HashMap<String, Object>();
 	
+	/**
+	 * Saves all the pending transactions in a batch fashion
+	 */
 	public static void save() {
 		
 		processTx(pendingInsertTx, TxType.INSERT);
@@ -38,20 +41,41 @@ public class DataController {
 		processTx(pendingDeleteTx, TxType.DELETE);
 		
 		// Reset pending transaction list
-		pendingInsertTx = new HashMap<Class<?>, List<Object>>();
-		pendingUpdateTx = new HashMap<Class<?>, List<Object>>();
-		pendingDeleteTx = new HashMap<Class<?>, List<Object>>();
-		pendingCache = new HashMap<String, Object>();
+		pendingInsertTx.clear();
+		pendingUpdateTx.clear();
+		pendingDeleteTx.clear();
+		pendingCache.clear();
 	}
 	
+	/**
+	 * Iterates through the passed-in map, which contains a list of entities
+	 * for a class type.  For each list the appropriate DAO is retrieved based
+	 * on the class type.  The list of entities is then applied the appropriate
+	 * transaction in a batch fashion.
+	 * 
+	 * @param pendingTx
+	 * @param type
+	 */
 	@SuppressWarnings("unchecked")
 	private static void processTx(Map<Class<?>, List<Object>> pendingTx, TxType type) {
 		
+		if (pendingTx.keySet().size() == 0)
+			return;
+		
 		Class<?>[] objectOrder = new Class<?>[] {
 			BusinessObjectBase.class,
-			CategoryType.class,
+			AccountType.class,
+			AccountTypeGroup.class,
+			Bank.class,
+			BankAccount.class,
+			BankAccountBalance.class,
 			Category.class,
-			Tag.class
+			CategoryType.class,
+			Institution.class,
+			Location.class,
+			Tag.class,
+			TagInstance.class,
+			Transaction.class
 		};
 		
 		for (Class<?> key : objectOrder) {
@@ -59,11 +83,12 @@ public class DataController {
 		    List<Object> entities = pendingTx.get(key);
 		    
 		    if (entities != null && entities.size() > 0) {
-		    	
+
+			    long start = System.currentTimeMillis();
+			    
 			    AbstractDao<Object, Long> dao = (AbstractDao<Object, Long>) getDao(key);
 			    
 			    String operation = "Inserted";
-			    long start = System.currentTimeMillis();
 			    
 			    switch (type) {
 			    case INSERT:
@@ -84,11 +109,15 @@ public class DataController {
 		}
 	}
 	
-	private static AbstractDao<?, Long> getDao(Class<?> key) {
+	/**
+	 * Returns the appropriate Dao object for the given class
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public static AbstractDao<?, Long> getDao(Class<?> key) {
 		
 		DaoSession session = ApplicationContext.getDaoSession();
-		
-		// TODO: Update for all DAOs
 		
 		if (key.equals(BusinessObjectBase.class))
 			return session.getBusinessObjectBaseDao();
@@ -98,6 +127,26 @@ public class DataController {
 			return session.getCategoryDao();
 		if (key.equals(CategoryType.class))
 			return session.getCategoryTypeDao();
+		if (key.equals(AccountType.class))
+			return session.getAccountTypeDao();
+		if (key.equals(AccountTypeGroup.class))
+			return session.getAccountTypeGroupDao();
+		if (key.equals(Bank.class))
+			return session.getBankDao();
+		if (key.equals(BankAccount.class))
+			return session.getBankAccountDao();
+		if (key.equals(BankAccountBalance.class))
+			return session.getBankAccountBalanceDao();
+		if (key.equals(BudgetItem.class))
+			return session.getBudgetItemDao();
+		if (key.equals(Institution.class))
+			return session.getInstitutionDao();
+		if (key.equals(Location.class))
+			return session.getLocationDao();
+		if (key.equals(TagInstance.class))
+			return session.getTagInstanceDao();
+		if (key.equals(Transaction.class))
+			return session.getTransactionDao();
 		
 		return null;
 	}
@@ -118,6 +167,9 @@ public class DataController {
 	}
 	
 	/**
+	 * Adds a transaction to the appropriate pending transaction map.  We also
+	 * add the passed-in object to a cache in case it needs to be referenced
+	 * before it has been inserted into the database.
 	 * 
 	 * @param object
 	 * @param type
@@ -151,6 +203,14 @@ public class DataController {
 		}
 	}
 	
+	/**
+	 * Returns a list from the map based on the given key.  If no list exists for
+	 * the key a list is created and added to the map.
+	 * 
+	 * @param key
+	 * @param map
+	 * @return
+	 */
 	private static List<Object> getList(Class<?> key, Map<Class<?>, List<Object>> map) {
 		
 		List<Object> list = map.get(key);
@@ -169,55 +229,6 @@ public class DataController {
 	}
 	
 	/**
-	 * Batch adding of BusinessObjectBase entities into the database and assigning them to the
-	 * passed in list of entities.
-	 * 
-	 * @param entities A list of entities all of which inherit the interface BusinessObjectInterface
-	 */
-	public static void addBusinessObjectBase(List<?> entities) {
-		
-		List<BusinessObjectBase> businessObjects = new ArrayList<BusinessObjectBase>();
-		BusinessObjectBaseDao bobDao = ApplicationContext.getDaoSession().getBusinessObjectBaseDao();
-		
-		for (int i = 0; i < entities.size(); i++) {
-			
-			businessObjects.add(new BusinessObjectBase());
-		}
-		
-		bobDao.insertInTx(businessObjects);
-		
-		for (int i = 0; i < entities.size(); i++) {
-			
-			try {
-				
-				((BusinessObjectInterface) entities.get(i)).setBusinessObjectBase(businessObjects.get(i));
-				
-			} catch (ClassCastException ex) {
-				
-				Log.e(TAG, "Could not add business object to entity.", ex);
-				
-				bobDao.delete(businessObjects.get(i));
-			}
-		}
-	}
-	
-	/**
-	 * Add a single BusinessObjectBase entity into the database and assigning it to the
-	 * passed in entity.
-	 * 
-	 * @param entity The entity that needs a BusinessObjectBase
-	 */
-	public static void addBusinessObjectBase(BusinessObjectInterface entity) {
-		
-		BusinessObjectBaseDao bobDao = ApplicationContext.getDaoSession().getBusinessObjectBaseDao();
-		
-		BusinessObjectBase businessObjectBase = new BusinessObjectBase();
-		bobDao.insert(businessObjectBase);
-		
-		entity.setBusinessObjectBase(businessObjectBase);
-	}
-	
-	/**
 	 * Create default Category Types
 	 */
 	public static void ensureCategoryTypesLoaded() {
@@ -227,18 +238,14 @@ public class DataController {
 		
 		if (categoryTypes.size() == 0) {
 			
-			categoryTypes.add(CategoryType.createCategoryType("2", ApplicationContext.getContext().getString(R.string.ct_exp)));
-			categoryTypes.add(CategoryType.createCategoryType("1", ApplicationContext.getContext().getString(R.string.ct_inc)));
-			categoryTypes.add(CategoryType.createCategoryType("4", ApplicationContext.getContext().getString(R.string.ct_asst)));
-			categoryTypes.add(CategoryType.createCategoryType("8", ApplicationContext.getContext().getString(R.string.ct_liab)));
-			categoryTypes.add(CategoryType.createCategoryType("16", ApplicationContext.getContext().getString(R.string.ct_equity)));
-			categoryTypes.add(CategoryType.createCategoryType("64", ApplicationContext.getContext().getString(R.string.ct_flow)));
-			categoryTypes.add(CategoryType.createCategoryType("128", ApplicationContext.getContext().getString(R.string.ct_bal)));
-			categoryTypes.add(CategoryType.createCategoryType("32", ApplicationContext.getContext().getString(R.string.ct_stat)));
-			
-			addBusinessObjectBase(categoryTypes);
-			
-			ctDao.insertInTx(categoryTypes);
+			CategoryType.createCategoryType("2", ApplicationContext.getContext().getString(R.string.ct_exp)).insert();
+			CategoryType.createCategoryType("1", ApplicationContext.getContext().getString(R.string.ct_inc)).insert();
+			CategoryType.createCategoryType("4", ApplicationContext.getContext().getString(R.string.ct_asst)).insert();
+			CategoryType.createCategoryType("8", ApplicationContext.getContext().getString(R.string.ct_liab)).insert();
+			CategoryType.createCategoryType("16", ApplicationContext.getContext().getString(R.string.ct_equity)).insert();
+			CategoryType.createCategoryType("64", ApplicationContext.getContext().getString(R.string.ct_flow)).insert();
+			CategoryType.createCategoryType("128", ApplicationContext.getContext().getString(R.string.ct_bal)).insert();
+			CategoryType.createCategoryType("32", ApplicationContext.getContext().getString(R.string.ct_stat)).insert();
 		}
 	}
 
@@ -252,30 +259,26 @@ public class DataController {
 		
 		if (accountTypes.size() == 0) {
 			
-			accountTypes.add(AccountType.createAccountType("0", ApplicationContext.getContext().getString(R.string.at_unknown), 1, 0, null));
-			accountTypes.add(AccountType.createAccountType("1", ApplicationContext.getContext().getString(R.string.at_checking), 1, 0, null));
-			accountTypes.add(AccountType.createAccountType("2", ApplicationContext.getContext().getString(R.string.at_saving), 1, 0, null));
-			accountTypes.add(AccountType.createAccountType("3", ApplicationContext.getContext().getString(R.string.at_loans), 1, 1, null));
-			accountTypes.add(AccountType.createAccountType("4", ApplicationContext.getContext().getString(R.string.at_cc), 1, 1, null));
-			accountTypes.add(AccountType.createAccountType("5", ApplicationContext.getContext().getString(R.string.at_inv), 1, 0, null));
-			accountTypes.add(AccountType.createAccountType("6", ApplicationContext.getContext().getString(R.string.at_loc), 1, 1, null));
-			accountTypes.add(AccountType.createAccountType("7", ApplicationContext.getContext().getString(R.string.at_mort), 1, 1, null));
-			accountTypes.add(AccountType.createAccountType("8", ApplicationContext.getContext().getString(R.string.at_prop), 1, 0, null));
-			accountTypes.add(AccountType.createAccountType("8.2", ApplicationContext.getContext().getString(R.string.at_art), 1, 0, "8"));
-			accountTypes.add(AccountType.createAccountType("8.0", ApplicationContext.getContext().getString(R.string.at_re), 1, 0, "8"));
-			accountTypes.add(AccountType.createAccountType("8.1", ApplicationContext.getContext().getString(R.string.at_veh), 1, 0, "8"));
-			accountTypes.add(AccountType.createAccountType("8.3", ApplicationContext.getContext().getString(R.string.at_jew), 1, 0, "8"));
-			accountTypes.add(AccountType.createAccountType("8.4", ApplicationContext.getContext().getString(R.string.at_fur), 1, 0, "8"));
-			accountTypes.add(AccountType.createAccountType("8.5", ApplicationContext.getContext().getString(R.string.at_app), 1, 0, "8"));
-			accountTypes.add(AccountType.createAccountType("8.6", ApplicationContext.getContext().getString(R.string.at_comp), 1, 0, "8"));
-			accountTypes.add(AccountType.createAccountType("8.7", ApplicationContext.getContext().getString(R.string.at_elec), 1, 0, "8"));
-			accountTypes.add(AccountType.createAccountType("8.8", ApplicationContext.getContext().getString(R.string.at_se), 1, 0, "8"));
-			accountTypes.add(AccountType.createAccountType("8.9", ApplicationContext.getContext().getString(R.string.at_misc), 1, 0, "8"));
-			accountTypes.add(AccountType.createAccountType("9", ApplicationContext.getContext().getString(R.string.at_cash), 1, 0, null));
-			
-			addBusinessObjectBase(accountTypes);
-			
-			atDao.insertInTx(accountTypes);
+			AccountType.createAccountType("0", ApplicationContext.getContext().getString(R.string.at_unknown), 1, 0, null).insert();
+			AccountType.createAccountType("1", ApplicationContext.getContext().getString(R.string.at_checking), 1, 0, null).insert();
+			AccountType.createAccountType("2", ApplicationContext.getContext().getString(R.string.at_saving), 1, 0, null).insert();
+			AccountType.createAccountType("3", ApplicationContext.getContext().getString(R.string.at_loans), 1, 1, null).insert();
+			AccountType.createAccountType("4", ApplicationContext.getContext().getString(R.string.at_cc), 1, 1, null).insert();
+			AccountType.createAccountType("5", ApplicationContext.getContext().getString(R.string.at_inv), 1, 0, null).insert();
+			AccountType.createAccountType("6", ApplicationContext.getContext().getString(R.string.at_loc), 1, 1, null).insert();
+			AccountType.createAccountType("7", ApplicationContext.getContext().getString(R.string.at_mort), 1, 1, null).insert();
+			AccountType.createAccountType("8", ApplicationContext.getContext().getString(R.string.at_prop), 1, 0, null).insert();
+			AccountType.createAccountType("8.2", ApplicationContext.getContext().getString(R.string.at_art), 1, 0, "8").insert();
+			AccountType.createAccountType("8.0", ApplicationContext.getContext().getString(R.string.at_re), 1, 0, "8").insert();
+			AccountType.createAccountType("8.1", ApplicationContext.getContext().getString(R.string.at_veh), 1, 0, "8").insert();
+			AccountType.createAccountType("8.3", ApplicationContext.getContext().getString(R.string.at_jew), 1, 0, "8").insert();
+			AccountType.createAccountType("8.4", ApplicationContext.getContext().getString(R.string.at_fur), 1, 0, "8").insert();
+			AccountType.createAccountType("8.5", ApplicationContext.getContext().getString(R.string.at_app), 1, 0, "8").insert();
+			AccountType.createAccountType("8.6", ApplicationContext.getContext().getString(R.string.at_comp), 1, 0, "8").insert();
+			AccountType.createAccountType("8.7", ApplicationContext.getContext().getString(R.string.at_elec), 1, 0, "8").insert();
+			AccountType.createAccountType("8.8", ApplicationContext.getContext().getString(R.string.at_se), 1, 0, "8").insert();
+			AccountType.createAccountType("8.9", ApplicationContext.getContext().getString(R.string.at_misc), 1, 0, "8").insert();
+			AccountType.createAccountType("9", ApplicationContext.getContext().getString(R.string.at_cash), 1, 0, null).insert();
 		}
 	}
 	
@@ -289,15 +292,11 @@ public class DataController {
 		
 		if (accountTypeGroups.size() == 0) {
 			
-			accountTypeGroups.add(AccountTypeGroup.createAccountTypeGroup("INVST", ApplicationContext.getContext().getString(R.string.atg_inv), "brokerage.png", 99));
-			accountTypeGroups.add(AccountTypeGroup.createAccountTypeGroup("PROP", ApplicationContext.getContext().getString(R.string.atg_prop), "house.png", 3));
-			accountTypeGroups.add(AccountTypeGroup.createAccountTypeGroup("SPEND", ApplicationContext.getContext().getString(R.string.atg_cash), "cash.png", 0));
-			accountTypeGroups.add(AccountTypeGroup.createAccountTypeGroup("DEBT", ApplicationContext.getContext().getString(R.string.atg_ccd), "cc.png", 1));
-			accountTypeGroups.add(AccountTypeGroup.createAccountTypeGroup("ODEBT", ApplicationContext.getContext().getString(R.string.atg_od), "cash.png", 2));
-			
-			addBusinessObjectBase(accountTypeGroups);
-			
-			atgDao.insertInTx(accountTypeGroups);
+			AccountTypeGroup.createAccountTypeGroup("INVST", ApplicationContext.getContext().getString(R.string.atg_inv), "brokerage.png", 99).insert();
+			AccountTypeGroup.createAccountTypeGroup("PROP", ApplicationContext.getContext().getString(R.string.atg_prop), "house.png", 3).insert();
+			AccountTypeGroup.createAccountTypeGroup("SPEND", ApplicationContext.getContext().getString(R.string.atg_cash), "cash.png", 0).insert();
+			AccountTypeGroup.createAccountTypeGroup("DEBT", ApplicationContext.getContext().getString(R.string.atg_ccd), "cc.png", 1).insert();
+			AccountTypeGroup.createAccountTypeGroup("ODEBT", ApplicationContext.getContext().getString(R.string.atg_od), "cash.png", 2).insert();
 		}
 	}
 	
@@ -320,24 +319,12 @@ public class DataController {
 		
 		JSONObject records = device.getJSONObject(Constant.KEY_RECORDS);
 		
-		// TODO: Is the sorting necessary here since we did it in the SyncEngine?
-		if (fullSyncRequired) {
-			
-			// Sort Created -> Categories by parent_guid
-			
-			// Sort Created -> Transactions by parent_guid
-			
-			// Sort Updated -> Transactions by parent_guid
-		}
-		
 		for (String operation : operationOrder) {
 			
 			boolean delete = operation.equals(Constant.KEY_DELETED);
 			JSONObject operationObj = records.getJSONObject(operation);
 			
 			for (int type = 0; type < objectOrder.length; type++) {
-				
-				long start = System.currentTimeMillis();
 				
 				String objectType = objectOrder[type];
 				JSONArray objects = operationObj.optJSONArray(objectType);
@@ -352,8 +339,6 @@ public class DataController {
 						parseAndSave(data, type, delete);
 					}
 				}
-				
-				Log.i(TAG, operation + " - " + objectType + " parse/save took " + (System.currentTimeMillis() - start) + " ms");
 			}
 		}
 		

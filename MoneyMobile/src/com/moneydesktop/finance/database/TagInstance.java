@@ -10,7 +10,7 @@ import de.greenrobot.dao.DaoException;
 /**
  * Entity mapped to table TAG_INSTANCE.
  */
-public class TagInstance implements BusinessObjectInterface {
+public class TagInstance extends ObjectBase  {
 
     private Long id;
     private long tagId;
@@ -179,6 +179,14 @@ public class TagInstance implements BusinessObjectInterface {
     }
 
     // KEEP METHODS - put your custom methods here
+    
+    public void setExternalId(String id) {
+    	
+    }
+    
+    public String getExternalId() {
+    	return "";
+    }
     // KEEP METHODS END
 
 }

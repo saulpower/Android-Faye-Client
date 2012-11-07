@@ -10,7 +10,7 @@ import de.greenrobot.dao.DaoException;
 /**
  * Entity mapped to table LOCATION.
  */
-public class Location implements BusinessObjectInterface {
+public class Location extends ObjectBase  {
 
     private Long id;
     private String city;
@@ -241,6 +241,14 @@ public class Location implements BusinessObjectInterface {
     }
 
     // KEEP METHODS - put your custom methods here
+    
+    public void setExternalId(String id) {
+    	setLocationId(id);
+    }
+    
+    public String getExternalId() {
+    	return getLocationId();
+    }
     // KEEP METHODS END
 
 }

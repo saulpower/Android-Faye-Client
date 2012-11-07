@@ -16,7 +16,7 @@ import de.greenrobot.dao.AbstractDao;
 /**
  * Entity mapped to table ACCOUNT_TYPE.
  */
-public class AccountType implements BusinessObjectInterface {
+public class AccountType extends ObjectBase  {
 
     private Long id;
     private String accountTypeId;
@@ -265,6 +265,14 @@ public class AccountType implements BusinessObjectInterface {
     }
 
     // KEEP METHODS - put your custom methods here
+    
+    public void setExternalId(String id) {
+    	setAccountTypeId(id);
+    }
+    
+    public String getExternalId() {
+    	return getAccountTypeId();
+    }
     
     public static AccountType getAccountType(String accountTypeId) {
     	

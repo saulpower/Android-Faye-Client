@@ -11,7 +11,7 @@ import de.greenrobot.dao.DaoException;
 /**
  * Entity mapped to table TRANSACTION.
  */
-public class Transaction implements BusinessObjectInterface {
+public class Transaction extends ObjectBase  {
 
     private Long id;
     private Double amount;
@@ -594,6 +594,14 @@ public class Transaction implements BusinessObjectInterface {
     }
 
     // KEEP METHODS - put your custom methods here
+    
+    public void setExternalId(String id) {
+    	setTransactionId(id);
+    }
+    
+    public String getExternalId() {
+    	return getTransactionId();
+    }
     // KEEP METHODS END
 
 }

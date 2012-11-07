@@ -11,7 +11,7 @@ import de.greenrobot.dao.DaoException;
 /**
  * Entity mapped to table BANK_ACCOUNT.
  */
-public class BankAccount implements BusinessObjectInterface {
+public class BankAccount extends ObjectBase  {
 
     private Long id;
     private String accountId;
@@ -462,6 +462,14 @@ public class BankAccount implements BusinessObjectInterface {
     }
 
     // KEEP METHODS - put your custom methods here
+    
+    public void setExternalId(String id) {
+    	setAccountId(id);
+    }
+    
+    public String getExternalId() {
+    	return getAccountId();
+    }
     // KEEP METHODS END
 
 }

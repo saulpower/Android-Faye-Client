@@ -11,7 +11,7 @@ import de.greenrobot.dao.DaoException;
 /**
  * Entity mapped to table ACCOUNT_TYPE_GROUP.
  */
-public class AccountTypeGroup implements BusinessObjectInterface {
+public class AccountTypeGroup extends ObjectBase  {
 
     private Long id;
     private String groupId;
@@ -168,6 +168,14 @@ public class AccountTypeGroup implements BusinessObjectInterface {
     }
 
     // KEEP METHODS - put your custom methods here
+    
+    public void setExternalId(String id) {
+    	setGroupId(id);
+    }
+    
+    public String getExternalId() {
+    	return getGroupId();
+    }
     
     public static AccountTypeGroup createAccountTypeGroup(String id, String groupName, String imageName, Integer sortOrder) {
     	

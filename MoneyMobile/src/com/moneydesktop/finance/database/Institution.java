@@ -11,7 +11,7 @@ import de.greenrobot.dao.DaoException;
 /**
  * Entity mapped to table INSTITUTION.
  */
-public class Institution implements BusinessObjectInterface {
+public class Institution extends ObjectBase  {
 
     private Long id;
     private java.util.Date createdOn;
@@ -218,6 +218,14 @@ public class Institution implements BusinessObjectInterface {
     }
 
     // KEEP METHODS - put your custom methods here
+    
+    public void setExternalId(String id) {
+    	setInstitutionId(id);
+    }
+    
+    public String getExternalId() {
+    	return getInstitutionId();
+    }
     // KEEP METHODS END
 
 }

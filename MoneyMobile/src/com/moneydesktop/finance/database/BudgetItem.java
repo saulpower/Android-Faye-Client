@@ -10,7 +10,7 @@ import de.greenrobot.dao.DaoException;
 /**
  * Entity mapped to table BUDGET_ITEM.
  */
-public class BudgetItem implements BusinessObjectInterface {
+public class BudgetItem extends ObjectBase  {
 
     private Long id;
     private Double amount;
@@ -181,6 +181,14 @@ public class BudgetItem implements BusinessObjectInterface {
     }
 
     // KEEP METHODS - put your custom methods here
+    
+    public void setExternalId(String id) {
+    	setBudgetItemId(id);
+    }
+    
+    public String getExternalId() {
+    	return getBudgetItemId();
+    }
     // KEEP METHODS END
 
 }

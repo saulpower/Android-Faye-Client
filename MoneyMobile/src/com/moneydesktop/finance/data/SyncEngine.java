@@ -109,6 +109,8 @@ public class SyncEngine {
 			DataController.ensureAccountTypesLoaded();
 			DataController.ensureAccountTypeGroupsLoaded();
 			
+			DataController.save();
+			
 			JSONObject device = data.getJSONObject(Constant.KEY_DEVICE);
 			
 			boolean isFullSync = device.getBoolean(Constant.KEY_FULL_SYNC);

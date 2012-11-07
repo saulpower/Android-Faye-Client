@@ -67,7 +67,7 @@ public class FinanceDaoGenerator {
         addBudgetItem();
         addLocation();
         
-        new DaoGenerator().generateAll(schema, "/Users/saulhoward/Developer/Android/MoneyMobile/src");
+        new DaoGenerator().generateAll(schema, "/Users/saulhoward/Developer/Android/Chocopologie/chocopologie/MoneyMobile/src");
     }
     
     private static void addBusinessObjectBase(Entity entity) {
@@ -75,7 +75,7 @@ public class FinanceDaoGenerator {
     	Property businessObjectId = entity.addLongProperty("businessObjectId").notNull().getProperty();
     	entity.addToOne(businessObject, businessObjectId);
     	
-    	entity.implementsInterface("BusinessObjectInterface");
+    	entity.setSuperclass("ObjectBase");
     }
     
     private static void addBusinessObject() {
