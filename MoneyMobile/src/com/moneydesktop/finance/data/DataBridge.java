@@ -108,7 +108,34 @@ public class DataBridge {
 			return json;
 	        
 		} catch (Exception e) {
-			e.printStackTrace();
+
+			Log.e(TAG, "Error downloading sync", e);
+			
+			return null;
+		}
+	}
+	
+	public JSONObject endSync(String syncToken) {
+		
+		String baseUrl = Preferences.getString(Preferences.KEY_SYNC_HOST, DebugActivity.PROD_SYNC_HOST);
+		
+		String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_SYNC);
+		
+		try {
+			
+			JSONObject body = new JSONObject();
+			body.put(Constant.KEY_SYNC_TOKEN, syncToken);
+			
+			String response = HttpRequest.sendDelete(url, getHeaders(), null, body.toString());
+			
+			JSONObject json = new JSONObject(response);
+			
+			return json;
+			
+		} catch (Exception e) {
+			
+			Log.e(TAG, "Error ending sync", e);
+			
 			return null;
 		}
 	}

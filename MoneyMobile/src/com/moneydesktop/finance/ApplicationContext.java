@@ -9,7 +9,9 @@ import android.os.PowerManager.WakeLock;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.data.SyncEngine;
+import com.moneydesktop.finance.database.BusinessObjectBase;
 import com.moneydesktop.finance.database.DaoMaster;
 import com.moneydesktop.finance.database.DaoMaster.DevOpenHelper;
 import com.moneydesktop.finance.database.DaoSession;
@@ -39,6 +41,7 @@ public class ApplicationContext extends Application {
 		
         Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler());
         
+        getObjectMapper();
         initializeDatabase();
         
 		acquireWakeLock();
@@ -49,6 +52,8 @@ public class ApplicationContext extends Application {
 	@Override
 	public void onTerminate() {
 		super.onTerminate();
+		
+		Preferences.saveLong(Preferences.KEY_BOB_ID, BusinessObjectBase.getIdCount());
 		
 		releaseWakeLock();
 	}

@@ -20,7 +20,7 @@ import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeGroup;
 import com.moneydesktop.finance.database.CategoryType;
 import com.moneydesktop.finance.database.Category;
-import com.moneydesktop.finance.database.Transaction;
+import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.BudgetItem;
 import com.moneydesktop.finance.database.Location;
 
@@ -35,7 +35,7 @@ import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.AccountTypeGroupDao;
 import com.moneydesktop.finance.database.CategoryTypeDao;
 import com.moneydesktop.finance.database.CategoryDao;
-import com.moneydesktop.finance.database.TransactionDao;
+import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.database.BudgetItemDao;
 import com.moneydesktop.finance.database.LocationDao;
 
@@ -59,7 +59,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig accountTypeGroupDaoConfig;
     private final DaoConfig categoryTypeDaoConfig;
     private final DaoConfig categoryDaoConfig;
-    private final DaoConfig transactionDaoConfig;
+    private final DaoConfig transactionsDaoConfig;
     private final DaoConfig budgetItemDaoConfig;
     private final DaoConfig locationDaoConfig;
 
@@ -74,7 +74,7 @@ public class DaoSession extends AbstractDaoSession {
     private final AccountTypeGroupDao accountTypeGroupDao;
     private final CategoryTypeDao categoryTypeDao;
     private final CategoryDao categoryDao;
-    private final TransactionDao transactionDao;
+    private final TransactionsDao transactionsDao;
     private final BudgetItemDao budgetItemDao;
     private final LocationDao locationDao;
 
@@ -115,8 +115,8 @@ public class DaoSession extends AbstractDaoSession {
         categoryDaoConfig = daoConfigMap.get(CategoryDao.class).clone();
         categoryDaoConfig.initIdentityScope(type);
 
-        transactionDaoConfig = daoConfigMap.get(TransactionDao.class).clone();
-        transactionDaoConfig.initIdentityScope(type);
+        transactionsDaoConfig = daoConfigMap.get(TransactionsDao.class).clone();
+        transactionsDaoConfig.initIdentityScope(type);
 
         budgetItemDaoConfig = daoConfigMap.get(BudgetItemDao.class).clone();
         budgetItemDaoConfig.initIdentityScope(type);
@@ -135,7 +135,7 @@ public class DaoSession extends AbstractDaoSession {
         accountTypeGroupDao = new AccountTypeGroupDao(accountTypeGroupDaoConfig, this);
         categoryTypeDao = new CategoryTypeDao(categoryTypeDaoConfig, this);
         categoryDao = new CategoryDao(categoryDaoConfig, this);
-        transactionDao = new TransactionDao(transactionDaoConfig, this);
+        transactionsDao = new TransactionsDao(transactionsDaoConfig, this);
         budgetItemDao = new BudgetItemDao(budgetItemDaoConfig, this);
         locationDao = new LocationDao(locationDaoConfig, this);
 
@@ -150,7 +150,7 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(AccountTypeGroup.class, accountTypeGroupDao);
         registerDao(CategoryType.class, categoryTypeDao);
         registerDao(Category.class, categoryDao);
-        registerDao(Transaction.class, transactionDao);
+        registerDao(Transactions.class, transactionsDao);
         registerDao(BudgetItem.class, budgetItemDao);
         registerDao(Location.class, locationDao);
     }
@@ -167,7 +167,7 @@ public class DaoSession extends AbstractDaoSession {
         accountTypeGroupDaoConfig.getIdentityScope().clear();
         categoryTypeDaoConfig.getIdentityScope().clear();
         categoryDaoConfig.getIdentityScope().clear();
-        transactionDaoConfig.getIdentityScope().clear();
+        transactionsDaoConfig.getIdentityScope().clear();
         budgetItemDaoConfig.getIdentityScope().clear();
         locationDaoConfig.getIdentityScope().clear();
     }
@@ -216,8 +216,8 @@ public class DaoSession extends AbstractDaoSession {
         return categoryDao;
     }
 
-    public TransactionDao getTransactionDao() {
-        return transactionDao;
+    public TransactionsDao getTransactionsDao() {
+        return transactionsDao;
     }
 
     public BudgetItemDao getBudgetItemDao() {

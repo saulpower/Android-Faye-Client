@@ -35,12 +35,12 @@ public class BankAccountDao extends AbstractDao<BankAccount, Long> {
         public final static Property Balance = new Property(4, Double.class, "balance", false, "BALANCE");
         public final static Property BankName = new Property(5, String.class, "bankName", false, "BANK_NAME");
         public final static Property BeginningBalance = new Property(6, Double.class, "beginningBalance", false, "BEGINNING_BALANCE");
-        public final static Property CreditLimit = new Property(7, Float.class, "creditLimit", false, "CREDIT_LIMIT");
+        public final static Property CreditLimit = new Property(7, Double.class, "creditLimit", false, "CREDIT_LIMIT");
         public final static Property DefaultClassId = new Property(8, String.class, "defaultClassId", false, "DEFAULT_CLASS_ID");
         public final static Property DueDay = new Property(9, Integer.class, "dueDay", false, "DUE_DAY");
         public final static Property ExclusionFlags = new Property(10, Integer.class, "exclusionFlags", false, "EXCLUSION_FLAGS");
         public final static Property InstitutionId = new Property(11, String.class, "institutionId", false, "INSTITUTION_ID");
-        public final static Property InterestRate = new Property(12, Float.class, "interestRate", false, "INTEREST_RATE");
+        public final static Property InterestRate = new Property(12, Double.class, "interestRate", false, "INTEREST_RATE");
         public final static Property IsExcluded = new Property(13, Boolean.class, "isExcluded", false, "IS_EXCLUDED");
         public final static Property IsHolding = new Property(14, Boolean.class, "isHolding", false, "IS_HOLDING");
         public final static Property IsLinked = new Property(15, Boolean.class, "isLinked", false, "IS_LINKED");
@@ -150,7 +150,7 @@ public class BankAccountDao extends AbstractDao<BankAccount, Long> {
             stmt.bindDouble(7, beginningBalance);
         }
  
-        Float creditLimit = entity.getCreditLimit();
+        Double creditLimit = entity.getCreditLimit();
         if (creditLimit != null) {
             stmt.bindDouble(8, creditLimit);
         }
@@ -175,7 +175,7 @@ public class BankAccountDao extends AbstractDao<BankAccount, Long> {
             stmt.bindString(12, institutionId);
         }
  
-        Float interestRate = entity.getInterestRate();
+        Double interestRate = entity.getInterestRate();
         if (interestRate != null) {
             stmt.bindDouble(13, interestRate);
         }
@@ -270,12 +270,12 @@ public class BankAccountDao extends AbstractDao<BankAccount, Long> {
             cursor.isNull(offset + 4) ? null : cursor.getDouble(offset + 4), // balance
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // bankName
             cursor.isNull(offset + 6) ? null : cursor.getDouble(offset + 6), // beginningBalance
-            cursor.isNull(offset + 7) ? null : cursor.getFloat(offset + 7), // creditLimit
+            cursor.isNull(offset + 7) ? null : cursor.getDouble(offset + 7), // creditLimit
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // defaultClassId
             cursor.isNull(offset + 9) ? null : cursor.getInt(offset + 9), // dueDay
             cursor.isNull(offset + 10) ? null : cursor.getInt(offset + 10), // exclusionFlags
             cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // institutionId
-            cursor.isNull(offset + 12) ? null : cursor.getFloat(offset + 12), // interestRate
+            cursor.isNull(offset + 12) ? null : cursor.getDouble(offset + 12), // interestRate
             cursor.isNull(offset + 13) ? null : cursor.getShort(offset + 13) != 0, // isExcluded
             cursor.isNull(offset + 14) ? null : cursor.getShort(offset + 14) != 0, // isHolding
             cursor.isNull(offset + 15) ? null : cursor.getShort(offset + 15) != 0, // isLinked
@@ -304,12 +304,12 @@ public class BankAccountDao extends AbstractDao<BankAccount, Long> {
         entity.setBalance(cursor.isNull(offset + 4) ? null : cursor.getDouble(offset + 4));
         entity.setBankName(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
         entity.setBeginningBalance(cursor.isNull(offset + 6) ? null : cursor.getDouble(offset + 6));
-        entity.setCreditLimit(cursor.isNull(offset + 7) ? null : cursor.getFloat(offset + 7));
+        entity.setCreditLimit(cursor.isNull(offset + 7) ? null : cursor.getDouble(offset + 7));
         entity.setDefaultClassId(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
         entity.setDueDay(cursor.isNull(offset + 9) ? null : cursor.getInt(offset + 9));
         entity.setExclusionFlags(cursor.isNull(offset + 10) ? null : cursor.getInt(offset + 10));
         entity.setInstitutionId(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
-        entity.setInterestRate(cursor.isNull(offset + 12) ? null : cursor.getFloat(offset + 12));
+        entity.setInterestRate(cursor.isNull(offset + 12) ? null : cursor.getDouble(offset + 12));
         entity.setIsExcluded(cursor.isNull(offset + 13) ? null : cursor.getShort(offset + 13) != 0);
         entity.setIsHolding(cursor.isNull(offset + 14) ? null : cursor.getShort(offset + 14) != 0);
         entity.setIsLinked(cursor.isNull(offset + 15) ? null : cursor.getShort(offset + 15) != 0);

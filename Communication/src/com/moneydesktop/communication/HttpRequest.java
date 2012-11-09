@@ -23,12 +23,10 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 
-import android.util.Log;
-
 public class HttpRequest {
 	
-	private static final String TAG = "HttpRequest";
-	
+	public static final String TAG = "HttpRequest";
+    
 	private static final String GET = "GET";
 	private static final String POST = "POST";
 	private static final String PUT = "PUT";
@@ -49,8 +47,8 @@ public class HttpRequest {
 		return sendRequest(url, PUT, headers, params, data);
 	}
 	
-	public static String sendDelete(String url, HashMap<String, String> headers, HashMap<String, String> params) throws ClientProtocolException, IOException {
-		return sendRequest(url, DELETE, headers, params, null);
+	public static String sendDelete(String url, HashMap<String, String> headers, HashMap<String, String> params, String data) throws ClientProtocolException, IOException {
+		return sendRequest(url, DELETE, headers, params, data);
 	}
 	
 	/**
@@ -164,5 +162,4 @@ public class HttpRequest {
 		
 		return sb.substring(0, sb.length() - 1);
 	}
-	
 }

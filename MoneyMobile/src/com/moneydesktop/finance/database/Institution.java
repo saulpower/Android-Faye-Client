@@ -11,7 +11,7 @@ import de.greenrobot.dao.DaoException;
 /**
  * Entity mapped to table INSTITUTION.
  */
-public class Institution extends ObjectBase  {
+public class Institution extends BusinessObject  {
 
     private Long id;
     private java.util.Date createdOn;

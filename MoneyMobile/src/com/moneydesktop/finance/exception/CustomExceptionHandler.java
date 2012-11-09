@@ -3,14 +3,13 @@ package com.moneydesktop.finance.exception;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 import android.content.Intent;
-import android.util.Log;
 
 import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.SplashActivity;
+import com.moneydesktop.finance.activity.handset.SplashActivity;
 
 public class CustomExceptionHandler implements UncaughtExceptionHandler {
 	
-	private static final String TAG = "CustomExceptionHandler";
+	public static final String TAG = "CustomExceptionHandler";
 
     private UncaughtExceptionHandler defaultUEH;
     
@@ -23,8 +22,6 @@ public class CustomExceptionHandler implements UncaughtExceptionHandler {
     }
 
     public void uncaughtException(Thread t, Throwable e) {
-    	
-    	Log.i(TAG, "Uncaught Exception:" + Log.getStackTraceString(e));
     	
     	Intent i = new Intent(ApplicationContext.getContext(), SplashActivity.class);
 		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -45,7 +45,7 @@ public class FinanceDaoGenerator {
 	private static Entity location;
 	private static Entity tag;
 	private static Entity tagInstance;
-	private static Entity transaction;
+	private static Entity transactions;
 	
     public static void main(String[] args) throws Exception {
     	
@@ -75,7 +75,7 @@ public class FinanceDaoGenerator {
     	Property businessObjectId = entity.addLongProperty("businessObjectId").notNull().getProperty();
     	entity.addToOne(businessObject, businessObjectId);
     	
-    	entity.setSuperclass("ObjectBase");
+    	entity.setSuperclass("BusinessObject");
     }
     
     private static void addBusinessObject() {
@@ -90,6 +90,8 @@ public class FinanceDaoGenerator {
     	businessObject.addStringProperty("primaryKey");
     	businessObject.addStringProperty("toString");
     	businessObject.addIntProperty("version");
+    	
+    	businessObject.setSuperclass("BusinessObject");
     }
     
     // Dependency on BusinessObject and Tag
@@ -141,12 +143,12 @@ public class FinanceDaoGenerator {
     	bankAccount.addDoubleProperty("balance");
     	bankAccount.addStringProperty("bankName");
     	bankAccount.addDoubleProperty("beginningBalance");
-    	bankAccount.addFloatProperty("creditLimit");
+    	bankAccount.addDoubleProperty("creditLimit");
     	bankAccount.addStringProperty("defaultClassId");
     	bankAccount.addIntProperty("dueDay");
     	bankAccount.addIntProperty("exclusionFlags");
     	bankAccount.addStringProperty("institutionId");
-    	bankAccount.addFloatProperty("interestRate");
+    	bankAccount.addDoubleProperty("interestRate");
     	bankAccount.addBooleanProperty("isExcluded");
     	bankAccount.addBooleanProperty("isHolding");
     	bankAccount.addBooleanProperty("isLinked");
@@ -217,62 +219,60 @@ public class FinanceDaoGenerator {
     // Dependency on BankAccount and Category
     private static void addTransaction() {
     	
-    	transaction = schema.addEntity("Transaction");
-    	transaction.addIdProperty();
-    	transaction.addDoubleProperty("amount");
-    	transaction.addDoubleProperty("amountReimbursable");
-    	transaction.addStringProperty("classId");
-    	transaction.addDateProperty("date");
-    	transaction.addDateProperty("datePosted");
-    	transaction.addIntProperty("dayNumber");
-    	transaction.addIntProperty("exclusionFlags");
-    	transaction.addBooleanProperty("hasReceipt");
-    	transaction.addBooleanProperty("hasSplit");
-    	transaction.addBooleanProperty("isBusiness");
-    	transaction.addBooleanProperty("isCleared");
-    	transaction.addBooleanProperty("isExcluded");
-    	transaction.addBooleanProperty("isFlagged");
-    	transaction.addBooleanProperty("isManual");
-    	transaction.addBooleanProperty("isMatched");
-    	transaction.addBooleanProperty("isProcessed");
-    	transaction.addBooleanProperty("isReimbursable");
-    	transaction.addBooleanProperty("isReported");
-    	transaction.addBooleanProperty("isReportedAndPaid");
-    	transaction.addBooleanProperty("isReportedAndSubmitted");
-    	transaction.addBooleanProperty("isSplit");
-    	transaction.addBooleanProperty("isVoid");
-    	transaction.addStringProperty("memo");
-    	transaction.addStringProperty("monthName");
-    	transaction.addIntProperty("monthNumber");
-    	transaction.addDoubleProperty("normalizedAmount");
-    	transaction.addStringProperty("originalCategory");
-    	transaction.addStringProperty("originalTitle");
-    	transaction.addIntProperty("quarterNumber");
-    	transaction.addDoubleProperty("rawAmount");
-    	transaction.addStringProperty("reference");
-    	transaction.addStringProperty("tagString");
-    	transaction.addStringProperty("title");
-    	transaction.addStringProperty("transactionId");
-    	transaction.addIntProperty("transactionType");
-    	transaction.addIntProperty("weekNumber");
-    	transaction.addIntProperty("yearNumber");
+    	transactions = schema.addEntity("Transactions");
+    	transactions.addIdProperty();
+    	transactions.addDoubleProperty("amount");
+    	transactions.addDoubleProperty("amountReimbursable");
+    	transactions.addDateProperty("date");
+    	transactions.addDateProperty("datePosted");
+    	transactions.addIntProperty("dayNumber");
+    	transactions.addIntProperty("exclusionFlags");
+    	transactions.addBooleanProperty("hasReceipt");
+    	transactions.addBooleanProperty("hasSplit");
+    	transactions.addBooleanProperty("isBusiness");
+    	transactions.addBooleanProperty("isCleared");
+    	transactions.addBooleanProperty("isExcluded");
+    	transactions.addBooleanProperty("isFlagged");
+    	transactions.addBooleanProperty("isManual");
+    	transactions.addBooleanProperty("isMatched");
+    	transactions.addBooleanProperty("isProcessed");
+    	transactions.addBooleanProperty("isReimbursable");
+    	transactions.addBooleanProperty("isReported");
+    	transactions.addBooleanProperty("isReportedAndPaid");
+    	transactions.addBooleanProperty("isReportedAndSubmitted");
+    	transactions.addBooleanProperty("isSplit");
+    	transactions.addBooleanProperty("isVoid");
+    	transactions.addStringProperty("memo");
+    	transactions.addIntProperty("monthNumber");
+    	transactions.addDoubleProperty("normalizedAmount");
+    	transactions.addStringProperty("originalCategory");
+    	transactions.addStringProperty("originalTitle");
+    	transactions.addIntProperty("quarterNumber");
+    	transactions.addDoubleProperty("rawAmount");
+    	transactions.addStringProperty("reference");
+    	transactions.addStringProperty("tagString");
+    	transactions.addStringProperty("title");
+    	transactions.addStringProperty("transactionId");
+    	transactions.addIntProperty("transactionType");
+    	transactions.addIntProperty("weekNumber");
+    	transactions.addIntProperty("yearNumber");
     	
     	// Transaction to BankAccount Relationship
-    	Property transaction_bankAccountId = transaction.addLongProperty("bankAccountId").getProperty();
-    	bankAccount.addToMany(transaction, transaction_bankAccountId).setName("transactions");
-    	transaction.addToOne(bankAccount, transaction_bankAccountId).setName("bankAccount");
+    	Property transaction_bankAccountId = transactions.addLongProperty("bankAccountId").getProperty();
+    	bankAccount.addToMany(transactions, transaction_bankAccountId).setName("transactions");
+    	transactions.addToOne(bankAccount, transaction_bankAccountId).setName("bankAccount");
     	
     	// Transaction to Category Relationship
-    	Property transaction_categoryId = transaction.addLongProperty("categoryId").getProperty();
-    	category.addToMany(transaction, transaction_categoryId).setName("transactions");
-    	transaction.addToOne(category, transaction_categoryId).setName("category");
+    	Property transaction_categoryId = transactions.addLongProperty("categoryId").getProperty();
+    	category.addToMany(transactions, transaction_categoryId).setName("transactions");
+    	transactions.addToOne(category, transaction_categoryId).setName("category");
     	
     	// Transaction Recursive Relationship
-    	Property transaction_parentTransactionId = transaction.addLongProperty("parentTransactionId").getProperty();
-    	transaction.addToOne(transaction, transaction_parentTransactionId).setName("parent");
-    	transaction.addToMany(transaction, transaction_parentTransactionId).setName("children");
+    	Property transaction_parentTransactionId = transactions.addLongProperty("parentTransactionId").getProperty();
+    	transactions.addToOne(transactions, transaction_parentTransactionId).setName("parent");
+    	transactions.addToMany(transactions, transaction_parentTransactionId).setName("children");
     	
-    	addBusinessObjectBase(transaction);
+    	addBusinessObjectBase(transactions);
     }
     
     private static void addCategoryType() {

@@ -10,7 +10,7 @@ import de.greenrobot.dao.DaoException;
 /**
  * Entity mapped to table BANK_ACCOUNT_BALANCE.
  */
-public class BankAccountBalance extends ObjectBase  {
+public class BankAccountBalance extends BusinessObject  {
 
     private Long id;
     private Double balance;

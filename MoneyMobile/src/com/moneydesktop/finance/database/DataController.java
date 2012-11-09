@@ -9,21 +9,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
 import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.util.Enums.TxType;
 
 import de.greenrobot.dao.AbstractDao;
 
 public class DataController {
 	
-	public enum TxType {
-		INSERT, UPDATE, DELETE
-	}
-	
-	private static final String TAG = "DatabaseDefaults";
+	public static final String TAG = "DatabaseDefaults";
 
 	private static Map<Class<?>, List<Object>> pendingInsertTx = new HashMap<Class<?>, List<Object>>();
 	private static Map<Class<?>, List<Object>> pendingUpdateTx = new HashMap<Class<?>, List<Object>>();
@@ -34,8 +28,8 @@ public class DataController {
 	/**
 	 * Saves all the pending transactions in a batch fashion
 	 */
-	public static void save() {
-		
+	public static synchronized void save() {
+			
 		processTx(pendingInsertTx, TxType.INSERT);
 		processTx(pendingUpdateTx, TxType.UPDATE);
 		processTx(pendingDeleteTx, TxType.DELETE);
@@ -63,7 +57,6 @@ public class DataController {
 			return;
 		
 		Class<?>[] objectOrder = new Class<?>[] {
-			BusinessObjectBase.class,
 			AccountType.class,
 			AccountTypeGroup.class,
 			Bank.class,
@@ -74,8 +67,9 @@ public class DataController {
 			Institution.class,
 			Location.class,
 			Tag.class,
+			Transactions.class,
 			TagInstance.class,
-			Transaction.class
+			BusinessObjectBase.class
 		};
 		
 		for (Class<?> key : objectOrder) {
@@ -83,34 +77,29 @@ public class DataController {
 		    List<Object> entities = pendingTx.get(key);
 		    
 		    if (entities != null && entities.size() > 0) {
-
-			    long start = System.currentTimeMillis();
 			    
 			    AbstractDao<Object, Long> dao = (AbstractDao<Object, Long>) getDao(key);
 			    
-			    String operation = "Inserted";
+			    for (Object object : entities)
+			    	((BusinessObject) object).willSave(type == TxType.DELETE);
 			    
 			    switch (type) {
 			    case INSERT:
 			    	dao.insertInTx(entities);
 			    	break;
 				case UPDATE:
-					operation = "Updated";
 			    	dao.updateInTx(entities);
 					break;
 				case DELETE:
-					operation = "Deleted";
 			    	dao.deleteInTx(entities);
 					break;
 			    }
-			    
-				Log.i(TAG, operation + " " + entities.size() + " (" + key + ") in " + (System.currentTimeMillis() - start) + " ms");
 		    }
 		}
 	}
 	
 	/**
-	 * Returns the appropriate Dao object for the given class
+	 * Returns the appropriate DAO object for the given class
 	 * 
 	 * @param key
 	 * @return
@@ -145,8 +134,8 @@ public class DataController {
 			return session.getLocationDao();
 		if (key.equals(TagInstance.class))
 			return session.getTagInstanceDao();
-		if (key.equals(Transaction.class))
-			return session.getTransactionDao();
+		if (key.equals(Transactions.class))
+			return session.getTransactionsDao();
 		
 		return null;
 	}
@@ -174,32 +163,39 @@ public class DataController {
 	 * @param object
 	 * @param type
 	 */
-	private static void addTransaction(Object object, TxType type) {
+	private static synchronized void addTransaction(Object object, TxType type) {
+		
+		if (object == null)
+			return;
 		
 		Class<?> key = object.getClass();
 		
 		if (!object.getClass().equals(BusinessObjectBase.class)) {
 
-			pendingCache.put(((BusinessObjectInterface) object).getBusinessObjectBase().getExternalId(), object);
+			pendingCache.put((key.getName() + ((BusinessObject) object).getBusinessObjectBase().getExternalId()), object);
 		}
 		
 		List<Object> list = null;
+		Map<Class<?>, List<Object>> pendingTx = null;
 		
 		switch (type) {
 		case INSERT:
-			list = getList(key, pendingInsertTx);
-			list.add(object);
+			pendingTx = pendingInsertTx;
 			break;
 		case UPDATE:
-			list = getList(key, pendingUpdateTx);
-			list.add(object);
+			pendingTx = pendingUpdateTx;
 			break;
 		case DELETE:
-			list = getList(key, pendingDeleteTx);
-			list.add(object);
+			pendingTx = pendingDeleteTx;
 			break;
-		default:
-			break;
+		}
+		
+		if (pendingTx != null) {
+			
+			list = getList(key, pendingTx);
+			
+			if (!list.contains(object))
+				list.add(object);
 		}
 	}
 	
@@ -223,83 +219,48 @@ public class DataController {
 		return list;
 	}
 	
-	public static Object getFromCache(String id) {
+	/**
+	 * Returns an object that is sitting in one of our pending transaction maps.
+	 * Used to check for objects that have been created but not yet inserted
+	 * into the database.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public static Object checkCache(String id) {
 		
 		return pendingCache.get(id);
 	}
 	
 	/**
-	 * Create default Category Types
+	 * Deletes all objects in the database for a given
+	 * class.
+	 * 
+	 * @param key
 	 */
-	public static void ensureCategoryTypesLoaded() {
+	@SuppressWarnings("unchecked")
+	public static synchronized void deleteData(Class<?> key) {
 		
-		CategoryTypeDao ctDao = ApplicationContext.getDaoSession().getCategoryTypeDao();
-		List<CategoryType> categoryTypes = ctDao.queryBuilder().list();
+		AbstractDao<Object, Long> dao = (AbstractDao<Object, Long>) getDao(key);
+		List<Object> entities = (List<Object>) dao.queryBuilder().list();
 		
-		if (categoryTypes.size() == 0) {
+		for (Object object : entities) {
 			
-			CategoryType.createCategoryType("2", ApplicationContext.getContext().getString(R.string.ct_exp)).insert();
-			CategoryType.createCategoryType("1", ApplicationContext.getContext().getString(R.string.ct_inc)).insert();
-			CategoryType.createCategoryType("4", ApplicationContext.getContext().getString(R.string.ct_asst)).insert();
-			CategoryType.createCategoryType("8", ApplicationContext.getContext().getString(R.string.ct_liab)).insert();
-			CategoryType.createCategoryType("16", ApplicationContext.getContext().getString(R.string.ct_equity)).insert();
-			CategoryType.createCategoryType("64", ApplicationContext.getContext().getString(R.string.ct_flow)).insert();
-			CategoryType.createCategoryType("128", ApplicationContext.getContext().getString(R.string.ct_bal)).insert();
-			CategoryType.createCategoryType("32", ApplicationContext.getContext().getString(R.string.ct_stat)).insert();
+			if (object instanceof BusinessObject)
+				((BusinessObject) object).suspendDataState();
 		}
-	}
-
-	/**
-	 * Create default Account Types
-	 */
-	public static void ensureAccountTypesLoaded() {
 		
-		AccountTypeDao atDao = ApplicationContext.getDaoSession().getAccountTypeDao();
-		List<AccountType> accountTypes = atDao.queryBuilder().list();
-		
-		if (accountTypes.size() == 0) {
-			
-			AccountType.createAccountType("0", ApplicationContext.getContext().getString(R.string.at_unknown), 1, 0, null).insert();
-			AccountType.createAccountType("1", ApplicationContext.getContext().getString(R.string.at_checking), 1, 0, null).insert();
-			AccountType.createAccountType("2", ApplicationContext.getContext().getString(R.string.at_saving), 1, 0, null).insert();
-			AccountType.createAccountType("3", ApplicationContext.getContext().getString(R.string.at_loans), 1, 1, null).insert();
-			AccountType.createAccountType("4", ApplicationContext.getContext().getString(R.string.at_cc), 1, 1, null).insert();
-			AccountType.createAccountType("5", ApplicationContext.getContext().getString(R.string.at_inv), 1, 0, null).insert();
-			AccountType.createAccountType("6", ApplicationContext.getContext().getString(R.string.at_loc), 1, 1, null).insert();
-			AccountType.createAccountType("7", ApplicationContext.getContext().getString(R.string.at_mort), 1, 1, null).insert();
-			AccountType.createAccountType("8", ApplicationContext.getContext().getString(R.string.at_prop), 1, 0, null).insert();
-			AccountType.createAccountType("8.2", ApplicationContext.getContext().getString(R.string.at_art), 1, 0, "8").insert();
-			AccountType.createAccountType("8.0", ApplicationContext.getContext().getString(R.string.at_re), 1, 0, "8").insert();
-			AccountType.createAccountType("8.1", ApplicationContext.getContext().getString(R.string.at_veh), 1, 0, "8").insert();
-			AccountType.createAccountType("8.3", ApplicationContext.getContext().getString(R.string.at_jew), 1, 0, "8").insert();
-			AccountType.createAccountType("8.4", ApplicationContext.getContext().getString(R.string.at_fur), 1, 0, "8").insert();
-			AccountType.createAccountType("8.5", ApplicationContext.getContext().getString(R.string.at_app), 1, 0, "8").insert();
-			AccountType.createAccountType("8.6", ApplicationContext.getContext().getString(R.string.at_comp), 1, 0, "8").insert();
-			AccountType.createAccountType("8.7", ApplicationContext.getContext().getString(R.string.at_elec), 1, 0, "8").insert();
-			AccountType.createAccountType("8.8", ApplicationContext.getContext().getString(R.string.at_se), 1, 0, "8").insert();
-			AccountType.createAccountType("8.9", ApplicationContext.getContext().getString(R.string.at_misc), 1, 0, "8").insert();
-			AccountType.createAccountType("9", ApplicationContext.getContext().getString(R.string.at_cash), 1, 0, null).insert();
-		}
+		dao.deleteInTx(entities);
 	}
 	
 	/**
-	 * Create default Account Type Groups
+	 * Iterates through the JSON response and performs the appropriate commands
+	 * on the included objects in the database.
+	 * 
+	 * @param device
+	 * @param fullSyncRequired
+	 * @throws JSONException
 	 */
-	public static void ensureAccountTypeGroupsLoaded() {
-		
-		AccountTypeGroupDao atgDao = ApplicationContext.getDaoSession().getAccountTypeGroupDao();
-		List<AccountTypeGroup> accountTypeGroups = atgDao.queryBuilder().list();
-		
-		if (accountTypeGroups.size() == 0) {
-			
-			AccountTypeGroup.createAccountTypeGroup("INVST", ApplicationContext.getContext().getString(R.string.atg_inv), "brokerage.png", 99).insert();
-			AccountTypeGroup.createAccountTypeGroup("PROP", ApplicationContext.getContext().getString(R.string.atg_prop), "house.png", 3).insert();
-			AccountTypeGroup.createAccountTypeGroup("SPEND", ApplicationContext.getContext().getString(R.string.atg_cash), "cash.png", 0).insert();
-			AccountTypeGroup.createAccountTypeGroup("DEBT", ApplicationContext.getContext().getString(R.string.atg_ccd), "cc.png", 1).insert();
-			AccountTypeGroup.createAccountTypeGroup("ODEBT", ApplicationContext.getContext().getString(R.string.atg_od), "cash.png", 2).insert();
-		}
-	}
-	
 	public static void saveSyncData(JSONObject device, boolean fullSyncRequired) throws JSONException {
 		
 		String[] operationOrder = new String[] {
@@ -309,7 +270,7 @@ public class DataController {
 			};
 		
 		String[] objectOrder = new String[] {
-				Constant.TAGS, 
+				Constant.KEY_TAGS, 
 				Constant.CATEGORIES, 
 				Constant.MEMBERS, 
 				Constant.ACCOUNTS, 
@@ -345,6 +306,14 @@ public class DataController {
 		save();
 	}
 	
+	/**
+	 * Parse an object based on its class and queues it up to be saved
+	 * in the database.
+	 * 
+	 * @param json
+	 * @param type
+	 * @param delete
+	 */
 	private static void parseAndSave(JSONObject json, int type, boolean delete) {
 		
 		switch (type) {
@@ -355,12 +324,16 @@ public class DataController {
 				Category.saveCategory(json, delete);
 				break;
 			case 2:
+				Bank.saveBank(json, delete);
 				break;
 			case 3:
+				BankAccount.saveBankAccount(json, delete);
 				break;
 			case 4:
+				Transactions.saveTransaction(json, delete);
 				break;
 			case 5:
+				BudgetItem.saveBudgetItem(json, delete);
 				break;
 		}
 	}

@@ -7,13 +7,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.DataController;
+import com.moneydesktop.finance.database.DataDefaults;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.util.Comparators;
+import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.Util;
 
 import de.greenrobot.event.EventBus;
@@ -30,6 +34,7 @@ public class SyncEngine {
 	private boolean needsFullSync = false;
 	private boolean needsSync = false;
 	private boolean isRunning = false;
+	private boolean shouldSync = false;
 
 	public static SyncEngine sharedInstance() {
 		
@@ -46,6 +51,10 @@ public class SyncEngine {
 		this.eventBus = EventBus.getDefault();
 	}
 	
+	public boolean isRunning() {
+		return isRunning;
+	}
+
 	public void beginSync(final boolean fullSync) {
 		
 		needsFullSync = fullSync;
@@ -93,7 +102,7 @@ public class SyncEngine {
 		if (needsFullSync) {
 			
 			data = db.downloadSync(true);
-		
+			
 		} else {
 			
 			// TODO: Handle sync when a full sync is not necessary
@@ -105,9 +114,9 @@ public class SyncEngine {
 			
 			long start = System.currentTimeMillis();
 			
-			DataController.ensureCategoryTypesLoaded();
-			DataController.ensureAccountTypesLoaded();
-			DataController.ensureAccountTypeGroupsLoaded();
+			DataDefaults.ensureCategoryTypesLoaded();
+			DataDefaults.ensureAccountTypesLoaded();
+			DataDefaults.ensureAccountTypeGroupsLoaded();
 			
 			DataController.save();
 			
@@ -128,12 +137,25 @@ public class SyncEngine {
 			preprocessSyncData(device);
 			DataController.saveSyncData(device, isFullSync);
 			
-			Log.i(TAG, "DB sync: " + (System.currentTimeMillis() - start) + " ms");
+			Log.i(TAG, "DB Sync: " + (System.currentTimeMillis() - start) + " ms");
+			
+			if (syncToken != null)
+				db.endSync(syncToken);
+			
+			BankAccount.buildAccountBalances();
+			
+			// TODO: Sync ended refresh data notification
+			
+			shouldSync = false;
+			needsFullSync = false;
 			
 		} else if (needsFullSync) {
 		
-			needsSync = true;
+			needsFullSync = true;
+			shouldSync = true;
 		}
+		
+		// TODO: Sync ended notification
 		
 		// Save last sync'd date
 		Preferences.saveLong(Preferences.KEY_LAST_SYNC, System.currentTimeMillis());

@@ -11,7 +11,7 @@ import de.greenrobot.dao.DaoException;
 /**
  * Entity mapped to table ACCOUNT_TYPE_GROUP.
  */
-public class AccountTypeGroup extends ObjectBase  {
+public class AccountTypeGroup extends BusinessObject  {
 
     private Long id;
     private String groupId;

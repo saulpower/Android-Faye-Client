@@ -16,7 +16,7 @@ import de.greenrobot.dao.AbstractDao;
 /**
  * Entity mapped to table ACCOUNT_TYPE.
  */
-public class AccountType extends ObjectBase  {
+public class AccountType extends BusinessObject  {
 
     private Long id;
     private String accountTypeId;

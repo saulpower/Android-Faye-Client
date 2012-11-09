@@ -10,7 +10,7 @@ import de.greenrobot.dao.DaoException;
 /**
  * Entity mapped to table LOCATION.
  */
-public class Location extends ObjectBase  {
+public class Location extends BusinessObject  {
 
     private Long id;
     private String city;

@@ -11,7 +11,7 @@ import de.greenrobot.dao.DaoException;
 /**
  * Entity mapped to table CATEGORY_TYPE.
  */
-public class CategoryType extends ObjectBase  {
+public class CategoryType extends BusinessObject  {
 
     private Long id;
     private String categoryTypeId;
@@ -163,7 +163,6 @@ public class CategoryType extends ObjectBase  {
     	
     	return categoryType;
     }
-    
     // KEEP METHODS END
 
 }

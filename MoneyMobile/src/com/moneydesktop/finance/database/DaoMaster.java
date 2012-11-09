@@ -19,7 +19,7 @@ import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.AccountTypeGroupDao;
 import com.moneydesktop.finance.database.CategoryTypeDao;
 import com.moneydesktop.finance.database.CategoryDao;
-import com.moneydesktop.finance.database.TransactionDao;
+import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.database.BudgetItemDao;
 import com.moneydesktop.finance.database.LocationDao;
 
@@ -43,7 +43,7 @@ public class DaoMaster extends AbstractDaoMaster {
         AccountTypeGroupDao.createTable(db, ifNotExists);
         CategoryTypeDao.createTable(db, ifNotExists);
         CategoryDao.createTable(db, ifNotExists);
-        TransactionDao.createTable(db, ifNotExists);
+        TransactionsDao.createTable(db, ifNotExists);
         BudgetItemDao.createTable(db, ifNotExists);
         LocationDao.createTable(db, ifNotExists);
     }
@@ -61,7 +61,7 @@ public class DaoMaster extends AbstractDaoMaster {
         AccountTypeGroupDao.dropTable(db, ifExists);
         CategoryTypeDao.dropTable(db, ifExists);
         CategoryDao.dropTable(db, ifExists);
-        TransactionDao.dropTable(db, ifExists);
+        TransactionsDao.dropTable(db, ifExists);
         BudgetItemDao.dropTable(db, ifExists);
         LocationDao.dropTable(db, ifExists);
     }
@@ -106,7 +106,7 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(AccountTypeGroupDao.class);
         registerDaoClass(CategoryTypeDao.class);
         registerDaoClass(CategoryDao.class);
-        registerDaoClass(TransactionDao.class);
+        registerDaoClass(TransactionsDao.class);
         registerDaoClass(BudgetItemDao.class);
         registerDaoClass(LocationDao.class);
     }

@@ -14,11 +14,12 @@ public class Preferences {
 
 	private static final String KEY_TOKEN = "md_token";
 	
-	public static final String KEY_USER = "md_user";
 	public static final String KEY_API_HOST = "md_api_host";
-	public static final String KEY_SYNC_HOST = "md_sync_host";
+	public static final String KEY_BOB_ID = "md_bob_id";
 	public static final String KEY_FAYE_HOST = "md_faye_host";
 	public static final String KEY_LAST_SYNC = "md_last_sync";
+	public static final String KEY_SYNC_HOST = "md_sync_host";
+	public static final String KEY_USER = "md_user";
 
 	private static final String SEED = "moneydesktop";
 
