@@ -18,7 +18,6 @@ import org.json.JSONObject;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.data.Constant;
@@ -734,13 +733,22 @@ public class Transactions extends BusinessObject  {
     	return transaction;
     }
     
+    /**
+     * Performs a query to get all transactions for a given bank account.
+     * The query groups the results by date and summarizes the amounts of the
+     * transactions for that date.  The results are returned ordered by date
+     * ascending.
+     * 
+     * @param bankAccountId
+     * @return
+     */
     @SuppressWarnings("rawtypes")
-	public static List<Map> summarizedTransactions(Long id) {
+	public static List<Map> summarizedTransactions(Long bankAccountId) {
     	
-    	String guid = Long.toString(id);
+    	String guid = Long.toString(bankAccountId);
     	
     	SQLiteDatabase db = ApplicationContext.getDb();
-    	Cursor cursor = db.rawQuery("SELECT DATE, sum(RAW_AMOUNT) FROM TRANSACTIONS WHERE BANK_ACCOUNT_ID = ? GROUP BY DATE ORDER BY DATE ASC", new String[] { guid });
+    	Cursor cursor = db.rawQuery(Constant.QUERY_SUMMED_TRANSACTIONS, new String[] { guid });
     	
     	cursor.moveToFirst();
     	

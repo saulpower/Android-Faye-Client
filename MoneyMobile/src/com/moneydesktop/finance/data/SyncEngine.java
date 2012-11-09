@@ -114,6 +114,7 @@ public class SyncEngine {
 			
 			long start = System.currentTimeMillis();
 			
+			// Ensure that database defaults are loaded
 			DataDefaults.ensureCategoryTypesLoaded();
 			DataDefaults.ensureAccountTypesLoaded();
 			DataDefaults.ensureAccountTypeGroupsLoaded();
@@ -134,6 +135,7 @@ public class SyncEngine {
 			Log.i(TAG, "DB initialization: " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
 			
+			// Process the data received from the sync request
 			preprocessSyncData(device);
 			DataController.saveSyncData(device, isFullSync);
 			
@@ -142,6 +144,7 @@ public class SyncEngine {
 			if (syncToken != null)
 				db.endSync(syncToken);
 			
+			// Process updating account balances
 			BankAccount.buildAccountBalances();
 			
 			// TODO: Sync ended refresh data notification
@@ -157,7 +160,7 @@ public class SyncEngine {
 		
 		// TODO: Sync ended notification
 		
-		// Save last sync'd date
+		// Save the sync date to preferences
 		Preferences.saveLong(Preferences.KEY_LAST_SYNC, System.currentTimeMillis());
 		
 		isRunning = false;

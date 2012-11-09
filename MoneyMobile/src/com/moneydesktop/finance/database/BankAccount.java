@@ -16,8 +16,6 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import android.util.Log;
-
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.util.Enums.AccountExclusionFlags;
 
@@ -600,7 +598,7 @@ public class BankAccount extends BusinessObject  {
     
     /**
      * Iterate through each Bank and then each Bank Account and create a
-     * bank account balance for each day.
+     * bank account balance on a per day basis.
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void buildAccountBalances() {
@@ -609,42 +607,54 @@ public class BankAccount extends BusinessObject  {
     	
     	List<Bank> banks = (List<Bank>) DataController.getDao(Bank.class).queryBuilder().list();
     	
+    	// Iterate through each bank
     	for (Bank bank : banks) {
     		
+    		// Iterate through each bank account
     		for (BankAccount bankAccount : bank.getBankAccounts()) {
     			
+    			// Get the bank account's current balance
     			double balance = bankAccount.getBalance();
     			
-    			List<Map> expenses = Transactions.summarizedTransactions(bankAccount.getId());
+    			// Get a list of summed transactions grouped by date
+    			List<Map> transactionSet = Transactions.summarizedTransactions(bankAccount.getId());
     			
-    			if (expenses.size() > 0) {
+    			if (transactionSet.size() > 0) {
     				
-        			Map<String, Double> map = toMap(expenses);
+    				// Convert the list of summed transactions to a map for easy lookup by date
+        			Map<String, Double> summedAmounts = toMap(transactionSet);
+        			
         			boolean isFinancial = bankAccount.getAccountType().getFinancialAccountType() == 0;
     				
-    				Map<String, Object> oldest = expenses.get(0);
+        			// The oldest transaction will be the first in the list due to our query
+    				Map<String, Object> oldest = transactionSet.get(0);
+    				GregorianCalendar oldestCal = new GregorianCalendar();
+    				oldestCal.setTime((Date) oldest.get(Constant.KEY_DATE));
     				
-    				Date oldestDate = (Date) oldest.get(Constant.KEY_DATE);
+    				// Subtract one day to make our iteration inclusive of this transaction
+    				oldestCal.add(Calendar.DAY_OF_YEAR, -1);
     				
     				Date today = new Date();
-    				
     				GregorianCalendar cal = new GregorianCalendar();
     				cal.setTime(today);
     				
-    				while (cal.getTime().after(oldestDate)) {
+    				// Iterate through each day from today to the oldest date in our transaction set
+    				while (cal.getTime().after(oldestCal.getTime())) {
     					
     					Date day = cal.getTime();
     					String time = dateFormat.format(day);
     					
+    					// Create the account balance for the given day
     					BankAccountBalance bab = new BankAccountBalance();
     					bab.setBalance(balance);
     					bab.setDate(day);
     					bab.setBankAccountId(bankAccount.getId());
     					bab.insertBatch();
     					
-    					if (map.containsKey(time)) {
+    					// If the given day has transactions modify the account balance
+    					if (summedAmounts.containsKey(time)) {
     						
-    						Double amount = map.get(time);
+    						Double amount = summedAmounts.get(time);
     						
     						if (isFinancial)
     							balance += amount;
@@ -652,6 +662,7 @@ public class BankAccount extends BusinessObject  {
     							balance -= amount;
     					}
     					
+    					// Decrement the current date by one day
     					cal.add(Calendar.DAY_OF_YEAR, -1);
     				}
     			}
@@ -666,12 +677,13 @@ public class BankAccount extends BusinessObject  {
     }
     
     /**
-     * Create a single map from a list of maps with the date as the key
-     * and the amount as the value.
+     * Create a single map from a list of maps with the date (formatted as
+     * MM-DD-YYYY) as the key and the amount as the value.
      * 
      * @param expenses
      * @return
      */
+	@SuppressWarnings("rawtypes")
 	private static Map<String, Double> toMap(List<Map> expenses) {
     	
     	Map<String, Double> response = new HashMap<String, Double>();

@@ -85,6 +85,12 @@ public class Constant {
 	/*******************************************************************
 	 * VALUES
 	 *******************************************************************/
-	public static final String VALUE_NULL = "null";
 	
+	public static final String VALUE_NULL = "null";
+
+	/*******************************************************************
+	 * QUERIES
+	 *******************************************************************/
+	
+	public static final String QUERY_SUMMED_TRANSACTIONS = "SELECT DATE, sum(RAW_AMOUNT) FROM TRANSACTIONS WHERE BANK_ACCOUNT_ID = ? GROUP BY DATE ORDER BY DATE ASC";
 }
