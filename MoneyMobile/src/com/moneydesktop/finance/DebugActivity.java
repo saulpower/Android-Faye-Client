@@ -26,7 +26,7 @@ public class DebugActivity extends ListActivity {
 	public static final String PROD_API_HOST = "firefly.moneydesktop.com";
 	public static final String PROD_SYNC_HOST = "synchronicity.moneydesktop.com";
 	public static final String PROD_FAYE_HOST = "faye.moneydesktop.com";
-	
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +43,7 @@ public class DebugActivity extends ListActivity {
     	
 		String item = (String) getListAdapter().getItem(position);
 		Toast.makeText(this, "Switching to " + item, Toast.LENGTH_SHORT).show();
-		
+
 		switch (position) {
 		case 0:
 			Preferences.saveString(Preferences.KEY_API_HOST, SAND_API_HOST);
@@ -66,7 +66,7 @@ public class DebugActivity extends ListActivity {
 			Preferences.saveString(Preferences.KEY_FAYE_HOST, PROD_FAYE_HOST);
 			break;
 		}
-		
+
 		finish();
     }
 
