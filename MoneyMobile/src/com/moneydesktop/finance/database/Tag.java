@@ -9,9 +9,12 @@ import de.greenrobot.dao.DaoException;
 // KEEP INCLUDES - put your custom includes here
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.model.User;
+import com.moneydesktop.finance.util.Enums.DataState;
 // KEEP INCLUDES END
 /**
  * Entity mapped to table TAG.
@@ -156,6 +159,7 @@ public class Tag extends BusinessObject  {
     
     public void setExternalId(String id) {
     	setTagId(id);
+    	getBusinessObjectBase().setExternalId(id);
     }
     
     public String getExternalId() {
@@ -199,6 +203,37 @@ public class Tag extends BusinessObject  {
     		}
     	}
     }
+    
+    public JSONObject getJson() throws JSONException {
+    	
+    	JSONObject json = new JSONObject();
+    	
+    	json.put(Constant.KEY_GUID, getTagId() != null ? getTagId() : null);
+    	json.put(Constant.KEY_IS_DELETED, 0);
+    	
+    	if (getExternalId() != null)
+    		json.put(Constant.KEY_EXTERNAL_ID, getExternalId());
+    	
+    	if (getBusinessObjectBase().getDataStateEnum() == DataState.DATA_STATE_DELETED || isDeleted()) {
+    		
+        	json.put(Constant.KEY_IS_DELETED, 1);
+        	
+    		return json;
+    	
+    	} else if (getBusinessObjectBase().getDataStateEnum() == DataState.DATA_STATE_NEW) {
+    		
+    		json.put(Constant.KEY_GUID, null);
+    	}
+    	
+    	if (getTagName() != null)
+    		json.put(Constant.KEY_NAME, getTagName());
+    	
+    	json.put(Constant.KEY_USER_GUID, User.getCurrentUser().getUserId());
+    	json.put(Constant.KEY_REVISION, getBusinessObjectBase().getVersion());
+    	
+    	return json;
+    }
+    
     // KEEP METHODS END
 
 }

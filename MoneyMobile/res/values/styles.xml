@@ -3,7 +3,7 @@
     <style name="button">
         <item name="android:textColor">@color/light_blue</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:background">@drawable/phone_perfed_paper</item>
+        <item name="android:background">@drawable/white_button</item>
     </style>
     <style name="field">
         <item name="android:textColor">@color/gray7</item>

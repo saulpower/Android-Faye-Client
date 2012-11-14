@@ -8,9 +8,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.data.Serialization;
+import com.moneydesktop.finance.util.MacUtil;
 
 public class User {
 
+	private static final String DEMO_NAME = "Demo User";
+	private static final String DEMO_ID = "demouserid";
+	private static final String DEMO_FIRST_NAME = "Demo";
+	private static final String DEMO_LAST_NAME = "User";
+	private static final String DEMO_ENTITY = "demoentity";
+	
 	private static User sharedInstance;
 	
 	private String userId;
@@ -44,6 +51,21 @@ public class User {
 		sharedInstance.setCanSync(true);
 		
 		Preferences.saveUserToken(data.optString(Constant.KEY_LOGIN_TOKEN));
+		
+		sharedInstance.save();
+	}
+	
+	public static void registerDemoUser() {
+		
+		sharedInstance = new User();
+		sharedInstance.setUserName(DEMO_NAME);
+		sharedInstance.setUserId(DEMO_ID);
+		sharedInstance.setFirstName(DEMO_FIRST_NAME);
+		sharedInstance.setLastName(DEMO_LAST_NAME);
+		sharedInstance.setSystemDeviceId(MacUtil.getMACAddress());
+		sharedInstance.setCurrentEntityId(DEMO_ENTITY);
+		sharedInstance.setDefaultEntityId(DEMO_ENTITY);
+		sharedInstance.setCanSync(false);
 		
 		sharedInstance.save();
 	}
@@ -153,7 +175,7 @@ public class User {
 		this.defaultEntityId = defaultEntityId;
 	}
 	
-	public boolean canSync() {
+	public boolean getCanSync() {
 		return canSync;
 	}
 	

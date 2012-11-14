@@ -39,6 +39,7 @@
     <string name="button_login">LOGIN</string>
     <string name="button_ok">OK</string>
     <string name="description">description</string>
+    <string name="demo_message">Creating Demo Data</string>
     <string name="error_login_failed">Login Failed</string>
     <string name="error_login_incomplete">Please complete the login fields</string>
     <string name="error_login_invalid">Invalid User Name or Password</string>

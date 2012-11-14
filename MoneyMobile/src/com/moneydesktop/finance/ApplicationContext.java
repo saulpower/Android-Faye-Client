@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.util.Log;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -15,14 +16,17 @@ import com.moneydesktop.finance.database.BusinessObjectBase;
 import com.moneydesktop.finance.database.DaoMaster;
 import com.moneydesktop.finance.database.DaoMaster.DevOpenHelper;
 import com.moneydesktop.finance.database.DaoSession;
+import com.moneydesktop.finance.database.DatabaseDefaults;
+import com.moneydesktop.finance.database.Institution;
 import com.moneydesktop.finance.exception.CustomExceptionHandler;
+import com.moneydesktop.finance.model.EventMessage.AuthEvent;
 import com.moneydesktop.finance.model.EventMessage.LoginEvent;
 
 import de.greenrobot.event.EventBus;
 
 public class ApplicationContext extends Application {
 	
-//	private final String TAG = "ApplicationContext";
+	private final String TAG = "ApplicationContext";
 
 	final static String WAKE_TAG = "wake_lock";
 
@@ -40,19 +44,22 @@ public class ApplicationContext extends Application {
 		super.onCreate();
 		
         Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler());
-        
-        getObjectMapper();
+
         initializeDatabase();
+		DatabaseDefaults.ensureInstitutionsLoaded();
+		
+		EventBus.getDefault().register(this);
+		
+        getObjectMapper();
         
 		acquireWakeLock();
-		
-		registerEventListeners();
 	}
 	
 	@Override
 	public void onTerminate() {
 		super.onTerminate();
 		
+		Log.i(TAG, "Savig BusinessObjectBase ID count");
 		Preferences.saveLong(Preferences.KEY_BOB_ID, BusinessObjectBase.getIdCount());
 		
 		releaseWakeLock();
@@ -66,16 +73,24 @@ public class ApplicationContext extends Application {
         daoSession = daoMaster.newSession();
 	}
 	
-	private void registerEventListeners() {
-		
-		EventBus eventBus = EventBus.getDefault();
-		eventBus.register(this);
-	}
+	/*********************************************************************************
+	 * Event Listening
+	 *********************************************************************************/
 	
 	public void onEvent(LoginEvent event) {
 		
-		SyncEngine.sharedInstance().beginSync(true);
+		SyncEngine.sharedInstance().setNeedsFullSync(true);
+		SyncEngine.sharedInstance().beginSync();
 	}
+	
+	public void onEvent(AuthEvent event) {
+		
+		Institution.processLocalBanksFile(R.raw.institutions);
+	}
+	
+	/*********************************************************************************
+	 * Getters
+	 *********************************************************************************/
 	
     public ApplicationContext() {
         instance = this;
@@ -107,6 +122,10 @@ public class ApplicationContext extends Application {
 	public static DaoSession getDaoSession() {
 		return daoSession;
 	}
+	
+	/*********************************************************************************
+	 * Misc.
+	 *********************************************************************************/
 
 	public void acquireWakeLock() {
 			

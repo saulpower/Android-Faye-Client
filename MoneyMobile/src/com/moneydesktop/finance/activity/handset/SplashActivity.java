@@ -9,13 +9,11 @@ import android.widget.ImageView;
 
 import com.crittercism.app.Crittercism;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.R.drawable;
-import com.moneydesktop.finance.R.id;
-import com.moneydesktop.finance.R.layout;
+import com.moneydesktop.finance.model.User;
 
 public class SplashActivity extends Activity {
 	
-//	private final String TAG = "SplashActivity";
+	public final String TAG = "SplashActivity";
 
 	protected int splashTime = 5000; // time to display the splash screen in ms
     private CountDownTimer timer;
@@ -25,6 +23,8 @@ public class SplashActivity extends Activity {
         super.onCreate(savedInstanceState);
         
         setContentView(R.layout.splash_view);
+
+        resetApp();
         
         Crittercism.init(getApplicationContext(), "50258d166c36f91a1b000004");
         
@@ -53,10 +53,25 @@ public class SplashActivity extends Activity {
     	
     	return true;
     }
+	
+	private void resetApp() {
+		
+        User.clear();
+	}
     
     private void endSplash() {
     	
-    	Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+    	Intent i = null;
+    	
+    	if (User.getCurrentUser() != null) {
+			
+	    	i = new Intent(this, DashboardActivity.class);
+	    	
+		} else {
+    	
+			i = new Intent(this, LoginActivity.class);
+		}
+    	
 		i.putExtras(getIntent());
     	
 		startActivity(i);

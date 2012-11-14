@@ -1,5 +1,7 @@
 package com.moneydesktop.finance.database;
 
+import org.json.JSONObject;
+
 import com.moneydesktop.finance.database.DaoSession;
 import de.greenrobot.dao.DaoException;
 
@@ -244,11 +246,17 @@ public class Location extends BusinessObject  {
     
     public void setExternalId(String id) {
     	setLocationId(id);
+    	getBusinessObjectBase().setExternalId(id);
     }
     
     public String getExternalId() {
     	return getLocationId();
     }
+    
+    public JSONObject getJson() {
+    	return null;
+    }
+    
     // KEEP METHODS END
 
 }

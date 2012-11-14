@@ -87,7 +87,10 @@ public class MacUtil {
 	 *            eth0, wlan0 or NULL=use first interface
 	 * @return mac address or empty string
 	 */
-	public static String getMACAddress(String interfaceName) {
+	public static String getMACAddress() {
+		
+		String interfaceName = "eth0";
+		
 		try {
 			List<NetworkInterface> interfaces = Collections
 					.list(NetworkInterface.getNetworkInterfaces());

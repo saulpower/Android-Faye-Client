@@ -14,6 +14,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.database.Cursor;
@@ -21,6 +22,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.model.User;
+import com.moneydesktop.finance.util.Enums.DataState;
 // KEEP INCLUDES END
 /**
  * Entity mapped to table TRANSACTIONS.
@@ -591,6 +594,7 @@ public class Transactions extends BusinessObject  {
     
     public void setExternalId(String id) {
     	setTransactionId(id);
+    	getBusinessObjectBase().setExternalId(id);
     }
     
     public String getExternalId() {
@@ -643,9 +647,13 @@ public class Transactions extends BusinessObject  {
     	transaction.setIsBusiness(!json.optBoolean(Constant.KEY_IS_PERSONAL));
     	
     	BankAccount bankAccount = (BankAccount) getObject(BankAccount.class, json.optString(Constant.KEY_ACCOUNT_GUID));
-    	transaction.setBankAccountId(bankAccount.getId());
-    	bankAccount.acceptChanges();
-    	bankAccount.updateBatch();
+    	
+    	if (bankAccount != null) {
+    		
+	    	transaction.setBankAccountId(bankAccount.getId());
+	    	bankAccount.acceptChanges();
+	    	bankAccount.updateBatch();
+    	}
     	
     	if (!json.optString(Constant.KEY_DATE).equals(Constant.VALUE_NULL))
     		transaction.setDate(new Date((json.optLong(Constant.KEY_DATE) * 1000)));
@@ -766,6 +774,113 @@ public class Transactions extends BusinessObject  {
     	}
     	
     	return list;
+    }
+    
+    public JSONObject getJson() throws JSONException {
+    	
+    	JSONObject json = new JSONObject();
+    	
+    	if (getTransactionId() != null)
+    		json.put(Constant.KEY_GUID, getTransactionId());
+    	
+    	if (getBusinessObjectBase().getDataState() == DataState.DATA_STATE_DELETED.index())
+    		return json;
+    	
+    	json.put(Constant.KEY_USER_GUID, User.getCurrentUser().getUserId());
+    	
+    	if (getBankAccount().getAccountId() != null)
+    		json.put(Constant.KEY_ACCOUNT_GUID, getBankAccount().getAccountId());
+    	
+    	if (getCategory().getCategoryId() != null) {
+    		
+    		if (getCategory().getBusinessObjectBase().getDataStateEnum() == DataState.DATA_STATE_NEW)
+    			json.put(Constant.KEY_CATEGORY_GUID, getCategory().getExternalId());
+    	}
+    	
+    	if (getTransactionType() != null)
+    		json.put(Constant.KEY_TRANSACTION_TYPE, getTransactionType());
+    	
+    	if (getAmount() != null)
+    		json.put(Constant.KEY_AMOUNT, getAmount());
+    	
+    	if (getDate() != null) {
+    		json.put(Constant.KEY_USER_DATE, (getDate().getTime() / 1000));
+    		json.put(Constant.KEY_DATE, (getDate().getTime() / 1000));
+    	}
+    	
+    	if (getTitle() != null)
+    		json.put(Constant.KEY_USER_DESCRIPTION, getTitle());
+    	
+    	if (getMemo() != null)
+    		json.put(Constant.KEY_MEMO, getMemo());
+    	
+    	if (getReference() != null)
+    		json.put(Constant.KEY_REFERENCE, getReference());
+    	
+    	if (getIsProcessed() != null)
+    		json.put(Constant.KEY_HAS_BEEN_VIEWED, getIsProcessed());
+    	
+    	if (getIsBusiness() != null)
+    		json.put(Constant.KEY_IS_PERSONAL, getIsBusiness());
+    	
+    	if (getIsCleared() != null)
+    		json.put(Constant.KEY_IS_CLEARED, getIsCleared());
+    	
+    	if (getIsFlagged() != null)
+    		json.put(Constant.KEY_IS_FLAGGED, getIsFlagged());
+    	
+    	if (getIsVoid() != null)
+    		json.put(Constant.KEY_IS_VOID, getIsVoid());
+    	
+    	if (getIsReimbursable() != null)
+    		json.put(Constant.KEY_IS_REIMBURSABLE, getIsReimbursable());
+    	
+    	if (getBusinessObjectBase().getVersion() != null)
+    		json.put(Constant.KEY_REVISION, getBusinessObjectBase().getVersion());
+    	
+    	if (getExternalId() != null)
+    		json.put(Constant.KEY_EXTERNAL_ID, getExternalId());
+    	
+    	if (getIsManual() != null)
+    		json.put(Constant.KEY_IS_MANUAL, getIsManual());
+    	
+    	JSONArray tags = new JSONArray();
+    	
+    	for (TagInstance ti : getBusinessObjectBase().getTagInstances()) {
+    		tags.put(ti.getJson());
+    	}
+    	
+    	json.put(Constant.KEY_TAGS, tags);
+    	
+    	return json;
+    }
+    
+    public boolean isIncome() {
+    	
+    	if (getCategoryId() != null) {
+    		
+    		Category cat = null;
+    		
+    		try {
+    			cat = getCategory();
+    		} catch (DaoException ex) {
+    			cat = (Category) BusinessObject.getObject(Category.class, null, getCategoryId());
+    		}
+    		
+    		if (cat == null)
+    			return false;
+    		
+    		try {
+	    		if (cat.getCategoryName().equalsIgnoreCase(Constant.INCOME) ||
+	    				(cat.getParent() != null && cat.getParent().getCategoryName().equalsIgnoreCase(Constant.INCOME))) {
+	    			return true;
+	    		}
+    		} catch (Exception ex) {
+    			return false;
+    		}
+    	}
+    	
+    	return false;
     }
     
     // KEEP METHODS END

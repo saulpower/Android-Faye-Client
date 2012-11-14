@@ -2,6 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <color name="black">#000</color>
+    <color name="gray4">#919195</color>
     <color name="gray7">#606060</color>
     <color name="light_blue">#00ACED</color>
     <color name="transparent">#00000000</color>
