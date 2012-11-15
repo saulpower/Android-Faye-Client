@@ -109,6 +109,8 @@ public class Constant {
 	public static final String BUSINESS_OBJECT = "business_object";
 	public static final String INCOME = "income";
 	public static final String PERSONAL = "personal";
+	
+    public static final float STANDARD_DPI = 160f;
 
 	/*******************************************************************
 	 * QUERIES

@@ -7,7 +7,6 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
 
 import com.moneydesktop.communication.HttpRequest;
@@ -43,8 +42,21 @@ public class DataBridge {
     	return sharedInstance;
 	}
 	
+	public static DataBridge sharedInstance(Context context) {
+		
+		if (sharedInstance == null) {
+    		sharedInstance = new DataBridge(context);
+    	}
+    	
+    	return sharedInstance;
+	}
+	
 	public DataBridge() {
 		this.context = ApplicationContext.getContext();
+	}
+	
+	public DataBridge(Context context) {
+		this.context = context;
 	}
 	
 	/**
@@ -167,15 +179,15 @@ public class DataBridge {
 	 */
 	public HashMap<String, String> getHeaders() {
 		
-		String version = "0.0";
+		String version = "1.0";
 		
 		try {
 			
 			PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
 			version = pInfo.versionName;
 			
-		} catch (NameNotFoundException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			Log.w(TAG, "Could not get app version");
 		}
 		
 		HashMap<String, String> headers = new HashMap<String, String>();

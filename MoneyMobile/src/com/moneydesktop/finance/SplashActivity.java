@@ -5,15 +5,13 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.MotionEvent;
-import android.widget.ImageView;
 
 import com.crittercism.app.Crittercism;
-import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.handset.activity.DashboardActivity;
 import com.moneydesktop.finance.handset.activity.LoginActivity;
+import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.tablet.activity.LoginTabletActivity;
-import com.moneydesktop.finance.model.User;
 
 public class SplashActivity extends BaseActivity {
 	

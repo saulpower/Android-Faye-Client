@@ -1,5 +1,6 @@
 package com.moneydesktop.finance.data;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
@@ -29,7 +30,12 @@ public class Preferences {
 
 	private static SharedPreferences getPrefs() {
 		
-		return PreferenceManager.getDefaultSharedPreferences(ApplicationContext.getContext());
+		Context context = ApplicationContext.getContext();
+		
+		if (context == null)
+			return null;
+		
+		return PreferenceManager.getDefaultSharedPreferences(context);
 	}
 
 	public static boolean saveString(String key, String value) {
@@ -49,7 +55,7 @@ public class Preferences {
 		
 			value = getPrefs().getString(key, defaultString);
 			
-		} catch (ClassCastException ex) {}
+		} catch (Exception ex) {}
 		
 		return value == null ? defaultString : value;
 	}
@@ -71,7 +77,7 @@ public class Preferences {
 		
 			value = getPrefs().getBoolean(key, defaultBool);
 			
-		} catch (ClassCastException ex) {}
+		} catch (Exception ex) {}
 		
 		return value;
 	}
@@ -92,7 +98,8 @@ public class Preferences {
 		try {
 			
 			value = getPrefs().getLong(key, defValue);
-		} catch (ClassCastException ex) {}
+			
+		} catch (Exception ex) {}
 		
 		return value == null ? defValue : value; 
 	}
