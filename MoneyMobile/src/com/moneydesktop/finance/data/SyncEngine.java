@@ -1,5 +1,6 @@
 package com.moneydesktop.finance.data;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,8 +14,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 
+import com.moneydesktop.finance.ApplicationContext;
+import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BusinessObject;
 import com.moneydesktop.finance.database.BusinessObjectBase;
@@ -33,9 +37,24 @@ public class SyncEngine {
 	private final String TAG = "SyncEngine";
 
 	private static SyncEngine sharedInstance;
+
+	private final int TIMER_DELAY = 10000;
 	
 	private DataBridge db;
 	private EventBus eventBus;
+	
+	private ArrayList<Bank> banksUpdating = null;
+	private Handler bankStatusTimer = null;
+	private Runnable bankStatusTask = new Runnable() {
+		
+		public void run() {
+
+			bankStatusTimerFired();
+			
+			if (bankStatusTimer != null)
+				bankStatusTimer.postDelayed(this, TIMER_DELAY);
+		}
+	};
 	
 	private boolean isRunning = false;
 	private boolean shouldSync = false;
@@ -53,6 +72,8 @@ public class SyncEngine {
 		
 		this.db = DataBridge.sharedInstance();
 		this.eventBus = EventBus.getDefault();
+		
+		this.banksUpdating = new ArrayList<Bank>();
 	}
 	
 	public boolean needsFullSync() {
@@ -94,6 +115,77 @@ public class SyncEngine {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void beginBankStatusUpdate(Bank bank) {
+		
+		if (!banksUpdating.contains(bank)) {
+			banksUpdating.add(bank);
+		}
+		
+		if (bankStatusTimer != null)
+			return;
+		
+		startBankStatusTimer();
+	}
+	
+	private void startBankStatusTimer() {
+		
+		if (User.getCurrentUser().getCanSync() && banksUpdating.size() > 0 && bankStatusTimer == null) {
+			
+			bankStatusTimer = new Handler();
+			bankStatusTimer.postDelayed(bankStatusTask, TIMER_DELAY);
+		}
+	}
+	
+	private void endBankStatusTimer() {
+		
+		if (bankStatusTimer != null) {
+			
+			bankStatusTimer.removeCallbacks(bankStatusTask);
+			bankStatusTimer = null;
+		}
+	}
+	
+	private void bankStatusTimerFired() {
+		
+		new Thread(new Runnable() {
+			
+			public void run() {
+				
+				synchronized(banksUpdating) {
+					
+					List<Bank> updatingCopy = new ArrayList<Bank>();
+					
+					Collections.copy(updatingCopy, banksUpdating);
+					
+					for (int i = 0; i < banksUpdating.size(); i++) {
+						
+						Bank bank = updatingCopy.get(i);
+						
+						JSONObject json = DataBridge.sharedInstance().getBankStatus(bank.getBankId());
+						bank.updateStatus(json);
+						
+						if (bank.getProcessStatus() >= 3)
+							banksUpdating.remove(i);
+					}
+					
+					if (banksUpdating.size() == 0) {
+						
+						// Run code on main thread
+						new Handler(ApplicationContext.getContext().getMainLooper()).post(new Runnable() {
+							
+							public void run() {
+
+								endBankStatusTimer();
+								beginSync();
+							}
+						});
+					}
+				}
+			}
+			
+		}).start();
 	}
 	
 	public void beginSync() {

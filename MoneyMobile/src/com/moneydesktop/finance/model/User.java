@@ -3,6 +3,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.Base64;
+import android.util.Log;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.moneydesktop.finance.data.Constant;
@@ -11,6 +12,8 @@ import com.moneydesktop.finance.data.Serialization;
 import com.moneydesktop.finance.util.MacUtil;
 
 public class User {
+	
+	public static final String TAG = "User";
 
 	private static final String DEMO_NAME = "Demo User";
 	private static final String DEMO_ID = "demouserid";
@@ -113,7 +116,9 @@ public class User {
 			
 			try {
 				user = (User) Serialization.deserialize(userString, User.class);
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				Log.e(TAG, "Could not deserialize user");
+			}
 		}
 		
 		return user;

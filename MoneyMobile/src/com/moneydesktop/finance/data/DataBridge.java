@@ -7,7 +7,6 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
 
 import com.moneydesktop.communication.HttpRequest;
@@ -24,8 +23,9 @@ public class DataBridge {
 	
 	private static final String ENDPOINT_DEVICE = "devices";
 	private static final String ENDPOINT_FULL_SYNC = "sync/full";
-	private static final String ENDPOINT_SYNC = "sync";
 	private static final String ENDPOINT_INSTITUTIONS = "institutions";
+	private static final String ENDPOINT_MEMBERS = "members";
+	private static final String ENDPOINT_SYNC = "sync";
 	
 	private static DataBridge sharedInstance;
 	
@@ -42,8 +42,21 @@ public class DataBridge {
     	return sharedInstance;
 	}
 	
+	public static DataBridge sharedInstance(Context context) {
+		
+		if (sharedInstance == null) {
+    		sharedInstance = new DataBridge(context);
+    	}
+    	
+    	return sharedInstance;
+	}
+	
 	public DataBridge() {
 		this.context = ApplicationContext.getContext();
+	}
+	
+	public DataBridge(Context context) {
+		this.context = context;
 	}
 	
 	/**
@@ -119,28 +132,6 @@ public class DataBridge {
 		}
 	}
 	
-	public JSONObject uploadSync(JSONObject data) {
-		
-		String baseUrl = Preferences.getString(Preferences.KEY_SYNC_HOST, DebugActivity.PROD_SYNC_HOST);
-		
-        String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_SYNC);
-        
-		try {
-			
-			String response = HttpRequest.sendPost(url, getHeaders(), null, data.toString());
-			
-			JSONObject json = new JSONObject(response);
-			
-			return json;
-	        
-		} catch (Exception e) {
-
-			Log.e(TAG, "Error downloading sync", e);
-			
-			return null;
-		}
-	}
-	
 	public void endSync(String syncToken) {
 		
 		String baseUrl = Preferences.getString(Preferences.KEY_SYNC_HOST, DebugActivity.PROD_SYNC_HOST);
@@ -158,6 +149,148 @@ public class DataBridge {
 			
 			Log.e(TAG, "Error ending sync", e);
 		}
+	}
+	
+	public JSONObject getBankStatus(String bankId) {
+
+		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
+		
+		String url = String.format("%s://%s/%s/%s", protocol, baseUrl, ENDPOINT_MEMBERS, bankId);
+		
+		try {
+			
+			String response = HttpRequest.sendGet(url, getHeaders(), null);
+			
+			JSONObject json = new JSONObject(response);
+			
+			return json;
+			
+		} catch (Exception e) {
+			Log.e(TAG, "Error getting bank status", e);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Get the generic headers used in every request sent to the server
+	 * 
+	 * @return A map of request headers and their value
+	 */
+	public HashMap<String, String> getHeaders() {
+		
+		String version = "1.0";
+		
+		try {
+			
+			PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+			version = pInfo.versionName;
+			
+		} catch (Exception e) {
+			Log.w(TAG, "Could not get app version");
+		}
+		
+		HashMap<String, String> headers = new HashMap<String, String>();
+		headers.put("Content-Type", "application/json");
+		headers.put("Accept", "application/json");
+		headers.put("MD-App-Build", version);
+		
+		// If the user is logged in then we will need their token to authenticate a request
+		if (User.getCurrentUser() != null && !User.getCurrentUser().getUserId().equals("")) {
+			headers.put("X-Auth-UserToken", User.getCurrentUser().getAuthorizationToken());
+		}
+		
+		return headers;
+	}
+	
+	/**
+	 * Returns a JSON array of the credential fields necessary to login with
+	 * the passed in institution ID.
+	 * 
+	 * @param guid
+	 * @return
+	 */
+	public JSONArray getInstituteLoginFields(String institutionId) {
+		
+		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
+		
+		String url = String.format("%s://%s/%s/%s", protocol, baseUrl, ENDPOINT_INSTITUTIONS, institutionId);
+		
+		try {
+			
+			String response = HttpRequest.sendGet(url, getHeaders(), null);
+			
+			JSONObject json = new JSONObject(response);
+			JSONArray credentials = json.getJSONObject(Constant.KEY_INSTITUTION).getJSONArray(Constant.KEY_CREDENTIALS);
+			
+			return credentials;
+			
+		} catch (Exception e) {
+			
+			Log.e(TAG, "Error getting institute fields", e);
+			
+			return null;
+		}
+	}
+	
+	/**
+	 * Get the array of multi-factor authentication questions necessary to login
+	 * to the passed in bank ID
+	 * 
+	 * @param bankId
+	 */
+	public JSONArray getMfaQuestions(String bankId) {
+		
+		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
+		
+		String url = String.format("%s://%s/%s/%s", protocol, baseUrl, ENDPOINT_MEMBERS, bankId);
+		
+		try {
+			
+			String response = HttpRequest.sendGet(url, getHeaders(), null);
+			
+			JSONObject json = new JSONObject(response);
+			JSONObject status = json.getJSONObject(Constant.KEY_MEMBER).getJSONObject(Constant.KEY_PROCESS_STATUS);
+			
+			if (!status.isNull(Constant.KEY_MFA)) {
+				
+				return status.getJSONObject(Constant.KEY_MFA).getJSONArray(Constant.KEY_CREDENTIALS);
+			}
+			
+		} catch (Exception e) {
+			Log.e(TAG, "Error getting institute fields", e);
+		}
+		
+		return null;
+	}
+	
+	public void setUseSSL(boolean useSSL) {
+		
+		if (!useSSL)
+			protocol = "http";
+		else
+			protocol = "https";
+	}
+	
+	public JSONObject saveFinancialInstitute(JSONObject data) {
+
+		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
+		
+		String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_MEMBERS);
+		
+		try {
+			
+			String response = HttpRequest.sendPost(url, getHeaders(), null, data.toString());
+			
+			JSONObject json = new JSONObject(response);
+			
+			return json;
+			
+		} catch (Exception e) {
+			Log.e(TAG, "Error getting institute fields", e);
+		}
+		
+		return null;
 	}
 	
 	public JSONArray syncInstitutions() {
@@ -182,43 +315,70 @@ public class DataBridge {
 		}
 	}
 	
-	/**
-	 * Get the generic headers used in every request sent to the server
-	 * 
-	 * @return A map of request headers and their value
-	 */
-	public HashMap<String, String> getHeaders() {
+	public JSONObject updateLoginFields(String bankId, JSONObject fields) {
 		
-		String version = "0.0";
+		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
+		
+		String url = String.format("%s://%s/%s/%s", protocol, baseUrl, ENDPOINT_MEMBERS, bankId);
 		
 		try {
 			
-			PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-			version = pInfo.versionName;
+			String response = HttpRequest.sendPut(url, getHeaders(), null, fields.toString());
 			
-		} catch (NameNotFoundException e) {
-			e.printStackTrace();
+			JSONObject json = new JSONObject(response);
+			
+			return json;
+			
+		} catch (Exception e) {
+			Log.e(TAG, "Error updating login fields", e);
 		}
 		
-		HashMap<String, String> headers = new HashMap<String, String>();
-		headers.put("Content-Type", "application/json");
-		headers.put("Accept", "application/json");
-		headers.put("MD-App-Build", version);
+		return null;
+	}
+	
+	public JSONObject updateMfaQuestions(String bankId, JSONObject answers) {
 		
-		// If the user is logged in then we will need their token to authenticate a request
-		if (User.getCurrentUser() != null && !User.getCurrentUser().getUserId().equals("")) {
-			headers.put("X-Auth-UserToken", User.getCurrentUser().getAuthorizationToken());
+		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
+		
+		String url = String.format("%s://%s/%s/%s", protocol, baseUrl, ENDPOINT_MEMBERS, bankId);
+		
+		try {
+			
+			JSONObject json = new JSONObject();
+			json.put(Constant.KEY_CREDENTIALS, answers);
+			
+			String response = HttpRequest.sendPut(url, getHeaders(), null, json.toString());
+			
+			json = new JSONObject(response);
+			
+			return json;
+			
+		} catch (Exception e) {
+			Log.e(TAG, "Error updating mfa questions", e);
 		}
 		
-		return headers;
+		return null;
 	}
 	
-	public void setUseSSL(boolean useSSL) {
+	public JSONObject uploadSync(JSONObject data) {
 		
-		if (!useSSL)
-			protocol = "http";
-		else
-			protocol = "https";
+		String baseUrl = Preferences.getString(Preferences.KEY_SYNC_HOST, DebugActivity.PROD_SYNC_HOST);
+		
+        String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_SYNC);
+        
+		try {
+			
+			String response = HttpRequest.sendPost(url, getHeaders(), null, data.toString());
+			
+			JSONObject json = new JSONObject(response);
+			
+			return json;
+	        
+		} catch (Exception e) {
+
+			Log.e(TAG, "Error downloading sync", e);
+			
+			return null;
+		}
 	}
-	
 }

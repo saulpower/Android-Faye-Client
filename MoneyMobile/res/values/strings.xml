@@ -28,6 +28,7 @@
     <string name="atg_ccd">Credit Card Debt</string>
     <string name="atg_od">Other Debt</string>
     <string name="at_cash">Cash</string>
+    <string name="connecting">Connecting to bank</string>
     <string name="ct_exp">Expense</string>
     <string name="ct_inc">Income</string>
     <string name="ct_asst">Asset</string>
@@ -51,6 +52,10 @@
     <string name="label_password">PASSWORD</string>
     <string name="loading">Loading</string>
     <string name="menu_settings">Settings</string>
+    <string name="status_description_4">An unknown error occured. Just refresh this bank to try again.</string>
+    <string name="status_description_5">Invalid username and password. Click on the button below to try again.</string>
+    <string name="status_description_6">Multifactor Authentication Required. Click on the button below to give us these additional pieces of information.</string>
+    <string name="status_description_7">This bank needs to be refreshed to get the most up to date data. Please refresh this bank.</string>
     <string name="text_login">Please fill out the form below to login.</string>
     <string name="text_signup">Don\'t have an account? Learn more.</string>
     <string name="title_activity_money_mobile">MoneyMobileActivity</string>

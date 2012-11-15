@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.util.DisplayMetrics;
 import android.view.Display;
 
+import com.moneydesktop.finance.data.Constant;
+
 public class UiUtils {
 
     public static int getScreenWidth (Activity activity) {
@@ -29,6 +31,6 @@ public class UiUtils {
         final DisplayMetrics metrics = new DisplayMetrics();
         final Display display = context.getWindowManager().getDefaultDisplay();
         display.getMetrics(metrics);
-        return (metrics.densityDpi / MDConstants.STANDARD_DPI);
+        return (metrics.densityDpi / Constant.STANDARD_DPI);
     }
 }

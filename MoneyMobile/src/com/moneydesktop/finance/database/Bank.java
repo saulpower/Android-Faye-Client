@@ -1,6 +1,7 @@
 package com.moneydesktop.finance.database;
 
 import java.util.List;
+
 import com.moneydesktop.finance.database.DaoSession;
 import de.greenrobot.dao.DaoException;
 
@@ -8,6 +9,9 @@ import de.greenrobot.dao.DaoException;
 
 // KEEP INCLUDES - put your custom includes here
 import java.util.Date;
+import android.util.Log;
+import com.moneydesktop.finance.ApplicationContext;
+import com.moneydesktop.finance.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -324,7 +328,95 @@ public class Bank extends BusinessObject  {
     	return getBankId();
     }
     
-    public static Bank saveBank(JSONObject json, boolean delete) {
+    public void updateStatus(JSONObject json) {
+    	
+    	try {
+    	
+    		int newStatus = json.getJSONObject(Constant.KEY_MEMBER).optInt(Constant.KEY_LAST_JOB, 0);
+    		
+    		if (json.getJSONObject(Constant.KEY_MEMBER).optInt(Constant.KEY_IS_MANUAL) == 1)
+    			newStatus = 3;
+    		
+    		setProcessStatus(newStatus);
+    	
+    		switch (getProcessStatus()) {
+    		case 4:
+    			setStatusDescription(ApplicationContext.getContext().getString(R.string.status_description_4));
+    			break;
+    		case 5:
+    			setStatusDescription(ApplicationContext.getContext().getString(R.string.status_description_5));
+    			break;
+    		case 6:
+    			setStatusDescription(ApplicationContext.getContext().getString(R.string.status_description_6));
+    			break;
+    		case 7:
+    			setStatusDescription(ApplicationContext.getContext().getString(R.string.status_description_7));
+    			break;
+    		}
+    		
+    		acceptChanges();
+    		updateBatch();
+    		
+    	} catch (Exception ex) {
+    		Log.e(TAG, "Could not update bank status", ex);
+    	}
+    }
+    
+    public static Bank saveIncomingBank(JSONObject json, boolean delete) {
+    	
+    	Bank bank = saveBank(json, delete);
+    	
+    	// Object was deleted no need to continue
+    	if (bank == null)
+    		return null;
+    	
+    	bank.setStatus(json.optInt(Constant.KEY_STATUS));
+    	
+    	if (!json.isNull(Constant.KEY_LAST_UPDATE))
+    		bank.setLastRefreshDate(new Date((json.optLong(Constant.KEY_LAST_UPDATE) * 1000)));
+    	if (!json.isNull(Constant.KEY_IS_MANUAL))
+    		bank.setIsLinked(json.optBoolean(Constant.KEY_IS_MANUAL));
+    	
+    	if (bank.getIsLinked())
+    		bank.setProcessStatus(3);
+    	
+    	if (!json.isNull(Constant.KEY_USER_CREATED)) {
+    		
+    		Integer flags = bank.getBusinessObjectBase().getFlags();
+    		
+    		if (!json.optBoolean(Constant.KEY_USER_CREATED))
+    			bank.getBusinessObjectBase().setFlags(flags | Constant.FLAG_BANK_USER_CREATED);
+    		else
+    			bank.getBusinessObjectBase().setFlags(flags &~ Constant.FLAG_BANK_USER_CREATED);
+    	}
+    	
+    	bank.acceptChanges();
+    	
+    	return bank;
+    }
+    
+    public static Bank saveUserBank(JSONObject json, boolean delete) {
+    	
+    	Bank bank = saveBank(json, delete);
+    	
+    	// Object was deleted no need to continue
+    	if (bank == null)
+    		return null;
+    	
+    	bank.setStatusDescription(ApplicationContext.getContext().getString(R.string.connecting));
+    	bank.setDateCreated(new Date());
+    	bank.setStatusFlags(4);
+    	bank.setIsLinked(true);
+    	
+    	if (!json.isNull(Constant.KEY_CLASSID))
+    		bank.setDefaultClassId(json.optString(Constant.KEY_CLASSID));
+    	
+    	bank.acceptChanges();
+    	
+    	return bank;
+    }
+    
+    private static Bank saveBank(JSONObject json, boolean delete) {
     	
     	Bank bank = (Bank) saveObject(json, Bank.class, delete);
 
@@ -340,32 +432,13 @@ public class Bank extends BusinessObject  {
     		institution.updateBatch();
     	}
     	
-    	bank.setStatus(json.optInt(Constant.KEY_STATUS));
-    	
-    	if (!json.optString(Constant.KEY_LAST_JOB).equals(Constant.VALUE_NULL))
-    		bank.setProcessStatus(json.optInt(Constant.KEY_LAST_JOB));
-    	if (!json.optString(Constant.KEY_LAST_UPDATE).equals(Constant.VALUE_NULL))
-    		bank.setLastRefreshDate(new Date((json.optLong(Constant.KEY_LAST_UPDATE) * 1000)));
-    	if (!json.optString(Constant.KEY_INSTITUTION_NAME).equals(Constant.VALUE_NULL))
-    		bank.setBankName(json.optString(Constant.KEY_INSTITUTION_NAME));
-    	if (!json.optString(Constant.KEY_IS_MANUAL).equals(Constant.VALUE_NULL))
-    		bank.setIsLinked(json.optBoolean(Constant.KEY_IS_MANUAL));
-    	
-    	if (bank.getIsLinked())
-    		bank.setProcessStatus(3);
-    	
-    	if (!json.optString(Constant.KEY_USER_CREATED).equals(Constant.VALUE_NULL)) {
-    		
-    		Integer flags = bank.getBusinessObjectBase().getFlags();
-    		
-    		if (!json.optBoolean(Constant.KEY_USER_CREATED))
-    			bank.getBusinessObjectBase().setFlags(flags | Constant.FLAG_BANK_USER_CREATED);
-    		else
-    			bank.getBusinessObjectBase().setFlags(flags &~ Constant.FLAG_BANK_USER_CREATED);
-    	}
-    	
     	bank.setLogoId(json.optString(Constant.KEY_GUID));
-    	bank.acceptChanges();
+    	
+    	if (!json.isNull(Constant.KEY_INSTITUTION_NAME))
+    		bank.setBankName(json.optString(Constant.KEY_INSTITUTION_NAME));
+
+    	if (!json.isNull(Constant.KEY_LAST_JOB))
+    		bank.setProcessStatus(json.optInt(Constant.KEY_LAST_JOB));
     	
     	return bank;
     }

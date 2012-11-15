@@ -1,12 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <color name="alertColor">#D9531E</color>
     <color name="black">#000</color>
+    
+    <color name="budgetColorGreenBackground">#2EBE51</color>
+    <color name="budgetColorGreenRingColor">#3ED269</color>
+    <color name="budgetColorYellowBackground">#FBB600</color>
+    <color name="budgetColorYellowRingColor">#F5D54A</color>
+    <color name="budgetColorRedBackground">#E22727</color>
+    <color name="budgetColorRedRingColor">#EF4135</color>
+    
+    <color name="debts">#CC3925</color>
+    
+    <color name="gray0">#F2F2F2</color>
+    <color name="gray1">#E9EAEB</color>
+    <color name="gray2">#C9CACC</color>
+    <color name="gray3">#B0B0B3</color>
     <color name="gray4">#919195</color>
     <color name="gray7">#606060</color>
+    <color name="gray8">#494949</color>
+    <color name="gray9">#333333</color>
+    
     <color name="light_blue">#00ACED</color>
+    <color name="primaryColor">#00ACED</color>
     <color name="transparent">#00000000</color>
+    
+    <color name="random1">#91b266</color>
+    <color name="random2">#eee58a</color>
+    <color name="random3">#dd5526</color>
+    <color name="random4">#e49524</color>
+    <color name="random5">#fec62d</color>
+    <color name="random6">#213e52</color>
+    <color name="random7">#bf8f47</color>
+    <color name="random8">#4c1b1b</color>
+    <color name="random9">#b92025</color>
+    <color name="random10">#d7cb70</color>
+    <color name="random11">#ffd64f</color>
+    <color name="random12">#f7941e</color>
+    <color name="random13">#dc6e27</color>
+    <color name="random14">#f0e5c1</color>
+    <color name="random15">#8baca3</color>
+    <color name="random16">#3b6771</color>
+    
+    <color name="secondaryColor">#47C3D3</color>
+    <color name="secondaryHeaderColor">#BF1B2B</color>
     <color name="shadow_gray">#B2B2B2</color>
+    <color name="splitsColor">#F16430</color>
     <color name="white">#FFF</color>
 
 </resources>
