@@ -38,7 +38,7 @@ public class DashboardTabletActivity extends BaseActivity {
         
         EventBus.getDefault().register(this);
         
-        if (SyncEngine.sharedInstance().isRunning()) {
+        if (SyncEngine.sharedInstance().isSyncing()) {
         	DialogUtils.showProgress(this, "Syncing Data...");
         }
     }

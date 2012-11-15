@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.database;
+package com.moneydesktop.finance.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,8 +9,26 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.database.AccountType;
+import com.moneydesktop.finance.database.AccountTypeGroup;
+import com.moneydesktop.finance.database.Bank;
+import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.database.BankAccountBalance;
+import com.moneydesktop.finance.database.BudgetItem;
+import com.moneydesktop.finance.database.BusinessObject;
+import com.moneydesktop.finance.database.BusinessObjectBase;
+import com.moneydesktop.finance.database.Category;
+import com.moneydesktop.finance.database.CategoryType;
+import com.moneydesktop.finance.database.DaoSession;
+import com.moneydesktop.finance.database.Institution;
+import com.moneydesktop.finance.database.Location;
+import com.moneydesktop.finance.database.Tag;
+import com.moneydesktop.finance.database.TagInstance;
+import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.util.Enums.DataState;
 import com.moneydesktop.finance.util.Enums.TxType;
 
 import de.greenrobot.dao.AbstractDao;
@@ -25,20 +43,29 @@ public class DataController {
 	
 	private static Map<String, Object> pendingCache = new HashMap<String, Object>();
 	
+	private static int count = 0;
+	
 	/**
 	 * Saves all the pending transactions in a batch fashion
 	 */
 	public static synchronized void save() {
-			
+
+		long start = System.currentTimeMillis();
+		count = 0;
+		
 		processTx(pendingInsertTx, TxType.INSERT);
 		processTx(pendingUpdateTx, TxType.UPDATE);
 		processTx(pendingDeleteTx, TxType.DELETE);
+
+		Preferences.saveLong(Preferences.KEY_BOB_ID, BusinessObjectBase.getIdCount());
 		
 		// Reset pending transaction list
 		pendingInsertTx.clear();
 		pendingUpdateTx.clear();
 		pendingDeleteTx.clear();
 		pendingCache.clear();
+		
+		Log.i(TAG, "Processed " + count + " records in " + (System.currentTimeMillis() - start) + " ms");
 	}
 	
 	/**
@@ -51,7 +78,7 @@ public class DataController {
 	 * @param type
 	 */
 	@SuppressWarnings("unchecked")
-	private static void processTx(Map<Class<?>, List<Object>> pendingTx, TxType type) {
+	private static synchronized void processTx(Map<Class<?>, List<Object>> pendingTx, TxType type) {
 		
 		if (pendingTx.keySet().size() == 0)
 			return;
@@ -62,13 +89,14 @@ public class DataController {
 			Bank.class,
 			BankAccount.class,
 			BankAccountBalance.class,
+			BudgetItem.class,
 			Category.class,
 			CategoryType.class,
 			Institution.class,
 			Location.class,
 			Tag.class,
-			Transactions.class,
 			TagInstance.class,
+			Transactions.class,
 			BusinessObjectBase.class
 		};
 		
@@ -94,6 +122,8 @@ public class DataController {
 			    	dao.deleteInTx(entities);
 					break;
 			    }
+			    
+			    count += entities.size();
 		    }
 		}
 	}
@@ -152,6 +182,7 @@ public class DataController {
 	
 	public static void delete(Object object) {
 		
+		((BusinessObject) object).setDeleted(true);
 		addTransaction(object, TxType.DELETE);
 	}
 	
@@ -163,7 +194,7 @@ public class DataController {
 	 * @param object
 	 * @param type
 	 */
-	private static synchronized void addTransaction(Object object, TxType type) {
+	private static void addTransaction(Object object, TxType type) {
 		
 		if (object == null)
 			return;
@@ -172,7 +203,7 @@ public class DataController {
 		
 		if (!object.getClass().equals(BusinessObjectBase.class)) {
 
-			pendingCache.put((key.getName() + ((BusinessObject) object).getBusinessObjectBase().getExternalId()), object);
+			pendingCache.put((key.getName() + ((BusinessObject) object).getExternalId()), object);
 		}
 		
 		List<Object> list = null;
@@ -262,46 +293,44 @@ public class DataController {
 	 * @throws JSONException
 	 */
 	public static void saveSyncData(JSONObject device, boolean fullSyncRequired) throws JSONException {
-		
-		String[] operationOrder = new String[] {
-				Constant.KEY_CREATED, 
-				Constant.KEY_UPDATED, 
-				Constant.KEY_DELETED
-			};
-		
-		String[] objectOrder = new String[] {
-				Constant.KEY_TAGS, 
-				Constant.CATEGORIES, 
-				Constant.MEMBERS, 
-				Constant.ACCOUNTS, 
-				Constant.TRANSACTIONS, 
-				Constant.BUDGETS 
-			};
+
+		long start = System.currentTimeMillis();
+		int count = 0;
 		
 		JSONObject records = device.getJSONObject(Constant.KEY_RECORDS);
 		
-		for (String operation : operationOrder) {
+		for (String operation : Constant.OPERATION_ORDER) {
 			
 			boolean delete = operation.equals(Constant.KEY_DELETED);
 			JSONObject operationObj = records.getJSONObject(operation);
 			
-			for (int type = 0; type < objectOrder.length; type++) {
+			for (int type = 0; type < Constant.OBJECT_ORDER.length; type++) {
 				
-				String objectType = objectOrder[type];
+				String objectType = Constant.OBJECT_ORDER[type];
 				JSONArray objects = operationObj.optJSONArray(objectType);
 				
 				if (objects != null) {
 					
 					for (int i = 0; i < objects.length(); i++) {
 						
-						JSONObject data = objects.getJSONObject(i);
-						
-						// parse based on object type
-						parseAndSave(data, type, delete);
+						try {
+							
+							JSONObject data = objects.getJSONObject(i);
+							
+							// parse based on object type
+							parseAndSave(data, type, delete);
+							
+							count++;
+							
+						} catch (JSONException ex) {
+							Log.e(TAG, "Could not save sync object", ex);
+						}
 					}
 				}
 			}
 		}
+		
+		Log.i(TAG, "DB Parsed " + count + " records in " + (System.currentTimeMillis() - start) + " ms");
 		
 		save();
 	}
@@ -335,6 +364,28 @@ public class DataController {
 			case 5:
 				BudgetItem.saveBudgetItem(json, delete);
 				break;
+		}
+	}
+	
+	/**
+	 * Query the database and return all objects of the given class 
+	 * with the given data state.
+	 * 
+	 * @param key
+	 * @param dataState
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static List<Object> getChangedData(Class<?> key, DataState dataState) {
+		
+		try {
+		
+			AbstractDao<Object, Long> dao = (AbstractDao<Object, Long>) getDao(key);
+			
+			return dao.queryRaw(Constant.QUERY_BUSINESS_BASE_JOIN, Integer.toString(dataState.index()));
+		
+		} catch (Exception ex) {
+			return null;
 		}
 	}
 }

@@ -2,10 +2,22 @@ package com.moneydesktop.finance.database;
 
 import java.util.List;
 
+import android.database.sqlite.SQLiteDatabase;
+
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 
-public class DataDefaults {
+public class DatabaseDefaults {
+	
+	public static final String TAG = "DatabaseDefaults";
+	
+	public static void resetDatabase() {
+		
+		SQLiteDatabase db = ApplicationContext.getDb();
+		
+		DaoMaster.dropAllTables(db, true);
+		DaoMaster.createAllTables(db, true);
+	}
 	
 	/**
 	 * Create default Category Types
@@ -77,5 +89,10 @@ public class DataDefaults {
 			AccountTypeGroup.createAccountTypeGroup("DEBT", ApplicationContext.getContext().getString(R.string.atg_ccd), "cc.png", 1).insertBatch().acceptChanges();
 			AccountTypeGroup.createAccountTypeGroup("ODEBT", ApplicationContext.getContext().getString(R.string.atg_od), "cash.png", 2).insertBatch().acceptChanges();
 		}
+	}
+	
+	public static void ensureInstitutionsLoaded() {
+		
+		Institution.processLocalBanksFile(R.raw.institutions);
 	}
 }

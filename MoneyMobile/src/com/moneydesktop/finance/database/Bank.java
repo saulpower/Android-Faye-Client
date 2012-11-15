@@ -8,8 +8,11 @@ import de.greenrobot.dao.DaoException;
 
 // KEEP INCLUDES - put your custom includes here
 import java.util.Date;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.util.Enums.DataState;
 // KEEP INCLUDES END
 /**
  * Entity mapped to table BANK.
@@ -314,6 +317,7 @@ public class Bank extends BusinessObject  {
     
     public void setExternalId(String id) {
     	setBankId(id);
+    	getBusinessObjectBase().setExternalId(id);
     }
     
     public String getExternalId() {
@@ -365,6 +369,24 @@ public class Bank extends BusinessObject  {
     	
     	return bank;
     }
+    
+    public JSONObject getJson() throws JSONException {
+    	
+    	JSONObject json = new JSONObject();
+    	
+    	if (getBusinessObjectBase().getDataStateEnum() == DataState.DATA_STATE_DELETED) {
+    		
+    		json.put(Constant.KEY_GUID, getBankId());
+    		
+    		if (getExternalId() != null)
+    			json.put(Constant.KEY_EXTERNAL_ID, getExternalId());
+    		else
+    			return null;
+    	}
+    	
+    	return json;
+    }
+    
     // KEEP METHODS END
 
 }

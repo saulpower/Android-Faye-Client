@@ -1,6 +1,6 @@
 package com.moneydesktop.finance.database;
 
-public class DatabaseFactory {
+public class DatabaseObjectFactory {
 
 	public static BusinessObject createInstance(Class<?> key, String id) {
 		

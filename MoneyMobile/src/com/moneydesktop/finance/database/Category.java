@@ -8,10 +8,12 @@ import de.greenrobot.dao.DaoException;
 
 // KEEP INCLUDES - put your custom includes here
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.model.User;
+import com.moneydesktop.finance.util.Enums.DataState;
 // KEEP INCLUDES END
 /**
  * Entity mapped to table CATEGORY.
@@ -328,6 +330,7 @@ public class Category extends BusinessObject  {
     
     public void setExternalId(String id) {
     	setCategoryId(id);
+    	getBusinessObjectBase().setExternalId(id);
     }
     
     public String getExternalId() {
@@ -377,6 +380,41 @@ public class Category extends BusinessObject  {
     	
     	return category;
     }
+    
+    public JSONObject getJson() throws JSONException {
+    	
+    	JSONObject json = new JSONObject();
+    	
+    	if (getBusinessObjectBase().getDataStateEnum() == DataState.DATA_STATE_DELETED) {
+    		
+    		if (getCategoryId() != null)
+    			json.put(Constant.KEY_GUID, getCategoryId());
+    		
+    		return json;
+    	}
+    	
+    	if (getBusinessObjectBase().getDataStateEnum() != DataState.DATA_STATE_NEW && getCategoryId() != null)
+    		json.put(Constant.KEY_GUID, getCategoryId());
+    	
+    	if (getCategoryName() != null)
+    		json.put(Constant.KEY_NAME, getCategoryName());
+    	
+    	if (getCategoryType() != null && getCategoryType().getCategoryTypeId() != null)
+    		json.put(Constant.KEY_INCOME, (Integer.parseInt(getCategoryType().getCategoryTypeId()) == 1) ? 1 : 0);
+    	
+    	if (getParent() != null)
+    		json.put(Constant.KEY_PARENT_GUID, getParent().getCategoryId());
+    	
+    	if (getExternalId() != null)
+    		json.put(Constant.KEY_EXTERNAL_ID, getExternalId());
+    	
+    	json.put(Constant.KEY_IS_DELETED, isDeleted() ? 1 : 0);
+    	json.put(Constant.KEY_REVISION, getBusinessObjectBase().getVersion());
+    	json.put(Constant.KEY_USER_GUID, User.getCurrentUser().getUserId());
+    	
+    	return json;
+    }
+    
     // KEEP METHODS END
 
 }

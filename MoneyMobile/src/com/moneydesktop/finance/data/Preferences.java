@@ -17,9 +17,13 @@ public class Preferences {
 	public static final String KEY_API_HOST = "md_api_host";
 	public static final String KEY_BOB_ID = "md_bob_id";
 	public static final String KEY_FAYE_HOST = "md_faye_host";
+	public static final String KEY_IS_DEMO_MODE = "md_is_demo_mode";
+	public static final String KEY_LAST_INSTITUTION_SYNC = "md_last_institution_sync";
 	public static final String KEY_LAST_SYNC = "md_last_sync";
 	public static final String KEY_SYNC_HOST = "md_sync_host";
 	public static final String KEY_USER = "md_user";
+	public static final String KEY_NEEDS_SYNC = "md_needs_sync";
+	public static final String KEY_NEEDS_FULL_SYNC = "md_needs_full_sync";
 
 	private static final String SEED = "moneydesktop";
 
@@ -48,6 +52,28 @@ public class Preferences {
 		} catch (ClassCastException ex) {}
 		
 		return value == null ? defaultString : value;
+	}
+
+	public static boolean saveBoolean(String key, boolean value) {
+		
+		SharedPreferences prefs = getPrefs();
+		Editor edit = prefs.edit();
+		edit.putBoolean(key, value);
+		
+		return edit.commit();
+	}
+	
+	public static boolean getBoolean(String key, boolean defaultBool) {
+		
+		boolean value = defaultBool;
+		
+		try {
+		
+			value = getPrefs().getBoolean(key, defaultBool);
+			
+		} catch (ClassCastException ex) {}
+		
+		return value;
 	}
 	
 	public static boolean saveLong(String key, Long value) {

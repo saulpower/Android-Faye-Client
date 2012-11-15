@@ -9,12 +9,15 @@ import android.widget.ImageView;
 
 import com.crittercism.app.Crittercism;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.handset.activity.DashboardActivity;
 import com.moneydesktop.finance.handset.activity.LoginActivity;
+import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.tablet.activity.LoginTabletActivity;
+import com.moneydesktop.finance.model.User;
 
 public class SplashActivity extends BaseActivity {
 	
-//	private final String TAG = "SplashActivity";
+	public final String TAG = "SplashActivity";
 
 	protected int splashTime = 5000; // time to display the splash screen in ms
     private CountDownTimer timer;
@@ -24,6 +27,8 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         
         setContentView(R.layout.splash_view);
+
+        resetApp();
         
         if (isTablet(this)) {
         	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -55,18 +60,38 @@ public class SplashActivity extends BaseActivity {
     	
     	return true;
     }
+	
+	private void resetApp() {
+		
+        User.clear();
+	}
     
     private void endSplash() {    	
-    	Intent intent;
+    	    	
+    	Intent i = null;
     	
-    	if (isTablet(this)) {
-    		intent = new Intent(getApplicationContext(), LoginTabletActivity.class);
-    	} else {
-    		intent = new Intent(getApplicationContext(), LoginActivity.class);
-    	}
+    	if (User.getCurrentUser() != null) {
+			
+        	if (isTablet(this)) {
+        		i = new Intent(getApplicationContext(), DashboardTabletActivity.class);
+        	} else {
+        		i = new Intent(getApplicationContext(), DashboardActivity.class);
+        	}
+	    	
+		} else {
+			
+	    	if (isTablet(this)) {
+	    		i = new Intent(getApplicationContext(), LoginTabletActivity.class);
+	    	} else {
+	    		i = new Intent(getApplicationContext(), LoginActivity.class);
+	    	}
+	    	
+		}
     	
-    	intent.putExtras(getIntent());
-    	startActivity(intent);
+		i.putExtras(getIntent());
+    	
+    	i.putExtras(getIntent());
+    	startActivity(i);
     	finish();
     }
 }

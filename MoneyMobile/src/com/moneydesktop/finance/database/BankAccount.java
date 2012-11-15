@@ -14,10 +14,14 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.DataController;
+import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.util.Enums.AccountExclusionFlags;
+import com.moneydesktop.finance.util.Enums.DataState;
 
 // KEEP INCLUDES END
 /**
@@ -480,6 +484,7 @@ public class BankAccount extends BusinessObject  {
     
     public void setExternalId(String id) {
     	setAccountId(id);
+    	getBusinessObjectBase().setExternalId(id);
     }
     
     public String getExternalId() {
@@ -694,6 +699,86 @@ public class BankAccount extends BusinessObject  {
     	}
     	
     	return response;
+    }
+    
+    public JSONObject getJson() throws JSONException {
+    	
+    	JSONObject json = new JSONObject();
+    	
+    	if (getExternalId() != null)
+    		json.put(Constant.KEY_EXTERNAL_ID, getExternalId());
+    	
+    	if (getAccountId() != null && getBusinessObjectBase().getDataStateEnum() != DataState.DATA_STATE_NEW)
+    		json.put(Constant.KEY_GUID, getAccountId());
+    	
+    	if (getBusinessObjectBase().getDataStateEnum() == DataState.DATA_STATE_DELETED)
+    		return json;
+    	
+    	json.put(Constant.KEY_USER_GUID, User.getCurrentUser().getUserId());
+    	
+    	json.put(Constant.KEY_MEMBER_GUID, getBank().getBankId() != null ? getBank().getBankId() : null);
+    	
+    	if (getAccountName() != null)
+    		json.put(Constant.KEY_USER_NAME, getAccountName());
+    	
+    	if (getOriginalName() != null)
+    		json.put(Constant.KEY_NAME, getOriginalName());
+    	else if (getAccountName() != null)
+    		json.put(Constant.KEY_NAME, getAccountName());
+    	
+    	if (getAccountType() != null && getAccountType().getAccountTypeId() != null)
+    		json.put(Constant.KEY_ACCOUNT_TYPE, getAccountType().getAccountTypeId().replace(Constant.KEY_ACCOUNTTYPE, ""));
+    	
+    	if (getSubAccountType() != null) {
+    		
+    		String enumString = getSubAccountType().getAccountTypeId().split("\\.")[0];
+    		Integer propertyType = Integer.parseInt(enumString);
+    		
+    		if (propertyType != null)
+    			json.put(Constant.KEY_PROPERTY_TYPE, propertyType);
+    	}
+    	
+		if (getDueDay() != null && getDueDay() != 0)
+			json.put(Constant.KEY_DAY_DUE, getDueDay());
+    	
+		if (getBeginningBalance() != null)
+			json.put(Constant.KEY_ORG_BALANCE, getBeginningBalance());
+		else
+			json.put(Constant.KEY_ORG_BALANCE, 0.0);
+		
+		if (getExclusionFlags() != null)
+			json.put(Constant.KEY_FLAGS, getExclusionFlags());
+		else
+			json.put(Constant.KEY_FLAGS, 0);
+		
+		json.put(Constant.KEY_IS_HIDDEN, (getIsExcluded() != null && getIsExcluded()) ? 1 : 0);
+		
+		if (getIsLinked() != null && getIsLinked())
+			json.put(Constant.KEY_IS_MANUAL, getIsLinked() ? 1 : 0);
+		
+		if (getCreditLimit() != null)
+			json.put(Constant.KEY_CREDIT_LIMIT, getCreditLimit());
+		
+		if (getBalance() != null)
+			json.put(Constant.KEY_BALANCE, getBalance());
+		
+		if (getMinimumPayment() != null)
+			json.put(Constant.KEY_MIN_PAYMENT, getMinimumPayment());
+		
+		if (getInterestRate() != null)
+			json.put(Constant.KEY_INTEREST_RATE, getInterestRate());
+		else
+			json.put(Constant.KEY_INTEREST_RATE, 0.0);
+		
+		if (getDefaultClassId() != null)
+			json.put(Constant.KEY_IS_PERSONAL, getDefaultClassId().equals(Constant.PERSONAL) ? 1 : 0);
+		
+		if (getBusinessObjectBase().getVersion() != null)
+			json.put(Constant.KEY_REVISION, getBusinessObjectBase().getVersion());
+		
+		json.put(Constant.KEY_IS_DELETED, getBusinessObjectBase().getDataStateEnum() == DataState.DATA_STATE_DELETED ? 1 : 0);
+		
+		return json;
     }
     
     // KEEP METHODS END

@@ -2,6 +2,7 @@ package com.moneydesktop.finance.data;
 
 import java.util.HashMap;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -12,7 +13,10 @@ import android.util.Log;
 import com.moneydesktop.communication.HttpRequest;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.DebugActivity;
+import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
+
+import de.greenrobot.event.EventBus;
 
 public class DataBridge {
 	
@@ -21,13 +25,13 @@ public class DataBridge {
 	private static final String ENDPOINT_DEVICE = "devices";
 	private static final String ENDPOINT_FULL_SYNC = "sync/full";
 	private static final String ENDPOINT_SYNC = "sync";
+	private static final String ENDPOINT_INSTITUTIONS = "institutions";
 	
 	private static DataBridge sharedInstance;
 	
 	private String protocol = "https";
 	
 	private Context context;
-	private HashMap<String, String> headers;
 
 	public static DataBridge sharedInstance() {
 		
@@ -40,7 +44,6 @@ public class DataBridge {
 	
 	public DataBridge() {
 		this.context = ApplicationContext.getContext();
-		this.headers = getHeaders();
 	}
 	
 	/**
@@ -61,7 +64,7 @@ public class DataBridge {
         		
         String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_DEVICE);
         
-        String response = HttpRequest.sendPost(url, headers, null, body);
+        String response = HttpRequest.sendPost(url, getHeaders(), null, body);
         
         JSONObject json = new JSONObject(response);
         
@@ -71,7 +74,8 @@ public class DataBridge {
         	data.put(Constant.KEY_USERNAME, userName);
         	
         	User.registerUser(data, context);
-        	headers = getHeaders();
+        	
+        	EventBus.getDefault().post(new EventMessage().new AuthEvent());
         }
         
         Log.i(TAG, "Auth in " + (System.currentTimeMillis() - start) + " ms");
@@ -96,7 +100,7 @@ public class DataBridge {
 
 			Long start = System.currentTimeMillis();
 			
-			String response = HttpRequest.sendGet(url, headers, null);
+			String response = HttpRequest.sendGet(url, getHeaders(), null);
 			
 			Log.i(TAG, "Sync Get: " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
@@ -115,7 +119,29 @@ public class DataBridge {
 		}
 	}
 	
-	public JSONObject endSync(String syncToken) {
+	public JSONObject uploadSync(JSONObject data) {
+		
+		String baseUrl = Preferences.getString(Preferences.KEY_SYNC_HOST, DebugActivity.PROD_SYNC_HOST);
+		
+        String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_SYNC);
+        
+		try {
+			
+			String response = HttpRequest.sendPost(url, getHeaders(), null, data.toString());
+			
+			JSONObject json = new JSONObject(response);
+			
+			return json;
+	        
+		} catch (Exception e) {
+
+			Log.e(TAG, "Error downloading sync", e);
+			
+			return null;
+		}
+	}
+	
+	public void endSync(String syncToken) {
 		
 		String baseUrl = Preferences.getString(Preferences.KEY_SYNC_HOST, DebugActivity.PROD_SYNC_HOST);
 		
@@ -126,9 +152,25 @@ public class DataBridge {
 			JSONObject body = new JSONObject();
 			body.put(Constant.KEY_SYNC_TOKEN, syncToken);
 			
-			String response = HttpRequest.sendDelete(url, getHeaders(), null, body.toString());
+			HttpRequest.sendDelete(url, getHeaders(), null, body.toString());
 			
-			JSONObject json = new JSONObject(response);
+		} catch (Exception e) {
+			
+			Log.e(TAG, "Error ending sync", e);
+		}
+	}
+	
+	public JSONArray syncInstitutions() {
+
+		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
+		
+		String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_INSTITUTIONS);
+		
+		try {
+			
+			String response = HttpRequest.sendGet(url, getHeaders(), null);
+			
+			JSONArray json = new JSONArray(response);
 			
 			return json;
 			

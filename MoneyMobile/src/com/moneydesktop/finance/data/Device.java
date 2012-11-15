@@ -38,7 +38,7 @@ public class Device {
 		
 		try {
 			
-			String eth = MacUtil.getMACAddress("eth0");
+			String eth = MacUtil.getMACAddress();
 			
 			data.put("uid", eth);
 			data.put("name", getName());

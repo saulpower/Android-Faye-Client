@@ -1,5 +1,7 @@
 package com.moneydesktop.finance.database;
 
+import org.json.JSONObject;
+
 import com.moneydesktop.finance.database.DaoSession;
 import de.greenrobot.dao.DaoException;
 
@@ -163,12 +165,17 @@ public class BankAccountBalance extends BusinessObject  {
     // KEEP METHODS - put your custom methods here
     
     public void setExternalId(String id) {
-    	
+    	getBusinessObjectBase().setExternalId(id);
     }
     
     public String getExternalId() {
-    	return "";
+    	return Long.toString(getBusinessObjectBase().getId());
     }
+    
+    public JSONObject getJson() {
+    	return null;
+    }
+    
     // KEEP METHODS END
 
 }

@@ -1,6 +1,9 @@
 package com.moneydesktop.finance.database;
 
 import java.util.List;
+
+import org.json.JSONObject;
+
 import com.moneydesktop.finance.database.DaoSession;
 import de.greenrobot.dao.DaoException;
 
@@ -151,6 +154,7 @@ public class CategoryType extends BusinessObject  {
     
     public void setExternalId(String id) {
     	setCategoryTypeId(id);
+    	getBusinessObjectBase().setExternalId(id);
     }
     
     public String getExternalId() {
@@ -163,6 +167,11 @@ public class CategoryType extends BusinessObject  {
     	
     	return categoryType;
     }
+    
+    public JSONObject getJson() {
+    	return null;
+    }
+    
     // KEEP METHODS END
 
 }

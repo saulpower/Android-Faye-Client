@@ -2,6 +2,7 @@ package com.moneydesktop.communication;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.util.HashMap;
 
@@ -105,7 +106,8 @@ public class HttpRequest {
         response = httpclient.execute(httpRequest);
 
         StatusLine statusLine = response.getStatusLine();
-        if (statusLine.getStatusCode() != HttpStatus.SC_OK) {
+        int statusCode = statusLine.getStatusCode() / 100;
+        if (statusCode != 2) {
         	
         	//Closes the connection.
             response.getEntity().getContent().close();
@@ -118,11 +120,17 @@ public class HttpRequest {
 	
 	private static String getResponseBody(final HttpEntity entity) throws IOException {
 		
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-        entity.writeTo(out);
-        out.close();
-        
-        return out.toString();
+		try {
+			
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+	        entity.writeTo(out);
+	        out.close();
+	        
+	        return out.toString();
+	        
+		} catch (Exception ex) {
+			return null;
+		}
 	}
 	
 	private static HttpUriRequest getRequest(String method, String url) {
@@ -140,7 +148,7 @@ public class HttpRequest {
 		}
 		
 		if (method.equals(DELETE)) {
-			return new HttpDelete();
+			return new HttpDeleteWithBody(url);
 		}
 		
 		return null;

@@ -6,7 +6,10 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.database.CategoryDao.Properties;
 import com.moneydesktop.finance.util.Enums.DataState;
 
@@ -19,7 +22,7 @@ import de.greenrobot.dao.Query;
 
 public abstract class BusinessObject implements BusinessObjectInterface {
 	
-	public static final String TAG = "ObjectBase";
+	public static final String TAG = "BusinessObject";
 
 	private static Map<Class<?>, Query<?>> queries = new HashMap<Class<?>, Query<?>>();
 	
@@ -30,6 +33,7 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 	protected boolean syncSuspended = false;
 	protected boolean ignoreWillSave = false;
 	protected boolean suspendChangeTracking = false;
+	protected boolean isDeleted = false;
 	
 	/********************************************************************************
 	 * Property Access Methods
@@ -63,14 +67,22 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 		this.ignoreWillSave = ignoreWillSave;
 	}
 	
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+	
 	/********************************************************************************
 	 * Methods
 	 ********************************************************************************/
-	
+
 	/**
 	 * Called to update the DataState of the object
 	 */
-	protected void acceptChanges() {
+	public void acceptChanges() {
 		
 		if (this instanceof BusinessObjectBase)
 			return;
@@ -100,6 +112,8 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 		
 		if (ignoreWillSave)
 			return;
+
+		this.isDeleted = isDeleted;
 		
 		if (isDeleted) {
 			// TODO: notification of deleted object
@@ -141,19 +155,25 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 		return false;
 	}
 	
-	protected BusinessObject insertBatch() {
-		addBusinessObjectBase();
+	public BusinessObject insertBatch() {
+		
+		BusinessObjectBase bob = addBusinessObjectBase();
+		
+		if (bob != null)
+			bob.insertBatch();
+		
 		DataController.insert(this);
 		
 		return this;
 	}
 	
-	protected void updateBatch() {
+	public void updateBatch() {
 		DataController.update(this);
 		DataController.update(getBusinessObjectBase());
 	}
 	
-	protected void deleteBatch() {
+	public void deleteBatch() {
+
 		DataController.delete(getBusinessObjectBase());
 		DataController.delete(this);
 	}
@@ -161,19 +181,19 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 	/**
 	 * Adds a BusinessObjectBase object to the current object
 	 */
-	private void addBusinessObjectBase() {
+	protected BusinessObjectBase addBusinessObjectBase() {
 
 		if (this instanceof BusinessObjectBase)
-			return;
+			return null;
 		
 		BusinessObjectBase bob = new BusinessObjectBase(BusinessObjectBase.nextId());
+		setBusinessObjectBase(bob);
 		bob.setExternalId(getExternalId());
 		bob.setDataState(DataState.DATA_STATE_NEW.index());
 		bob.setFlags(0);
 		bob.setVersion(0);
-		setBusinessObjectBase(bob);
 		
-		bob.insertBatch();
+		return bob;
 	}
 	
 	/********************************************************************************
@@ -212,15 +232,14 @@ public abstract class BusinessObject implements BusinessObjectInterface {
     	if (object == null) {
     		
     		inserting = true;
-    		object = DatabaseFactory.createInstance(key, guid);
+    		object = DatabaseObjectFactory.createInstance(key, guid);
+    		object.insertBatch();
     		object.setExternalId(guid);
     	}
     	
     	object.setNew(inserting);
     	
-    	if (inserting)
-    		object.insertBatch();
-    	else
+    	if (!inserting)
     		object.updateBatch();
     	
     	return object;
@@ -233,18 +252,33 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 	 * @param id
 	 * @return
 	 */
-    protected static Object getObject(Class<?> key, String id) {
+    public static Object getObject(Class<?> key, String id) {
 
+    	return getObject(key, id, Long.valueOf(id.hashCode()));
+    }
+    
+    /**
+	 * Returns an object from the database for the given class and GUID
+	 * 
+	 * @param key
+	 * @param id
+	 * @return
+	 */
+    public static Object getObject(Class<?> key, String guid, Long id) {
+    	
     	Object object = null;
     	
     	if (id == null || id.equals(""))
     		return object;
     	
-    	object = DataController.checkCache((key.getName() + id));
+    	object = DataController.checkCache((key.getName() + guid));
 
         if (object == null)
-        	object = getQuery(key, Long.valueOf(id.hashCode())).unique();
+        	object = getQuery(key, id).unique();
 
+        if (object == null)
+        	Log.i(TAG, "Could not get " + key.getCanonicalName() + " - " + guid);
+        
     	return object;
     }
 

@@ -49,6 +49,7 @@
 		        style="@style/button" />
 			    
 		    <TextView 
+		        android:id="@+id/signup"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_marginTop="50dp"
@@ -84,6 +85,7 @@
 			    android:contentDescription="@string/description" />
 			    
 		    <TextView 
+		        android:id="@+id/login_text"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 			    android:layout_marginTop="15dp"
@@ -149,6 +151,7 @@
 	        android:layout_marginRight="10dp" />
 			    
 	    <TextView 
+	        android:id="@+id/email_label"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_marginBottom="84dp"
@@ -158,6 +161,7 @@
 	        style="@style/label" />
 			    
 	    <TextView 
+	        android:id="@+id/password_label"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_marginBottom="36dp"
