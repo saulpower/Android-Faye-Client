@@ -1,6 +1,5 @@
-package com.moneydesktop.finance.activity.handset;
+package com.moneydesktop.finance.tablet.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -18,12 +17,9 @@ import android.widget.ImageView;
 import android.widget.ViewFlipper;
 
 import com.moneydesktop.finance.ApplicationContext;
+import com.moneydesktop.finance.BaseActivity;
 import com.moneydesktop.finance.DebugActivity;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.R.anim;
-import com.moneydesktop.finance.R.id;
-import com.moneydesktop.finance.R.layout;
-import com.moneydesktop.finance.R.string;
 import com.moneydesktop.finance.data.DataBridge;
 import com.moneydesktop.finance.database.DaoMaster;
 import com.moneydesktop.finance.model.EventMessage;
@@ -32,7 +28,7 @@ import com.moneydesktop.finance.util.DialogUtils;
 
 import de.greenrobot.event.EventBus;
 
-public class LoginActivity extends Activity {
+public class LoginTabletActivity extends BaseActivity {
 	
 	private final String TAG = "LoginActivity";
 	
@@ -43,6 +39,15 @@ public class LoginActivity extends Activity {
 	
 	private Animation inLeft, inRight, outLeft, outRight;
 	
+	@Override
+	public void onBackPressed() {
+		if (viewFlipper.indexOfChild(viewFlipper.getCurrentView()) == 1) {
+			cancel();
+		} else {
+			super.onBackPressed();
+		}
+	}
+
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +73,7 @@ public class LoginActivity extends Activity {
 		
 		if (User.getCurrentUser() != null) {
 			
-	    	Intent i = new Intent(this, DashboardActivity.class);
+	    	Intent i = new Intent(this, DashboardTabletActivity.class);
 	    	startActivity(i);
 		}
 	}
@@ -139,7 +144,7 @@ public class LoginActivity extends Activity {
 			
 			public void onClick(View v) {
 				
-		    	Intent i = new Intent(LoginActivity.this, DebugActivity.class);
+		    	Intent i = new Intent(LoginTabletActivity.this, DebugActivity.class);
 		    	startActivity(i);
 			}
 		});
@@ -256,7 +261,7 @@ public class LoginActivity extends Activity {
     			
     			if (!result) {
     				
-    				DialogUtils.alertDialog(getString(R.string.error_login_failed), getString(R.string.error_login_invalid), LoginActivity.this, null);
+    				DialogUtils.alertDialog(getString(R.string.error_login_failed), getString(R.string.error_login_invalid), LoginTabletActivity.this, null);
     			
     			} else {
     				

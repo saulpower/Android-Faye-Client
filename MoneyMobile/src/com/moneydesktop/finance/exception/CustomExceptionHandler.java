@@ -5,7 +5,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import android.content.Intent;
 
 import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.activity.handset.SplashActivity;
+import com.moneydesktop.finance.SplashActivity;
 
 public class CustomExceptionHandler implements UncaughtExceptionHandler {
 	

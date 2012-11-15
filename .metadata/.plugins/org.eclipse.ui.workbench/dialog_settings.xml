@@ -12,4 +12,27 @@
 		<list key="textEntries">
 		</list>
 	</section>
+	<section name="WorkbenchPreferenceDialogSettings">
+		<item value="28" key="DIALOG_Y_ORIGIN"/>
+		<item value="165" key="DIALOG_X_ORIGIN"/>
+	</section>
+	<section name="ShowViewDialog">
+		<item value="308" key="DIALOG_WIDTH"/>
+		<item value="org.eclipse.debug.ui.DebugView" key="ShowViewDialog.STORE_SELECTED_VIEW_ID"/>
+		<item value="194" key="DIALOG_Y_ORIGIN"/>
+		<item value="415" key="DIALOG_HEIGHT"/>
+		<item value="686" key="DIALOG_X_ORIGIN"/>
+		<item value="1|Lucida Grande|11.0|0|COCOA|1|LucidaGrande" key="DIALOG_FONT_NAME"/>
+		<list key="ShowViewDialog.STORE_EXPANDED_CATEGORIES_ID">
+			<item value="org.eclipse.ui"/>
+			<item value="org.eclipse.debug.ui"/>
+		</list>
+	</section>
+	<section name="ImportExportAction">
+		<item value="org.eclipse.ui.wizards.import.ExternalProject" key="ImportExportPage.STORE_SELECTED_IMPORT_WIZARD_ID"/>
+		<list key="ImportExportPage.STORE_EXPANDED_IMPORT_CATEGORIES">
+			<item value="org.eclipse.ui.Basic"/>
+			<item value="com.android.ide.eclipse.wizards.category"/>
+		</list>
+	</section>
 </section>

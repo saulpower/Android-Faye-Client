@@ -1,5 +1,7 @@
 <resources>
-
+    <string name="account_types_title">Accounts</string>
+    <string name="account_types_indicator_show">Show</string>
+    <string name="account_types_indicator_hide">Hide</string>
     <string name="app_name">MoneyMobile</string>
     <string name="at_unknown">Unknown</string>
     <string name="at_checking">Checking</string>
