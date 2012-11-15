@@ -1,6 +1,5 @@
-package com.moneydesktop.finance.activity.handset;
+package com.moneydesktop.finance.tablet.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -15,21 +14,21 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.moneydesktop.finance.ApplicationContext;
+import com.moneydesktop.finance.BaseActivity;
 import com.moneydesktop.finance.DebugActivity;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.DataBridge;
-import com.moneydesktop.finance.data.DemoData;
+import com.moneydesktop.finance.database.DaoMaster;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.util.DialogUtils;
-import com.moneydesktop.finance.util.Fonts;
 
 import de.greenrobot.event.EventBus;
 
-public class LoginActivity extends Activity {
+public class LoginTabletActivity extends BaseActivity {
 	
 	private final String TAG = "LoginActivity";
 	
@@ -37,10 +36,18 @@ public class LoginActivity extends Activity {
 	private Button loginViewButton, demoButton, loginButton, cancelButton;
 	private EditText username, password;
 	private ImageView logo;
-	private TextView signupText, loginText, emailLabel, passwordLabel;
 	
 	private Animation inLeft, inRight, outLeft, outRight;
 	
+	@Override
+	public void onBackPressed() {
+		if (viewFlipper.indexOfChild(viewFlipper.getCurrentView()) == 1) {
+			cancel();
+		} else {
+			super.onBackPressed();
+		}
+	}
+
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +58,8 @@ public class LoginActivity extends Activity {
         setupView();
         
         addDemoCredentials();
+        
+        User.clear();
     }
 	
 	@Override
@@ -61,12 +70,10 @@ public class LoginActivity extends Activity {
 	}
 	
 	private void toDashboard() {
-
-		DialogUtils.hideProgress();
 		
 		if (User.getCurrentUser() != null) {
 			
-	    	Intent i = new Intent(this, DashboardActivity.class);
+	    	Intent i = new Intent(this, DashboardTabletActivity.class);
 	    	startActivity(i);
 		}
 	}
@@ -75,6 +82,9 @@ public class LoginActivity extends Activity {
 		
 		username.setText("saul.howard@moneydesktop.com");
 		password.setText("password123");
+		
+		DaoMaster.dropAllTables(ApplicationContext.getDb(), true);
+		DaoMaster.createAllTables(ApplicationContext.getDb(), true);
 	}
 	
 	private void setupView() {
@@ -92,20 +102,6 @@ public class LoginActivity extends Activity {
 		cancelButton = (Button) findViewById(R.id.cancel_button);
 		
 		logo = (ImageView) findViewById(R.id.logo);
-		
-		signupText = (TextView) findViewById(R.id.signup);
-		loginText = (TextView) findViewById(R.id.login_text);
-		emailLabel = (TextView) findViewById(R.id.email_label);
-		passwordLabel = (TextView) findViewById(R.id.password_label);
-		
-		Fonts.applyPrimaryBoldFont(loginViewButton, 15);
-		Fonts.applyPrimaryBoldFont(demoButton, 15);
-		Fonts.applyPrimaryBoldFont(loginButton, 15);
-		Fonts.applyPrimaryBoldFont(cancelButton, 15);
-		Fonts.applyPrimaryBoldFont(signupText, 12);
-		Fonts.applySecondaryItalicFont(loginText, 10);
-		Fonts.applyPrimaryBoldFont(emailLabel, 9);
-		Fonts.applyPrimaryBoldFont(passwordLabel, 9);
 		
 		addListeners();
 	}
@@ -148,7 +144,7 @@ public class LoginActivity extends Activity {
 			
 			public void onClick(View v) {
 				
-		    	Intent i = new Intent(LoginActivity.this, DebugActivity.class);
+		    	Intent i = new Intent(LoginTabletActivity.this, DebugActivity.class);
 		    	startActivity(i);
 			}
 		});
@@ -215,27 +211,6 @@ public class LoginActivity extends Activity {
 	
 	private void demoMode() {
 		
-		User.registerDemoUser();
-		
-		DialogUtils.showProgress(this, getString(R.string.demo_message));
-		
-		new AsyncTask<Void, Void, Boolean>() {
-    		
-			@Override
-			protected Boolean doInBackground(Void... params) {
-
-				DemoData.createDemoData();
-
-				return true;
-			}
-    		
-    		@Override
-    		protected void onPostExecute(Boolean result) {
-
-    			toDashboard();
-    		}
-			
-		}.execute();
 	}
 	
 	private void login() {
@@ -286,7 +261,7 @@ public class LoginActivity extends Activity {
     			
     			if (!result) {
     				
-    				DialogUtils.alertDialog(getString(R.string.error_login_failed), getString(R.string.error_login_invalid), LoginActivity.this, null);
+    				DialogUtils.alertDialog(getString(R.string.error_login_failed), getString(R.string.error_login_invalid), LoginTabletActivity.this, null);
     			
     			} else {
     				

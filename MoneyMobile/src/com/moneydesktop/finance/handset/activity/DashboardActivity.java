@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.activity.handset;
+package com.moneydesktop.finance.handset.activity;
 
 import android.app.Activity;
 import android.os.Bundle;

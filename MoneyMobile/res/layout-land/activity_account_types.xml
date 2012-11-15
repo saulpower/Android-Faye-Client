@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:moneydesktop="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+    <!--Begin of Title Bar-->
+    <RelativeLayout android:layout_width="fill_parent"
+                  android:layout_height="50dip"
+                  android:background="@color/gray7"
+                  android:id="@+id/accounts_title_bar"
+                  android:layout_alignParentTop="true">
+
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="fill_parent"
+                  android:gravity="center_vertical"
+                  android:layout_marginLeft="10dip"
+                  android:textSize="18dip"
+                  android:textColor="@android:color/white"
+                  android:layout_alignParentLeft="true"
+                  android:text="@string/account_types_title"/>
+
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="fill_parent"
+                      android:layout_alignParentRight="true"
+                      android:gravity="center_vertical"
+                      android:orientation="horizontal">
+
+            <ImageView android:layout_width="45dip"
+                       android:layout_height="45dip"
+                       android:layout_marginRight="10dip"
+                       android:src="@drawable/ic_action_search"/>
+
+            <ImageView android:layout_width="45dip"
+                       android:layout_height="45dip"
+                       android:layout_marginRight="10dip"/>
+
+            <ImageView android:layout_width="45dip"
+                       android:layout_height="45dip"
+                       android:layout_marginRight="10dip"
+                       android:src="@android:drawable/btn_plus"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+    <!--End of Title Bar-->
+    
+        <ExpandableListView android:layout_height="fill_parent"
+                        android:layout_width="fill_parent"
+                        android:id="@+id/accounts_expandable_list_view"
+                        android:layout_below="@id/accounts_title_bar"/>
+
+    <com.moneydesktop.finance.views.BankAccountSlidingDrawer
+                   android:layout_height="fill_parent"
+                   android:layout_width="wrap_content"
+                   android:id="@+id/account_slider"
+                   moneydesktop:orientation="horizontal"
+                   android:layout_alignParentRight="true"
+                   moneydesktop:content="@+id/panel_frame"
+                   android:layout_below="@id/accounts_title_bar"
+                   moneydesktop:handle="@+id/account_handle">
+
+        <ImageView android:layout_width="wrap_content"
+                   android:layout_height="fill_parent"
+                   android:src="@drawable/icon"
+                   android:layout_alignParentRight="true"
+                   android:id="@+id/account_handle"/>
+
+
+        <RelativeLayout android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:gravity="right"
+                        android:id="@+id/panel_frame">
+
+              <LinearLayout android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:gravity="right"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentRight="true"
+                            android:id="@+id/panel_layout">
+
+                  <LinearLayout android:layout_height="fill_parent"
+                               android:layout_width="fill_parent"
+                               android:orientation="vertical"
+                               android:id="@+id/panel_layout_holder"
+                               android:background="@color/white"/>
+
+              </LinearLayout>
+
+          </RelativeLayout>
+
+    </com.moneydesktop.finance.views.BankAccountSlidingDrawer>
+
+
+
+</RelativeLayout>

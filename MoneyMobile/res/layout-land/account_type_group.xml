@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="30dip"
+              android:orientation="vertical"
+              android:weightSum="1">
+
+     <LinearLayout android:layout_width="fill_parent"
+                   android:layout_height="wrap_content"
+                   android:gravity="center_vertical"
+                   android:orientation="horizontal">
+
+            <TextView android:layout_height="wrap_content"
+                  android:layout_width="fill_parent"
+                  android:layout_weight=".25"
+                  android:layout_marginLeft="10dip"
+                  android:text="ACCOUNT TYPE"
+                  android:id="@+id/account_type_group_name"/>
+
+            <View android:layout_height="fill_parent"
+                  android:layout_width="1dip"
+                  android:background="@android:color/white"/>
+
+            <TextView android:layout_height="wrap_content"
+                  android:layout_width="fill_parent"
+                  android:layout_weight=".25"
+                  android:layout_marginLeft="10dip"
+                  android:text="Sum Amount"
+                  android:id="@+id/account_type_group_sum"/>
+
+            <View android:layout_height="fill_parent"
+                  android:layout_width="1dip"
+                  android:background="@android:color/white"/>
+
+            <TextView android:layout_height="wrap_content"
+                  android:layout_width="fill_parent"
+                  android:layout_weight=".25"
+                  android:layout_marginLeft="10dip"
+                  android:text=""/>
+
+            <View android:layout_height="fill_parent"
+                  android:layout_width="1dip"
+                  android:background="@android:color/white"/>
+
+         <LinearLayout
+                 android:layout_width="fill_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_weight=".25">
+
+            <TextView android:layout_height="wrap_content"
+                  android:layout_width="fill_parent"
+                  android:gravity="right"
+                  android:layout_marginRight="10dip"
+                  android:id="@+id/account_type_group_indicator"
+                  android:text="@string/account_types_indicator_show"/>
+
+         </LinearLayout>
+     </LinearLayout>
+
+    <View android:layout_height="1dip"
+          android:layout_width="fill_parent"
+          android:background="@android:color/white"/>
+
+</LinearLayout>
