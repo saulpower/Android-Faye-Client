@@ -1,15 +1,17 @@
 package com.moneydesktop.finance.tablet.activity;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseActivity;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.AccountTypesAdapter;
+import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.views.BankAccountSlidingDrawer;
+import com.moneydesktop.finance.views.SlidingDrawerRightSide;
 
 
 import android.app.Activity;
@@ -23,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class AccountTypesTabletActivity extends BaseActivity {
 
@@ -38,7 +41,21 @@ public class AccountTypesTabletActivity extends BaseActivity {
         final LinearLayout panelLayoutHolder = (LinearLayout) findViewById(R.id.panel_layout_holder);
 
         mExpandableListView.setGroupIndicator(null);
-        mExpandableListView.setAdapter(new AccountTypesAdapter(ApplicationContext.getDaoSession().getAccountTypeDao().queryBuilder().list(), this, mExpandableListView)); // pass in Account type list as well.
+        
+        List<AccountType> accountTypes = ApplicationContext.getDaoSession().getAccountTypeDao().queryBuilder().list();
+        List<AccountType> accountTypesFiltered = new ArrayList<AccountType>();
+        
+        for (AccountType type : accountTypes) {  //This could possibly be optimized by throwing a "where" in the query builder
+        	if (!type.getBankAccounts().isEmpty()) {
+        		accountTypesFiltered.add(type);
+        	}
+        }
+        
+        if (!accountTypesFiltered.isEmpty()) {
+        	mExpandableListView.setAdapter(new AccountTypesAdapter(accountTypesFiltered, this, mExpandableListView));
+        } else {
+        	Toast.makeText(this, "No Accounts types that have bank accounts...show empty state", Toast.LENGTH_SHORT).show();
+        }
 
         mExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 			
@@ -92,8 +109,8 @@ public class AccountTypesTabletActivity extends BaseActivity {
     }
 
 
-    public static BankAccountSlidingDrawer setupDrawer (final ViewGroup.LayoutParams layoutParams, Activity activity) {
-        final BankAccountSlidingDrawer drawer = (BankAccountSlidingDrawer) activity.findViewById(R.id.account_slider);
+    public static SlidingDrawerRightSide setupDrawer (final ViewGroup.LayoutParams layoutParams, Activity activity) {
+        final SlidingDrawerRightSide drawer = (SlidingDrawerRightSide) activity.findViewById(R.id.account_slider);
         final ViewGroup.LayoutParams drawerLayoutParams = drawer.getLayoutParams();
 
         Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon);

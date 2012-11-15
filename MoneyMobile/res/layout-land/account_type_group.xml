@@ -4,11 +4,12 @@
               android:layout_width="fill_parent"
               android:layout_height="30dip"
               android:orientation="vertical"
-              android:weightSum="1">
+              android:weightSum="1"
+              android:gravity="center_vertical"
+              android:background="@drawable/tablet_accounts_category_wood">
 
      <LinearLayout android:layout_width="fill_parent"
                    android:layout_height="wrap_content"
-                   android:gravity="center_vertical"
                    android:orientation="horizontal">
 
             <TextView android:layout_height="wrap_content"
@@ -57,9 +58,5 @@
 
          </LinearLayout>
      </LinearLayout>
-
-    <View android:layout_height="1dip"
-          android:layout_width="fill_parent"
-          android:background="@android:color/white"/>
 
 </LinearLayout>

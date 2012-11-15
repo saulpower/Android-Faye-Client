@@ -37,7 +37,7 @@ import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 
 /** Sliding door impl where the handle is inside the drawer . */
-public class BankAccountSlidingDrawer extends ViewGroup {
+public class SlidingDrawerRightSide extends ViewGroup {
     public static final int ORIENTATION_HORIZONTAL = 0;
      public static final int ORIENTATION_VERTICAL = 1;
 
@@ -144,7 +144,7 @@ public class BankAccountSlidingDrawer extends ViewGroup {
       * @param context The application's environment.
       * @param attrs The attributes defined in XML.
       */
-     public BankAccountSlidingDrawer(Context context, AttributeSet attrs) {
+     public SlidingDrawerRightSide(Context context, AttributeSet attrs) {
          this(context, attrs, 0);
      }
 
@@ -155,7 +155,7 @@ public class BankAccountSlidingDrawer extends ViewGroup {
       * @param attrs The attributes defined in XML.
       * @param defStyle The style to apply to this widget.
       */
-     public BankAccountSlidingDrawer(Context context, AttributeSet attrs, int defStyle) {
+     public SlidingDrawerRightSide(Context context, AttributeSet attrs, int defStyle) {
          super(context, attrs, defStyle);
          TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BankAccountSlidingDrawer, defStyle, 0);
 
