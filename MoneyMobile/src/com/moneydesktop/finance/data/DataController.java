@@ -353,7 +353,7 @@ public class DataController {
 				Category.saveCategory(json, delete);
 				break;
 			case 2:
-				Bank.saveBank(json, delete);
+				Bank.saveIncomingBank(json, delete);
 				break;
 			case 3:
 				BankAccount.saveBankAccount(json, delete);

@@ -33,7 +33,9 @@ public class Constant {
 	public static final String KEY_BUDGETS = "budgets";
 	public static final String KEY_CATEGORIES = "categories";
 	public static final String KEY_CATEGORY_GUID = "category_guid";
+	public static final String KEY_CLASSID = "classID";
 	public static final String KEY_CREATED = "created";
+	public static final String KEY_CREDENTIALS = "credentials";
 	public static final String KEY_CREDIT_LIMIT = "credit_limit";
 	public static final String KEY_BALANCE = "balance";
 	public static final String KEY_DATE = "date";
@@ -48,6 +50,7 @@ public class Constant {
 	public static final String KEY_GUID = "guid";
 	public static final String KEY_HAS_BEEN_VIEWED = "has_been_viewed";
 	public static final String KEY_INCOME = "income";
+	public static final String KEY_INSTITUTION = "institution";
 	public static final String KEY_INSTITUTION_GUID = "institution_guid";
 	public static final String KEY_INSTITUTION_NAME = "institution_name"; 
 	public static final String KEY_INSTRUCTIONS = "instructions";
@@ -66,9 +69,11 @@ public class Constant {
 	public static final String KEY_LAST_JOB = "last_job_status";
 	public static final String KEY_LAST_UPDATE = "last_update_time";
 	public static final String KEY_LOGIN_TOKEN = "login_token";
+	public static final String KEY_MEMBER = "member";
 	public static final String KEY_MEMBERS = "members";
 	public static final String KEY_MEMBER_GUID = "member_guid";
 	public static final String KEY_MEMO = "memo";
+	public static final String KEY_MFA = "mfa";
 	public static final String KEY_MIN_PAYMENT = "minimum_payment";
 	public static final String KEY_NAME = "name";
 	public static final String KEY_OBJECTS = "objects";
@@ -76,6 +81,7 @@ public class Constant {
 	public static final String KEY_PARENT_GUID = "parent_guid";
 	public static final String KEY_POPULARITY = "popularity";
 	public static final String KEY_POSTED_DATE = "posted_date";
+	public static final String KEY_PROCESS_STATUS = "process_status";
 	public static final String KEY_PROPERTY_TYPE = "property_type";
 	public static final String KEY_RECORDS = "records";
 	public static final String KEY_REFERENCE = "reference";

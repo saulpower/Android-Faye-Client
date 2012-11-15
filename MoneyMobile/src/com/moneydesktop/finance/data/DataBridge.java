@@ -24,8 +24,9 @@ public class DataBridge {
 	
 	private static final String ENDPOINT_DEVICE = "devices";
 	private static final String ENDPOINT_FULL_SYNC = "sync/full";
-	private static final String ENDPOINT_SYNC = "sync";
 	private static final String ENDPOINT_INSTITUTIONS = "institutions";
+	private static final String ENDPOINT_MEMBERS = "members";
+	private static final String ENDPOINT_SYNC = "sync";
 	
 	private static DataBridge sharedInstance;
 	
@@ -119,28 +120,6 @@ public class DataBridge {
 		}
 	}
 	
-	public JSONObject uploadSync(JSONObject data) {
-		
-		String baseUrl = Preferences.getString(Preferences.KEY_SYNC_HOST, DebugActivity.PROD_SYNC_HOST);
-		
-        String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_SYNC);
-        
-		try {
-			
-			String response = HttpRequest.sendPost(url, getHeaders(), null, data.toString());
-			
-			JSONObject json = new JSONObject(response);
-			
-			return json;
-	        
-		} catch (Exception e) {
-
-			Log.e(TAG, "Error downloading sync", e);
-			
-			return null;
-		}
-	}
-	
 	public void endSync(String syncToken) {
 		
 		String baseUrl = Preferences.getString(Preferences.KEY_SYNC_HOST, DebugActivity.PROD_SYNC_HOST);
@@ -160,26 +139,25 @@ public class DataBridge {
 		}
 	}
 	
-	public JSONArray syncInstitutions() {
+	public JSONObject getBankStatus(String bankId) {
 
 		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
 		
-		String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_INSTITUTIONS);
+		String url = String.format("%s://%s/%s/%s", protocol, baseUrl, ENDPOINT_MEMBERS, bankId);
 		
 		try {
 			
 			String response = HttpRequest.sendGet(url, getHeaders(), null);
 			
-			JSONArray json = new JSONArray(response);
+			JSONObject json = new JSONObject(response);
 			
 			return json;
 			
 		} catch (Exception e) {
-			
-			Log.e(TAG, "Error ending sync", e);
-			
-			return null;
+			Log.e(TAG, "Error getting bank status", e);
 		}
+		
+		return null;
 	}
 	
 	/**
@@ -213,6 +191,67 @@ public class DataBridge {
 		return headers;
 	}
 	
+	/**
+	 * Returns a JSON array of the credential fields necessary to login with
+	 * the passed in institution ID.
+	 * 
+	 * @param guid
+	 * @return
+	 */
+	public JSONArray getInstituteLoginFields(String institutionId) {
+		
+		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
+		
+		String url = String.format("%s://%s/%s/%s", protocol, baseUrl, ENDPOINT_INSTITUTIONS, institutionId);
+		
+		try {
+			
+			String response = HttpRequest.sendGet(url, getHeaders(), null);
+			
+			JSONObject json = new JSONObject(response);
+			JSONArray credentials = json.getJSONObject(Constant.KEY_INSTITUTION).getJSONArray(Constant.KEY_CREDENTIALS);
+			
+			return credentials;
+			
+		} catch (Exception e) {
+			
+			Log.e(TAG, "Error getting institute fields", e);
+			
+			return null;
+		}
+	}
+	
+	/**
+	 * Get the array of multi-factor authentication questions necessary to login
+	 * to the passed in bank ID
+	 * 
+	 * @param bankId
+	 */
+	public JSONArray getMfaQuestions(String bankId) {
+		
+		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
+		
+		String url = String.format("%s://%s/%s/%s", protocol, baseUrl, ENDPOINT_MEMBERS, bankId);
+		
+		try {
+			
+			String response = HttpRequest.sendGet(url, getHeaders(), null);
+			
+			JSONObject json = new JSONObject(response);
+			JSONObject status = json.getJSONObject(Constant.KEY_MEMBER).getJSONObject(Constant.KEY_PROCESS_STATUS);
+			
+			if (!status.isNull(Constant.KEY_MFA)) {
+				
+				return status.getJSONObject(Constant.KEY_MFA).getJSONArray(Constant.KEY_CREDENTIALS);
+			}
+			
+		} catch (Exception e) {
+			Log.e(TAG, "Error getting institute fields", e);
+		}
+		
+		return null;
+	}
+	
 	public void setUseSSL(boolean useSSL) {
 		
 		if (!useSSL)
@@ -221,4 +260,113 @@ public class DataBridge {
 			protocol = "https";
 	}
 	
+	public JSONObject saveFinancialInstitute(JSONObject data) {
+
+		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
+		
+		String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_MEMBERS);
+		
+		try {
+			
+			String response = HttpRequest.sendPost(url, getHeaders(), null, data.toString());
+			
+			JSONObject json = new JSONObject(response);
+			
+			return json;
+			
+		} catch (Exception e) {
+			Log.e(TAG, "Error getting institute fields", e);
+		}
+		
+		return null;
+	}
+	
+	public JSONArray syncInstitutions() {
+
+		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
+		
+		String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_INSTITUTIONS);
+		
+		try {
+			
+			String response = HttpRequest.sendGet(url, getHeaders(), null);
+			
+			JSONArray json = new JSONArray(response);
+			
+			return json;
+			
+		} catch (Exception e) {
+			
+			Log.e(TAG, "Error ending sync", e);
+			
+			return null;
+		}
+	}
+	
+	public JSONObject updateLoginFields(String bankId, JSONObject fields) {
+		
+		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
+		
+		String url = String.format("%s://%s/%s/%s", protocol, baseUrl, ENDPOINT_MEMBERS, bankId);
+		
+		try {
+			
+			String response = HttpRequest.sendPut(url, getHeaders(), null, fields.toString());
+			
+			JSONObject json = new JSONObject(response);
+			
+			return json;
+			
+		} catch (Exception e) {
+			Log.e(TAG, "Error updating login fields", e);
+		}
+		
+		return null;
+	}
+	
+	public JSONObject updateMfaQuestions(String bankId, JSONObject answers) {
+		
+		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
+		
+		String url = String.format("%s://%s/%s/%s", protocol, baseUrl, ENDPOINT_MEMBERS, bankId);
+		
+		try {
+			
+			JSONObject json = new JSONObject();
+			json.put(Constant.KEY_CREDENTIALS, answers);
+			
+			String response = HttpRequest.sendPut(url, getHeaders(), null, json.toString());
+			
+			json = new JSONObject(response);
+			
+			return json;
+			
+		} catch (Exception e) {
+			Log.e(TAG, "Error updating mfa questions", e);
+		}
+		
+		return null;
+	}
+	
+	public JSONObject uploadSync(JSONObject data) {
+		
+		String baseUrl = Preferences.getString(Preferences.KEY_SYNC_HOST, DebugActivity.PROD_SYNC_HOST);
+		
+        String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_SYNC);
+        
+		try {
+			
+			String response = HttpRequest.sendPost(url, getHeaders(), null, data.toString());
+			
+			JSONObject json = new JSONObject(response);
+			
+			return json;
+	        
+		} catch (Exception e) {
+
+			Log.e(TAG, "Error downloading sync", e);
+			
+			return null;
+		}
+	}
 }
