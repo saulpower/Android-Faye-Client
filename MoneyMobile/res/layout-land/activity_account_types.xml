@@ -8,9 +8,13 @@
     <!--Begin of Title Bar-->
     <RelativeLayout android:layout_width="fill_parent"
                   android:layout_height="50dip"
-                  android:background="@color/gray7"
                   android:id="@+id/accounts_title_bar"
                   android:layout_alignParentTop="true">
+                  
+        <ImageView android:layout_height="match_parent"
+            	   android:layout_width="match_parent"
+            	   android:scaleType="fitXY"
+            	   android:src="@drawable/top_nav_wood"/>
 
         <TextView android:layout_width="wrap_content"
                   android:layout_height="fill_parent"
@@ -27,17 +31,18 @@
                       android:gravity="center_vertical"
                       android:orientation="horizontal">
 
-            <ImageView android:layout_width="45dip"
-                       android:layout_height="45dip"
+            <ImageView android:layout_width="35dip"
+                       android:layout_height="35dip"
                        android:layout_marginRight="10dip"
+                       android:layout_gravity="center_vertical"
                        android:src="@drawable/ic_action_search"/>
 
-            <ImageView android:layout_width="45dip"
-                       android:layout_height="45dip"
+            <ImageView android:layout_width="35dip"
+                       android:layout_height="35dip"
                        android:layout_marginRight="10dip"/>
 
-            <ImageView android:layout_width="45dip"
-                       android:layout_height="45dip"
+            <ImageView android:layout_width="35dip"
+                       android:layout_height="35dip"
                        android:layout_marginRight="10dip"
                        android:src="@android:drawable/btn_plus"/>
 
@@ -51,7 +56,7 @@
                         android:id="@+id/accounts_expandable_list_view"
                         android:layout_below="@id/accounts_title_bar"/>
 
-    <com.moneydesktop.finance.views.BankAccountSlidingDrawer
+    <com.moneydesktop.finance.views.SlidingDrawerRightSide
                    android:layout_height="fill_parent"
                    android:layout_width="wrap_content"
                    android:id="@+id/account_slider"
@@ -90,7 +95,7 @@
 
           </RelativeLayout>
 
-    </com.moneydesktop.finance.views.BankAccountSlidingDrawer>
+    </com.moneydesktop.finance.views.SlidingDrawerRightSide>
 
 
 

@@ -11,45 +11,47 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
 public class AccountTypeChildView extends FrameLayout {
 
-    private View mView;
-    private RelativeLayout mBankAccountLayout;
+    private View mChildView;
     private Context mContext;
     private List<BankAccount> mBankAccounts;
     private LinearLayout mBankAccountContainer;
-
-
+    
     public AccountTypeChildView (Context context, List<BankAccount> bankAccounts) {
         super(context);
         mContext = context;
         mBankAccounts = bankAccounts;
 
         final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mView = inflater.inflate(R.layout.account_type_child, this, true);
-        mBankAccountLayout = (RelativeLayout) findViewById(R.layout.bank_account);
-        mBankAccountContainer = (LinearLayout) findViewById(R.id.account_type_bank_container);
+        mChildView = inflater.inflate(R.layout.account_type_child, this, true);
+        mBankAccountContainer = (LinearLayout) mChildView.findViewById(R.id.account_type_bank_container);
         populateView();
     }
 
     private void populateView () {
-        for (BankAccount account : mBankAccounts) {
-            //mBankAccount.setImage();
-        	mBankAccountLayout.setOnClickListener(new OnClickListener() {
-				
+        for (final BankAccount account : mBankAccounts) {        	
+        	View view = createChildView();
+        	final TextView bankName = (TextView)view.findViewById(R.id.account_bank_name);
+        	
+        	bankName.setText(account.getInstitutionId());
+        
+        	bankName.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					Toast.makeText(mContext, "Bank Account " + mBankAccounts.get(0) + " was clicked!", Toast.LENGTH_SHORT).show();					
+					Toast.makeText(mContext, "Bank Account " + ((TextView)v.findViewById(R.id.account_bank_name)).getText() + " was clicked!", Toast.LENGTH_SHORT).show();					
 				}
 			});
 
-            mBankAccountContainer.addView(mBankAccountLayout);
+            mBankAccountContainer.addView(view);
         }
     }
-
-    public AccountTypeChildView (Context context) {
-        super(context);
+    
+    private View createChildView () {
+        final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        return inflater.inflate(R.layout.bank_account, null);
     }
 }
