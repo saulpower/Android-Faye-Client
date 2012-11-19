@@ -111,16 +111,22 @@ public class DataController {
 			    for (Object object : entities)
 			    	((BusinessObject) object).willSave(type == TxType.DELETE);
 			    
-			    switch (type) {
-			    case INSERT:
-			    	dao.insertInTx(entities);
-			    	break;
-				case UPDATE:
-			    	dao.updateInTx(entities);
-					break;
-				case DELETE:
-			    	dao.deleteInTx(entities);
-					break;
+			    try {
+			    	
+				    switch (type) {
+				    case INSERT:
+				    	dao.insertInTx(entities);
+				    	break;
+					case UPDATE:
+				    	dao.updateInTx(entities);
+						break;
+					case DELETE:
+				    	dao.deleteInTx(entities);
+						break;
+				    }
+				    
+			    } catch (Exception ex) {
+			    	Log.e(TAG, "Error processing transaction", ex);
 			    }
 			    
 			    count += entities.size();

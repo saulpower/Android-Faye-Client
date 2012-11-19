@@ -1,13 +1,16 @@
 package com.moneydesktop.finance.handset.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
+import android.view.View.OnTouchListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -15,31 +18,37 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.moneydesktop.finance.BaseActivity;
 import com.moneydesktop.finance.DebugActivity;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.DataBridge;
 import com.moneydesktop.finance.data.DemoData;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
+import com.moneydesktop.finance.util.Animator;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.Fonts;
 
 import de.greenrobot.event.EventBus;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends BaseActivity {
 	
 	private final String TAG = "LoginActivity";
 	
 	private ViewFlipper viewFlipper;
+	private LinearLayout buttonView, credentialView;
 	private Button loginViewButton, demoButton, loginButton, cancelButton;
 	private EditText username, password;
 	private ImageView logo;
-	private TextView signupText, loginText, emailLabel, passwordLabel;
+	private TextView signupText, loginText, usernameLabel, passwordLabel, messageTitle, messageBody;
 	
 	private Animation inLeft, inRight, outLeft, outRight;
+	
+	private boolean failed = false;
 	
 	@Override
 	public void onBackPressed() {
@@ -89,6 +98,8 @@ public class LoginActivity extends Activity {
 	private void setupView() {
 		
 		viewFlipper = (ViewFlipper) findViewById(R.id.flipper);
+		buttonView = (LinearLayout) findViewById(R.id.button_view);
+		credentialView = (LinearLayout) findViewById(R.id.credentials);
 		configureFlipper();
 		
 		username = (EditText) findViewById(R.id.username_field);
@@ -104,17 +115,19 @@ public class LoginActivity extends Activity {
 		
 		signupText = (TextView) findViewById(R.id.signup);
 		loginText = (TextView) findViewById(R.id.login_text);
-		emailLabel = (TextView) findViewById(R.id.email_label);
+		usernameLabel = (TextView) findViewById(R.id.email_label);
 		passwordLabel = (TextView) findViewById(R.id.password_label);
+		messageTitle = (TextView) findViewById(R.id.message_title);
+		messageBody = (TextView) findViewById(R.id.message_body);
 		
 		Fonts.applyPrimaryBoldFont(loginViewButton, 15);
 		Fonts.applyPrimaryBoldFont(demoButton, 15);
 		Fonts.applyPrimaryBoldFont(loginButton, 15);
 		Fonts.applyPrimaryBoldFont(cancelButton, 15);
 		Fonts.applyPrimaryBoldFont(signupText, 12);
-		Fonts.applySecondaryItalicFont(loginText, 10);
-		Fonts.applyPrimaryBoldFont(emailLabel, 9);
-		Fonts.applyPrimaryBoldFont(passwordLabel, 9);
+		Fonts.applySecondaryItalicFont(loginText, 12);
+//		Fonts.applyPrimaryItalicFont(usernameLabel, 9);
+//		Fonts.applyPrimaryItalicFont(passwordLabel, 9);
 		
 		addListeners();
 	}
@@ -159,6 +172,47 @@ public class LoginActivity extends Activity {
 				
 		    	Intent i = new Intent(LoginActivity.this, DebugActivity.class);
 		    	startActivity(i);
+			}
+		});
+		
+		username.setOnFocusChangeListener(new OnFocusChangeListener() {
+			
+			public void onFocusChange(View v, boolean hasFocus) {
+				
+				usernameLabel.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
+			}
+		});
+		
+		password.setOnFocusChangeListener(new OnFocusChangeListener() {
+			
+			public void onFocusChange(View v, boolean hasFocus) {
+				
+				passwordLabel.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
+			}
+		});
+		
+		messageBody.setOnTouchListener(new OnTouchListener() {
+			
+			public boolean onTouch(View v, MotionEvent event) {
+				
+				return true;
+			}
+		});
+		
+		messageTitle.setOnTouchListener(new OnTouchListener() {
+			
+			public boolean onTouch(View v, MotionEvent event) {
+				
+				return true;
+			}
+		});
+		
+		loginText.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+
+				Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.setup_url)));
+				startActivity(browserIntent);
 			}
 		});
 	}
@@ -248,6 +302,13 @@ public class LoginActivity extends Activity {
 	}
 	
 	private void login() {
+		
+		if (failed) {
+			
+			resetLogin();
+			
+			return;
+		}
         
 		if (loginCheck()) {
 	        
@@ -257,6 +318,16 @@ public class LoginActivity extends Activity {
 			
 			DialogUtils.alertDialog(getString(R.string.error_title), getString(R.string.error_login_incomplete), this, null);
 		}
+	}
+	
+	private void resetLogin() {
+		
+		toggleAnimations(true);
+		
+		loginButton.setText(getString(R.string.button_login));
+		cancelButton.setText(getString(R.string.button_cancel));
+		
+		failed = false;
 	}
 	
 	private boolean loginCheck() {
@@ -292,10 +363,18 @@ public class LoginActivity extends Activity {
     		protected void onPostExecute(Boolean result) {
 
     			DialogUtils.hideProgress();
-    			
+
+				failed = !result;
+				
     			if (!result) {
     				
-    				DialogUtils.alertDialog(getString(R.string.error_login_failed), getString(R.string.error_login_invalid), LoginActivity.this, null);
+    				messageTitle.setText(getString(R.string.error_login_failed));
+    				messageBody.setText(getString(R.string.error_login_invalid));
+							
+					toggleAnimations(false);
+					
+					loginButton.setText(getString(R.string.button_return_login));
+					cancelButton.setText(getString(R.string.button_setup));
     			
     			} else {
     				
@@ -309,7 +388,39 @@ public class LoginActivity extends Activity {
 		}.execute();
 	}
 	
+	private void toggleAnimations(boolean reset) {
+		
+		int offset = (int) (.20 * getScreenMeasurements()[1]) * (reset ? -1 : 1);
+		long duration = 750;
+		long delay = reset ? 250 : 0;
+		
+		Animator.translateView(buttonView, new float[] {0, offset}, duration);
+		Animator.fadeView(loginText, !reset, duration, delay);
+		Animator.fadeView(credentialView, !reset, duration, delay);
+		Animator.fadeView(usernameLabel, !reset, duration, delay);
+		Animator.fadeView(passwordLabel, !reset, duration, delay);
+		Animator.fadeView(password, !reset, duration, delay);
+		Animator.fadeView(username, !reset, duration, delay);
+		
+		delay = reset ? 0 : 250;
+		
+		Animator.fadeView(messageTitle, reset, duration, delay);
+		Animator.fadeView(messageBody, reset, duration, delay);
+		
+		Animator.startAnimations();
+	}
+	
 	private void cancel() {
+		
+		if (failed) {
+			
+			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.setup_url)));
+			startActivity(browserIntent);
+			
+			resetLogin();
+			
+			return;
+		}
 		
 		username.clearFocus();
 		password.clearFocus();

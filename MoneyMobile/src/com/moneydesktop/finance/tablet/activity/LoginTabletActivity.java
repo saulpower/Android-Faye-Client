@@ -16,12 +16,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ViewFlipper;
 
-import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseActivity;
 import com.moneydesktop.finance.DebugActivity;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.DataBridge;
-import com.moneydesktop.finance.database.DaoMaster;
+import com.moneydesktop.finance.data.DemoData;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.util.DialogUtils;
@@ -58,8 +57,6 @@ public class LoginTabletActivity extends BaseActivity {
         setupView();
         
         addDemoCredentials();
-        
-        User.clear();
     }
 	
 	@Override
@@ -70,6 +67,8 @@ public class LoginTabletActivity extends BaseActivity {
 	}
 	
 	private void toDashboard() {
+
+		DialogUtils.hideProgress();
 		
 		if (User.getCurrentUser() != null) {
 			
@@ -82,9 +81,6 @@ public class LoginTabletActivity extends BaseActivity {
 		
 		username.setText("saul.howard@moneydesktop.com");
 		password.setText("password123");
-		
-		DaoMaster.dropAllTables(ApplicationContext.getDb(), true);
-		DaoMaster.createAllTables(ApplicationContext.getDb(), true);
 	}
 	
 	private void setupView() {
@@ -211,6 +207,27 @@ public class LoginTabletActivity extends BaseActivity {
 	
 	private void demoMode() {
 		
+		User.registerDemoUser();
+		
+		DialogUtils.showProgress(this, getString(R.string.demo_message));
+		
+		new AsyncTask<Void, Void, Boolean>() {
+    		
+			@Override
+			protected Boolean doInBackground(Void... params) {
+
+				DemoData.createDemoData();
+
+				return true;
+			}
+    		
+    		@Override
+    		protected void onPostExecute(Boolean result) {
+
+    			toDashboard();
+    		}
+			
+		}.execute();
 	}
 	
 	private void login() {

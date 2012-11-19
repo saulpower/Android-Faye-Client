@@ -654,7 +654,10 @@ public class BankAccountSlidingDrawer extends ViewGroup {
          // Try only once... we should really loop but it's not a big deal
          // if the draw was cancelled, it will only be temporary anyway
          content.getViewTreeObserver().dispatchOnPreDraw();
-         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && !content.isHardwareAccelerated()) content.buildDrawingCache();
+         
+         // TODO: Fix this so compatible with API Level 10
+//         if (Build.VERSION.SDK_INT >= 12 && !content.isHardwareAccelerated())
+//        	 content.buildDrawingCache();
 
          content.setVisibility(View.GONE);
      }

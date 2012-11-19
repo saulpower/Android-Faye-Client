@@ -36,9 +36,10 @@ public class Fonts {
 		applyFont(PRIMARY_BOLD, view, size);
 	}
 	
-	public static void applyPrimaryItalicFont(TextView view, float size) {
-		applyFont(PRIMARY_ITALIC, view, size);
-	}
+	// Does not work
+//	public static void applyPrimaryItalicFont(TextView view, float size) {
+//		applyFont(PRIMARY_ITALIC, view, size);
+//	}
 	
 	public static void applySecondaryFont(TextView view, float size) {
 		applyFont(SECONDARY, view, size);

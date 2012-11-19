@@ -1,38 +1,45 @@
 package com.moneydesktop.finance.util;
 
-import com.moneydesktop.finance.R;
-
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.Window;
+import android.widget.TextView;
+
+import com.moneydesktop.finance.R;
 
 public class DialogUtils {
 	
-	public static ProgressDialog progressDialog;
-	public static boolean registering = false;
+	private static Dialog dialog;
 	private static AlertDialog alert;
-
+    
     public static void showProgress(Context context, String message) {
-    	
+
     	try {
 	    	
     		hideProgress();
+	    	View progressView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null);
+	    	TextView text = (TextView) progressView.findViewById(R.id.spinner_text);
+	    	text.setText(message);
 	    	
-	    	if (!registering) {
-	    		progressDialog = ProgressDialog.show(context, "", message);
-	    	}
+	    	dialog = new Dialog(context, R.style.MyDialog);
+	    	dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+	    	dialog.setContentView(progressView);
+	    	dialog.show();
 	    	
-    	} catch (Exception ex) {}
+		} catch (Exception ex) {}
     }
     
     public static void hideProgress() {
     	
-    	if (progressDialog != null && !registering) {
+    	if (dialog != null) {
     		try {
-    			progressDialog.dismiss();
+    			dialog.dismiss();
     		} catch (Exception ex) {}
-    		progressDialog = null;
+    		dialog = null;
     	}
     }
 

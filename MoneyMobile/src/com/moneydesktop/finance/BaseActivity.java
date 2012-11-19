@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
-public class BaseActivity extends Activity{
+public class BaseActivity extends Activity {
 
     public static final int DEVICE_DISPLAY_SIZE_PHONE = 1;
     public static final int DEVICE_DISPLAY_SIZE_TABLET = 2;
@@ -41,6 +41,7 @@ public class BaseActivity extends Activity{
     
 
     public static int getDeviceDisplaySize (final Context context, final DisplayMetrics metrics) {
+    	
         final float widthInches = metrics.widthPixels / metrics.xdpi;
         final float heightInches = metrics.heightPixels / metrics.ydpi;
         final float screenSizeInInches = (float) Math.sqrt(Math.pow(widthInches, 2f) + Math.pow(heightInches, 2f));
@@ -50,6 +51,23 @@ public class BaseActivity extends Activity{
                 : DEVICE_DISPLAY_SIZE_PHONE;
     }
 
-	
+    /**
+     * Returns the width and height measurement in pixels.
+     * 
+     * @return
+     */
+	public float[] getScreenMeasurements() {
+		
+		float[] values = new float[2];
+		
+        final DisplayMetrics metrics = new DisplayMetrics();
+        final WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getMetrics(metrics);
+        
+        values[0] = metrics.widthPixels;
+        values[1] = metrics.heightPixels;
+        
+        return values;
+	}
 	
 }

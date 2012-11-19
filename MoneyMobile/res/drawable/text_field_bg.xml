@@ -10,5 +10,5 @@
 		android:state_selected= "true"
 		android:drawable="@color/light_blue" />
 	<item
-		android:drawable="@color/gray1" />
+		android:drawable="@color/white" />
 </selector>

@@ -45,6 +45,7 @@ public class ApplicationContext extends Application {
 		
         Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler());
 
+//        DatabaseDefaults.resetDatabase();
         initializeDatabase();
 		DatabaseDefaults.ensureInstitutionsLoaded();
 		

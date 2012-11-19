@@ -3,6 +3,7 @@
 
     <color name="alertColor">#D9531E</color>
     <color name="black">#000</color>
+    <color name="black_modal">#BF000000</color>
     
     <color name="budgetColorGreenBackground">#2EBE51</color>
     <color name="budgetColorGreenRingColor">#3ED269</color>
@@ -18,10 +19,12 @@
     <color name="gray2">#C9CACC</color>
     <color name="gray3">#B0B0B3</color>
     <color name="gray4">#919195</color>
+    <color name="gray5">#737373</color>
     <color name="gray7">#606060</color>
     <color name="gray8">#494949</color>
     <color name="gray9">#333333</color>
     
+    <color name="light_gray1">#A1A1A5</color>
     <color name="light_blue">#00ACED</color>
     <color name="primaryColor">#00ACED</color>
     <color name="transparent">#00000000</color>
