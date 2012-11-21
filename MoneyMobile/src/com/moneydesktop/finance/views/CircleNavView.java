@@ -3,6 +3,7 @@ package com.moneydesktop.finance.views;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.tablet.activity.AccountTypesTabletActivity;
+import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -69,22 +70,21 @@ public class CircleNavView extends RelativeLayout {
         mReportsNav = (Button) mNavView.findViewById(R.id.nav_reports);
         
    	 	findSlopeOfScreen();
-   	 	plotTouchCoordinates();
         populateView();
     }
-
-    private void plotTouchCoordinates() {
-		for (int x = 0; x < mDeviceWidth; x++) {
-			
-		}
-	}
 
 	private void populateView () {    	
     	 mPointer = (ImageView) findViewById(R.id.option_pointer);
          
-         mAccountTypesNav.setOnClickListener(new OnClickListener() {			
+         mAccountTypesNav.setOnClickListener(new OnClickListener() {	 		
 			public void onClick(View v) {
 				animatePointerToDegreesThenClick(ACCOUNTS, AccountTypesTabletActivity.class);
+			}
+	  	 });
+         
+         mDashboardNav.setOnClickListener(new OnClickListener() {			
+			public void onClick(View v) {		
+				animatePointerToDegreesThenClick(DASHBOARD, DashboardTabletActivity.class);
 			}
 		});
                   
@@ -192,16 +192,10 @@ public class CircleNavView extends RelativeLayout {
                  return false;
  			}
          };
-         
 
+        
          mNavView.findViewById(R.id.nav_container).setOnTouchListener(touchListenerForContainer);
-         
-         mAccountTypesNav.setOnTouchListener(touchListenerForAccountsNavButton);
-         mDashboardNav.setOnTouchListener(touchListenerForDashboardNavButton);
-         mSettingsNav.setOnTouchListener(touchListenerForSettingsNavButton);
-         mReportsNav.setOnTouchListener(touchListenerForReportsNavButton);
-         
-         mNavView.findViewById(R.id.nav_container).setOnClickListener(new View.OnClickListener(){
+         mNavView.findViewById(R.id.nav_container).setOnClickListener(new View.OnClickListener(){ 
 
  			public void onClick(View v) {
  				if (!mIsBeingDragged) {
@@ -209,6 +203,11 @@ public class CircleNavView extends RelativeLayout {
                  }
  			}
          });
+         
+         mAccountTypesNav.setOnTouchListener(touchListenerForAccountsNavButton);
+         mDashboardNav.setOnTouchListener(touchListenerForDashboardNavButton);
+         mSettingsNav.setOnTouchListener(touchListenerForSettingsNavButton);
+         mReportsNav.setOnTouchListener(touchListenerForReportsNavButton);
 
     }
     
@@ -292,10 +291,16 @@ public class CircleNavView extends RelativeLayout {
 			public void onAnimationRepeat(Animation animation) {			
 			}
 			
-			public void onAnimationEnd(Animation animation) {
-				Intent intent = new Intent(mContext, (Class)object);
-				mContext.startActivity(intent);
-				((Activity) mContext).finish();
+			public void onAnimationEnd(Animation animation) {=
+				
+				if (mContext.getClass() == object) {
+					((Activity)mContext).onBackPressed();
+				} else {
+					Intent intent = new Intent(mContext, (Class)object);
+					mContext.startActivity(intent);
+					((Activity) mContext).finish();
+				}
+			
 			}
 		});
         

@@ -26,6 +26,7 @@ public class DashboardTabletActivity extends BaseActivity {
 		if (mCircleNav.getVisibility() == View.VISIBLE) {
 			mCircleNav.setVisibility(View.INVISIBLE);
 		} else {
+			
 			super.onBackPressed();
 		}
 	}
