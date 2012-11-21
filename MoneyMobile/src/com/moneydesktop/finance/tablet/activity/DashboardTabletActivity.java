@@ -22,6 +22,15 @@ public class DashboardTabletActivity extends BaseActivity {
 	CircleNavView mCircleNav;
 	
 	@Override
+	public void onBackPressed() {
+		if (mCircleNav.getVisibility() == View.VISIBLE) {
+			mCircleNav.setVisibility(View.INVISIBLE);
+		} else {
+			super.onBackPressed();
+		}
+	}
+
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
