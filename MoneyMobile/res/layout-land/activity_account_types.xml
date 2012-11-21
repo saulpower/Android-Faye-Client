@@ -11,11 +11,6 @@
                   android:id="@+id/accounts_title_bar"
                   android:layout_alignParentTop="true">
                   
-        <ImageView android:layout_height="match_parent"
-            	   android:layout_width="match_parent"
-            	   android:scaleType="fitXY"
-            	   android:src="@drawable/top_nav_wood"/>
-
         <TextView android:layout_width="wrap_content"
                   android:layout_height="fill_parent"
                   android:gravity="center_vertical"
@@ -83,13 +78,14 @@
                             android:gravity="right"
                             android:layout_alignParentBottom="true"
                             android:layout_alignParentRight="true"
+                            android:background="@drawable/tablet_vertical_tray_background"
                             android:id="@+id/panel_layout">
 
                   <LinearLayout android:layout_height="fill_parent"
                                android:layout_width="fill_parent"
                                android:orientation="vertical"
                                android:id="@+id/panel_layout_holder"
-                               android:background="@color/white"/>
+                               android:padding="10dip"/>
 
               </LinearLayout>
 

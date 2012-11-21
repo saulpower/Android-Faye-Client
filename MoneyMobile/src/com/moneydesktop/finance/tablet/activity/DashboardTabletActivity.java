@@ -17,7 +17,7 @@ import android.widget.LinearLayout;
 
 public class DashboardTabletActivity extends BaseActivity {
 
-	Button mTempButton, mLaunchNav;
+	Button mLaunchNav;
 	LinearLayout mContainer;
 	CircleNavView mCircleNav;
 	
@@ -26,7 +26,6 @@ public class DashboardTabletActivity extends BaseActivity {
 		if (mCircleNav.getVisibility() == View.VISIBLE) {
 			mCircleNav.setVisibility(View.INVISIBLE);
 		} else {
-			
 			super.onBackPressed();
 		}
 	}
@@ -34,10 +33,8 @@ public class DashboardTabletActivity extends BaseActivity {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
         setContentView(R.layout.dashboard_view);
         
-        mTempButton = (Button) findViewById(R.id.view_accounts_button);
         mLaunchNav = (Button) findViewById(R.id.view_nav_button);
         mContainer = (LinearLayout) findViewById(R.id.dashboard_container);
         mCircleNav = (CircleNavView) findViewById(R.id.tablet_nav);
@@ -46,16 +43,6 @@ public class DashboardTabletActivity extends BaseActivity {
 			
 			public void onClick(View v) {  
                 mCircleNav.setVisibility(View.VISIBLE);
-			}
-		});
-        
-        mTempButton.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				Intent intent = new Intent(DashboardTabletActivity.this, AccountTypesTabletActivity.class);
-				
-				startActivity(intent);
-				finish();
 			}
 		});
         

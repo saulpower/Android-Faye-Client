@@ -291,7 +291,7 @@ public class CircleNavView extends RelativeLayout {
 			public void onAnimationRepeat(Animation animation) {			
 			}
 			
-			public void onAnimationEnd(Animation animation) {=
+			public void onAnimationEnd(Animation animation) {
 				
 				if (mContext.getClass() == object) {
 					((Activity)mContext).onBackPressed();

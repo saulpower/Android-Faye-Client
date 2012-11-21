@@ -12,12 +12,6 @@
         android:orientation="vertical" >
 
         <Button
-            android:id="@+id/view_accounts_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Temp Button to launch View Accounts" />
-
-        <Button
             android:id="@+id/view_nav_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
