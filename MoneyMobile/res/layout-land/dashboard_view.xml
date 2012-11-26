@@ -3,19 +3,21 @@
     android:id="@+id/flipper"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-   
     
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/dashboard_container"
         android:orientation="vertical" >
-
+        
+        <include layout="@layout/title_bar" android:id="@+id/dashboard_title_bar"/>
+        
         <Button
             android:id="@+id/view_nav_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Temp Button to launch Circle Nav" />
+        
     </LinearLayout>
 
     <com.moneydesktop.finance.views.CircleNavView
