@@ -30,14 +30,12 @@ import android.widget.Toast;
 public class AccountTypesTabletActivity extends BaseActivity {
 
     private ExpandableListView mExpandableListView;
-    //private BankAccountSlidingDrawer mBankAccountSlidingDrawer;
 
     public void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_types);
 
         mExpandableListView = (ExpandableListView) findViewById(R.id.accounts_expandable_list_view);
-        //mBankAccountSlidingDrawer = (BankAccountSlidingDrawer) findViewById(R.id.account_slider);
         final LinearLayout panelLayoutHolder = (LinearLayout) findViewById(R.id.panel_layout_holder);
 
         mExpandableListView.setGroupIndicator(null);
@@ -58,17 +56,13 @@ public class AccountTypesTabletActivity extends BaseActivity {
         }
 
         mExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-			
 			public boolean onGroupClick(ExpandableListView expandableListView, View view, int groupPosition, long id) {
 	            ((AccountTypesAdapter)mExpandableListView.getExpandableListAdapter()).notifyDataSetChanged();
 	            return false;
 			}
 		});
         
-
-
-        panelLayoutHolder.setOnTouchListener(new View.OnTouchListener() {
-			
+        panelLayoutHolder.setOnTouchListener(new View.OnTouchListener() {			
 			public boolean onTouch(View view, MotionEvent event) {
 				return true;
 			}
@@ -81,11 +75,9 @@ public class AccountTypesTabletActivity extends BaseActivity {
 
         setupDrawer(layoutParams, this);
         initializeDrawer(panelLayoutHolder);
-
     }
 
     private void initializeDrawer (final LinearLayout panelLayoutHolder) {
-
     	
     	List<BankAccount> bankAccounts = ApplicationContext.getDaoSession().getBankAccountDao().loadAll();
         //For every bank account that is attached, add it to the Drawer
@@ -100,10 +92,10 @@ public class AccountTypesTabletActivity extends BaseActivity {
         LayoutInflater layoutInflater = getLayoutInflater();
         final View bankAccountView = layoutInflater.inflate(R.layout.bank_account, null);
 
-        ImageView bankImage = (ImageView) bankAccountView.findViewById(R.id.bank_account_image);
+        //ImageView bankImage = (ImageView) bankAccountView.findViewById(R.id.bank_account_image);
 
         //set the bank image here...
-        //something like bankImage.setImage(bankAccount.getImage());
+        //bankImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bankbook));
 
         return bankAccountView;
     }

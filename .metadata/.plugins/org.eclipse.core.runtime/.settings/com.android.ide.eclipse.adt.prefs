@@ -1,4 +1,7 @@
 com.android.ide.eclipse.adt.fixLegacyEditors=1
-com.android.ide.eclipse.adt.sdk=/Users/kandersen/Desktop/android-sdk-macosx
+com.android.ide.eclipse.adt.sdk=/Users/kentandersen/Desktop/android-sdk-macosx
 com.android.ide.eclipse.adt.xmlEditor=true
+design.palette.flyout.width=145
+design.structure.flyout.state=1
+design.structure.flyout.width=158
 eclipse.preferences.version=1

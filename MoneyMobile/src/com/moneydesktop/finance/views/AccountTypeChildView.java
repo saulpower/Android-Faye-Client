@@ -52,6 +52,6 @@ public class AccountTypeChildView extends FrameLayout {
     
     private View createChildView () {
         final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        return inflater.inflate(R.layout.bank_account, null);
+        return inflater.inflate(R.layout.bank_account, null); //TODO: change this....this is the wrong layout.
     }
 }

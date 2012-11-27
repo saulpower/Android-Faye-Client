@@ -4,57 +4,13 @@
                 xmlns:moneydesktop="http://schemas.android.com/apk/res/com.moneydesktop.finance"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
-
-    <!--Begin of Title Bar-->
-    <RelativeLayout android:layout_width="fill_parent"
-                  android:layout_height="50dip"
-                  android:id="@+id/accounts_title_bar"
-                  android:layout_alignParentTop="true">
-                  
-        <ImageView android:layout_height="match_parent"
-            	   android:layout_width="match_parent"
-            	   android:scaleType="fitXY"
-            	   android:src="@drawable/top_nav_wood"/>
-
-        <TextView android:layout_width="wrap_content"
-                  android:layout_height="fill_parent"
-                  android:gravity="center_vertical"
-                  android:layout_marginLeft="10dip"
-                  android:textSize="18dip"
-                  android:textColor="@android:color/white"
-                  android:layout_alignParentLeft="true"
-                  android:text="@string/account_types_title"/>
-
-        <LinearLayout android:layout_width="wrap_content"
-                      android:layout_height="fill_parent"
-                      android:layout_alignParentRight="true"
-                      android:gravity="center_vertical"
-                      android:orientation="horizontal">
-
-            <ImageView android:layout_width="35dip"
-                       android:layout_height="35dip"
-                       android:layout_marginRight="10dip"
-                       android:layout_gravity="center_vertical"
-                       android:src="@drawable/ic_action_search"/>
-
-            <ImageView android:layout_width="35dip"
-                       android:layout_height="35dip"
-                       android:layout_marginRight="10dip"/>
-
-            <ImageView android:layout_width="35dip"
-                       android:layout_height="35dip"
-                       android:layout_marginRight="10dip"
-                       android:src="@android:drawable/btn_plus"/>
-
-        </LinearLayout>
-
-    </RelativeLayout>
-    <!--End of Title Bar-->
-    
-        <ExpandableListView android:layout_height="fill_parent"
-                        android:layout_width="fill_parent"
-                        android:id="@+id/accounts_expandable_list_view"
-                        android:layout_below="@id/accounts_title_bar"/>
+                
+    <include layout="@layout/title_bar" android:id="@+id/accounts_title_bar"/>
+ 
+    <ExpandableListView android:layout_height="fill_parent"
+                    android:layout_width="fill_parent"
+                    android:id="@+id/accounts_expandable_list_view"
+                    android:layout_below="@id/accounts_title_bar"/>
 
     <com.moneydesktop.finance.views.SlidingDrawerRightSide
                    android:layout_height="fill_parent"
@@ -83,13 +39,14 @@
                             android:gravity="right"
                             android:layout_alignParentBottom="true"
                             android:layout_alignParentRight="true"
+                            android:background="@drawable/tablet_vertical_tray_background"
                             android:id="@+id/panel_layout">
 
                   <LinearLayout android:layout_height="fill_parent"
                                android:layout_width="fill_parent"
                                android:orientation="vertical"
                                android:id="@+id/panel_layout_holder"
-                               android:background="@color/white"/>
+                               android:padding="10dip"/>
 
               </LinearLayout>
 

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:id="@+id/nav_container"
+              android:background="@color/transparent50percent">              
+	
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center">
+            
+		    <ImageView
+		         android:layout_width="wrap_content"
+		         android:layout_height="wrap_content"
+                 android:id="@+id/option_pointer"
+		         android:src="@drawable/tablet_nav_blue_circle" />	
+			        
+		</RelativeLayout>
+			
+       	<RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center">
+		    
+		    <ImageView
+	       		 android:layout_width="wrap_content"
+	       		 android:layout_height="wrap_content"
+	       		 android:src="@drawable/tablet_newnav_mainbutton_grey" />
+			    	
+		</RelativeLayout>
+    
+	    <LinearLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:gravity="center"
+	            android:layout_marginLeft="300dip">
+	
+	            <Button
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:id="@+id/nav_settings"
+	                android:background="@drawable/tablet_newnav_settings_white" />
+	
+	    </LinearLayout>
+	
+	    <LinearLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:gravity="center"
+	            android:layout_marginBottom="300dip">
+	
+	            <Button
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:id="@+id/nav_dashboard"
+	                android:background="@drawable/tablet_newnav_dashboard_white" />
+	
+	    </LinearLayout>
+		
+	    <LinearLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:gravity="center"
+	            android:layout_marginRight="300dip">
+	
+	            <Button
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:id="@+id/nav_account_types"
+	                android:background="@drawable/tablet_newnav_accounts_white" />
+	
+	    </LinearLayout>
+	
+	    <LinearLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:gravity="center"
+	            android:layout_marginTop="300dip">
+	
+	            <Button
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:background="@drawable/tablet_newnav_reports_white"
+	                android:id="@+id/nav_reports" />
+	
+	    </LinearLayout>
+</RelativeLayout>
