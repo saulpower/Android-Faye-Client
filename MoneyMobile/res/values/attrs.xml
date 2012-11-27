@@ -8,8 +8,12 @@
         <attr name="android:background" />
     </declare-styleable>
     
-    
-    
+    <declare-styleable name="Caret">
+        <attr name="color" format="color" />
+        <attr name="width" format="dimension" />
+        <attr name="height" format="dimension" />
+    </declare-styleable>
+
     <!-- Identifier for the child that represents the drawer's handle. -->
        <attr name="handle" format="reference"/>
        <!-- Identifier for the child that represents the drawer's content. -->
@@ -27,12 +31,14 @@
    when the user clicks the handle. Default is true. -->
        <attr name="animateOnClick" format="boolean" />
 
-
     <attr name="orientation">
+
+        <!-- Defines an horizontal widget. -->
         <enum name="horizontal" value="0" />
+        <!-- Defines a vertical widget. -->
         <enum name="vertical" value="1" />
     </attr>
-
+        
     <declare-styleable name="BankAccountSlidingDrawer">
         <attr name="handle" />
         <attr name="content" />

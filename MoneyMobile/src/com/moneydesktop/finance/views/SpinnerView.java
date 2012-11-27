@@ -7,12 +7,11 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.ImageView;
 
 public class SpinnerView extends ImageView {
 
-	private static final String TAG = "SpinnerView";
+	public static final String TAG = "SpinnerView";
 
 	private final String TYPE_DRAWABLE = "drawable";
 	
@@ -107,8 +106,6 @@ public class SpinnerView extends ImageView {
         	
         	BitmapDrawable d = (BitmapDrawable) context.getResources().getDrawable(resourceId);
         	bitmapList.add(d.getBitmap());
-        	
-        	Log.i(TAG, "loading animation frame: " + name);
         }
     }
     

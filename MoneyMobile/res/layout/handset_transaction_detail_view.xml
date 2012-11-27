@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>   
+<ScrollView 
+   	xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical"
+	    android:background="@color/gray0" >
+	    
+	    <RelativeLayout 
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:padding="@dimen/transaction_padding"
+			android:gravity="center_vertical" >
+	        
+	        <ImageView
+	            android:id="@+id/bank_image"
+				android:layout_width="25dp"
+				android:layout_height="25dp"
+				android:layout_alignParentLeft="true"
+				android:layout_centerVertical="true"
+				android:layout_marginRight="8dp"
+				android:scaleType="fitCenter"
+				android:src="@drawable/bank"
+	            android:contentDescription="@string/description" />
+	        
+	        <TextView
+	            android:id="@+id/account_name"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentTop="true"
+	            android:layout_toRightOf="@id/bank_image"
+	            android:textColor="@color/gray7"
+	            android:textSize="12sp"
+	            android:ellipsize="end" />
+	        
+	        <TextView
+	            android:id="@+id/bank_name"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/account_name"
+	            android:layout_toRightOf="@id/bank_image"
+	            android:textColor="@color/gray3"
+	            android:textSize="10sp"
+	            android:ellipsize="end" />
+	        
+	    </RelativeLayout>
+		    
+	    <View
+	        android:layout_width="match_parent"
+	        android:layout_height="2dp"
+	        android:background="@drawable/dotted_line_long" />
+	    
+	    <RelativeLayout 
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:padding="@dimen/transaction_padding"
+			android:gravity="center_vertical" >
+	        
+	        <TextView
+	            android:id="@+id/payee"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentTop="true"
+	            android:text="@string/label_payee"
+	            style="@style/transaction_label" />
+	        
+	        <EditText
+	            android:id="@+id/payee_name"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/payee"
+	            style="@style/transaction_field"
+	            android:inputType="textCapWords"/>
+	        
+	    </RelativeLayout>
+		    
+	    <View
+	        android:layout_width="match_parent"
+	        android:layout_height="2dp"
+	        android:background="@drawable/dotted_line_long" />
+	    
+	    <RelativeLayout 
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:padding="@dimen/transaction_padding"
+			android:gravity="center_vertical" >
+	        
+	        <TextView
+	            android:id="@+id/amount_label"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentTop="true"
+	            android:text="@string/label_amount"
+	            style="@style/transaction_label" />
+	        
+	        <EditText
+	            android:id="@+id/amount"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/amount_label"
+	            style="@style/transaction_field"
+	            android:textSize="48sp"
+	            android:inputType="numberDecimal" />
+	        
+	    </RelativeLayout>
+		    
+	    <View
+	        android:layout_width="match_parent"
+	        android:layout_height="2dp"
+	        android:background="@drawable/dotted_line_long" />
+	    
+	    <RelativeLayout 
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:padding="@dimen/transaction_padding"
+			android:gravity="center_vertical" >
+	        
+	        <TextView
+	            android:id="@+id/date_label"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentTop="true"
+	            android:text="@string/label_date"
+	            style="@style/transaction_label" />
+	        
+	        <EditText
+	            android:id="@+id/date"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/date_label"
+	            style="@style/transaction_field"
+	            android:inputType="date" />
+	        
+	    </RelativeLayout>
+		    
+	    <View
+	        android:layout_width="match_parent"
+	        android:layout_height="2dp"
+	        android:background="@drawable/dotted_line_long" />
+	    
+	    <RelativeLayout 
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:padding="@dimen/transaction_padding"
+			android:gravity="center_vertical" >
+	        
+	        <TextView
+	            android:id="@+id/category"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentTop="true"
+	            android:text="@string/label_category"
+	            style="@style/transaction_label" />
+	        
+	        <TextView
+	            android:id="@+id/category_name"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/category"
+	            style="@style/transaction_field" />
+	        
+	    </RelativeLayout>
+		    
+	    <View
+	        android:layout_width="match_parent"
+	        android:layout_height="2dp"
+	        android:background="@drawable/dotted_line_long" />
+	    
+	    <RelativeLayout 
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:padding="@dimen/transaction_padding"
+			android:gravity="center_vertical" >
+	        
+	        <TextView
+	            android:id="@+id/tags_label"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentTop="true"
+	            android:text="@string/label_tags"
+	            style="@style/transaction_label" />
+	        
+	        <TextView
+	            android:id="@+id/tags"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/tags_label"
+	            style="@style/transaction_field" />
+	        
+	    </RelativeLayout>
+		    
+	    <View
+	        android:layout_width="match_parent"
+	        android:layout_height="2dp"
+	        android:background="@drawable/dotted_line_long" />
+	    
+	    <RelativeLayout 
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:padding="@dimen/transaction_padding"
+			android:gravity="center_vertical" >
+	        
+	        <TextView
+	            android:id="@+id/markers_label"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentTop="true"
+	            android:layout_marginBottom="5dp"
+	            android:text="@string/label_other"
+	            style="@style/transaction_label" />
+	        
+	        <ToggleButton 
+	            android:id="@+id/flag_b"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/markers_label"
+	            android:layout_alignParentLeft="true"
+	            android:textColor="@color/transparent"
+	            android:background="@drawable/business_selector" />
+	        
+	        <ToggleButton 
+	            android:id="@+id/flag_p"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/markers_label"
+	            android:layout_toRightOf="@id/flag_b"
+	            android:layout_marginLeft="15dp"
+	            android:textColor="@color/transparent"
+	            android:background="@drawable/personal_selector" />
+	        
+	        <ToggleButton 
+	            android:id="@+id/flag_c"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/markers_label"
+	            android:layout_toRightOf="@id/flag_p"
+	            android:layout_marginLeft="15dp"
+	            android:textColor="@color/transparent"
+	            android:background="@drawable/cleared_selector" />
+	        
+	        <ToggleButton 
+	            android:id="@+id/flag"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/markers_label"
+	            android:layout_toRightOf="@id/flag_c"
+	            android:layout_marginLeft="15dp"
+	            android:textColor="@color/transparent"
+	            android:background="@drawable/flagged_selector" />
+	        
+	    </RelativeLayout>
+		    
+	    <View
+	        android:layout_width="match_parent"
+	        android:layout_height="2dp"
+	        android:background="@drawable/dotted_line_long" />
+	    
+	    <RelativeLayout 
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:padding="@dimen/transaction_padding"
+			android:gravity="center_vertical" >
+	        
+	        <TextView
+	            android:id="@+id/memo_label"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentTop="true"
+	            android:text="@string/label_memo"
+	            style="@style/transaction_label" />
+	        
+	        <EditText
+	            android:id="@+id/memo"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/memo_label"
+	            android:inputType="textCapSentences"
+	            style="@style/transaction_field" />
+	        
+	    </RelativeLayout>
+		    
+	    <View
+	        android:layout_width="match_parent"
+	        android:layout_height="2dp"
+	        android:background="@drawable/dotted_line_long" />
+	    
+	    <RelativeLayout 
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:padding="@dimen/transaction_padding"
+			android:gravity="center_vertical" >
+	        
+	        <TextView
+	            android:id="@+id/stmt_label"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentTop="true"
+	            android:text="@string/label_stmt"
+	            style="@style/transaction_label" />
+	        
+	        <EditText
+	            android:id="@+id/stmt"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/stmt_label"
+	            style="@style/transaction_field"
+	            android:textSize="12sp"
+	            android:inputType="textCapCharacters" />
+	        
+	    </RelativeLayout>
+	    
+	</LinearLayout>
+	
+</ScrollView>

@@ -279,7 +279,7 @@ public class DataController {
 	public static synchronized void deleteData(Class<?> key) {
 		
 		AbstractDao<Object, Long> dao = (AbstractDao<Object, Long>) getDao(key);
-		List<Object> entities = (List<Object>) dao.queryBuilder().list();
+		List<Object> entities = (List<Object>) dao.loadAll();
 		
 		for (Object object : entities) {
 			

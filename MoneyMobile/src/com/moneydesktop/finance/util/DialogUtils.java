@@ -22,6 +22,7 @@ public class DialogUtils {
 	    	
     		hideProgress();
 	    	View progressView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null);
+	    	progressView.setBackgroundResource(R.color.transparent);
 	    	TextView text = (TextView) progressView.findViewById(R.id.spinner_text);
 	    	text.setText(message);
 	    	

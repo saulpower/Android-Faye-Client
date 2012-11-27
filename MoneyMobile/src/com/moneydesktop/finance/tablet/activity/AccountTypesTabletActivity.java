@@ -42,7 +42,7 @@ public class AccountTypesTabletActivity extends BaseActivity {
 
         mExpandableListView.setGroupIndicator(null);
         
-        List<AccountType> accountTypes = ApplicationContext.getDaoSession().getAccountTypeDao().queryBuilder().list();
+        List<AccountType> accountTypes = ApplicationContext.getDaoSession().getAccountTypeDao().loadAll();
         List<AccountType> accountTypesFiltered = new ArrayList<AccountType>();
         
         for (AccountType type : accountTypes) {  //This could possibly be optimized by throwing a "where" in the query builder
@@ -85,7 +85,7 @@ public class AccountTypesTabletActivity extends BaseActivity {
 
 	private void initializeDrawer (final LinearLayout panelLayoutHolder) {
     	
-    	List<BankAccount> bankAccounts = ApplicationContext.getDaoSession().getBankAccountDao().queryBuilder().list();
+    	List<BankAccount> bankAccounts = ApplicationContext.getDaoSession().getBankAccountDao().loadAll();
         //For every bank account that is attached, add it to the Drawer
         for (BankAccount bankAccount : bankAccounts) {
             //create the view to be attached
@@ -121,4 +121,8 @@ public class AccountTypesTabletActivity extends BaseActivity {
         return drawer;
     }
 
+	@Override
+	public String getActivityTitle() {
+		return null;
+	}
 }

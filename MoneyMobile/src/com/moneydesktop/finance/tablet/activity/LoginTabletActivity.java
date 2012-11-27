@@ -308,4 +308,9 @@ public class LoginTabletActivity extends BaseActivity {
     	InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         in.hideSoftInputFromWindow(viewFlipper.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 	}
+
+	@Override
+	public String getActivityTitle() {
+		return null;
+	}
 }

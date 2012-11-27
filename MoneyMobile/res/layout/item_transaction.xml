@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/lblue_to_white" >
+	    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+	    android:layout_below="@+id/cell"
+        android:layout_marginTop="-2dp"
+        android:background="@color/white" />
+
+    <include
+        android:id="@+id/header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/item_transaction_header" />
+    
+	<LinearLayout
+	    android:id="@id/cell"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/header"
+	    android:layout_marginLeft="10dp"
+    	android:background="@drawable/transaction_item" 
+	    android:orientation="vertical" >
+	    
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="28dp"
+	        android:orientation="horizontal" >
+	        
+		    <TextView
+		        android:id="@+id/title"
+		        android:layout_width="0dp"
+		        android:layout_weight="65"
+		        android:layout_height="match_parent"
+		        android:paddingLeft="8dp"
+		        android:gravity="center_vertical|left"
+	            android:text="@string/default_title"
+				android:textColor="@drawable/gray7_to_white"
+				android:textSize="16sp"
+				android:singleLine="true"
+				android:ellipsize="end" />
+	        
+		    <TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="match_parent"
+		        android:paddingRight="3dp"
+		        android:gravity="center"
+	            android:text="@string/dollar_sign"
+				android:textColor="@drawable/gray3_to_white"
+				android:textSize="10sp" />
+		    
+		    <View
+		        android:layout_width="28dp"
+		        android:layout_height="match_parent"
+		        android:layout_marginLeft="-14dp"
+		        android:layout_marginRight="-14dp"
+		        android:background="@drawable/dotted_line_vertical" />
+		    
+		    <TextView
+		        android:id="@+id/amount"
+		        android:layout_width="0dp"
+		        android:layout_weight="45"
+		        android:layout_height="match_parent"
+		        android:paddingRight="8dp"
+		        android:gravity="center_vertical|right"
+	            android:text="@string/default_price"
+				android:textColor="@drawable/gray7_to_white"
+				android:textStyle="bold"
+				android:textSize="16sp"
+				android:singleLine="true"
+				android:ellipsize="end" />
+	        
+	    </LinearLayout>
+	    
+	    <View
+	        android:layout_width="match_parent"
+	        android:layout_height="2dp"
+	        android:background="@drawable/dotted_line" />
+	    
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="20dp"
+	        android:orientation="horizontal" >
+	    
+		    <TextView
+		        android:id="@+id/category"
+		        android:layout_width="0dp"
+		        android:layout_weight="45"
+		        android:layout_height="match_parent"
+		        android:paddingLeft="8dp"
+		        android:gravity="center_vertical|left"
+	            android:text="@string/default_category"
+				android:textColor="@drawable/gray3_to_white"
+				android:textSize="10sp"
+				android:singleLine="true"
+				android:ellipsize="end" />
+		    
+		    <View
+		        android:layout_width="20dp"
+		        android:layout_height="match_parent"
+		        android:layout_marginLeft="-10dp"
+		        android:layout_marginRight="-10dp"
+		        android:background="@drawable/dotted_line_vertical" />
+		    
+		    <TextView
+		        android:id="@+id/bottom"
+		        android:layout_width="0dp"
+		        android:layout_weight="55"
+		        android:layout_height="match_parent"
+		        android:paddingRight="8dp"
+		        android:gravity="center_vertical|right"
+				android:textColor="@drawable/gray7_to_white"
+				android:singleLine="true"
+				android:ellipsize="end" />
+	    
+	    </LinearLayout>
+	    
+	    <View
+	        android:layout_width="match_parent"
+	        android:layout_height="1dp"
+	        android:background="@color/light_gray1" />
+	    
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent">
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/navbar_height"
+        android:background="@color/white" />
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/navbar_height"
+        android:background="@color/gray3" />
+    
+	<LinearLayout
+	    android:id="@+id/info"
+	    android:layout_width="wrap_content"
+	    android:layout_height="@dimen/navbar_height"
+	    android:layout_marginLeft="10dp"
+	    android:gravity="center_vertical"
+	    android:orientation="horizontal">
+	    
+	    <ImageView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:contentDescription="@string/description"
+	        android:src="@drawable/phone_nav_logo" />
+	    
+	    <TextView
+	        android:id="@+id/title"
+	        android:layout_width="wrap_content"
+	        android:layout_height="match_parent"
+	        android:layout_marginLeft="5dp"
+	        android:gravity="center_vertical"
+	        android:textColor="@color/light_blue"
+	        android:textSize="14sp"
+	        android:text="@string/default_header" />
+	    
+	    <com.moneydesktop.finance.views.Caret
+	        android:id="@+id/caret"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="15dp"
+	        android:visibility="gone"
+	        app:color="@color/light_blue"
+	        app:width="10dp"
+	        app:height="10dp" />
+	    
+	</LinearLayout>
+	
+	<ImageButton 
+	    android:id="@+id/back_button"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_marginLeft="10dp"
+	    android:contentDescription="@string/description"
+	    android:background="@drawable/phone_nav_back_selector"
+	    android:visibility="gone" />
+	    
+</RelativeLayout>

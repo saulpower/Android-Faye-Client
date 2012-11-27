@@ -63,7 +63,7 @@ public class LoginActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        setContentView(R.layout.login_view);
+        setContentView(R.layout.handset_login_view);
 
         setupAnimations();
         setupView();
@@ -435,5 +435,10 @@ public class LoginActivity extends BaseActivity {
 
     	InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         in.hideSoftInputFromWindow(viewFlipper.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+	}
+
+	@Override
+	public String getActivityTitle() {
+		return null;
 	}
 }

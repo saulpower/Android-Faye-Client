@@ -278,7 +278,7 @@ public class Institution extends BusinessObject  {
     private static boolean institutionsCheck() {
     	
     	InstitutionDao institutionDao = ApplicationContext.getDaoSession().getInstitutionDao();
-    	List<Institution> institutions = institutionDao.queryBuilder().list();
+    	List<Institution> institutions = institutionDao.loadAll();
     	
     	return (institutions.size() == 0);
     }

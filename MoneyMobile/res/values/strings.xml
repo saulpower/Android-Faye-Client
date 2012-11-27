@@ -44,15 +44,30 @@
     <string name="button_ok">OK</string>
     <string name="button_return_login">RETURN TO LOGIN</string>
     <string name="button_setup">I NEED TO SET UP MY MOBILE ACCOUNT</string>
+    <string name="default_account">MONEY MARKET</string>
+    <string name="default_bank">ABC BANK</string>
+    <string name="default_category">Category</string>
+    <string name="default_header">Header</string>
+    <string name="default_price">5.99</string>
+    <string name="default_title">Title</string>
     <string name="description">description</string>
     <string name="demo_message">Creating Demo Data</string>
+    <string name="dollar_sign">$</string>
     <string name="error_login_failed">YOUR LOGIN\nWAS UNSUCCESSFUL.</string>
     <string name="error_login_incomplete">Please complete the login fields</string>
     <string name="error_login_invalid">Did you know you need to setup\nyour mobile account before you\ncan use this app?</string>
     <string name="error_title">Error</string>
     <string name="hello_world">Hello world!</string>
+    <string name="label_amount">Amount</string>
+    <string name="label_category">Category</string>
+    <string name="label_date">Date</string>
     <string name="label_email">Email</string>
+    <string name="label_memo">Memo</string>
+    <string name="label_other">Other Markers</string>
     <string name="label_password">Password</string>
+    <string name="label_payee">Payee</string>
+    <string name="label_stmt">Statement Description</string>
+    <string name="label_tags">Tags</string>
     <string name="loading">Loading</string>
     <string name="menu_settings">Settings</string>
     <string name="setup_url">http://www.moneydesktop.com/</string>
@@ -62,7 +77,13 @@
     <string name="status_description_7">This bank needs to be refreshed to get the most up to date data. Please refresh this bank.</string>
     <string name="text_login">How do I set up my mobile account?</string>
     <string name="text_signup">Need an account?</string>
-    <string name="title_activity_money_mobile">MoneyMobileActivity</string>
+    <string name="title_activity_accounts">Accounts</string>
+    <string name="title_activity_budget">Budgets</string>
+    <string name="title_activity_dashboard">Dashboard</string>
     <string name="title_activity_debug">DebugActivity</string>
+    <string name="title_activity_money_mobile">MoneyMobileActivity</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_spending">Spending</string>
+    <string name="title_activity_transactions">Transactions</string>
 
 </resources>

@@ -49,19 +49,35 @@ public class DashboardTabletActivity extends BaseActivity {
 			}
 		});
         
-        
-        EventBus.getDefault().register(this);
-        
         if (SyncEngine.sharedInstance().isSyncing()) {
         	DialogUtils.showProgress(this, "Syncing Data...");
         }
     }
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		EventBus.getDefault().register(this);
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		
+        EventBus.getDefault().unregister(this);
+	}
 	
 	public void onEvent(SyncEvent event) {
 		
 		if (event.isFinished()) {
 			DialogUtils.hideProgress();
 		}
+	}
+
+	@Override
+	public String getActivityTitle() {
+		return null;
 	}
 	
 }

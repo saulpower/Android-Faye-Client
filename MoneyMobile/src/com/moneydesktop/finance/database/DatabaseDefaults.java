@@ -25,7 +25,7 @@ public class DatabaseDefaults {
 	public static void ensureCategoryTypesLoaded() {
 		
 		CategoryTypeDao ctDao = ApplicationContext.getDaoSession().getCategoryTypeDao();
-		List<CategoryType> categoryTypes = ctDao.queryBuilder().list();
+		List<CategoryType> categoryTypes = ctDao.loadAll();
 		
 		if (categoryTypes.size() == 0) {
 			
@@ -46,7 +46,7 @@ public class DatabaseDefaults {
 	public static void ensureAccountTypesLoaded() {
 		
 		AccountTypeDao atDao = ApplicationContext.getDaoSession().getAccountTypeDao();
-		List<AccountType> accountTypes = atDao.queryBuilder().list();
+		List<AccountType> accountTypes = atDao.loadAll();
 		
 		if (accountTypes.size() == 0) {
 			
@@ -79,7 +79,7 @@ public class DatabaseDefaults {
 	public static void ensureAccountTypeGroupsLoaded() {
 		
 		AccountTypeGroupDao atgDao = ApplicationContext.getDaoSession().getAccountTypeGroupDao();
-		List<AccountTypeGroup> accountTypeGroups = atgDao.queryBuilder().list();
+		List<AccountTypeGroup> accountTypeGroups = atgDao.loadAll();
 		
 		if (accountTypeGroups.size() == 0) {
 			
