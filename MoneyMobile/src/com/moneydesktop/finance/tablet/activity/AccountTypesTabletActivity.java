@@ -34,6 +34,8 @@ public class AccountTypesTabletActivity extends BaseActivity {
     public void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_types);
+        
+        UiUtils.setupTitleBar(this, getResources().getString(R.string.account_types_title), null, true, false, R.drawable.tablet_button_plus, R.drawable.tablet_button_plus, R.drawable.tablet_button_plus, 0);
 
         mExpandableListView = (ExpandableListView) findViewById(R.id.accounts_expandable_list_view);
         final LinearLayout panelLayoutHolder = (LinearLayout) findViewById(R.id.panel_layout_holder);
@@ -77,7 +79,11 @@ public class AccountTypesTabletActivity extends BaseActivity {
         initializeDrawer(panelLayoutHolder);
     }
 
-    private void initializeDrawer (final LinearLayout panelLayoutHolder) {
+    private void setupTitleBar() {
+    	findViewById(R.id.title_bar_name);
+	}
+
+	private void initializeDrawer (final LinearLayout panelLayoutHolder) {
     	
     	List<BankAccount> bankAccounts = ApplicationContext.getDaoSession().getBankAccountDao().queryBuilder().list();
         //For every bank account that is attached, add it to the Drawer
