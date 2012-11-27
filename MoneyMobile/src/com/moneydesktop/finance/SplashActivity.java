@@ -26,7 +26,7 @@ public class SplashActivity extends BaseActivity {
         
         setContentView(R.layout.splash_view);
 
-        resetApp();
+//        resetApp();
         
         if (isTablet(this)) {
         	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -90,4 +90,9 @@ public class SplashActivity extends BaseActivity {
     	startActivity(i);
     	finish();
     }
+
+	@Override
+	public String getActivityTitle() {
+		return null;
+	}
 }

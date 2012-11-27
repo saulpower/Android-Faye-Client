@@ -60,6 +60,8 @@ public class ApplicationContext extends Application {
 	public void onTerminate() {
 		super.onTerminate();
 		
+		EventBus.getDefault().unregister(this);
+		
 		Log.i(TAG, "Savig BusinessObjectBase ID count");
 		Preferences.saveLong(Preferences.KEY_BOB_ID, BusinessObjectBase.getIdCount());
 		

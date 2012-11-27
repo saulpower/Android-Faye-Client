@@ -610,7 +610,7 @@ public class BankAccount extends BusinessObject  {
     	
     	DataController.deleteData(BankAccountBalance.class);
     	
-    	List<Bank> banks = (List<Bank>) DataController.getDao(Bank.class).queryBuilder().list();
+    	List<Bank> banks = (List<Bank>) DataController.getDao(Bank.class).loadAll();
     	
     	// Iterate through each bank
     	for (Bank bank : banks) {

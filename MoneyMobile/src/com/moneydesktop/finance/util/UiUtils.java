@@ -1,7 +1,9 @@
 package com.moneydesktop.finance.util;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Display;
 
 import com.moneydesktop.finance.data.Constant;
@@ -32,5 +34,9 @@ public class UiUtils {
         final Display display = context.getWindowManager().getDefaultDisplay();
         display.getMetrics(metrics);
         return (metrics.densityDpi / Constant.STANDARD_DPI);
+    }
+    
+    public static float getDynamicPixels(Context context, float pixels) {
+    	return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixels, context.getResources().getDisplayMetrics());
     }
 }

@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="25dp"
-    android:gravity="center" >
+    android:gravity="center"
+    android:background="@color/black_modal" >
     
     <LinearLayout
         android:layout_width="wrap_content"
@@ -21,6 +22,7 @@
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:layout_marginTop="10dp"
+		    android:text="@string/loading"
 		    android:textColor="#FFF"
 		    android:textSize="18sp"
 		    android:textStyle="bold" />

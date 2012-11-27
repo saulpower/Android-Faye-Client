@@ -24,11 +24,11 @@
 
         <activity
             android:name=".tablet.activity.AccountTypesTabletActivity"
-            android:screenOrientation="landscape" />   
+            android:screenOrientation="landscape" />
         
         <activity
             android:name=".handset.activity.DashboardActivity"
-            android:screenOrientation="portrait" />    
+            android:screenOrientation="portrait" />
             
         <activity
             android:name=".tablet.activity.DashboardTabletActivity"

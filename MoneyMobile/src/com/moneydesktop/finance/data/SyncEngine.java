@@ -34,7 +34,7 @@ import de.greenrobot.event.EventBus;
 
 public class SyncEngine {
 	
-	private final String TAG = "SyncEngine";
+	public final String TAG = "SyncEngine";
 
 	private static SyncEngine sharedInstance;
 

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/phone_wood" >
+    
+    <ViewFlipper 
+        android:id="@+id/flipper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+		
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        
+	    <FrameLayout
+	        android:id="@+id/fragment"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+        	android:paddingTop="@dimen/navbar_height" />
+        
+    </ViewFlipper>
+
+    <ViewFlipper 
+        android:id="@+id/nav_flipper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true">
+	    
+        <View
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent" />
+	    
+	    <include
+	        android:id="@+id/nav_bar"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        layout="@layout/handset_navigation_bar" />
+	    
+    </ViewFlipper>
+    
+</RelativeLayout>

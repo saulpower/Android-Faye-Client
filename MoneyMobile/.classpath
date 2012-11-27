@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="libs/jackson-databind-2.1.0.jar"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="libs/commons-lang-2.6.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

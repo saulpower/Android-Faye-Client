@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<dimen name="navbar_height">38dp</dimen>
+	<dimen name="navbar_text_slide">54dp</dimen>
+	<dimen name="transaction_padding">12dp</dimen>
+</resources>
