@@ -37,6 +37,14 @@
         <item name="android:textSize">14sp</item>
         <item name="android:gravity">center</item>
     </style>
+    <style name="text_accounts">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:paddingTop">12dip</item>
+        <item name="android:paddingBottom">12dip</item>
+        <item name="android:paddingLeft">8dip</item>
+        <item name="android:gravity">center_vertical|left</item>
+    </style>
     <style name="text_blue">
         <item name="android:textColor">@color/light_blue</item>
         <item name="android:textStyle">bold</item>

@@ -2,7 +2,7 @@ package com.moneydesktop.finance.views;
 
 
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.tablet.activity.AccountTypesTabletActivity;
+import com.moneydesktop.finance.tablet.activity.AccountSummaryTabletActivity;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 
 import android.app.Activity;
@@ -48,7 +48,6 @@ public class CircleNavView extends RelativeLayout {
     private Button mSettingsNav;
     private Button mReportsNav;
     private boolean mIsAnimating = false;
-    private int mCurrentDegrees;
     
     
     public CircleNavView(Context context, AttributeSet attrs) {
@@ -75,7 +74,7 @@ public class CircleNavView extends RelativeLayout {
          
          mAccountTypesNav.setOnClickListener(new OnClickListener() {	 		
 			public void onClick(View v) {
-				animatePointerToDegreesThenClick(ACCOUNTS, AccountTypesTabletActivity.class);
+				animatePointerToDegreesThenClick(ACCOUNTS, AccountSummaryTabletActivity.class);
 			}
 	  	 });
          
@@ -105,22 +104,18 @@ public class CircleNavView extends RelativeLayout {
             				 && (mStartingYPosition > mDeviceHeight/3)
             				 && (mStartingYPosition < mDeviceHeight - (mDeviceHeight/4))) {
             			 animatePointerToDegrees(ACCOUNTS);
-            			 mCurrentDegrees = ACCOUNTS;
             		 } else if ((mStartingXPosition > mDeviceWidth/4) 
             				 && (mStartingXPosition < mDeviceWidth - (mDeviceWidth/3)) 
             				 && (mStartingYPosition < mDeviceHeight/3)) {
             			 animatePointerToDegrees(DASHBOARD);
-            			 mCurrentDegrees = DASHBOARD;
             		 } else if ((mStartingXPosition > mDeviceWidth - (mDeviceWidth/3))
             				 && (mStartingYPosition < mDeviceHeight - (mDeviceHeight/4))
             				 && (mStartingYPosition > mDeviceHeight/3)) {
             			 animatePointerToDegrees(SETTINGS);
-            			 mCurrentDegrees = SETTINGS;
             		 } else if ((mStartingXPosition > mDeviceWidth/4)
             				 && (mStartingXPosition < mDeviceWidth - (mDeviceWidth/4))
             				 && (mStartingYPosition > mDeviceHeight - (mDeviceHeight/3))) {
             			 animatePointerToDegrees(REPORTS);
-            			 mCurrentDegrees = REPORTS;
             		 }
                      
                      break;

@@ -38,7 +38,7 @@ public class AccountTypeChildView extends FrameLayout {
         	View view = createChildView();
         	final TextView bankName = (TextView)view.findViewById(R.id.account_bank_name);
         	
-        	bankName.setText(account.getInstitutionId());
+        	bankName.setText(account.getBankName());
         
         	bankName.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {

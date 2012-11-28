@@ -23,7 +23,7 @@
         <activity android:name="com.crittercism.NotificationActivity" />
 
         <activity
-            android:name=".tablet.activity.AccountTypesTabletActivity"
+            android:name="com.moneydesktop.finance.tablet.activity.AccountSummaryTabletActivity"
             android:screenOrientation="landscape" />
         
         <activity

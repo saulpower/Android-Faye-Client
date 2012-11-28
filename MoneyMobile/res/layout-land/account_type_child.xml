@@ -3,8 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     	   	  android:layout_width="fill_parent"
               android:layout_height="100dip"
-              android:id="@+id/account_type_bank_container"
-              android:background="@drawable/tablet_wood">
+              android:id="@+id/account_type_bank_container">
     
     
 </LinearLayout>

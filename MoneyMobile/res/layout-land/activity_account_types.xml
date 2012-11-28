@@ -3,14 +3,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:moneydesktop="http://schemas.android.com/apk/res/com.moneydesktop.finance"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+                android:layout_height="fill_parent"
+                android:background="@drawable/wooddark">
                 
     <include layout="@layout/title_bar" android:id="@+id/accounts_title_bar"/>
  
     <ExpandableListView android:layout_height="fill_parent"
                     android:layout_width="fill_parent"
                     android:id="@+id/accounts_expandable_list_view"
-                    android:layout_below="@id/accounts_title_bar"/>
+                    android:layout_marginTop="40dip"
+                    />
 
     <com.moneydesktop.finance.views.SlidingDrawerRightSide
                    android:layout_height="fill_parent"

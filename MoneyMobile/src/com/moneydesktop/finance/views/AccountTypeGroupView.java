@@ -1,7 +1,11 @@
 package com.moneydesktop.finance.views;
 
+import java.text.DecimalFormat;
+
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.AccountType;
+import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.util.Util;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,6 +20,7 @@ public class AccountTypeGroupView extends FrameLayout {
     private TextView mIndicator;
     private Context mContext;
     private AccountType mAccountType;
+    private TextView mAccountTypeSum;
 
     
     public AccountTypeGroupView (Context context, AccountType accountType, final boolean isGroupExpanded) {
@@ -27,6 +32,7 @@ public class AccountTypeGroupView extends FrameLayout {
         final View view = inflater.inflate(R.layout.account_type_group, this, true);
         mAccountTypeName = (TextView)view.findViewById(R.id.account_type_group_name);
         mIndicator = (TextView)view.findViewById(R.id.account_type_group_indicator);
+        mAccountTypeSum = (TextView)findViewById(R.id.account_type_group_sum);
 
 
         populateView(isGroupExpanded);
@@ -35,6 +41,15 @@ public class AccountTypeGroupView extends FrameLayout {
     private void populateView (boolean isGroupExpanded) {
 
         mAccountTypeName.setText(mAccountType.getAccountTypeName()); //get the account name (Checking, savings, etc)
+        double accountTypeSum = 0;
+        
+        for (BankAccount bankAccount : mAccountType.getBankAccounts()) {
+        	accountTypeSum = accountTypeSum + bankAccount.getBalance();
+        }
+        
+        String formatedSum = Util.customFormat("$###,###,###,###.##", accountTypeSum);
+        
+        mAccountTypeSum.setText(formatedSum);
 
         if (isGroupExpanded) {
             mIndicator.setText(mContext.getString(R.string.account_types_indicator_hide));
@@ -43,7 +58,7 @@ public class AccountTypeGroupView extends FrameLayout {
         }
 
     }
-
+    
     public AccountTypeGroupView (Context context) {
         super(context);
     }

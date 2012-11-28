@@ -1,5 +1,6 @@
 package com.moneydesktop.finance.util;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,4 +27,10 @@ public class Util {
 		
 		return list;
 	}
+	
+    public static String customFormat(String pattern, double s) { 
+        DecimalFormat myFormatter = new DecimalFormat(pattern); 
+        String stringformatoutput = myFormatter.format(s); 
+        return stringformatoutput; 
+     } 
 }

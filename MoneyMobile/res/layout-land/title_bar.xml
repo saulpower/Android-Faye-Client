@@ -3,13 +3,14 @@
     		  android:layout_width="fill_parent"
               android:layout_height="50dip"
               android:id="@+id/accounts_title_bar"
-              android:layout_alignParentTop="true">
+              android:layout_alignParentTop="true"
+              android:background="@drawable/top_nav_wood">
               
     <TextView android:layout_width="wrap_content"
               android:layout_height="fill_parent"
               android:gravity="center_vertical"
               android:layout_marginLeft="10dip"
-              android:textSize="18dip"
+              android:textSize="20dip"
               android:id="@+id/title_bar_name"
               android:textColor="@android:color/white"
               android:layout_alignParentLeft="true"

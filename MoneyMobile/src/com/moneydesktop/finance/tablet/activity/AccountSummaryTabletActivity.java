@@ -23,11 +23,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class AccountTypesTabletActivity extends BaseActivity {
+public class AccountSummaryTabletActivity extends BaseActivity {
 
     private ExpandableListView mExpandableListView;
 
@@ -39,11 +39,11 @@ public class AccountTypesTabletActivity extends BaseActivity {
 
         mExpandableListView = (ExpandableListView) findViewById(R.id.accounts_expandable_list_view);
         final LinearLayout panelLayoutHolder = (LinearLayout) findViewById(R.id.panel_layout_holder);
-
         mExpandableListView.setGroupIndicator(null);
         
         List<AccountType> accountTypes = ApplicationContext.getDaoSession().getAccountTypeDao().loadAll();
         List<AccountType> accountTypesFiltered = new ArrayList<AccountType>();
+        
         
         for (AccountType type : accountTypes) {  //This could possibly be optimized by throwing a "where" in the query builder
         	if (!type.getBankAccounts().isEmpty()) {
@@ -72,16 +72,12 @@ public class AccountTypesTabletActivity extends BaseActivity {
 
         
         final ViewGroup.LayoutParams layoutParams = panelLayoutHolder.getLayoutParams();
-        layoutParams.width = UiUtils.getMinimumPanalWidth(AccountTypesTabletActivity.this);
+        layoutParams.width = UiUtils.getMinimumPanalWidth(AccountSummaryTabletActivity.this);
         panelLayoutHolder.setLayoutParams(layoutParams);
 
         setupDrawer(layoutParams, this);
         initializeDrawer(panelLayoutHolder);
     }
-
-    private void setupTitleBar() {
-    	findViewById(R.id.title_bar_name);
-	}
 
 	private void initializeDrawer (final LinearLayout panelLayoutHolder) {
     	

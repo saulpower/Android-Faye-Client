@@ -39,8 +39,8 @@ public class UiUtils {
         display.getMetrics(metrics);
         return (metrics.densityDpi / Constant.STANDARD_DPI);
     }
+
     
-<<<<<<< HEAD
     public static void setupTitleBar(Activity activity, String titleName, String userEmail, 
     		boolean displayIcon1To3,
     		boolean displayIcon4,
@@ -72,9 +72,8 @@ public class UiUtils {
     	}	
     }
     
-=======
     public static float getDynamicPixels(Context context, float pixels) {
     	return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixels, context.getResources().getDisplayMetrics());
     }
->>>>>>> d6b2f165d336080333091808bd728fdab2bfae74
+
 }
