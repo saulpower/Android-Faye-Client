@@ -5,7 +5,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.widget.TextView;
 
@@ -23,6 +25,13 @@ public class DialogUtils {
     		hideProgress();
 	    	View progressView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null);
 	    	progressView.setBackgroundResource(R.color.transparent);
+	    	progressView.setOnTouchListener(new OnTouchListener() {
+				
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					return true;
+				}
+			});
 	    	TextView text = (TextView) progressView.findViewById(R.id.spinner_text);
 	    	text.setText(message);
 	    	
@@ -43,8 +52,16 @@ public class DialogUtils {
     		dialog = null;
     	}
     }
-
+    
+    public static void alertDialog(String title, String message, Context context) {
+    	alertDialog(title, message, context.getString(R.string.button_ok), context, null);
+    }
+    
     public static void alertDialog(String title, String message, Context context, DialogInterface.OnClickListener clickListener) {
+    	alertDialog(title, message, context.getString(R.string.button_ok), context, clickListener);
+    }
+
+    public static void alertDialog(String title, String message, String positiveButton, Context context, DialogInterface.OnClickListener clickListener) {
     	
     	if (alert != null)
     		dismissAlert();
@@ -52,7 +69,7 @@ public class DialogUtils {
     	AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
 		alertBuilder.setMessage(message)
 				.setCancelable(false)
-				.setPositiveButton(R.string.button_ok, clickListener);
+				.setPositiveButton(positiveButton, clickListener);
 		alert = alertBuilder.create();
 		
 		// Title for AlertDialog

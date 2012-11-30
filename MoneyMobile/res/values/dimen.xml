@@ -2,5 +2,6 @@
 <resources>
 	<dimen name="navbar_height">38dp</dimen>
 	<dimen name="navbar_text_slide">54dp</dimen>
-	<dimen name="transaction_padding">12dp</dimen>
+	<dimen name="transaction_padding">5dp</dimen>
+	<dimen name="transaction_padding_left">12dp</dimen>
 </resources>

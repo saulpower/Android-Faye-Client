@@ -32,10 +32,7 @@ public class CacheUtils {
 				refresh = (age > refreshTime);
 			}
 			
-			// Checks to see if file was completely downloaded
-			int total = FileIO.remoteDataLength(url);
-			
-			if (!file.exists() || refresh || (file.length() < total))
+			if (!file.exists() || refresh)
 				filename = FileIO.loadRemoteData(url, filename, listener);
 			else
 				filename = file.getAbsolutePath();

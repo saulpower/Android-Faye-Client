@@ -4,16 +4,6 @@ package com.moneydesktop.finance.tablet.activity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.BaseActivity;
-import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.adapters.AccountTypesAdapter;
-import com.moneydesktop.finance.database.AccountType;
-import com.moneydesktop.finance.database.BankAccount;
-import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.views.SlidingDrawerRightSide;
-
-
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,9 +13,17 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.moneydesktop.finance.ApplicationContext;
+import com.moneydesktop.finance.BaseActivity;
+import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.adapters.AccountTypesAdapter;
+import com.moneydesktop.finance.database.AccountType;
+import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.SlidingDrawerRightSide;
 
 public class AccountTypesTabletActivity extends BaseActivity {
 

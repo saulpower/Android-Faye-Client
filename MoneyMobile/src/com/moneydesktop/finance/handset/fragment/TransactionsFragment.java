@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,17 +35,14 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 	private TransactionsAdapter adapter;
 	private RelativeLayout loading;
 	
+	private boolean loaded = false;
+	
 	public static TransactionsFragment newInstance() {
-		
-		if (fragment == null) {
 			
-			Log.i("TEST", "new frag");
-			
-			fragment = new TransactionsFragment();
-		
-	        Bundle args = new Bundle();
-	        fragment.setArguments(args);
-		}
+		fragment = new TransactionsFragment();
+	
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
         
         return fragment;
 	}
@@ -56,6 +52,12 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
         super.onAttach(activity);
         
         this.activity.onFragmentAttached(this);
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		
         this.activity.updateNavBar(getFragmentTitle());
 	}
 	
@@ -69,8 +71,13 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 		
 		transactionsList = (AmazingListView) root.findViewById(R.id.transactions);
 		transactionsList.setOnItemClickListener(this);
-
-		getInitialTransactions();
+		
+		configureView();
+		
+		if (!loaded)
+			getInitialTransactions();
+		else
+			setupList();
 		
 		return root;
 	}
@@ -87,7 +94,7 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 				List<Transactions> row1 = Transactions.getRows(page).second;
 				List<Pair<String, List<Transactions>>> initial = Transactions.groupTransactions(row1);
 
-				adapter = new TransactionsAdapter(activity, initial);
+				adapter = new TransactionsAdapter(activity, transactionsList, initial);
 				
 				return null;
 			}
@@ -95,27 +102,35 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 			@Override
 			protected void onPostExecute(Void result) {
 
-				transactionsList.setAdapter(adapter);
-				transactionsList.setPinnedHeaderView(LayoutInflater.from(activity).inflate(R.layout.item_transaction_header, transactionsList, false));
-				transactionsList.setLoadingView(activity.getLayoutInflater().inflate(R.layout.loading_view, null));
-				
-				adapter.notifyMayHaveMorePages();
+				setupList();
 			};
 			
 		}.execute(1);
+	}
+	
+	private void setupList() {
+
+		transactionsList.setAdapter(adapter);
+		transactionsList.setPinnedHeaderView(LayoutInflater.from(activity).inflate(R.layout.item_transaction_header, transactionsList, false));
+		transactionsList.setLoadingView(activity.getLayoutInflater().inflate(R.layout.loading_view, null));
+		
+		adapter.notifyMayHaveMorePages();
 	}
 
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		
 		Transactions transaction = (Transactions) parent.getItemAtPosition(position);
 		
-		TransactionDetailFragment detail = TransactionDetailFragment.newInstance(transaction.getId());
-		
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.out_right, R.anim.in_left);
-		ft.add(R.id.fragment, detail);
-		ft.addToBackStack(null);
-		ft.commit();
+		if (transaction != null) {
+			
+			TransactionDetailFragment detail = TransactionDetailFragment.newInstance(transaction.getId());
+			
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.out_right, R.anim.in_left);
+			ft.replace(R.id.fragment, detail);
+			ft.addToBackStack(null);
+			ft.commit();
+		}
 	}
 
 	@Override
@@ -123,22 +138,36 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 		return getString(R.string.title_activity_transactions);
 	}
 
+	private void configureView() {
+		
+		if (loaded) {
+			
+			transactionsList.setVisibility(View.VISIBLE);
+			loading.setVisibility(View.GONE);
+		}
+	}
+	
 	public void onViewDidAppear() {
 		
-		animate(loading).alpha(0.0f).setDuration(400).setListener(new AnimatorListener() {
+		if (!loaded) {
 			
-			public void onAnimationStart(Animator animation) {}
+			animate(loading).alpha(0.0f).setDuration(400).setListener(new AnimatorListener() {
+				
+				public void onAnimationStart(Animator animation) {}
+				
+				public void onAnimationRepeat(Animator animation) {}
+				
+				public void onAnimationEnd(Animator animation) {
+					loading.setVisibility(View.GONE);
+				}
+				
+				public void onAnimationCancel(Animator animation) {}
+			});
 			
-			public void onAnimationRepeat(Animator animation) {}
+			transactionsList.setVisibility(View.VISIBLE);
+			animate(transactionsList).alpha(1.0f).setDuration(400);
 			
-			public void onAnimationEnd(Animator animation) {
-				loading.setVisibility(View.GONE);
-			}
-			
-			public void onAnimationCancel(Animator animation) {}
-		});
-		
-		transactionsList.setVisibility(View.VISIBLE);
-		animate(transactionsList).alpha(1.0f).setDuration(400);
+			loaded = true;
+		}
 	}
 }

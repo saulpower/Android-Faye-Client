@@ -5,6 +5,10 @@ public class Enums {
 	public enum TxType {
 		INSERT, UPDATE, DELETE
 	}
+
+	public enum LockType {
+		CHANGE, LOCK, NEW
+	}
 	
 	public enum DataState {
 		

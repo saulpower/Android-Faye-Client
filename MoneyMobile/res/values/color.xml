@@ -52,5 +52,6 @@
     <color name="shadow_gray">#B2B2B2</color>
     <color name="splitsColor">#F16430</color>
     <color name="white">#FFF</color>
+    <color name="white_transparent">#7FFFFFFF</color>
 
 </resources>

@@ -28,7 +28,6 @@ import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.util.Comparators;
 import com.moneydesktop.finance.util.Enums.DataState;
-import com.moneydesktop.finance.util.Util;
 
 import de.greenrobot.event.EventBus;
 
@@ -138,7 +137,7 @@ public class SyncEngine {
 		}
 	}
 	
-	private void endBankStatusTimer() {
+	public void endBankStatusTimer() {
 		
 		if (bankStatusTimer != null) {
 			

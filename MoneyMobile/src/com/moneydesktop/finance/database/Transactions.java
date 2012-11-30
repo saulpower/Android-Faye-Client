@@ -621,7 +621,6 @@ public class Transactions extends BusinessObject  {
     		return null;
     	}
     	
-    	
     	if (transaction.isNew()) {
     		
     		transaction.setExclusionFlags(0);

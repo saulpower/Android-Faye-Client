@@ -47,6 +47,7 @@
 				android:ellipsize="end" />
 	        
 		    <TextView
+		        android:id="@+id/dollar_sign"
 		        android:layout_width="wrap_content"
 		        android:layout_height="match_parent"
 		        android:paddingRight="3dp"
@@ -56,6 +57,7 @@
 				android:textSize="10sp" />
 		    
 		    <View
+		        android:id="@+id/dotted1"
 		        android:layout_width="28dp"
 		        android:layout_height="match_parent"
 		        android:layout_marginLeft="-14dp"
@@ -79,6 +81,7 @@
 	    </LinearLayout>
 	    
 	    <View
+	        android:id="@+id/dotted2"
 	        android:layout_width="match_parent"
 	        android:layout_height="2dp"
 	        android:background="@drawable/dotted_line" />
@@ -102,6 +105,7 @@
 				android:ellipsize="end" />
 		    
 		    <View
+		        android:id="@+id/dotted3"
 		        android:layout_width="20dp"
 		        android:layout_height="match_parent"
 		        android:layout_marginLeft="-10dp"

@@ -126,8 +126,8 @@ public class LoginActivity extends BaseActivity {
 		Fonts.applyPrimaryBoldFont(cancelButton, 15);
 		Fonts.applyPrimaryBoldFont(signupText, 12);
 		Fonts.applySecondaryItalicFont(loginText, 12);
-//		Fonts.applyPrimaryItalicFont(usernameLabel, 9);
-//		Fonts.applyPrimaryItalicFont(passwordLabel, 9);
+		Fonts.applyPrimaryItalicFont(usernameLabel, 9);
+		Fonts.applyPrimaryItalicFont(passwordLabel, 9);
 		
 		addListeners();
 	}
@@ -352,7 +352,7 @@ public class LoginActivity extends BaseActivity {
 					
 				} catch (Exception e) {
 					
-					Log.e(TAG, "Error Authenticating", e);
+					Log.e(TAG, "Error Authenticating: " + e.getLocalizedMessage());
 					return false;
 				}
 

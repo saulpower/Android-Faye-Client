@@ -28,7 +28,13 @@ import android.widget.ViewFlipper;
 
 import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
-import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.Preferences;
+import com.moneydesktop.finance.handset.activity.LockCodeActivity;
+import com.moneydesktop.finance.model.EventMessage.LockEvent;
+import com.moneydesktop.finance.util.Enums.LockType;
+import com.moneydesktop.finance.util.Fonts;
+
+import de.greenrobot.event.EventBus;
 
 abstract public class BaseActivity extends FragmentActivity {
 	
@@ -66,6 +72,7 @@ abstract public class BaseActivity extends FragmentActivity {
 	private ViewFlipper navFlipper;
     protected RelativeLayout navBar;
     private LinearLayout info;
+    private TextView title;
     private ImageButton back;
     protected Animation pushDown, pushUp;
     protected int fragmentCount = 0;
@@ -73,6 +80,10 @@ abstract public class BaseActivity extends FragmentActivity {
 	protected boolean onFragment = false;
 	private SharedPreferences mPreferences;
 	private ArrayList<AppearanceListener> listeners = new ArrayList<AppearanceListener>();
+	
+	private static long pause;
+	
+	public static boolean inForeground = false;
 	
     public SharedPreferences getSharedPreferences () {
         return mPreferences;
@@ -91,6 +102,20 @@ abstract public class BaseActivity extends FragmentActivity {
 	protected void onResume() {
 		super.onResume();
 		
+		inForeground = true;
+		EventBus.getDefault().register(this);
+		
+		lockScreenCheck();
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		inForeground = false;
+		if (!(this instanceof SplashActivity))
+			pause = System.currentTimeMillis();
+		EventBus.getDefault().unregister(this);
 	}
 	
 	private void setupAnimations() {
@@ -117,6 +142,10 @@ abstract public class BaseActivity extends FragmentActivity {
         return values;
 	}
 	
+	/**
+	 * Check if there is a navigation bar present and load it
+	 * if so.
+	 */
 	private void navigationCheck() {
 		
 		if (navFlipper == null) {
@@ -132,9 +161,14 @@ abstract public class BaseActivity extends FragmentActivity {
 		}
 	}
 	
+	/**
+	 * Configure the navigation bar so we can use it
+	 */
 	private void setupNavigation() {
 
 		info = (LinearLayout) navBar.findViewById(R.id.info);
+		title = (TextView) navBar.findViewById(R.id.title);
+		Fonts.applyPrimaryFont(title, 16);
 		back = (ImageButton) navBar.findViewById(R.id.back_button);
 		back.setOnClickListener(new OnClickListener() {
 			
@@ -145,15 +179,18 @@ abstract public class BaseActivity extends FragmentActivity {
 		});
 	}
 	
+	/**
+	 * Update the navigation bar with the passed in title.  Configure the
+	 * back button if necessary.
+	 * 
+	 * @param titleString the title for the navigation bar
+	 */
 	public void updateNavBar(String titleString) {
 		
 		if (navBar != null) {
 			
-			if (titleString != null) {
-				
-				TextView title = (TextView) navBar.findViewById(R.id.title);
+			if (titleString != null)
 				title.setText(titleString.toUpperCase());
-			}
 			
 			if (fragmentCount > 1 && !backShowing) {
 				
@@ -169,6 +206,12 @@ abstract public class BaseActivity extends FragmentActivity {
 		}
 	}
 	
+	/**
+	 * Flip the navigation bar to transition between dashboard and
+	 * various view controllers
+	 * 
+	 * @param home whether we are returning to the dashboard (home) or not
+	 */
 	public void configureView(final boolean home) {
 		
 		if (home) {
@@ -181,6 +224,11 @@ abstract public class BaseActivity extends FragmentActivity {
     	}
 	}
 	
+	/**
+	 * Configure the back button
+	 * 
+	 * @param show whether to show it or not
+	 */
 	private void configureBackButton(final boolean show) {
 		
 		int direction = show ? 1 : 0;
@@ -211,13 +259,10 @@ abstract public class BaseActivity extends FragmentActivity {
 		back.startAnimation(fade);
 	}
 	
-	protected void navigateTo(Class<?> activity) {
-		
-		Intent intent = new Intent(this, activity);
-		intent.putExtra(Constant.KEY_HAS_PREVIOUS, (getActivityTitle() != null));
-		startActivity(intent);
-	}
-	
+	/**
+	 * Pop back on the fragment manager's stack of fragments.
+	 * Update the navigation bar based on our fragment count.
+	 */
 	protected void navigateBack() {
 		
 		fragmentCount--;
@@ -230,6 +275,12 @@ abstract public class BaseActivity extends FragmentActivity {
 			onFragment = false;
 	}
 	
+	/**
+	 * Called whenever a new fragment has been added and
+	 * attached itself to the host activity.
+	 * 
+	 * @param fragment
+	 */
 	public void onFragmentAttached(AppearanceListener fragment) {
 		
 		if (onFragment) {
@@ -241,6 +292,47 @@ abstract public class BaseActivity extends FragmentActivity {
 		}
 	}
 	
+	public void modalActivity(Class<?> key) {
+
+		Intent intent = new Intent(this, key);
+		startActivity(intent);
+		overridePendingTransition(R.anim.in_up, R.anim.none);
+	}
+	
+	public void onEvent(LockEvent event) {
+		
+		showLockScreen(event.getType());
+	}
+	
+	private void lockScreenCheck() {
+
+		if (500 < (System.currentTimeMillis() - pause) && !(this instanceof SplashActivity)) {
+			
+			String code = Preferences.getString(Preferences.KEY_LOCK_CODE, "");
+			
+			if (!code.equals(""))
+				showLockScreen(LockType.LOCK);
+		}
+	}
+	
+	private void showLockScreen(LockType type) {
+		
+		if (!LockCodeActivity.showing) {
+			
+			LockCodeActivity.showing = true;
+			
+			Intent intent = new Intent(this, LockCodeActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			intent.putExtra(LockCodeActivity.EXTRA_LOCK, type);
+			startActivity(intent);
+			overridePendingTransition(R.anim.in_up, R.anim.none);
+		}
+	}
+	
+	/**
+	 * Called to notify children views they have appeared and
+	 * transition animations have completed.
+	 */
 	protected void viewDidAppear() {
 		
 		for (AppearanceListener listener : listeners) {

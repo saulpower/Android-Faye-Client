@@ -103,6 +103,7 @@ public abstract class AmazingAdapter extends BaseAdapter implements SectionIndex
 
 	@Override
 	public final View getView(int position, View convertView, ViewGroup parent) {
+		
 		View res = getAmazingView(position, convertView, parent);
 		
 		if (position == getCount() - 1 && automaticNextPageLoading) {
