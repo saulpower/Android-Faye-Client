@@ -5,6 +5,7 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.util.DialogUtils;
+import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.CircleNavView;
 
 import de.greenrobot.event.EventBus;
@@ -34,6 +35,8 @@ public class DashboardTabletActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard_view);
+        
+        UiUtils.setupTitleBar(this, getResources().getString(R.string.dashboard_title), "useremail@email.com", false, false, 0, 0, 0, 0);
         
         mLaunchNav = (Button) findViewById(R.id.view_nav_button);
         mContainer = (LinearLayout) findViewById(R.id.dashboard_container);
