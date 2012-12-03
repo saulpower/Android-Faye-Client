@@ -1,24 +1,23 @@
 package com.moneydesktop.finance.views;
 
+import java.text.NumberFormat;
 import java.util.List;
-
-import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.database.BankAccount;
-import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.util.Util;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.database.BankAccount;
 
 
 public class AccountTypeChildView extends FrameLayout {
 
+	private NumberFormat formatter = NumberFormat.getCurrencyInstance();
     private View mChildView;
     private Context mContext;
     private List<BankAccount> mBankAccounts;
@@ -42,7 +41,7 @@ public class AccountTypeChildView extends FrameLayout {
         	final TextView accountSum = (TextView)view.findViewById(R.id.tablet_account_type_bank_sum);
         		
         	accountName.setText(account.getAccountName() == null ? "" : account.getAccountName());
-        	accountSum.setText(account.getBalance() == null ? "" : UiUtils.customFormat("$###,###,###,###.##", Double.valueOf(account.getBalance())));
+        	accountSum.setText(account.getBalance() == null ? "" : formatter.format(account.getBalance()));
         	
         	
         	accountName.setOnClickListener(new OnClickListener() {

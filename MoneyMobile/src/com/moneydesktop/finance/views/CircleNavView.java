@@ -1,27 +1,23 @@
 package com.moneydesktop.finance.views;
 
 
-import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
-import com.moneydesktop.finance.tablet.fragment.AccountSummaryTabletFragment;
-import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
-
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
+import com.moneydesktop.finance.tablet.fragment.AccountSummaryTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
 
 public class CircleNavView extends RelativeLayout {
     
