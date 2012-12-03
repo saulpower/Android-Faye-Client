@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+	    
+    <TextView 
+        android:id="@+id/lock_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/text_lock"
+        style="@style/text" />
+    
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lock_text"
+	    android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal" >
+        
+        <EditText
+            android:id="@+id/field1"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:tag="1"
+            android:gravity="center"
+            android:singleLine="true"
+            android:nextFocusDown="@+id/field2"
+            android:inputType="numberPassword"
+            android:cursorVisible="false" />
+        
+        <EditText
+            android:id="@+id/field2"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:tag="2"
+            android:gravity="center"
+            android:singleLine="true"
+            android:nextFocusDown="@+id/field3"
+            android:nextFocusUp="@id/field1"
+            android:inputType="numberPassword"
+            android:cursorVisible="false" />
+        
+        <EditText
+            android:id="@+id/field3"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:tag="3"
+            android:gravity="center"
+            android:singleLine="true"
+            android:nextFocusUp="@id/field2"
+            android:nextFocusDown="@+id/field4"
+            android:inputType="numberPassword"
+            android:cursorVisible="false" />
+        
+        <EditText
+            android:id="@+id/field4"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:tag="4"
+            android:gravity="center"
+            android:singleLine="true"
+            android:nextFocusUp="@id/field3"
+            android:inputType="numberPassword"
+            android:cursorVisible="false" />
+        
+    </LinearLayout>
+    
+</RelativeLayout>
