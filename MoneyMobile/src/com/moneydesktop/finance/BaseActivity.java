@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -68,16 +69,21 @@ abstract public class BaseActivity extends FragmentActivity {
     }
     
 	protected final long TRANSITION_DURATION = 300;
+
+	protected FragmentManager fm;
 	
 	private ViewFlipper navFlipper;
     protected RelativeLayout navBar;
     private LinearLayout info;
     private TextView title;
     private ImageButton back;
+    
     protected Animation pushDown, pushUp;
+    
     protected int fragmentCount = 0;
     private boolean backShowing = false;
 	protected boolean onFragment = false;
+	
 	private SharedPreferences mPreferences;
 	private ArrayList<AppearanceListener> listeners = new ArrayList<AppearanceListener>();
 	
@@ -92,7 +98,9 @@ abstract public class BaseActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
+    	fm = getSupportFragmentManager();
+    	
 		mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		navigationCheck();
 		setupAnimations();
@@ -213,6 +221,9 @@ abstract public class BaseActivity extends FragmentActivity {
 	 * @param home whether we are returning to the dashboard (home) or not
 	 */
 	public void configureView(final boolean home) {
+		
+		if (navFlipper == null)
+			return;
 		
 		if (home) {
     		

@@ -1,17 +1,16 @@
 package com.moneydesktop.finance.views;
 
-import java.text.DecimalFormat;
-
-import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.database.AccountType;
-import com.moneydesktop.finance.database.BankAccount;
-import com.moneydesktop.finance.util.Util;
+import java.text.NumberFormat;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.database.AccountType;
+import com.moneydesktop.finance.database.BankAccount;
 
 
 public class AccountTypeGroupView extends FrameLayout {
@@ -47,7 +46,7 @@ public class AccountTypeGroupView extends FrameLayout {
         	accountTypeSum = accountTypeSum + bankAccount.getBalance();
         }
         
-        String formatedSum = Util.customFormat("$###,###,###,###.##", accountTypeSum);
+        String formatedSum = NumberFormat.getCurrencyInstance().format(accountTypeSum);
         
         mAccountTypeSum.setText(formatedSum);
 
