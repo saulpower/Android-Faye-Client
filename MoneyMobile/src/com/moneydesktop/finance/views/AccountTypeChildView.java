@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.util.Util;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -36,13 +38,16 @@ public class AccountTypeChildView extends FrameLayout {
     private void populateView () {
         for (final BankAccount account : mBankAccounts) {        	
         	View view = createChildView();
-        	final TextView bankName = (TextView)view.findViewById(R.id.account_bank_name);
+        	final TextView accountName = (TextView)view.findViewById(R.id.tablet_account_type_bank_name);
+        	final TextView accountSum = (TextView)view.findViewById(R.id.tablet_account_type_bank_sum);
+        		
+        	accountName.setText(account.getAccountName() == null ? "" : account.getAccountName());
+        	accountSum.setText(account.getBalance() == null ? "" : Util.customFormat("$###,###,###,###.##", Double.valueOf(account.getBalance())));
         	
-        	bankName.setText(account.getBankName());
-        
-        	bankName.setOnClickListener(new OnClickListener() {
+        	
+        	accountName.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					Toast.makeText(mContext, "Bank Account " + ((TextView)v.findViewById(R.id.account_bank_name)).getText() + " was clicked!", Toast.LENGTH_SHORT).show();					
+					Toast.makeText(mContext, "Account " + accountName.getText() + " was clicked!", Toast.LENGTH_SHORT).show();					
 				}
 			});
 
@@ -52,6 +57,6 @@ public class AccountTypeChildView extends FrameLayout {
     
     private View createChildView () {
         final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        return inflater.inflate(R.layout.bank_account, null); //TODO: change this....this is the wrong layout.
+        return inflater.inflate(R.layout.account_type_child_bank, null);
     }
 }

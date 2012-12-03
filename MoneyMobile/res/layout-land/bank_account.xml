@@ -6,8 +6,8 @@
               android:layout_gravity="center_horizontal"
               android:layout_margin="10dip">
 
-    <ImageView android:layout_width="100dip"
-               android:layout_height="100dip"
+    <ImageView android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
                android:id="@+id/bank_account_image"
                android:src="@drawable/tablet_accounts_bankbook"/>
     

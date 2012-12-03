@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--This is a container layout. We will add accounts to the layout programatically.-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    	   	  android:layout_width="fill_parent"
-              android:layout_height="100dip"
-              android:id="@+id/account_type_bank_container">
+    	   	  android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:id="@+id/account_type_bank_container"
+              android:layout_marginTop="10dip"
+              android:layout_marginBottom="10dip">
     
     
 </LinearLayout>
