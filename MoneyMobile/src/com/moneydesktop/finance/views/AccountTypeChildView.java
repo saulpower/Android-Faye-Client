@@ -42,7 +42,7 @@ public class AccountTypeChildView extends FrameLayout {
         	final TextView accountSum = (TextView)view.findViewById(R.id.tablet_account_type_bank_sum);
         		
         	accountName.setText(account.getAccountName() == null ? "" : account.getAccountName());
-        	accountSum.setText(account.getBalance() == null ? "" : Util.customFormat("$###,###,###,###.##", Double.valueOf(account.getBalance())));
+        	accountSum.setText(account.getBalance() == null ? "" : UiUtils.customFormat("$###,###,###,###.##", Double.valueOf(account.getBalance())));
         	
         	
         	accountName.setOnClickListener(new OnClickListener() {

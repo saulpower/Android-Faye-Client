@@ -16,15 +16,14 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.BaseActivity;
+import com.moneydesktop.finance.BaseTabletFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.AccountTypesAdapter;
 import com.moneydesktop.finance.database.AccountType;
+import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.SlidingDrawerRightSide;
-
-public class AccountSummaryTabletActivity extends BaseActivity {
 
 public class AccountTypesTabletFragment extends BaseTabletFragment {
     private ExpandableListView mExpandableListView;
@@ -97,16 +96,18 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
 	
 	
 	private void initializeDrawer (LinearLayout panelLayoutHolder) {
-    	List<BankAccount> bankAccounts = ApplicationContext.getDaoSession().getBankAccountDao().loadAll();
+		List<Bank> banksList = ApplicationContext.getDaoSession().getBankDao().loadAll();
+    	
     	panelLayoutHolder.addView(getPanelHeader());
     	
+
     	
     	//TODO: change this so that it doesn't add ACCOUNT, but instead, BANKS
         //For every bank account that is attached, add it to the Drawer
-        for (BankAccount bankAccount : bankAccounts) {
+        for (Bank banks : banksList) {
             //create the view to be attached
             //add it to the Drawer
-        	panelLayoutHolder.addView(populateDrawerView(bankAccount));
+        	panelLayoutHolder.addView(populateDrawerView(banks));
         }
     }
 
@@ -116,7 +117,7 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
 		return headerView;
 	}
 
-	private View populateDrawerView (final BankAccount bankAccount) {
+	private View populateDrawerView (final Bank banks) {
         LayoutInflater layoutInflater = activity.getLayoutInflater();
         final View bankTypeAccountView = layoutInflater.inflate(R.layout.bank_account, null);
 
