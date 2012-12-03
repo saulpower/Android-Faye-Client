@@ -16,15 +16,13 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.BaseActivity;
+import com.moneydesktop.finance.BaseTabletFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.AccountTypesAdapter;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.SlidingDrawerRightSide;
-
-public class AccountSummaryTabletActivity extends BaseActivity {
 
 public class AccountTypesTabletFragment extends BaseTabletFragment {
     private ExpandableListView mExpandableListView;
