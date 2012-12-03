@@ -174,7 +174,7 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
 
 	@Override
 	public void mayHaveMorePages() {
-		if (! footerViewAttached && listFooter != null) {
+		if (!footerViewAttached && listFooter != null) {
 			this.addFooterView(listFooter);
 			footerViewAttached = true;
 		}

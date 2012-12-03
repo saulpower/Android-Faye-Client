@@ -262,13 +262,8 @@ public class Institution extends BusinessObject  {
     	Runnable run = new Runnable() {
 			
 			public void run() {
-
-				long start = System.currentTimeMillis();
-				Log.i(TAG, "Started processing Institutions");
 				
 				parseAndSaveInstitutions(resource);
-				
-				Log.i(TAG, "Finished processing Institutions in " + (System.currentTimeMillis() - start) + " ms");
 			}
 		};
 		

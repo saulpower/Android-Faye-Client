@@ -23,6 +23,7 @@ import com.moneydesktop.finance.database.BusinessObjectBase;
 import com.moneydesktop.finance.database.Category;
 import com.moneydesktop.finance.database.CategoryType;
 import com.moneydesktop.finance.database.DaoSession;
+import com.moneydesktop.finance.database.DatabaseDefaults;
 import com.moneydesktop.finance.database.Institution;
 import com.moneydesktop.finance.database.Location;
 import com.moneydesktop.finance.database.Tag;
@@ -176,9 +177,9 @@ public class DataController {
 		return null;
 	}
 	
-	public static void insert(Object object) {
+	public static void insert(Object object, String guid) {
 		
-		addTransaction(object, TxType.INSERT);
+		addTransaction(object, guid, TxType.INSERT);
 	}
 	
 	public static void update(Object object) {
@@ -192,6 +193,10 @@ public class DataController {
 		addTransaction(object, TxType.DELETE);
 	}
 	
+	private static void addTransaction(Object object, TxType type) {
+		addTransaction(object, null, type);
+	}
+	
 	/**
 	 * Adds a transaction to the appropriate pending transaction map.  We also
 	 * add the passed-in object to a cache in case it needs to be referenced
@@ -200,7 +205,7 @@ public class DataController {
 	 * @param object
 	 * @param type
 	 */
-	private static void addTransaction(Object object, TxType type) {
+	private static void addTransaction(Object object, String guid, TxType type) {
 		
 		if (object == null)
 			return;
@@ -209,7 +214,11 @@ public class DataController {
 		
 		if (!object.getClass().equals(BusinessObjectBase.class)) {
 
-			pendingCache.put((key.getName() + ((BusinessObject) object).getExternalId()), object);
+			if (guid == null)
+				guid = ((BusinessObject) object).getExternalId();
+			
+			String keyId = key.getName() + guid;
+			pendingCache.put(keyId, object);
 		}
 		
 		List<Object> list = null;
@@ -393,5 +402,16 @@ public class DataController {
 		} catch (Exception ex) {
 			return null;
 		}
+	}
+	
+	/**
+	 * Removes all shared preferences and resets the database
+	 */
+	public static void deleteAllLocalData() {
+		
+		Preferences.remove(Preferences.KEY_LAST_INSTITUTION_SYNC);
+		Preferences.remove(Preferences.KEY_LAST_SYNC);
+		
+		DatabaseDefaults.resetDatabase();
 	}
 }

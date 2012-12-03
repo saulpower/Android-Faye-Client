@@ -1,12 +1,15 @@
 package com.moneydesktop.finance.handset.activity;
 
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.widget.ViewFlipper;
@@ -16,28 +19,35 @@ import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
+import com.moneydesktop.finance.data.DataController;
+import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.handset.fragment.AccountSummaryFragment;
 import com.moneydesktop.finance.handset.fragment.BudgetSummaryFragment;
+import com.moneydesktop.finance.handset.fragment.LockFragment;
 import com.moneydesktop.finance.handset.fragment.SettingsFragment;
 import com.moneydesktop.finance.handset.fragment.SpendingSummaryFragment;
 import com.moneydesktop.finance.handset.fragment.TransactionSummaryFragment;
 import com.moneydesktop.finance.handset.fragment.TransactionsFragment;
+import com.moneydesktop.finance.model.EventMessage.LogoutEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
+import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.util.DialogUtils;
-
-import de.greenrobot.event.EventBus;
 
 public class DashboardActivity extends BaseActivity {
 	
 	public static final String TAG = "DashboardActivity";
 	
-	FragmentManager fm;
+	private final String KEY_PAGER = "pager";
 	
-	ViewFlipper flipper;
+	private FragmentManager fm;
+	
+	private ViewFlipper flipper;
 
-    MyAdapter mAdapter;
-    ViewPager mPager;
+	private MyAdapter mAdapter;
+	private ViewPager mPager;
+	
+	private boolean loggingOut = false;
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,11 +62,11 @@ public class DashboardActivity extends BaseActivity {
         mPager.setAdapter(mAdapter);
 
         if (savedInstanceState != null) {
-            mPager.setCurrentItem(savedInstanceState.getInt("pager"));
+            mPager.setCurrentItem(savedInstanceState.getInt(KEY_PAGER));
         }
         
         if (SyncEngine.sharedInstance().isSyncing()) {
-        	DialogUtils.showProgress(this, "Syncing Data...");
+        	DialogUtils.showProgress(this, getString(R.string.text_syncing));
         }
 
     	fm = getSupportFragmentManager();
@@ -65,22 +75,8 @@ public class DashboardActivity extends BaseActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("pager", mPager.getCurrentItem());
+        outState.putInt(KEY_PAGER, mPager.getCurrentItem());
     }
-	
-	@Override
-	public void onResume() {
-		super.onResume();
-		
-		EventBus.getDefault().register(this);
-	}
-	
-	@Override
-	public void onPause() {
-		super.onPause();
-		
-        EventBus.getDefault().unregister(this);
-	}
 	
 	@Override
 	public void onBackPressed() {
@@ -107,8 +103,70 @@ public class DashboardActivity extends BaseActivity {
 	 */
 	public void onEvent(SyncEvent event) {
 		
-		if (event.isFinished())
+		if (event.isFinished()) {
+			
 			DialogUtils.hideProgress();
+			
+			if (loggingOut) {
+				
+				logout();
+			}
+		}
+	}
+	
+	public void onEvent(LogoutEvent event) {
+		
+		if (User.getCurrentUser().getCanSync())
+			SyncEngine.sharedInstance().syncIfNeeded();
+		
+		if (SyncEngine.sharedInstance().isSyncing()) {
+			
+			loggingOut = true;
+			DialogUtils.alertDialog(getString(R.string.logout_title), getString(R.string.logout_message), getString(R.string.logout_cancel), this, new OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					DialogUtils.dismissAlert();
+				}
+			});
+			
+		} else {
+			
+			logout();
+		}
+	}
+	
+	private void logout() {
+		
+		loggingOut = false;
+		
+		DialogUtils.showProgress(this, getString(R.string.logging_out));
+		
+		new AsyncTask<Void, Void, Boolean>() {
+    		
+			@Override
+			protected Boolean doInBackground(Void... params) {
+
+				SyncEngine.sharedInstance().endBankStatusTimer();
+				DataController.deleteAllLocalData();
+				User.clear();
+			
+				Preferences.saveBoolean(Preferences.KEY_IS_DEMO_MODE, false);
+
+				return true;
+			}
+    		
+    		@Override
+    		protected void onPostExecute(Boolean result) {
+
+    			DialogUtils.hideProgress();
+    			
+    	    	Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+    	    	startActivity(i);
+    	    	finish();
+    		}
+			
+		}.execute();
 	}
 	
 	private void setupView() {
@@ -139,27 +197,32 @@ public class DashboardActivity extends BaseActivity {
     
     private BaseFragment getFragment(int position) {
 
+    	BaseFragment frag = null;
+    	
         switch (position) {
         case 0:
-        	return SettingsFragment.newInstance(position);
+        	frag = SettingsFragment.newInstance(position);
+        	break;
         case 1:
-        	return SettingsFragment.newInstance(position);
+        	frag = SettingsFragment.newInstance(position);
+        	break;
         case 2:
-        	return SettingsFragment.newInstance(position);
+        	frag = SettingsFragment.newInstance(position);
+        	break;
         case 3:
-        	return TransactionsFragment.newInstance();
+        	frag = TransactionsFragment.newInstance();
+        	break;
         case 4:
-        	return SettingsFragment.newInstance(position);
+        	frag = LockFragment.newInstance();
+        	break;
         }
         
-        return null;
+        return frag;
     }
     
     @Override
     public void configureView(final boolean home) {
 		super.configureView(home);
-    	
-		Log.i(TAG, "flip");
 		
     	if (home) {
     		

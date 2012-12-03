@@ -1,7 +1,10 @@
 package com.moneydesktop.finance;
 
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -19,8 +22,10 @@ import com.moneydesktop.finance.database.DaoSession;
 import com.moneydesktop.finance.database.DatabaseDefaults;
 import com.moneydesktop.finance.database.Institution;
 import com.moneydesktop.finance.exception.CustomExceptionHandler;
+import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.AuthEvent;
 import com.moneydesktop.finance.model.EventMessage.LoginEvent;
+import com.moneydesktop.finance.util.Enums.LockType;
 
 import de.greenrobot.event.EventBus;
 
@@ -39,20 +44,44 @@ public class ApplicationContext extends Application {
     private static DaoSession daoSession;
 	
 	private static WakeLock wl;
+	
+	private static boolean screenOn = true;
+	private BroadcastReceiver screenLock = new BroadcastReceiver() {
 
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			
+			if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+				screenOn = true;
+			}
+			
+			if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+				screenOn = false;
+			}
+			
+			if (intent.getAction().equals(Intent.ACTION_USER_PRESENT) && screenOn && BaseActivity.inForeground) {
+				
+				String code = Preferences.getString(Preferences.KEY_LOCK_CODE, "");
+				if (!code.equals("")) {
+					showLockScreen();
+				}
+			}
+		}
+	};
+	
 	public void onCreate() {
 		super.onCreate();
 		
         Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler());
 
-//        DatabaseDefaults.resetDatabase();
         initializeDatabase();
 		DatabaseDefaults.ensureInstitutionsLoaded();
 		
 		EventBus.getDefault().register(this);
 		
         getObjectMapper();
-        
+
+    	registerScreenLock();
 		acquireWakeLock();
 	}
 	
@@ -65,6 +94,7 @@ public class ApplicationContext extends Application {
 		Log.i(TAG, "Savig BusinessObjectBase ID count");
 		Preferences.saveLong(Preferences.KEY_BOB_ID, BusinessObjectBase.getIdCount());
 		
+		unregisterReceiver(screenLock);
 		releaseWakeLock();
 	}
 	
@@ -74,6 +104,19 @@ public class ApplicationContext extends Application {
         db = helper.getWritableDatabase();
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
+	}
+	
+	private void registerScreenLock() {
+
+        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction(Intent.ACTION_USER_PRESENT);
+    	registerReceiver(screenLock, filter);
+	}
+	
+	private void showLockScreen() {
+		
+		EventBus.getDefault().post(new EventMessage().new LockEvent(LockType.LOCK));
 	}
 	
 	/*********************************************************************************

@@ -6,8 +6,6 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import android.util.Log;
-
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.database.CategoryDao.Properties;
@@ -157,12 +155,20 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 	
 	public BusinessObject insertBatch() {
 		
+		return insertBatch(null);
+	}
+	
+	public BusinessObject insertBatch(String guid) {
+		
 		BusinessObjectBase bob = addBusinessObjectBase();
 		
-		if (bob != null)
-			bob.insertBatch();
+		if (guid == null)
+			guid = getExternalId();
 		
-		DataController.insert(this);
+		if (bob != null)
+			bob.insertBatch(guid);
+		
+		DataController.insert(this, guid);
 		
 		return this;
 	}
@@ -233,7 +239,7 @@ public abstract class BusinessObject implements BusinessObjectInterface {
     		
     		inserting = true;
     		object = DatabaseObjectFactory.createInstance(key, guid);
-    		object.insertBatch();
+    		object.insertBatch(guid);
     		object.setExternalId(guid);
     	}
     	
@@ -275,9 +281,6 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 
         if (object == null)
         	object = getQuery(key, id).unique();
-
-        if (object == null)
-        	Log.i(TAG, "Could not get " + key.getCanonicalName() + " - " + guid);
         
     	return object;
     }

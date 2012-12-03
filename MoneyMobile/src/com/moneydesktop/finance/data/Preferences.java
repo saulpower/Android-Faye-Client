@@ -21,6 +21,7 @@ public class Preferences {
 	public static final String KEY_IS_DEMO_MODE = "md_is_demo_mode";
 	public static final String KEY_LAST_INSTITUTION_SYNC = "md_last_institution_sync";
 	public static final String KEY_LAST_SYNC = "md_last_sync";
+	public static final String KEY_LOCK_CODE = "md_lock_code";
 	public static final String KEY_SYNC_HOST = "md_sync_host";
 	public static final String KEY_USER = "md_user";
 	public static final String KEY_NEEDS_SYNC = "md_needs_sync";
@@ -36,6 +37,15 @@ public class Preferences {
 			return null;
 		
 		return PreferenceManager.getDefaultSharedPreferences(context);
+	}
+	
+	public static boolean remove(String key) {
+
+		SharedPreferences prefs = getPrefs();
+		Editor edit = prefs.edit();
+		edit.remove(key);
+		
+		return edit.commit();
 	}
 
 	public static boolean saveString(String key, String value) {

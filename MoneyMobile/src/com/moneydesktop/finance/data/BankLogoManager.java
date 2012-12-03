@@ -15,7 +15,7 @@ public class BankLogoManager {
 	
 	public static void getBankImage(final ImageView view, String guid) {
 		
-		if (checkForPackagedImage(view, guid))
+		if (guid == null || guid.equals("") || checkForPackagedImage(view, guid))
 			return;
 		
 		new AsyncTask<String, Void, String>() {

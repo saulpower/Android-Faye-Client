@@ -2,19 +2,22 @@
 <ScrollView 
    	xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fadingEdge="none"
+    android:background="@color/gray0">
 
 	<LinearLayout
+	    android:id="@+id/root"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:orientation="vertical"
-	    android:background="@color/gray0" >
+	    android:orientation="vertical" >
 	    
 	    <RelativeLayout 
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:padding="@dimen/transaction_padding"
-			android:gravity="center_vertical" >
+			style="@style/transaction_cell"
+			android:paddingTop="8dp"
+			android:paddingBottom="8dp" >
 	        
 	        <ImageView
 	            android:id="@+id/bank_image"
@@ -50,6 +53,7 @@
 	    </RelativeLayout>
 		    
 	    <View
+	        android:tag="dotted"
 	        android:layout_width="match_parent"
 	        android:layout_height="2dp"
 	        android:background="@drawable/dotted_line_long" />
@@ -57,8 +61,7 @@
 	    <RelativeLayout 
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:padding="@dimen/transaction_padding"
-			android:gravity="center_vertical" >
+			style="@style/transaction_cell" >
 	        
 	        <TextView
 	            android:id="@+id/payee"
@@ -79,6 +82,7 @@
 	    </RelativeLayout>
 		    
 	    <View
+	        android:tag="dotted"
 	        android:layout_width="match_parent"
 	        android:layout_height="2dp"
 	        android:background="@drawable/dotted_line_long" />
@@ -86,8 +90,7 @@
 	    <RelativeLayout 
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:padding="@dimen/transaction_padding"
-			android:gravity="center_vertical" >
+			style="@style/transaction_cell" >
 	        
 	        <TextView
 	            android:id="@+id/amount_label"
@@ -109,6 +112,7 @@
 	    </RelativeLayout>
 		    
 	    <View
+	        android:tag="dotted"
 	        android:layout_width="match_parent"
 	        android:layout_height="2dp"
 	        android:background="@drawable/dotted_line_long" />
@@ -116,8 +120,7 @@
 	    <RelativeLayout 
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:padding="@dimen/transaction_padding"
-			android:gravity="center_vertical" >
+			style="@style/transaction_cell" >
 	        
 	        <TextView
 	            android:id="@+id/date_label"
@@ -138,6 +141,7 @@
 	    </RelativeLayout>
 		    
 	    <View
+	        android:tag="dotted"
 	        android:layout_width="match_parent"
 	        android:layout_height="2dp"
 	        android:background="@drawable/dotted_line_long" />
@@ -145,8 +149,7 @@
 	    <RelativeLayout 
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:padding="@dimen/transaction_padding"
-			android:gravity="center_vertical" >
+			style="@style/transaction_cell" >
 	        
 	        <TextView
 	            android:id="@+id/category"
@@ -166,6 +169,7 @@
 	    </RelativeLayout>
 		    
 	    <View
+	        android:tag="dotted"
 	        android:layout_width="match_parent"
 	        android:layout_height="2dp"
 	        android:background="@drawable/dotted_line_long" />
@@ -173,8 +177,7 @@
 	    <RelativeLayout 
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:padding="@dimen/transaction_padding"
-			android:gravity="center_vertical" >
+			style="@style/transaction_cell" >
 	        
 	        <TextView
 	            android:id="@+id/tags_label"
@@ -194,6 +197,7 @@
 	    </RelativeLayout>
 		    
 	    <View
+	        android:tag="dotted"
 	        android:layout_width="match_parent"
 	        android:layout_height="2dp"
 	        android:background="@drawable/dotted_line_long" />
@@ -201,8 +205,7 @@
 	    <RelativeLayout 
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:padding="@dimen/transaction_padding"
-			android:gravity="center_vertical" >
+			style="@style/transaction_cell" >
 	        
 	        <TextView
 	            android:id="@+id/markers_label"
@@ -255,6 +258,7 @@
 	    </RelativeLayout>
 		    
 	    <View
+	        android:tag="dotted"
 	        android:layout_width="match_parent"
 	        android:layout_height="2dp"
 	        android:background="@drawable/dotted_line_long" />
@@ -262,8 +266,7 @@
 	    <RelativeLayout 
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:padding="@dimen/transaction_padding"
-			android:gravity="center_vertical" >
+			style="@style/transaction_cell" >
 	        
 	        <TextView
 	            android:id="@+id/memo_label"
@@ -284,6 +287,7 @@
 	    </RelativeLayout>
 		    
 	    <View
+	        android:tag="dotted"
 	        android:layout_width="match_parent"
 	        android:layout_height="2dp"
 	        android:background="@drawable/dotted_line_long" />
@@ -291,8 +295,7 @@
 	    <RelativeLayout 
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:padding="@dimen/transaction_padding"
-			android:gravity="center_vertical" >
+			style="@style/transaction_cell" >
 	        
 	        <TextView
 	            android:id="@+id/stmt_label"
@@ -308,7 +311,6 @@
 	            android:layout_height="wrap_content"
 	            android:layout_below="@id/stmt_label"
 	            style="@style/transaction_field"
-	            android:textSize="12sp"
 	            android:inputType="textCapCharacters" />
 	        
 	    </RelativeLayout>
