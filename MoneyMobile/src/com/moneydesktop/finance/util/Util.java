@@ -28,9 +28,9 @@ public class Util {
 		return list;
 	}
 	
-    public static String customFormat(String pattern, double s) { 
+    public static String customFormat(String pattern, double d) { 
         DecimalFormat myFormatter = new DecimalFormat(pattern); 
-        String stringformatoutput = myFormatter.format(s); 
+        String stringformatoutput = myFormatter.format(d); 
         return stringformatoutput; 
      } 
 }

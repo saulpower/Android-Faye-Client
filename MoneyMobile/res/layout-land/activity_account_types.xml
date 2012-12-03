@@ -4,24 +4,23 @@
                 xmlns:moneydesktop="http://schemas.android.com/apk/res/com.moneydesktop.finance"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background="@drawable/wooddark">
-                
-    <include layout="@layout/title_bar" android:id="@+id/accounts_title_bar"/>
+                android:background="@drawable/wooddark">                
  
     <ExpandableListView android:layout_height="fill_parent"
                     android:layout_width="fill_parent"
                     android:id="@+id/accounts_expandable_list_view"
                     android:layout_marginTop="40dip"
+                    android:cacheColorHint="#00000000"
                     />
 
     <com.moneydesktop.finance.views.SlidingDrawerRightSide
-                   android:layout_height="fill_parent"
-                   android:layout_width="wrap_content"
+                   android:layout_height="1dip"
+                   android:layout_width="1dip"
                    android:id="@+id/account_slider"
                    moneydesktop:orientation="horizontal"
                    android:layout_alignParentRight="true"
                    moneydesktop:content="@+id/panel_frame"
-                   android:layout_below="@id/accounts_title_bar"
+                   android:layout_marginTop="40dip"
                    moneydesktop:handle="@+id/account_handle">
 
         <ImageView android:layout_width="wrap_content"
@@ -34,16 +33,18 @@
         <RelativeLayout android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
                         android:gravity="right"
-                        android:id="@+id/panel_frame">
+                        android:id="@+id/panel_frame"
+                        android:background="@drawable/tablet_vertical_tray_background">
 
-              <LinearLayout android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
+              <LinearLayout android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
                             android:gravity="right"
+                            
                             android:layout_alignParentBottom="true"
                             android:layout_alignParentRight="true"
-                            android:background="@drawable/tablet_vertical_tray_background"
                             android:id="@+id/panel_layout">
 
+                      
                   <LinearLayout android:layout_height="fill_parent"
                                android:layout_width="fill_parent"
                                android:orientation="vertical"

@@ -77,6 +77,7 @@
     <string name="status_description_7">This bank needs to be refreshed to get the most up to date data. Please refresh this bank.</string>
     <string name="text_login">How do I set up my mobile account?</string>
     <string name="text_signup">Need an account?</string>
+    <string name="panel_title">MY INSTITUTIONS</string>
     <string name="title_activity_accounts">Accounts</string>
     <string name="title_activity_budget">Budgets</string>
     <string name="title_activity_dashboard">Dashboard</string>

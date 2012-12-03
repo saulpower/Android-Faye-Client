@@ -32,6 +32,11 @@ public class UiUtils {
         double ratio = getDensityRatio(activity);
         return Math.max(Math.min(getScreenWidth(activity), getScreenHeight(activity)) / 5, (int)(170 * ratio));
     }
+    
+    public static int getMinimumPanalHeight (final Activity activity) {
+        //double ratio = getDensityRatio(activity);
+        return getScreenHeight(activity);//Math.max(Math.min(getScreenHeight(activity), getScreenWidth(activity)) / 5, (int)(170 * ratio));
+    }
 
     public static float getDensityRatio (final Activity context) {
         final DisplayMetrics metrics = new DisplayMetrics();

@@ -2,12 +2,15 @@ package com.moneydesktop.finance.views;
 
 
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.tablet.activity.AccountSummaryTabletActivity;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
+import com.moneydesktop.finance.tablet.fragment.AccountSummaryTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -49,7 +52,7 @@ public class CircleNavView extends RelativeLayout {
     private Button mReportsNav;
     private boolean mIsAnimating = false;
     
-    
+
     public CircleNavView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
@@ -74,13 +77,14 @@ public class CircleNavView extends RelativeLayout {
          
          mAccountTypesNav.setOnClickListener(new OnClickListener() {	 		
 			public void onClick(View v) {
-				animatePointerToDegreesThenClick(ACCOUNTS, AccountSummaryTabletActivity.class);
+				//animatePointerToDegreesThenClick(ACCOUNTS, AccountSummaryTabletActivity.class);
+				animatePointerToDegreesThenClick(ACCOUNTS, new AccountTypesTabletFragment());
 			}
 	  	 });
          
          mDashboardNav.setOnClickListener(new OnClickListener() {			
 			public void onClick(View v) {		
-				animatePointerToDegreesThenClick(DASHBOARD, DashboardTabletActivity.class);
+				animatePointerToDegreesThenClick(DASHBOARD, new AccountSummaryTabletFragment());
 			}
 		});
                   
@@ -286,7 +290,7 @@ public class CircleNavView extends RelativeLayout {
         mOldAngle = mNewAngle;
     }
     
-    private void animatePointerToDegreesThenClick (final int rotationDegrees, final Object object) {
+    private void animatePointerToDegreesThenClick (final int rotationDegrees, final Object fragment) {
         mNewAngle =  rotationDegrees;
 
         RotateAnimation a = new RotateAnimation(mOldAngle, mNewAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -303,13 +307,17 @@ public class CircleNavView extends RelativeLayout {
 			
 			public void onAnimationEnd(Animation animation) {
 				
-				if (mContext.getClass() == object) {
-					((Activity)mContext).onBackPressed();
-				} else {
-					Intent intent = new Intent(mContext, (Class)object);
-					mContext.startActivity(intent);
-					((Activity) mContext).finish();
-				}
+				((DashboardTabletActivity)mContext).showFragment(1); //This needs to be looked at....don't think I'm doing this right.
+				((DashboardTabletActivity)mContext).mCircleNav.setVisibility(View.GONE);
+				
+				
+//				if (mContext.getClass() == object) {
+//					((Activity)mContext).onBackPressed();
+//				} else {
+//					Intent intent = new Intent(mContext, (Class)object);
+//					mContext.startActivity(intent);
+//					((Activity) mContext).finish();
+//				}
 			
 			}
 		});
