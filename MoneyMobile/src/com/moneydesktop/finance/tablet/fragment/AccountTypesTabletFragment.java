@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -12,7 +13,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.moneydesktop.finance.ApplicationContext;
@@ -28,9 +32,9 @@ import com.moneydesktop.finance.views.SlidingDrawerRightSide;
 public class AccountTypesTabletFragment extends BaseTabletFragment {
     private ExpandableListView mExpandableListView;
     private static SlidingDrawerRightSide mRightDrawer;
+    private View mFooter;
 	
-	public static AccountTypesTabletFragment newInstance(int position) {
-		
+	public static AccountTypesTabletFragment newInstance(int position) {	
 		AccountTypesTabletFragment frag = new AccountTypesTabletFragment();
 		frag.setPosition(position);
 		
@@ -45,6 +49,7 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
 		root = inflater.inflate(R.layout.activity_account_types, null);
+		mFooter = inflater.inflate(R.layout.account_type_list_footer, null);
 		mExpandableListView = (ExpandableListView)root.findViewById(R.id.accounts_expandable_list_view);
 		mRightDrawer = (SlidingDrawerRightSide)root.findViewById(R.id.account_slider);
 		setupView();
@@ -59,14 +64,14 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
         List<AccountType> accountTypes = ApplicationContext.getDaoSession().getAccountTypeDao().loadAll();
         List<AccountType> accountTypesFiltered = new ArrayList<AccountType>();
         
-        
         for (AccountType type : accountTypes) {  //This could possibly be optimized by throwing a "where" in the query builder
         	if (!type.getBankAccounts().isEmpty()) {
         		accountTypesFiltered.add(type);
         	}
         }
         
-        if (!accountTypesFiltered.isEmpty()) {
+        if (!accountTypesFiltered.isEmpty()) {        	
+        	mExpandableListView.addFooterView(mFooter);
         	mExpandableListView.setAdapter(new AccountTypesAdapter(accountTypesFiltered, activity, mExpandableListView));
         } else {
         	Toast.makeText(activity, "No Accounts types that have bank accounts...show empty state", Toast.LENGTH_SHORT).show();
@@ -99,15 +104,11 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
 		List<Bank> banksList = ApplicationContext.getDaoSession().getBankDao().loadAll();
     	
     	panelLayoutHolder.addView(getPanelHeader());
-    	
 
-    	
-    	//TODO: change this so that it doesn't add ACCOUNT, but instead, BANKS
-        //For every bank account that is attached, add it to the Drawer
-        for (Bank banks : banksList) {
-            //create the view to be attached
-            //add it to the Drawer
-        	panelLayoutHolder.addView(populateDrawerView(banks));
+        //For every bank that is attached, add it to the Drawer
+        for (Bank bank : banksList) {
+            //create the view to be attached to Drawer
+        	panelLayoutHolder.addView(populateDrawerView(bank));
         }
     }
 
@@ -117,14 +118,15 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
 		return headerView;
 	}
 
-	private View populateDrawerView (final Bank banks) {
+	private View populateDrawerView (final Bank bank) {
         LayoutInflater layoutInflater = activity.getLayoutInflater();
         final View bankTypeAccountView = layoutInflater.inflate(R.layout.bank_account, null);
-
-        //ImageView bankImage = (ImageView) bankAccountView.findViewById(R.id.bank_account_image);
-
-        //set the bank image here...
-        //bankImage.setBackgroundDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bankbook));
+        ImageView bankImage = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_image);
+        TextView bankName = (TextView)bankTypeAccountView.findViewById(R.id.account_bank_name);
+        String logoid = bank.getLogoId();
+        
+       // bankImage.setBackgroundResource(R.drawable.bank1);
+        bankName.setText(bank.getBankName());
 
         return bankTypeAccountView;
     }

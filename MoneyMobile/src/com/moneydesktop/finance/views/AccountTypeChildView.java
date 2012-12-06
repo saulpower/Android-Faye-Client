@@ -47,9 +47,8 @@ public class AccountTypeChildView extends FrameLayout {
         	accountSum.setText(account.getBalance() == null ? "" : formatter.format(account.getBalance()));
         	
         	
-        	accountName.setOnClickListener(new OnClickListener() {
+        	view.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					Toast.makeText(mContext, "Account " + accountName.getText() + " was clicked!", Toast.LENGTH_SHORT).show();
 					
 					List<OnClickListener> onClickListeners = new ArrayList<View.OnClickListener>();
 					
@@ -74,7 +73,6 @@ public class AccountTypeChildView extends FrameLayout {
 						}
 					});
 					
-					
 					onClickListeners.add(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
@@ -91,7 +89,7 @@ public class AccountTypeChildView extends FrameLayout {
 					
 					RelativeLayout parentView = (RelativeLayout)((Activity)mContext).findViewById(R.id.account_types_container);
 					
-					new PopupWindowAtLocation(mContext, parentView, (int)view.getLeft() + view.getWidth(), (int)mChildView.getTop() + 40, 
+					new PopupWindowAtLocation(mContext, parentView, (int)view.getLeft() + view.getWidth(), (int)mChildView.getTop() + 50, //TODO: change this 50 value to the actual height of the title nav bar. I can't get its height until it has already been inflated and onMeasured has been called. 
 							mContext.getResources().getStringArray(R.array.account_selection_popup), onClickListeners);
 					
 				}

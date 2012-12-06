@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.R.drawable;
 import com.moneydesktop.finance.data.Constant;
 
 public class UiUtils {
@@ -81,11 +83,5 @@ public class UiUtils {
     public static float getDynamicPixels(Context context, float pixels) {
     	return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixels, context.getResources().getDisplayMetrics());
     }
-
-	public static String customFormat(String pattern, Double d) {
-        DecimalFormat myFormatter = new DecimalFormat(pattern); 
-        String stringformatoutput = myFormatter.format(d); 
-        return stringformatoutput; 
-	}
 
 }
