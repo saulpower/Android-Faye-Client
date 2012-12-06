@@ -102,8 +102,10 @@ public class LockCodeView extends RelativeLayout {
 		@Override
 		public void onFocusChange(View v, boolean hasFocus) {
 			
-			if (hasFocus)
+			if (hasFocus) {
 				((EditText) v).setText("");
+				currentField = (EditText) v;
+			}
 		}
 	};
     

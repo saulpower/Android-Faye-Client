@@ -53,7 +53,7 @@ abstract public class BaseActivity extends FragmentActivity {
         final WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         windowManager.getDefaultDisplay().getMetrics(metrics);
 
-        return getDeviceDisplaySize(context, metrics) == DEVICE_DISPLAY_SIZE_TABLET;
+        return getDeviceDisplaySize(context, metrics) == DEVICE_DISPLAY_SIZE_TABLET && android.os.Build.VERSION.SDK_INT >= 11;
     }
 
     @SuppressLint("FloatMath")
@@ -129,25 +129,6 @@ abstract public class BaseActivity extends FragmentActivity {
 	private void setupAnimations() {
 		pushDown = AnimationUtils.loadAnimation(this, R.anim.in_down);
 		pushUp = AnimationUtils.loadAnimation(this, R.anim.out_up);
-	}
-
-    /**
-     * Returns the width and height measurement in pixels.
-     * 
-     * @return
-     */
-	public float[] getScreenMeasurements() {
-		
-		float[] values = new float[2];
-		
-        final DisplayMetrics metrics = new DisplayMetrics();
-        final WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        windowManager.getDefaultDisplay().getMetrics(metrics);
-        
-        values[0] = metrics.widthPixels;
-        values[1] = metrics.heightPixels;
-        
-        return values;
 	}
 	
 	/**

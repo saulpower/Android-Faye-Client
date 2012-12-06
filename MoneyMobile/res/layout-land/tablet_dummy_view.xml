@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center|top" >
+    
+    <RelativeLayout 
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true" >
+        
+	    <TextView
+	        android:id="@+id/title"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="5dp"
+	        android:gravity="center"
+	        android:textStyle="bold"
+	        android:textSize="48sp"
+	        android:textColor="@color/white"
+	        android:text="@string/title_activity_spending" />
+	    
+	    <RelativeLayout 
+	        android:id="@+id/cover"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:background="@color/white" >
+	    
+			<ImageView 
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_alignParentTop="true"
+		        android:layout_alignParentLeft="true"
+		        android:layout_marginLeft="45dp"
+		        android:layout_marginTop="20dp"
+			    android:src="@drawable/ipad_dashboard_rightarrow"
+			    android:contentDescription="@string/description" />
+	    
+			<ImageView 
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_alignParentTop="true"
+		        android:layout_alignParentRight="true"
+		        android:layout_marginRight="45dp"
+		        android:layout_marginTop="20dp"
+			    android:src="@drawable/ipad_dashboard_leftarrow"
+			    android:contentDescription="@string/description" />
+        
+		    <com.moneydesktop.finance.views.VerticalTextView
+		        android:id="@+id/title_left"
+		        android:layout_width="wrap_content"
+		        android:layout_height="match_parent"
+		        android:layout_alignParentTop="true"
+		        android:layout_alignParentLeft="true"
+		        android:paddingRight="15dp"
+		        android:paddingTop="15dp"
+		        android:paddingBottom="35dp"
+		        android:gravity="bottom|right"
+		        android:textSize="20sp"
+		        android:textColor="@color/gray3" />
+        
+		    <com.moneydesktop.finance.views.VerticalTextView
+		        android:id="@+id/title_right"
+		        android:layout_width="wrap_content"
+		        android:layout_height="match_parent"
+		        android:layout_alignParentTop="true"
+		        android:layout_alignParentRight="true"
+		        android:paddingLeft="15dp"
+		        android:paddingBottom="40dp"
+		        android:paddingTop="15dp"
+		        android:gravity="center_vertical"
+		        android:textSize="20sp"
+		        android:textColor="@color/gray3" />
+	        
+	    </RelativeLayout>
+        
+    </RelativeLayout>
+
+</RelativeLayout> 

@@ -10,6 +10,7 @@
     
     <declare-styleable name="Caret">
         <attr name="color" format="color" />
+        <attr name="secondaryColor" format="color" />
         <attr name="width" format="dimension" />
         <attr name="height" format="dimension" />
     </declare-styleable>

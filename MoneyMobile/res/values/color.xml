@@ -28,7 +28,7 @@
     <color name="light_blue">#00ACED</color>
     <color name="primaryColor">#00ACED</color>
     <color name="transparent">#00000000</color>
-    <color name="transparent50percent">#50000000</color>
+    <color name="transparent50percent">#BF000000</color>
     
     <color name="random1">#91b266</color>
     <color name="random2">#eee58a</color>

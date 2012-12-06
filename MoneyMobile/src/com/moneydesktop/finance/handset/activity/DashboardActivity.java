@@ -1,6 +1,10 @@
 package com.moneydesktop.finance.handset.activity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.animation.Animation;
@@ -12,8 +16,12 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.FragmentAdapter;
 import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
+import com.moneydesktop.finance.handset.fragment.AccountSummaryFragment;
+import com.moneydesktop.finance.handset.fragment.BudgetSummaryFragment;
 import com.moneydesktop.finance.handset.fragment.LockFragment;
 import com.moneydesktop.finance.handset.fragment.SettingsFragment;
+import com.moneydesktop.finance.handset.fragment.SpendingSummaryFragment;
+import com.moneydesktop.finance.handset.fragment.TransactionSummaryFragment;
 import com.moneydesktop.finance.handset.fragment.TransactionsFragment;
 import com.moneydesktop.finance.shared.Dashboard;
 
@@ -34,7 +42,7 @@ public class DashboardActivity extends Dashboard {
         
         setupView();
         mPager.setPageMargin(20);
-        mAdapter = new FragmentAdapter(fm);
+        mAdapter = new FragmentAdapter(fm, getFragments());
         mPager.setAdapter(mAdapter);
 
         if (savedInstanceState != null) {
@@ -71,6 +79,19 @@ public class DashboardActivity extends Dashboard {
 		
 		if (fragmentCount == 1)
 			configureView(false);
+	}
+	
+	private List<Fragment> getFragments() {
+
+    	List<Fragment> fragments = new ArrayList<Fragment>();
+    	
+    	fragments.add(AccountSummaryFragment.newInstance(0));
+    	fragments.add(SpendingSummaryFragment.newInstance(1));
+    	fragments.add(BudgetSummaryFragment.newInstance(2));
+    	fragments.add(TransactionSummaryFragment.newInstance(3));
+    	fragments.add(SettingsFragment.newInstance(4));
+    	
+    	return fragments;
 	}
   	
     public void showFragment(int position) {
