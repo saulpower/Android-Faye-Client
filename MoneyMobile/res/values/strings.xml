@@ -1,4 +1,11 @@
 <resources>
+    <string-array name="account_selection_popup">
+        <item>VIEW ALL TXNS</item>
+        <item>VIEW UNCLEARED TXNS</item>
+        <item>EDIT SETTINGS</item>
+        <item>SHOW/HIDE DATA</item>
+        <item>DELETE THIS ACCOUNT</item>
+    </string-array>    
     <string name="account_types_title">Accounts</string>
     <string name="account_types_indicator_show">Show</string>
     <string name="account_types_indicator_hide">Hide</string>
