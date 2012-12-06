@@ -4,6 +4,7 @@
                 xmlns:moneydesktop="http://schemas.android.com/apk/res/com.moneydesktop.finance"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
+                android:id="@+id/account_types_container"
                 android:background="@drawable/wooddark">                
  
     <ExpandableListView android:layout_height="fill_parent"
