@@ -102,7 +102,7 @@ public class LockCodeActivity extends BaseActivity implements ProcessCodeListene
 		
 		// The container prevents the user from selecting
 		// the text fields manually
-		container = (LinearLayout) findViewById(R.id.container);
+		container = (LinearLayout) findViewById(R.id.block_container);
 		container.setOnTouchListener(new OnTouchListener() {
 			
 			@Override
@@ -111,6 +111,14 @@ public class LockCodeActivity extends BaseActivity implements ProcessCodeListene
 				currentLockCode.showKeyboard();
 				
 				return true;
+			}
+		});
+		container.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+
+				currentLockCode.showKeyboard();
 			}
 		});
 	}

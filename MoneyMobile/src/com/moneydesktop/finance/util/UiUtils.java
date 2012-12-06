@@ -9,6 +9,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -48,6 +49,24 @@ public class UiUtils {
         return (metrics.densityDpi / Constant.STANDARD_DPI);
     }
 
+    /**
+     * Returns the width and height measurement in pixels.
+     * 
+     * @return
+     */
+	public static float[] getScreenMeasurements(Context context) {
+		
+		float[] values = new float[2];
+		
+        final DisplayMetrics metrics = new DisplayMetrics();
+        final WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getMetrics(metrics);
+        
+        values[0] = metrics.widthPixels;
+        values[1] = metrics.heightPixels;
+        
+        return values;
+	}
     
     public static void setupTitleBar(Activity activity, String titleName, String userEmail, 
     		boolean displayIcon1To3,

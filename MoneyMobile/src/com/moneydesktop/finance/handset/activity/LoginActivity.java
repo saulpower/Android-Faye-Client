@@ -32,6 +32,7 @@ import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.util.Animator;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.util.UiUtils;
 
 import de.greenrobot.event.EventBus;
 
@@ -390,7 +391,7 @@ public class LoginActivity extends BaseActivity {
 	
 	private void toggleAnimations(boolean reset) {
 		
-		int offset = (int) (.20 * getScreenMeasurements()[1]) * (reset ? -1 : 1);
+		int offset = (int) (.20 * UiUtils.getScreenMeasurements(this)[1]) * (reset ? -1 : 1);
 		long duration = 750;
 		long delay = reset ? 250 : 0;
 		

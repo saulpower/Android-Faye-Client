@@ -10,6 +10,10 @@ public class Enums {
 		CHANGE, LOCK, NEW
 	}
 	
+	public enum NavDirection {
+		NEXT, PREVIOUS
+	}
+	
 	public enum DataState {
 		
 		DATA_STATE_UNCHANGED (0),

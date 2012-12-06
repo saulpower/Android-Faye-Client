@@ -3,6 +3,7 @@ package com.moneydesktop.finance.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,17 +16,30 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.tablet.fragment.AccountSummaryTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
+import com.moneydesktop.finance.util.Enums.NavDirection;
+
+import de.greenrobot.event.EventBus;
 
 public class CircleNavView extends RelativeLayout {
+	
+	public final String TAG = this.getClass().getSimpleName();
     
     private static int DASHBOARD = 0;
-	private static int ACCOUNTS = 270;
-	private static int SETTINGS = 90;
-	private static int REPORTS = 180;
+	private static int ACCOUNTS = 1;
+	private static int SETTINGS = 3;
+	private static int REPORTS = 2;
 	private static int ROTATE_BY = 90;
+	
+	private static int[] NAVIGATION_ORDER = new int[] {
+		0, 
+		270, 
+		180,
+		90
+	};
 
     private View.OnTouchListener touchListenerForContainer;
     private View.OnTouchListener touchListenerForAccountsNavButton;
@@ -48,6 +62,7 @@ public class CircleNavView extends RelativeLayout {
     private Button mReportsNav;
     private boolean mIsAnimating = false;
     
+    private int mCurrentPosition = 0;
 
     public CircleNavView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -62,6 +77,8 @@ public class CircleNavView extends RelativeLayout {
         mReportsNav = (Button) mNavView.findViewById(R.id.nav_reports);
         
         populateView();
+        
+        EventBus.getDefault().register(this);
     }
 
 	private void populateView () {    	
@@ -74,13 +91,13 @@ public class CircleNavView extends RelativeLayout {
          mAccountTypesNav.setOnClickListener(new OnClickListener() {	 		
 			public void onClick(View v) {
 				//animatePointerToDegreesThenClick(ACCOUNTS, AccountSummaryTabletActivity.class);
-				animatePointerToDegreesThenClick(ACCOUNTS, new AccountTypesTabletFragment());
+				animatePointerToPositionThenClick(ACCOUNTS, new AccountTypesTabletFragment());
 			}
 	  	 });
          
          mDashboardNav.setOnClickListener(new OnClickListener() {			
 			public void onClick(View v) {		
-				animatePointerToDegreesThenClick(DASHBOARD, new AccountSummaryTabletFragment());
+				animatePointerToPositionThenClick(DASHBOARD, new AccountSummaryTabletFragment());
 			}
 		});
                   
@@ -103,19 +120,19 @@ public class CircleNavView extends RelativeLayout {
             		 if ((mStartingXPosition < mDeviceWidth/3) 
             				 && (mStartingYPosition > mDeviceHeight/3)
             				 && (mStartingYPosition < mDeviceHeight - (mDeviceHeight/4))) {
-            			 animatePointerToDegrees(ACCOUNTS);
+            			 animatePointerToPosition(ACCOUNTS);
             		 } else if ((mStartingXPosition > mDeviceWidth/4) 
             				 && (mStartingXPosition < mDeviceWidth - (mDeviceWidth/3)) 
             				 && (mStartingYPosition < mDeviceHeight/3)) {
-            			 animatePointerToDegrees(DASHBOARD);
+            			 animatePointerToPosition(DASHBOARD);
             		 } else if ((mStartingXPosition > mDeviceWidth - (mDeviceWidth/3))
             				 && (mStartingYPosition < mDeviceHeight - (mDeviceHeight/4))
             				 && (mStartingYPosition > mDeviceHeight/3)) {
-            			 animatePointerToDegrees(SETTINGS);
+            			 animatePointerToPosition(SETTINGS);
             		 } else if ((mStartingXPosition > mDeviceWidth/4)
             				 && (mStartingXPosition < mDeviceWidth - (mDeviceWidth/4))
             				 && (mStartingYPosition > mDeviceHeight - (mDeviceHeight/3))) {
-            			 animatePointerToDegrees(REPORTS);
+            			 animatePointerToPosition(REPORTS);
             		 }
                      
                      break;
@@ -130,19 +147,19 @@ public class CircleNavView extends RelativeLayout {
                 		 if ((mStartingXPosition < mDeviceWidth/3) 
                 				 && (mStartingYPosition > mDeviceHeight/3)
                 				 && (mStartingYPosition < mDeviceHeight - (mDeviceHeight/4))) {
-                			 animatePointerToDegrees(ACCOUNTS);
+                			 animatePointerToPosition(ACCOUNTS);
                 		 } else if ((mStartingXPosition > mDeviceWidth/4) 
                 				 && (mStartingXPosition < mDeviceWidth - (mDeviceWidth/3)) 
                 				 && (mStartingYPosition < mDeviceHeight/3)) {
-                			 animatePointerToDegrees(DASHBOARD);
+                			 animatePointerToPosition(DASHBOARD);
                 		 } else if ((mStartingXPosition > mDeviceWidth - (mDeviceWidth/3))
                 				 && (mStartingYPosition < mDeviceHeight - (mDeviceHeight/4))
                 				 && (mStartingYPosition > mDeviceHeight/3)) {
-                			 animatePointerToDegrees(SETTINGS);
+                			 animatePointerToPosition(SETTINGS);
                 		 } else if ((mStartingXPosition > mDeviceWidth/4)
                 				 && (mStartingXPosition < mDeviceWidth - (mDeviceWidth/4))
                 				 && (mStartingYPosition > mDeviceHeight - (mDeviceHeight/3))) {
-                			 animatePointerToDegrees(REPORTS);
+                			 animatePointerToPosition(REPORTS);
                 		 }
                 	 }
                 	 
@@ -170,7 +187,7 @@ public class CircleNavView extends RelativeLayout {
  			public boolean onTouch(View v, MotionEvent event) {
                  if (event.getAction() == MotionEvent.ACTION_DOWN)
                  {
-                    animatePointerToDegrees(ACCOUNTS);
+                    animatePointerToPosition(ACCOUNTS);
                  }
                  return false;
  			}
@@ -180,7 +197,7 @@ public class CircleNavView extends RelativeLayout {
  			public boolean onTouch(View v, MotionEvent event) {
                  if (event.getAction() == MotionEvent.ACTION_DOWN)
                  {
-                    animatePointerToDegrees(DASHBOARD);
+                    animatePointerToPosition(DASHBOARD);
                  }
                  return false;
  			}
@@ -190,7 +207,7 @@ public class CircleNavView extends RelativeLayout {
  			public boolean onTouch(View v, MotionEvent event) {
                  if (event.getAction() == MotionEvent.ACTION_DOWN)
                  {
-                    animatePointerToDegrees(REPORTS);
+                    animatePointerToPosition(REPORTS);
                  }
                  return false;
  			}
@@ -200,7 +217,7 @@ public class CircleNavView extends RelativeLayout {
  			public boolean onTouch(View v, MotionEvent event) {
                  if (event.getAction() == MotionEvent.ACTION_DOWN)
                  {
-                    animatePointerToDegrees(SETTINGS);
+                    animatePointerToPosition(SETTINGS);
                  }
                  return false;
  			}
@@ -212,7 +229,7 @@ public class CircleNavView extends RelativeLayout {
 
  			public void onClick(View v) {
  				if (!mIsBeingDragged) {
- 					mNavView.setVisibility(View.GONE);
+ 					hideNavigation();
                  }
  			}
          });
@@ -224,48 +241,83 @@ public class CircleNavView extends RelativeLayout {
 
     }
     
+//	private void animatePointerByDegrees (int rotationDegrees) {
+//        mNewAngle = mOldAngle - rotationDegrees;
+//
+//        RotateAnimation a = new RotateAnimation(mOldAngle, mNewAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+//        a.setFillAfter(true);
+//        a.setDuration(200);
+//        
+//        a.setAnimationListener(new AnimationListener() {
+//			
+//			public void onAnimationStart(Animation animation) {				
+//				mIsAnimating = true;
+//			}
+//			
+//			public void onAnimationRepeat(Animation animation) {			
+//			}
+//			
+//			public void onAnimationEnd(Animation animation) {
+//				mIsAnimating = false;
+//				
+//			}
+//		});
+//        
+//        mPointer.startAnimation(a);
+//
+//        mOldAngle = mNewAngle;
+//    }
+	
+	public void onEvent(NavigationEvent event) {
+		
+		if (event.getDirection() != null) {
 
-	private void animatePointerByDegrees (int rotationDegrees) {
-        mNewAngle = mOldAngle - rotationDegrees;
+	    	if (mIsAnimating)
+	    		return;
+	    	
+			if (event.getDirection() == NavDirection.NEXT)
+				animateNext();
+			else
+				animatePrevious();
+		}
+	}
+	
+	private void animatePrevious() {
+		
+		mCurrentPosition++;
+		
+		if (mCurrentPosition == NAVIGATION_ORDER.length)
+			mCurrentPosition = 0;
+		
+		animatePointerToPosition(mCurrentPosition);
+	}
+	
+	private void animateNext() {
+		
+		mCurrentPosition--;
+		
+		if (mCurrentPosition < 0)
+			mCurrentPosition = NAVIGATION_ORDER.length - 1;
+		
+		animatePointerToPosition(mCurrentPosition);
+	}
 
-        RotateAnimation a = new RotateAnimation(mOldAngle, mNewAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        a.setFillAfter(true);
-        a.setDuration(200);
-        
-        a.setAnimationListener(new AnimationListener() {
-			
-			public void onAnimationStart(Animation animation) {				
-				mIsAnimating = true;
-			}
-			
-			public void onAnimationRepeat(Animation animation) {			
-			}
-			
-			public void onAnimationEnd(Animation animation) {
-				mIsAnimating = false;
-				
-			}
-		});
-        
-        mPointer.startAnimation(a);
-
-        mOldAngle = mNewAngle;
-    }
-
-    private void animatePointerToDegrees (int rotationDegrees) {
-        mNewAngle =  rotationDegrees;
+    private void animatePointerToPosition(int position) {
+    	
+    	mCurrentPosition = position;
+        mNewAngle =  NAVIGATION_ORDER[position];
 
         RotateAnimation a;
-        if ((mOldAngle == DASHBOARD) && (mNewAngle == ACCOUNTS)) {
+        if ((mOldAngle == NAVIGATION_ORDER[DASHBOARD]) && (mNewAngle == NAVIGATION_ORDER[ACCOUNTS])) {
         	a = new RotateAnimation(mOldAngle, -90, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        } else if ((mOldAngle == ACCOUNTS) && (mNewAngle == DASHBOARD)) {
+        } else if ((mOldAngle == NAVIGATION_ORDER[ACCOUNTS]) && (mNewAngle == NAVIGATION_ORDER[DASHBOARD])) {
         	a = new RotateAnimation(mOldAngle, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);        	
         } else {
         	a = new RotateAnimation(mOldAngle, mNewAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         }
         
         a.setFillAfter(true);
-        a.setDuration(200);
+        a.setDuration(150);
         
         a.setAnimationListener(new AnimationListener() {
 			
@@ -286,8 +338,10 @@ public class CircleNavView extends RelativeLayout {
         mOldAngle = mNewAngle;
     }
     
-    private void animatePointerToDegreesThenClick (final int rotationDegrees, final Object fragment) {
-        mNewAngle =  rotationDegrees;
+    private void animatePointerToPositionThenClick(final int position, final Object fragment) {
+
+    	mCurrentPosition = position;
+        mNewAngle =  NAVIGATION_ORDER[position];
 
         RotateAnimation a = new RotateAnimation(mOldAngle, mNewAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         a.setFillAfter(true);
@@ -304,7 +358,7 @@ public class CircleNavView extends RelativeLayout {
 			public void onAnimationEnd(Animation animation) {
 				
 				((DashboardTabletActivity)mContext).showFragment(1); //This needs to be looked at....don't think I'm doing this right.
-				((DashboardTabletActivity)mContext).mCircleNav.setVisibility(View.GONE);
+				hideNavigation();
 				
 				
 //				if (mContext.getClass() == object) {
@@ -320,5 +374,9 @@ public class CircleNavView extends RelativeLayout {
         
         mPointer.startAnimation(a);
         mOldAngle = mNewAngle;
+    }
+    
+    private void hideNavigation() {
+    	((DashboardTabletActivity)mContext).toggleNavigation();
     }
 }

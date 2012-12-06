@@ -1,141 +1,106 @@
 package com.moneydesktop.finance.views;
 
-import java.util.ArrayList;
-
-import com.moneydesktop.finance.views.DirectionalViewPager.ItemInfo;
-
+import android.annotation.TargetApi;
 import android.content.Context;
-import android.support.v4.view.ViewConfigurationCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.VelocityTracker;
-import android.view.ViewConfiguration;
-import android.widget.Scroller;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
 
+import com.moneydesktop.finance.adapters.FragmentAdapter;
+import com.moneydesktop.finance.tablet.fragment.SummaryTabletFragment;
+
+@TargetApi(11)
 public class GrowViewPager extends ViewPager {
 	
 	public final String TAG = this.getClass().getSimpleName();
-    private static final boolean DEBUG = true;
-
-    static class ItemInfo {
-        Object object;
-        int position;
-        boolean scrolling;
-    }
-
-    private final ArrayList<ItemInfo> mItems = new ArrayList<ItemInfo>();
     
-    private Scroller mScroller;
-    
-    private boolean mPopulatePending;
-    private boolean mScrolling;
-
-    private int mTouchSlop;
-    
-    private OnPageChangeListener mOnPageChangeListener;
-
-    /**
-     * Determines speed during touch scrolling
-     */
-    private VelocityTracker mVelocityTracker;
-    private int mMinimumVelocity;
-    private int mMaximumVelocity;
+	public static final float BASE_SIZE = 0.8f;
+	public static final float BASE_ALPHA = 0.8f;
+	private final float MARGIN_SIZE = -0.25f;
+	
+    private boolean scrollingLeft;
     
 	public GrowViewPager(Context context) {
 		super(context);
-		
+
+        init();
 	}
 
     public GrowViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
-        
+
+        init();
     }
     
-    void initViewPager() {
-
-        setWillNotDraw(false);
-        mScroller = new Scroller(getContext());
-        final ViewConfiguration configuration = ViewConfiguration.get(getContext());
-        mTouchSlop = ViewConfigurationCompat.getScaledPagingTouchSlop(configuration);
-        mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
-        mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
-    }
-
-    @Override
-    public void computeScroll() {
-        if (DEBUG) Log.i(TAG, "computeScroll: finished=" + mScroller.isFinished());
-        if (!mScroller.isFinished()) {
-            if (mScroller.computeScrollOffset()) {
-                if (DEBUG) Log.i(TAG, "computeScroll: still scrolling");
-                int oldX = getScrollX();
-                int oldY = getScrollY();
-                int x = mScroller.getCurrX();
-                int y = mScroller.getCurrY();
-
-                if (oldX != x || oldY != y) {
-                    scrollTo(x, y);
-                }
-
-                if (mOnPageChangeListener != null) {
-                    int size = getWidth();
-                    int value = x;
-
-                    final int position = value / size;
-                    final int offsetPixels = value % size;
-                    final float offset = (float) offsetPixels / size;
-                    mOnPageChangeListener.onPageScrolled(position, offset, offsetPixels);
-                }
-
-                // Keep on drawing until the animation has finished.
-                invalidate();
-                return;
-            }
-        }
-
-        // Done with scroll, clean up state.
-        completeScroll();
-    }
-
-    private void completeScroll() {
-        boolean needPopulate;
-        if ((needPopulate = mScrolling)) {
-            // Done with scroll, no longer want to cache view drawing.
-//            setScrollingCacheEnabled(false);
-            mScroller.abortAnimation();
-            int oldX = getScrollX();
-            int oldY = getScrollY();
-            int x = mScroller.getCurrX();
-            int y = mScroller.getCurrY();
-            if (oldX != x || oldY != y) {
-                scrollTo(x, y);
-            }
-//            setScrollState(SCROLL_STATE_IDLE);
-        }
-        mPopulatePending = false;
-        mScrolling = false;
-        for (int i=0; i<mItems.size(); i++) {
-            ItemInfo ii = mItems.get(i);
-            if (ii.scrolling) {
-                needPopulate = true;
-                ii.scrolling = false;
-            }
-        }
-        if (needPopulate) {
-//            populate();
-        }
+    private void init() {
+    	
+    	// Get screen size to set margin width accordingly
+        final DisplayMetrics metrics = new DisplayMetrics();
+        final WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getMetrics(metrics);
+        
+        int margin = (int) (MARGIN_SIZE * metrics.widthPixels);
+        setPageMargin(margin);
+        
+        // Keep 3 pages loaded up at all times
+        setOffscreenPageLimit(3);
     }
     
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
     	super.onPageScrolled(position, positionOffset, positionOffsetPixels);
     	
-    	Log.i(TAG, "Scrolling: ");
+    	adjustSize(position, positionOffset);
     }
-
-    public void setOnPageChangeListener(OnPageChangeListener listener) {
-        mOnPageChangeListener = listener;
+    
+    @Override
+    public void onScrollChanged(int l, int t, int oldl, int oldt) {
+    	super.onScrollChanged(l, t, oldl, oldt);
+    	
+    	// Keep track of which direction we are scrolling
+    	scrollingLeft = (oldl - l) < 0;
     }
+    
+    /**
+     * Used to adjust the size of each view in the viewpager as the user
+     * scrolls.  This provides the effect of children scaling down as they
+     * are moved out and back to full size as they come into focus.
+     * 
+     * @param position
+     * @param percent
+     */
+    private void adjustSize(int position, float percent) {
+    	
+    	position += (scrollingLeft ? 1 : 0);
+    	int secondary = position + (scrollingLeft ? -1 : 1);
+    	int tertiary = position + (scrollingLeft ? 1 : -1);
+    	
+    	float scaleUp = scrollingLeft ? percent : 1.0f - percent;
+    	float scaleDown = scrollingLeft ? 1.0f - percent : percent;
 
+    	float percentOut = scaleUp > BASE_ALPHA ? BASE_ALPHA : scaleUp;
+    	float percentIn = scaleDown > BASE_ALPHA ? BASE_ALPHA : scaleDown;
+    	
+    	if (scaleUp < BASE_SIZE)
+    		scaleUp = BASE_SIZE;
+
+    	if (scaleDown < BASE_SIZE)
+    		scaleDown = BASE_SIZE;
+    	
+    	// Adjust the fragments that are, or will be, on screen
+    	SummaryTabletFragment current = (SummaryTabletFragment) ((position < getAdapter().getCount()) ? ((FragmentAdapter) getAdapter()).getItem(position) : null);
+    	SummaryTabletFragment next = (SummaryTabletFragment) ((secondary < getAdapter().getCount() && secondary > -1) ? ((FragmentAdapter) getAdapter()).getItem(secondary) : null);
+    	SummaryTabletFragment afterNext = (SummaryTabletFragment) ((tertiary < getAdapter().getCount() && tertiary > -1) ? ((FragmentAdapter) getAdapter()).getItem(tertiary) : null);
+    	
+    	if (current != null && next != null) {
+    		
+    		// Apply the adjustments to each fragment
+	    	current.transitionFragment(percentIn, scaleUp);
+	    	next.transitionFragment(percentOut, scaleDown);
+	    	
+	    	if (afterNext != null)
+	    		afterNext.transitionFragment(BASE_ALPHA, BASE_SIZE);
+    	}
+    }
 }

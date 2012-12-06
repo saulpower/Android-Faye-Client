@@ -25,7 +25,7 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         
         setContentView(R.layout.splash_view);
-
+        
         if (isTablet(this)) {
         	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         } else {
@@ -57,8 +57,8 @@ public class SplashActivity extends BaseActivity {
     	return true;
     }
     
-    private void endSplash() {    	
-    	    	
+    private void endSplash() {
+    	
     	Intent i = null;
     	
     	if (User.getCurrentUser() != null) {
@@ -79,6 +79,7 @@ public class SplashActivity extends BaseActivity {
 	    	
 		}
     	
+    	i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
     	i.putExtras(getIntent());
     	startActivity(i);
     	finish();
