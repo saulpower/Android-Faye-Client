@@ -9,12 +9,14 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.BankAccount;
 
 
@@ -42,9 +44,11 @@ public class AccountTypeChildView extends FrameLayout {
         	final View view = createChildView();
         	final TextView accountName = (TextView)view.findViewById(R.id.tablet_account_type_bank_name);
         	final TextView accountSum = (TextView)view.findViewById(R.id.tablet_account_type_bank_sum);
+        	ImageView bankLogo = (ImageView)view.findViewById(R.id.tablet_account_type_bank_logo);
         		
         	accountName.setText(account.getAccountName() == null ? "" : account.getAccountName());
         	accountSum.setText(account.getBalance() == null ? "" : formatter.format(account.getBalance()));
+        	BankLogoManager.getBankImage(bankLogo, account.getInstitutionId());
         	
         	
         	view.setOnClickListener(new OnClickListener() {
@@ -89,7 +93,7 @@ public class AccountTypeChildView extends FrameLayout {
 					
 					RelativeLayout parentView = (RelativeLayout)((Activity)mContext).findViewById(R.id.account_types_container);
 					
-					new PopupWindowAtLocation(mContext, parentView, (int)view.getLeft() + view.getWidth(), (int)mChildView.getTop() + 50, //TODO: change this 50 value to the actual height of the title nav bar. I can't get its height until it has already been inflated and onMeasured has been called. 
+					new PopupWindowAtLocation(mContext, parentView, (int)view.getLeft() + view.getWidth(), (int)mChildView.getTop() + 10, 
 							mContext.getResources().getStringArray(R.array.account_selection_popup), onClickListeners);
 					
 				}

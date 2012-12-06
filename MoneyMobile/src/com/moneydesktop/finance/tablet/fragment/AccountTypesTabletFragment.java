@@ -24,6 +24,7 @@ import com.moneydesktop.finance.BaseActivity.AppearanceListener;
 import com.moneydesktop.finance.BaseTabletFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.AccountTypesAdapter;
+import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.BankAccount;
@@ -130,8 +131,11 @@ public class AccountTypesTabletFragment extends BaseTabletFragment implements Ap
         LayoutInflater layoutInflater = activity.getLayoutInflater();
         final View bankTypeAccountView = layoutInflater.inflate(R.layout.bank_account, null);
         ImageView bankImage = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_image);
+        
+        BankLogoManager.getBankImage(bankImage, bank.getBankId());
+        
         TextView bankName = (TextView)bankTypeAccountView.findViewById(R.id.account_bank_name);
-        String logoid = bank.getLogoId();
+   
         
        // bankImage.setBackgroundResource(R.drawable.bank1);
         bankName.setText(bank.getBankName());
