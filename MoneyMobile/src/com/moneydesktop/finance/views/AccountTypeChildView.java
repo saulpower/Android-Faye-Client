@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.util.UiUtils;
 
 
 public class AccountTypeChildView extends FrameLayout {
@@ -95,6 +96,7 @@ public class AccountTypeChildView extends FrameLayout {
 					
 					new PopupWindowAtLocation(mContext, parentView, (int)view.getLeft() + view.getWidth(), (int)mChildView.getTop() + 10, 
 							mContext.getResources().getStringArray(R.array.account_selection_popup), onClickListeners);
+					
 					
 				}
 			});

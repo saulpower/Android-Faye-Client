@@ -3,7 +3,12 @@ package com.moneydesktop.finance.views;
 import java.util.List;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Util;
+import com.moneydesktop.finance.util.UiUtils;
+
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +29,7 @@ public class PopupWindowAtLocation extends FrameLayout {
 	ViewGroup mParentView;
 	LinearLayout mRoot;
 	LayoutInflater mInflater;
+	int mScreenHeight;
 	
     /**
      * 
@@ -31,7 +37,6 @@ public class PopupWindowAtLocation extends FrameLayout {
      * @param parentView -- the layout view that the popup will be displayed in
      * @param positionX -- the X position for the popup to be aligned with
      * @param positionY -- the Y position for the popup to be aligned with
-     * @param gravity -- Gravity.Left will use XY coordinates and put the popup on the right of the coordinates. Gravity.Right will do the opposite
      * @param buttonTitles -- the text that will be displayed for each of the buttons. Note** MUST be put in the list in the same order as the onClickListeners
      * @param onClickListeners -- onclick listeners for the buttons supplied. Note** MUST be put in the list in the same order as the Button Titles
      */
@@ -52,6 +57,8 @@ public class PopupWindowAtLocation extends FrameLayout {
 	    LinearLayout.LayoutParams overlayParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT);
 	    mRoot.setLayoutParams(overlayParams);
 	    
+	    mScreenHeight = UiUtils.getScreenHeight((Activity)mContext);
+	    
 	    mParentView.addView(mRoot);
 	    populateView();
 	
@@ -61,12 +68,6 @@ public class PopupWindowAtLocation extends FrameLayout {
 	    LinearLayout overlay = (LinearLayout)mRoot.findViewById(R.id.popup_overlay);
 	    LinearLayout subOverlay = (LinearLayout)mRoot.findViewById(R.id.popup_sub_overlay);
 	    LinearLayout buttonContainer = (LinearLayout)mRoot.findViewById(R.id.popup_container);
-	    
-	    LinearLayout.LayoutParams subOverlayParams = (LinearLayout.LayoutParams) subOverlay.getLayoutParams();
-	    subOverlayParams.leftMargin = mX;
-	    subOverlayParams.topMargin = mY;
-	    
-	    subOverlay.setLayoutParams(subOverlayParams);
 	    
 	    for (int i = 0; i < mButtonTitles.length; i++) {
 	    	
@@ -78,6 +79,21 @@ public class PopupWindowAtLocation extends FrameLayout {
 	    	
 	    	buttonContainer.addView(popupButton);
 	    }
+	    
+	    LinearLayout.LayoutParams subOverlayParams = (LinearLayout.LayoutParams) subOverlay.getLayoutParams();
+	    subOverlayParams.leftMargin = mX;
+	    subOverlayParams.topMargin = mY;
+	    
+	    
+	    /*
+	     * Should the popup get drawn off the screen, compensate for that based upon the number of buttons being drawn. 
+	     */
+	    boolean popupWillDisplayOffScreen = ((mY + (mButtonTitles.length * UiUtils.convertDpToPixel(75, mContext))) > mScreenHeight) ? true : false;	    
+	    if (popupWillDisplayOffScreen) {
+		    subOverlayParams.topMargin = (int) (mY - ((mY + mButtonTitles.length * UiUtils.convertDpToPixel(75, mContext)) - mScreenHeight));
+	    }
+	    
+	    subOverlay.setLayoutParams(subOverlayParams);
 	    
 	    Animation loadPopupAnimation = AnimationUtils.loadAnimation(mContext, R.anim.scale_fade_in);
 	    mRoot.startAnimation(loadPopupAnimation);
@@ -106,4 +122,5 @@ public class PopupWindowAtLocation extends FrameLayout {
 			}
 		});
 	}
+	
 }

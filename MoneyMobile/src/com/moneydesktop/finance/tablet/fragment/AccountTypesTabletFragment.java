@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -109,6 +110,10 @@ public class AccountTypesTabletFragment extends BaseTabletFragment implements Ap
 	}
 	
 	
+	/**
+	 * Setup the Panel/Drawer to show all banks attached.
+	 * @param panelLayoutHolder -- the panel container
+	 */
 	private void initializeDrawer (LinearLayout panelLayoutHolder) {
 		List<Bank> banksList = ApplicationContext.getDaoSession().getBankDao().loadAll();
     	
@@ -121,12 +126,21 @@ public class AccountTypesTabletFragment extends BaseTabletFragment implements Ap
         }
     }
 
+	/**
+	 * Adds the header Text to the panel
+	 * @return headerView
+	 */
     private View getPanelHeader() {
     	LayoutInflater layoutInflater = activity.getLayoutInflater();
     	final View headerView = layoutInflater.inflate(R.layout.tablet_panel_header, null); 
 		return headerView;
 	}
 
+    /**
+     * Creates a View of a bank represented on the right panel.
+     * @param bank -the bank to be added
+     * @return bank view 
+     */
 	private View populateDrawerView (final Bank bank) {
         LayoutInflater layoutInflater = activity.getLayoutInflater();
         final View bankTypeAccountView = layoutInflater.inflate(R.layout.bank_account, null);
@@ -135,15 +149,20 @@ public class AccountTypesTabletFragment extends BaseTabletFragment implements Ap
         BankLogoManager.getBankImage(bankImage, bank.getBankId());
         
         TextView bankName = (TextView)bankTypeAccountView.findViewById(R.id.account_bank_name);
-   
         
-       // bankImage.setBackgroundResource(R.drawable.bank1);
+        bankName.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
         bankName.setText(bank.getBankName());
 
         return bankTypeAccountView;
     }
 
 
+	/**
+	 * Drawer's width is set to a percentage of screen.
+	 * @param layoutParams
+	 * @param activity
+	 * @return the drawer
+	 */
     public static SlidingDrawerRightSide setupDrawer (final ViewGroup.LayoutParams layoutParams, Activity activity) {
         final ViewGroup.LayoutParams drawerLayoutParams = mRightDrawer.getLayoutParams();
 

@@ -24,11 +24,13 @@
     <TextView
         android:id="@+id/account_bank_name"
         android:layout_width="120dip"
-        android:layout_height="wrap_content"
+        android:layout_height="40dip"
         android:layout_alignLeft="@+id/bank_account_image"
-        android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/bank_account_bankbook"
         android:layout_below="@+id/bank_account_image"
-        android:layout_marginBottom="15dip" />
+        android:ellipsize="end"
+        android:textColor="@color/gray7"
+        android:gravity="center_vertical"
+        android:maxLines="2" />
 
 </RelativeLayout>

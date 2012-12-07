@@ -13,8 +13,8 @@
 		</list>
 	</section>
 	<section name="WorkbenchPreferenceDialogSettings">
-		<item value="28" key="DIALOG_Y_ORIGIN"/>
-		<item value="165" key="DIALOG_X_ORIGIN"/>
+		<item value="0" key="DIALOG_Y_ORIGIN"/>
+		<item value="458" key="DIALOG_X_ORIGIN"/>
 	</section>
 	<section name="NewWizardAction">
 	</section>
@@ -22,8 +22,8 @@
 		<item value="308" key="DIALOG_WIDTH"/>
 		<item value="org.eclipse.debug.ui.DebugView" key="ShowViewDialog.STORE_SELECTED_VIEW_ID"/>
 		<item value="194" key="DIALOG_Y_ORIGIN"/>
-		<item value="415" key="DIALOG_HEIGHT"/>
 		<item value="686" key="DIALOG_X_ORIGIN"/>
+		<item value="415" key="DIALOG_HEIGHT"/>
 		<item value="1|Lucida Grande|11.0|0|COCOA|1|LucidaGrande" key="DIALOG_FONT_NAME"/>
 		<list key="ShowViewDialog.STORE_EXPANDED_CATEGORIES_ID">
 			<item value="org.eclipse.ui"/>
