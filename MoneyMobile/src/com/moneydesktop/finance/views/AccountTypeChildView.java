@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -94,7 +95,7 @@ public class AccountTypeChildView extends FrameLayout {
 					
 					RelativeLayout parentView = (RelativeLayout)((Activity)mContext).findViewById(R.id.account_types_container);
 					
-					new PopupWindowAtLocation(mContext, parentView, (int)view.getLeft() + view.getWidth(), (int)mChildView.getTop() + 10, 
+					new PopupWindowAtLocation(mContext, parentView, (ViewGroup) view, (int)view.getLeft() + view.getWidth(), (int)mChildView.getTop() + 10, 
 							mContext.getResources().getStringArray(R.array.account_selection_popup), onClickListeners);
 					
 					

@@ -12,10 +12,12 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +32,7 @@ import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.PopupWindowAtLocation;
 import com.moneydesktop.finance.views.SlidingDrawerRightSide;
 
 public class AccountTypesTabletFragment extends BaseTabletFragment implements AppearanceListener {
@@ -122,7 +125,7 @@ public class AccountTypesTabletFragment extends BaseTabletFragment implements Ap
         //For every bank that is attached, add it to the Drawer
         for (Bank bank : banksList) {
             //create the view to be attached to Drawer
-        	panelLayoutHolder.addView(populateDrawerView(bank));
+        	panelLayoutHolder.addView(populateDrawerView(bank, panelLayoutHolder));
         }
     }
 
@@ -139,9 +142,10 @@ public class AccountTypesTabletFragment extends BaseTabletFragment implements Ap
     /**
      * Creates a View of a bank represented on the right panel.
      * @param bank -the bank to be added
+     * @param panelLayoutHolder 
      * @return bank view 
      */
-	private View populateDrawerView (final Bank bank) {
+	private View populateDrawerView (final Bank bank, final LinearLayout panelLayoutHolder) {
         LayoutInflater layoutInflater = activity.getLayoutInflater();
         final View bankTypeAccountView = layoutInflater.inflate(R.layout.bank_account, null);
         ImageView bankImage = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_image);
@@ -152,6 +156,39 @@ public class AccountTypesTabletFragment extends BaseTabletFragment implements Ap
         
         bankName.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
         bankName.setText(bank.getBankName());
+        
+        bankTypeAccountView.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				RelativeLayout parentView = (RelativeLayout)getActivity().findViewById(R.id.account_types_container);
+				
+				List<OnClickListener> onClickListeners = new ArrayList<View.OnClickListener>();
+				
+				onClickListeners.add(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						Toast.makeText(getActivity(), "REFRESH DATA", Toast.LENGTH_SHORT).show();
+					}
+				});
+				
+				onClickListeners.add(new OnClickListener() { 	
+					@Override
+					public void onClick(View v) {
+						Toast.makeText(getActivity(), "REMOVE", Toast.LENGTH_SHORT).show();
+					}
+				});
+				
+				onClickListeners.add(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						Toast.makeText(getActivity(), "UPDATE USERNAME AND PASSWORD", Toast.LENGTH_SHORT).show();
+					}
+				});
+				
+				new PopupWindowAtLocation(getActivity(), (ViewGroup) bankTypeAccountView, parentView, mRightDrawer.getLeft() - bankTypeAccountView.getWidth(), (int)bankTypeAccountView.getTop() + 10, getActivity().getResources().getStringArray(R.array.bank_selection_popup), onClickListeners);
+			}
+		});
 
         return bankTypeAccountView;
     }

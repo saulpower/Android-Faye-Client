@@ -30,6 +30,8 @@ public class PopupWindowAtLocation extends FrameLayout {
 	LinearLayout mRoot;
 	LayoutInflater mInflater;
 	int mScreenHeight;
+	int mScreenWidth;
+	ViewGroup mRelativeView;
 	
     /**
      * 
@@ -40,7 +42,7 @@ public class PopupWindowAtLocation extends FrameLayout {
      * @param buttonTitles -- the text that will be displayed for each of the buttons. Note** MUST be put in the list in the same order as the onClickListeners
      * @param onClickListeners -- onclick listeners for the buttons supplied. Note** MUST be put in the list in the same order as the Button Titles
      */
-	public PopupWindowAtLocation(Context context, ViewGroup parentView, int positionX, int positionY, 
+	public PopupWindowAtLocation(Context context, ViewGroup parentView, ViewGroup relativeView, int positionX, int positionY, 
 			String[] buttonTitles, List<OnClickListener> onClickListeners) {
 		super(context);
 		
@@ -50,6 +52,7 @@ public class PopupWindowAtLocation extends FrameLayout {
 		mButtonClickListeners = onClickListeners;
 		mButtonTitles = buttonTitles;
 		mParentView = parentView;
+		mRelativeView = relativeView;
 		
 		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	    mRoot = (LinearLayout) mInflater.inflate(R.layout.popup_with_buttons, null);
@@ -58,6 +61,7 @@ public class PopupWindowAtLocation extends FrameLayout {
 	    mRoot.setLayoutParams(overlayParams);
 	    
 	    mScreenHeight = UiUtils.getScreenHeight((Activity)mContext);
+	    mScreenWidth = UiUtils.getScreenWidth((Activity)mContext);
 	    
 	    mParentView.addView(mRoot);
 	    populateView();
@@ -88,9 +92,18 @@ public class PopupWindowAtLocation extends FrameLayout {
 	    /*
 	     * Should the popup get drawn off the screen, compensate for that based upon the number of buttons being drawn. 
 	     */
-	    boolean popupWillDisplayOffScreen = ((mY + (mButtonTitles.length * UiUtils.convertDpToPixel(75, mContext))) > mScreenHeight) ? true : false;	    
-	    if (popupWillDisplayOffScreen) {
+	    boolean popupWillDisplayOffScreenBottom = ((mY + (mButtonTitles.length * UiUtils.convertDpToPixel(75, mContext))) > mScreenHeight) ? true : false;
+	    boolean popupWillDisplayOffScreenTop = (mY < 0) ? true : false;
+	    boolean popupWillDisplayOffScreenRight = ((mX + mRoot.getWidth()) > mScreenWidth) ? true : false;
+	    
+	    if (popupWillDisplayOffScreenBottom) {
 		    subOverlayParams.topMargin = (int) (mY - ((mY + mButtonTitles.length * UiUtils.convertDpToPixel(75, mContext)) - mScreenHeight));
+	    }
+	    if (popupWillDisplayOffScreenTop) {
+	    	subOverlayParams.topMargin = 0;
+	    }
+	    if (popupWillDisplayOffScreenRight) {
+	    	subOverlayParams.leftMargin = ((mScreenWidth - mRoot.getWidth()) - mRelativeView.getWidth());
 	    }
 	    
 	    subOverlay.setLayoutParams(subOverlayParams);
