@@ -9,6 +9,7 @@ import com.moneydesktop.finance.util.UiUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,19 +32,17 @@ public class PopupWindowAtLocation extends FrameLayout {
 	LayoutInflater mInflater;
 	int mScreenHeight;
 	int mScreenWidth;
-	ViewGroup mRelativeView;
 	
     /**
      * 
      * @param context -- the context
-     * @param parentView -- the layout view that the popup will be displayed in
-     * @param positionX -- the X position for the popup to be aligned with
-     * @param positionY -- the Y position for the popup to be aligned with
+     * @param parentView -- the layout view that the popUp will be displayed in
+     * @param positionX -- the X position for the popUp to be aligned with
+     * @param positionY -- the Y position for the popUp to be aligned with
      * @param buttonTitles -- the text that will be displayed for each of the buttons. Note** MUST be put in the list in the same order as the onClickListeners
-     * @param onClickListeners -- onclick listeners for the buttons supplied. Note** MUST be put in the list in the same order as the Button Titles
+     * @param onClickListeners -- onClick listeners for the buttons supplied. Note** MUST be put in the list in the same order as the Button Titles
      */
-	public PopupWindowAtLocation(Context context, ViewGroup parentView, ViewGroup relativeView, int positionX, int positionY, 
-			String[] buttonTitles, List<OnClickListener> onClickListeners) {
+	public PopupWindowAtLocation(Context context, ViewGroup parentView, int positionX, int positionY, String[] buttonTitles, List<OnClickListener> onClickListeners) {
 		super(context);
 		
 		mContext = context;
@@ -52,7 +51,6 @@ public class PopupWindowAtLocation extends FrameLayout {
 		mButtonClickListeners = onClickListeners;
 		mButtonTitles = buttonTitles;
 		mParentView = parentView;
-		mRelativeView = relativeView;
 		
 		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	    mRoot = (LinearLayout) mInflater.inflate(R.layout.popup_with_buttons, null);
@@ -87,23 +85,23 @@ public class PopupWindowAtLocation extends FrameLayout {
 	    LinearLayout.LayoutParams subOverlayParams = (LinearLayout.LayoutParams) subOverlay.getLayoutParams();
 	    subOverlayParams.leftMargin = mX;
 	    subOverlayParams.topMargin = mY;
-	    
+	  
 	    
 	    /*
 	     * Should the popup get drawn off the screen, compensate for that based upon the number of buttons being drawn. 
 	     */
-	    boolean popupWillDisplayOffScreenBottom = ((mY + (mButtonTitles.length * UiUtils.convertDpToPixel(75, mContext))) > mScreenHeight) ? true : false;
+	    boolean popupWillDisplayOffScreenBottom = ((mY + (mButtonTitles.length * UiUtils.convertDpToPixel(78, mContext))) > mScreenHeight) ? true : false;
 	    boolean popupWillDisplayOffScreenTop = (mY < 0) ? true : false;
-	    boolean popupWillDisplayOffScreenRight = ((mX + mRoot.getWidth()) > mScreenWidth) ? true : false;
+	    boolean popupWillDisplayOffScreenRight = ((mX + UiUtils.getMinimumPanalWidth((Activity)mContext) + 100) > mScreenWidth) ? true : false;
 	    
 	    if (popupWillDisplayOffScreenBottom) {
-		    subOverlayParams.topMargin = (int) (mY - ((mY + mButtonTitles.length * UiUtils.convertDpToPixel(75, mContext)) - mScreenHeight));
+		    subOverlayParams.topMargin = (int) (mScreenHeight - mButtonTitles.length * UiUtils.convertDpToPixel(76, mContext));
 	    }
 	    if (popupWillDisplayOffScreenTop) {
 	    	subOverlayParams.topMargin = 0;
 	    }
 	    if (popupWillDisplayOffScreenRight) {
-	    	subOverlayParams.leftMargin = ((mScreenWidth - mRoot.getWidth()) - mRelativeView.getWidth());
+	    	subOverlayParams.leftMargin = (int) (mScreenWidth - (UiUtils.getMinimumPanalWidth((Activity)mContext)*2.2));
 	    }
 	    
 	    subOverlay.setLayoutParams(subOverlayParams);

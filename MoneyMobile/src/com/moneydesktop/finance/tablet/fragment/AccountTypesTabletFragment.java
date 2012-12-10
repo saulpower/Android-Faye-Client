@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -93,9 +94,11 @@ public class AccountTypesTabletFragment extends BaseTabletFragment implements Ap
         mExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 			public boolean onGroupClick(ExpandableListView expandableListView, View view, int groupPosition, long id) {
 	            ((AccountTypesAdapter)mExpandableListView.getExpandableListAdapter()).notifyDataSetChanged();
+	            mExpandableListView.smoothScrollToPosition(groupPosition);
 	            return false;
 			}
 		});
+        
         
         panelLayoutHolder.setOnTouchListener(new View.OnTouchListener() {			
 			public boolean onTouch(View view, MotionEvent event) {
@@ -186,7 +189,7 @@ public class AccountTypesTabletFragment extends BaseTabletFragment implements Ap
 					}
 				});
 				
-				new PopupWindowAtLocation(getActivity(), (ViewGroup) bankTypeAccountView, parentView, mRightDrawer.getLeft() - bankTypeAccountView.getWidth(), (int)bankTypeAccountView.getTop() + 10, getActivity().getResources().getStringArray(R.array.bank_selection_popup), onClickListeners);
+				new PopupWindowAtLocation(getActivity(), parentView, mRightDrawer.getLeft(), (int)bankTypeAccountView.getTop() + 10, getActivity().getResources().getStringArray(R.array.bank_selection_popup), onClickListeners);
 			}
 		});
 

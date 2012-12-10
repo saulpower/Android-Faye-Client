@@ -61,7 +61,7 @@ public class AccountTypesAdapter extends BaseExpandableListAdapter {
 	}
 	
 	public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-      AccountTypeChildView accountTypeChildView = new AccountTypeChildView(mContext, mAccountTypes.get(groupPosition).getBankAccounts());
+      AccountTypeChildView accountTypeChildView = new AccountTypeChildView(mContext, mAccountTypes.get(groupPosition).getBankAccounts(), mExpandableListView, groupPosition);
       return accountTypeChildView;
 	}
 
@@ -70,7 +70,7 @@ public class AccountTypesAdapter extends BaseExpandableListAdapter {
 	}
 
 	public boolean isChildSelectable(int groupPosition, int childPosition) {
-		return false;
+		return true;
 	}
 
 }
