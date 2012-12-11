@@ -123,7 +123,7 @@
 		     <View
 	        android:id="@+id/logindotted2"
 	        android:layout_width="300dp"
-	        android:layout_height="1dp"
+	        android:layout_height="2dp"
 	        android:background="@drawable/dotted_line_long" />
 		        
 		    
@@ -142,7 +142,7 @@
 		    <View
 	        android:id="@+id/logindotted3"
 	        android:layout_width="300dp"
-	        android:layout_height="1dp"
+	        android:layout_height="2dp"
 	        android:background="@drawable/dotted_line_long" />
 			    
 	        
