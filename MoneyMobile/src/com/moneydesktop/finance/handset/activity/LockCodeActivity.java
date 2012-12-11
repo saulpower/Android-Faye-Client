@@ -24,15 +24,15 @@ public class LockCodeActivity extends BaseActivity implements ProcessCodeListene
 	public final String EXTRA_CONFIRMATION = "extra_confirmation";
 	public static final String EXTRA_LOCK = "extra_lock";
 	
-	public static boolean showing = false;
+	public static boolean sShowing = false;
 	
-	private LinearLayout container;
-	private TextView cancel;
-	private ViewFlipper flipper;
-	private LockCodeView currentLockCode, lockCode1, lockCode2;
+	private LinearLayout mContainer;
+	private TextView mCancel;
+	private ViewFlipper mFlipper;
+	private LockCodeView mCurrentLockCode, mLockCode1, mLockCode2;
 	
-	private String confirmation = null;
-	private LockType type;
+	private String mConfirmation = null;
+	private LockType mType;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,7 +40,7 @@ public class LockCodeActivity extends BaseActivity implements ProcessCodeListene
         
         setContentView(R.layout.handset_lock_code_view);
         
-        type = (LockType) getIntent().getSerializableExtra(EXTRA_LOCK);
+        mType = (LockType) getIntent().getSerializableExtra(EXTRA_LOCK);
         
         setupViews();
 	}
@@ -56,13 +56,13 @@ public class LockCodeActivity extends BaseActivity implements ProcessCodeListene
 	protected void onDestroy() {
 		super.onDestroy();
 		
-		showing = false;
+		sShowing = false;
 	}
 	
 	@Override
 	public void onBackPressed() {
 		
-		if (type == LockType.LOCK) {
+		if (mType == LockType.LOCK) {
 			
 			moveTaskToBack(true);
 			return;
@@ -73,23 +73,23 @@ public class LockCodeActivity extends BaseActivity implements ProcessCodeListene
 	
 	public void setupViews() {
 
-		flipper = (ViewFlipper) findViewById(R.id.flipper);
-		flipper.setInAnimation(this, R.anim.in_right);
-		flipper.setOutAnimation(this, R.anim.out_left);
+		mFlipper = (ViewFlipper) findViewById(R.id.flipper);
+		mFlipper.setInAnimation(this, R.anim.in_right);
+		mFlipper.setOutAnimation(this, R.anim.out_left);
 		
-		lockCode1 = (LockCodeView) findViewById(R.id.lock_code1);
-		lockCode1.setListener(this);
+		mLockCode1 = (LockCodeView) findViewById(R.id.lock_code1);
+		mLockCode1.setListener(this);
 
-		lockCode2 = (LockCodeView) findViewById(R.id.lock_code2);
-		lockCode2.setListener(this);
+		mLockCode2 = (LockCodeView) findViewById(R.id.lock_code2);
+		mLockCode2.setListener(this);
 		
-		currentLockCode = lockCode1;
+		mCurrentLockCode = mLockCode1;
 		
 		setMessage();
 
-		cancel = (TextView) findViewById(R.id.cancel);
-		cancel.setVisibility(type == LockType.LOCK ? View.GONE : View.VISIBLE);
-		cancel.setOnClickListener(new OnClickListener() {
+		mCancel = (TextView) findViewById(R.id.cancel);
+		mCancel.setVisibility(mType == LockType.LOCK ? View.GONE : View.VISIBLE);
+		mCancel.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -98,27 +98,27 @@ public class LockCodeActivity extends BaseActivity implements ProcessCodeListene
 			}
 		});
 		
-		Fonts.applyPrimaryFont(cancel, 14);
+		Fonts.applyPrimaryFont(mCancel, 14);
 		
 		// The container prevents the user from selecting
 		// the text fields manually
-		container = (LinearLayout) findViewById(R.id.block_container);
-		container.setOnTouchListener(new OnTouchListener() {
+		mContainer = (LinearLayout) findViewById(R.id.block_container);
+		mContainer.setOnTouchListener(new OnTouchListener() {
 			
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 
-				currentLockCode.showKeyboard();
+				mCurrentLockCode.showKeyboard();
 				
 				return true;
 			}
 		});
-		container.setOnClickListener(new OnClickListener() {
+		mContainer.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 
-				currentLockCode.showKeyboard();
+				mCurrentLockCode.showKeyboard();
 			}
 		});
 	}
@@ -127,7 +127,7 @@ public class LockCodeActivity extends BaseActivity implements ProcessCodeListene
 
 		String message = "";
 		
-		switch (type) {
+		switch (mType) {
 		case LOCK:
 			message = getString(R.string.text_lock_app);
 			break;
@@ -135,27 +135,27 @@ public class LockCodeActivity extends BaseActivity implements ProcessCodeListene
 			message = getString(R.string.text_lock);
 			break;
 		case NEW:
-			boolean confirm = (confirmation == null);
+			boolean confirm = (mConfirmation == null);
 			message = getString(confirm ? R.string.text_lock_create : R.string.text_lock_confirm);
 			break;
 		}
 		
-		currentLockCode.setMessage(message);
+		mCurrentLockCode.setMessage(message);
 	}
 	
 	public void processCode() {
 
 		String savedCode = Preferences.getString(Preferences.KEY_LOCK_CODE, "");
-		String code = currentLockCode.getCode();
-		currentLockCode.resetFields();
+		String code = mCurrentLockCode.getCode();
+		mCurrentLockCode.resetFields();
 		
-		if (type == LockType.LOCK) {
+		if (mType == LockType.LOCK) {
 			
 			processLocked(code, savedCode);
 			return;
 		}
 		
-		if (type == LockType.CHANGE) {
+		if (mType == LockType.CHANGE) {
 			
 			processCodeChange(code, savedCode);
 			return;
@@ -188,11 +188,11 @@ public class LockCodeActivity extends BaseActivity implements ProcessCodeListene
 	
 	private void processConfirmation(String code) {
 		
-		if (confirmation == null) {
+		if (mConfirmation == null) {
 			
 			confirmationCode(code);
 			
-		} else if (code.equals(confirmation)) {
+		} else if (code.equals(mConfirmation)) {
 			
 			Preferences.saveString(Preferences.KEY_LOCK_CODE, code);
 			dismissModal();
@@ -205,22 +205,22 @@ public class LockCodeActivity extends BaseActivity implements ProcessCodeListene
 	
 	private void confirmationCode(String code) {
 		
-		confirmation = code;
-		type = LockType.NEW;
+		mConfirmation = code;
+		mType = LockType.NEW;
 		
-		if (currentLockCode.equals(lockCode1))
-			currentLockCode = lockCode2;
+		if (mCurrentLockCode.equals(mLockCode1))
+			mCurrentLockCode = mLockCode2;
 		else
-			currentLockCode = lockCode1;
+			mCurrentLockCode = mLockCode1;
 		
 		setMessage();
 		
-		flipper.showNext();
+		mFlipper.showNext();
 	}
 	
 	private void wrongCode() {
 
-		currentLockCode.shakeContainer();
+		mCurrentLockCode.shakeContainer();
 	}
 	
 	private void dismissModal() {

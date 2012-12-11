@@ -25,6 +25,6 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="20dp"
         android:text="@string/title_activity_lock"
-        android:textColor="@color/light_blue" />
+        android:textColor="@color/primaryColor" />
     
 </RelativeLayout>

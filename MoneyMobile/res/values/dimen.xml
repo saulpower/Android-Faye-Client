@@ -4,4 +4,11 @@
 	<dimen name="navbar_text_slide">54dp</dimen>
 	<dimen name="transaction_padding">5dp</dimen>
 	<dimen name="transaction_padding_left">12dp</dimen>
+	<dimen name="tablet_transaction_item">40dp</dimen>
+	<dimen name="tablet_transaction_vert">-20dp</dimen>
+	<dimen name="tablet_header_1">40dp</dimen>
+	<dimen name="tablet_header_1_half">-20dp</dimen>
+	<dimen name="tablet_header_2">24dp</dimen>
+	<dimen name="tablet_header_2l_half">-12dp</dimen>
+	<dimen name="tablet_header_2r_half">-11dp</dimen>
 </resources>

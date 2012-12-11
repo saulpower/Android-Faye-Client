@@ -38,7 +38,7 @@ import com.moneydesktop.finance.views.LabelEditText;
 
 import de.greenrobot.event.EventBus;
 
-public class LoginActivity extends BaseActivity {
+public class LoginHandsetActivity extends BaseActivity {
 	
 	private final String TAG = "LoginActivity";
 	
@@ -87,7 +87,7 @@ public class LoginActivity extends BaseActivity {
 		
 		if (User.getCurrentUser() != null) {
 			
-	    	Intent i = new Intent(this, DashboardActivity.class);
+	    	Intent i = new Intent(this, DashboardHandsetActivity.class);
 	    	startActivity(i);
 		}
 	}
@@ -128,8 +128,8 @@ public class LoginActivity extends BaseActivity {
 		Fonts.applyPrimaryBoldFont(cancelButton, 15);
 		Fonts.applyPrimaryBoldFont(signupText, 12);
 		Fonts.applySecondaryItalicFont(loginText, 12);
-		Fonts.applyPrimaryItalicFont(username, 9);
-		Fonts.applyPrimaryItalicFont(password, 9);
+		Fonts.applyPrimarySemiBoldFont(username, 25);
+		Fonts.applyPrimarySemiBoldFont(password, 25);
 		if (android.os.Build.VERSION.SDK_INT >= 11) {
 			findViewById(R.id.logindotted1).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 			findViewById(R.id.logindotted2).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -177,7 +177,7 @@ public class LoginActivity extends BaseActivity {
 			
 			public void onClick(View v) {
 				
-		    	Intent i = new Intent(LoginActivity.this, DebugActivity.class);
+		    	Intent i = new Intent(LoginHandsetActivity.this, DebugActivity.class);
 		    	startActivity(i);
 			}
 		});

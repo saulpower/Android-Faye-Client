@@ -2,8 +2,6 @@ package com.moneydesktop.finance.handset.fragment;
 
 import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,70 +14,72 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RelativeLayout;
 
-import com.moneydesktop.finance.BaseActivity.AppearanceListener;
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.adapters.TransactionsAdapter;
 import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.handset.adapter.TransactionsHandsetAdapter;
+import com.moneydesktop.finance.model.EventMessage.ParentAnimationEvent;
 import com.moneydesktop.finance.views.AmazingListView;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
 
-public class TransactionsFragment extends BaseFragment implements OnItemClickListener, AppearanceListener {
+import java.util.List;
+
+public class TransactionsFragment extends BaseFragment implements OnItemClickListener {
 	
 	public final String TAG = this.getClass().getSimpleName();
 	
-	private static TransactionsFragment fragment;
+	private static TransactionsFragment sFragment;
 
-	private AmazingListView transactionsList;
-	private TransactionsAdapter adapter;
-	private RelativeLayout loading;
+	private AmazingListView mTransactionsList;
+	private TransactionsHandsetAdapter mAdapter;
+	private RelativeLayout mLoading;
 	
-	private boolean loaded = false;
+	private boolean mLoaded = false;
 	
 	public static TransactionsFragment newInstance() {
 			
-		fragment = new TransactionsFragment();
+		sFragment = new TransactionsFragment();
 	
         Bundle args = new Bundle();
-        fragment.setArguments(args);
+        sFragment.setArguments(args);
         
-        return fragment;
+        return sFragment;
 	}
 	
 	@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         
-        this.activity.onFragmentAttached(this);
+        this.mActivity.onFragmentAttached();
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
 		
-        this.activity.updateNavBar(getFragmentTitle());
+        this.mActivity.updateNavBar(getFragmentTitle());
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
-		root = inflater.inflate(R.layout.handset_transactions_view, null);
+		mRoot = inflater.inflate(R.layout.handset_transactions_view, null);
 
-		loading = (RelativeLayout) root.findViewById(R.id.loading);
+		mLoading = (RelativeLayout) mRoot.findViewById(R.id.loading);
 		
-		transactionsList = (AmazingListView) root.findViewById(R.id.transactions);
-		transactionsList.setOnItemClickListener(this);
+		mTransactionsList = (AmazingListView) mRoot.findViewById(R.id.transactions);
+		mTransactionsList.setOnItemClickListener(this);
 		
 		configureView();
 		
-		if (!loaded)
+		if (!mLoaded)
 			getInitialTransactions();
 		else
 			setupList();
 		
-		return root;
+		return mRoot;
 	}
 	
 	private void getInitialTransactions() {
@@ -94,7 +94,7 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 				List<Transactions> row1 = Transactions.getRows(page).second;
 				List<Pair<String, List<Transactions>>> initial = Transactions.groupTransactions(row1);
 
-				adapter = new TransactionsAdapter(activity, transactionsList, initial);
+				mAdapter = new TransactionsHandsetAdapter(mActivity, mTransactionsList, initial);
 				
 				return null;
 			}
@@ -110,11 +110,11 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 	
 	private void setupList() {
 
-		transactionsList.setAdapter(adapter);
-		transactionsList.setPinnedHeaderView(LayoutInflater.from(activity).inflate(R.layout.item_transaction_header, transactionsList, false));
-		transactionsList.setLoadingView(activity.getLayoutInflater().inflate(R.layout.loading_view, null));
+		mTransactionsList.setAdapter(mAdapter);
+		mTransactionsList.setPinnedHeaderView(LayoutInflater.from(mActivity).inflate(R.layout.handset_item_transaction_header, mTransactionsList, false));
+		mTransactionsList.setLoadingView(mActivity.getLayoutInflater().inflate(R.layout.loading_view, null));
 		
-		adapter.notifyMayHaveMorePages();
+		mAdapter.notifyMayHaveMorePages();
 	}
 
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -140,34 +140,34 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 
 	private void configureView() {
 		
-		if (loaded) {
+		if (mLoaded) {
 			
-			transactionsList.setVisibility(View.VISIBLE);
-			loading.setVisibility(View.GONE);
+			mTransactionsList.setVisibility(View.VISIBLE);
+			mLoading.setVisibility(View.GONE);
 		}
 	}
 	
-	public void onViewDidAppear() {
+	public void onEvent(ParentAnimationEvent event) {
 		
-		if (!loaded) {
+		if (event.isOutAnimation() && event.isFinished() && !mLoaded) {
 			
-			animate(loading).alpha(0.0f).setDuration(400).setListener(new AnimatorListener() {
+			animate(mLoading).alpha(0.0f).setDuration(400).setListener(new AnimatorListener() {
 				
 				public void onAnimationStart(Animator animation) {}
 				
 				public void onAnimationRepeat(Animator animation) {}
 				
 				public void onAnimationEnd(Animator animation) {
-					loading.setVisibility(View.GONE);
+					mLoading.setVisibility(View.GONE);
 				}
 				
 				public void onAnimationCancel(Animator animation) {}
 			});
 			
-			transactionsList.setVisibility(View.VISIBLE);
-			animate(transactionsList).alpha(1.0f).setDuration(400);
+			mTransactionsList.setVisibility(View.VISIBLE);
+			animate(mTransactionsList).alpha(1.0f).setDuration(400);
 			
-			loaded = true;
+			mLoaded = true;
 		}
 	}
 }

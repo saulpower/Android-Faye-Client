@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.adapters;
+package com.moneydesktop.finance.handset.adapter;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -14,54 +14,54 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.adapters.AmazingAdapter;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.AmazingListView;
 
-public class TransactionsAdapter extends AmazingAdapter {
+public class TransactionsHandsetAdapter extends AmazingAdapter {
 
 	public final String TAG = "TransactionsAdapter";
 
-	private List<Pair<String, List<Transactions>>> sections;
-	private List<Transactions> allTransactions = new ArrayList<Transactions>();
-	private AsyncTask<Integer, Void, Pair<Boolean, List<Transactions>>> backgroundTask;
-	private DecimalFormat formatter = new DecimalFormat("###,##0.00");
-	private ColorStateList greenColor;
-	private ColorStateList grayColor;
-	private AmazingListView listView;
+	private List<Pair<String, List<Transactions>>> mSections;
+	private List<Transactions> mAllTransactions = new ArrayList<Transactions>();
+	private AsyncTask<Integer, Void, Pair<Boolean, List<Transactions>>> mBackgroundTask;
+	private DecimalFormat mFormatter = new DecimalFormat("###,##0.00");
+	private ColorStateList mGreenColor;
+	private ColorStateList mGrayColor;
+	private AmazingListView mListView;
 
-	private Activity activity;
+	private Activity mActivity;
 
-	public TransactionsAdapter(Activity activity, AmazingListView listView, List<Pair<String, List<Transactions>>> sections) {
-		this.activity = activity;
-		this.listView = listView;
-		this.sections = sections;
+	public TransactionsHandsetAdapter(Activity activity, AmazingListView listView, List<Pair<String, List<Transactions>>> sections) {
+		this.mActivity = activity;
+		this.mListView = listView;
+		this.mSections = sections;
 
 		for (Pair<String, List<Transactions>> pairs : sections)
-			this.allTransactions.addAll(pairs.second);
+			this.mAllTransactions.addAll(pairs.second);
 
-		greenColor = activity.getResources().getColorStateList(R.drawable.green_to_white);
-		grayColor = activity.getResources().getColorStateList(R.drawable.gray7_to_white);
+		mGreenColor = activity.getResources().getColorStateList(R.drawable.green_to_white);
+		mGrayColor = activity.getResources().getColorStateList(R.drawable.gray7_to_white);
 	}
 
 	public int getCount() {
 
 		int res = 0;
 
-		for (int i = 0; i < sections.size(); i++)
-			res += sections.get(i).second.size();
+		for (int i = 0; i < mSections.size(); i++)
+			res += mSections.get(i).second.size();
 
 		return res;
 	}
 
 	public Transactions getItem(int position) {
 		
-		return allTransactions.get(position);
+		return mAllTransactions.get(position);
 	}
 
 	public long getItemId(int position) {
@@ -73,13 +73,13 @@ public class TransactionsAdapter extends AmazingAdapter {
 
 		Log.i(TAG, "Got onNextPageRequested page = " + page);
 
-		DialogUtils.showProgress(activity, activity.getString(R.string.loading));
+		DialogUtils.showProgress(mActivity, mActivity.getString(R.string.loading));
 
-		if (backgroundTask != null) {
-			backgroundTask.cancel(false);
+		if (mBackgroundTask != null) {
+			mBackgroundTask.cancel(false);
 		}
 
-		backgroundTask = new AsyncTask<Integer, Void, Pair<Boolean, List<Transactions>>>() {
+		mBackgroundTask = new AsyncTask<Integer, Void, Pair<Boolean, List<Transactions>>>() {
 
 			@Override
 			protected Pair<Boolean, List<Transactions>> doInBackground(Integer... params) {
@@ -97,11 +97,11 @@ public class TransactionsAdapter extends AmazingAdapter {
 				if (isCancelled())
 					return;
 
-				allTransactions.addAll(rows.second);
-				List<Pair<String, List<Transactions>>> grouped = Transactions.groupTransactions(allTransactions);
+				mAllTransactions.addAll(rows.second);
+				List<Pair<String, List<Transactions>>> grouped = Transactions.groupTransactions(mAllTransactions);
 				
-				sections.clear();
-				sections.addAll(grouped);
+				mSections.clear();
+				mSections.addAll(grouped);
 
 				nextPage();
 
@@ -111,7 +111,7 @@ public class TransactionsAdapter extends AmazingAdapter {
 					notifyNoMorePages();
 				}
 				
-				listView.requestLayout();
+				mListView.requestLayout();
 				DialogUtils.hideProgress();
 			}
 
@@ -140,7 +140,7 @@ public class TransactionsAdapter extends AmazingAdapter {
 		View res = convertView;
 
 		if (res == null) {
-			res = activity.getLayoutInflater().inflate(R.layout.item_transaction, null);
+			res = mActivity.getLayoutInflater().inflate(R.layout.handset_item_transaction, null);
 			fixDottedLine(res);
 		}
 
@@ -159,8 +159,8 @@ public class TransactionsAdapter extends AmazingAdapter {
 		if (transactions != null) {
 		
 			title.setText(WordUtils.capitalize(transactions.getTitle().toLowerCase()));
-			amount.setText(formatter.format(transactions.getAmount()));
-			amount.setTextColor(transactions.getRawAmount() < 0 ? greenColor : grayColor);
+			amount.setText(mFormatter.format(transactions.getAmount()));
+			amount.setTextColor(transactions.getRawAmount() < 0 ? mGreenColor : mGrayColor);
 	
 			if (transactions.getCategory() != null)
 				category.setText(transactions.getCategory().getCategoryName());
@@ -193,16 +193,16 @@ public class TransactionsAdapter extends AmazingAdapter {
 
 		if (section < 0)
 			section = 0;
-		if (section >= sections.size())
-			section = sections.size() - 1;
+		if (section >= mSections.size())
+			section = mSections.size() - 1;
 		int c = 0;
 
-		for (int i = 0; i < sections.size(); i++) {
+		for (int i = 0; i < mSections.size(); i++) {
 
 			if (section == i)
 				return c;
 
-			c += sections.get(i).second.size();
+			c += mSections.get(i).second.size();
 		}
 
 		return 0;
@@ -213,12 +213,12 @@ public class TransactionsAdapter extends AmazingAdapter {
 
 		int c = 0;
 
-		for (int i = 0; i < sections.size(); i++) {
+		for (int i = 0; i < mSections.size(); i++) {
 
-			if (position >= c && position < c + sections.get(i).second.size())
+			if (position >= c && position < c + mSections.get(i).second.size())
 				return i;
 
-			c += sections.get(i).second.size();
+			c += mSections.get(i).second.size();
 		}
 
 		return -1;
@@ -227,10 +227,10 @@ public class TransactionsAdapter extends AmazingAdapter {
 	@Override
 	public String[] getSections() {
 
-		String[] res = new String[sections.size()];
+		String[] res = new String[mSections.size()];
 
-		for (int i = 0; i < sections.size(); i++)
-			res[i] = sections.get(i).first;
+		for (int i = 0; i < mSections.size(); i++)
+			res[i] = mSections.get(i).first;
 
 		return res;
 	}

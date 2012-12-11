@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/tablet_wood" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:orientation="horizontal" >
+
+        <com.moneydesktop.finance.views.SettingButton
+            android:id="@+id/lock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@color/white"
+            app:iconColor="@color/primaryColor"
+            app:textColor="@color/gray4"
+            app:title="@string/setting_lock_title"
+            app:text="@string/setting_lock_text"
+            app:icon="@string/icon_lock"
+            app:iconSize="80sp" />
+
+        <com.moneydesktop.finance.views.SettingButton
+            android:id="@+id/feedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@color/white"
+            app:iconColor="@color/primaryColor"
+            app:textColor="@color/gray4"
+            app:title="@string/setting_feedback_title"
+            app:text="@string/setting_feedback_text"
+            app:icon="@string/icon_feedback"
+            app:iconSize="120sp" />
+
+        <com.moneydesktop.finance.views.SettingButton
+            android:id="@+id/logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@color/white"
+            app:iconColor="@color/primaryColor"
+            app:textColor="@color/gray4"
+            app:title="@string/setting_unlink_title"
+            app:text="@string/setting_unlink_text"
+            app:icon="@string/icon_logout"
+            app:iconSize="100sp" />
+        
+    </LinearLayout>
+
+</RelativeLayout>

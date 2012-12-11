@@ -5,23 +5,27 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseActivity;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.data.SyncEngine;
-import com.moneydesktop.finance.handset.activity.LoginActivity;
+import com.moneydesktop.finance.handset.activity.LoginHandsetActivity;
 import com.moneydesktop.finance.model.EventMessage.LogoutEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.model.User;
+import com.moneydesktop.finance.tablet.activity.LoginTabletActivity;
 import com.moneydesktop.finance.util.DialogUtils;
 
-public abstract class Dashboard extends BaseActivity {
+public abstract class DashboardBaseActivity extends BaseActivity {
 
 	protected final String KEY_PAGER = "pager";
 	
-	protected boolean loggingOut = false;
+	protected boolean mLoggingOut = false;
+	protected boolean mOnHome = true;
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,38 +49,56 @@ public abstract class Dashboard extends BaseActivity {
 			
 			DialogUtils.hideProgress();
 			
-			if (loggingOut) {
+			if (mLoggingOut) {
 				
-				logout();
+				logout(ApplicationContext.isTablet());
 			}
 		}
 	}
 	
 	public void onEvent(LogoutEvent event) {
 		
-		if (User.getCurrentUser().getCanSync())
-			SyncEngine.sharedInstance().syncIfNeeded();
-		
-		if (SyncEngine.sharedInstance().isSyncing()) {
-			
-			loggingOut = true;
-			DialogUtils.alertDialog(getString(R.string.logout_title), getString(R.string.logout_message), getString(R.string.logout_cancel), this, new OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					DialogUtils.dismissAlert();
-				}
-			});
-			
-		} else {
-			
-			logout();
-		}
+	    DialogUtils.alertDialog("Unlink?", "Unlinking will remove this device from your list of approved devices. you can re-link it at any time. Would you like to continue?", "YES", "NO", this, new OnClickListener() {
+            
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                
+                switch (which) {
+                    case -2:
+                        processLogout();
+                        break;
+                }
+                
+                DialogUtils.dismissAlert();
+            }
+        });
 	}
 	
-	private void logout() {
+	private void processLogout() {
+
+        if (User.getCurrentUser().getCanSync())
+            SyncEngine.sharedInstance().syncIfNeeded();
+        
+        if (SyncEngine.sharedInstance().isSyncing()) {
+            
+            mLoggingOut = true;
+            DialogUtils.alertDialog(getString(R.string.logout_title), getString(R.string.logout_message), getString(R.string.logout_cancel), this, new OnClickListener() {
+                
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    DialogUtils.dismissAlert();
+                }
+            });
+            
+        } else {
+            
+            logout(ApplicationContext.isTablet());
+        }
+	}
+	
+	private void logout(final boolean isTablet) {
 		
-		loggingOut = false;
+		mLoggingOut = false;
 		
 		DialogUtils.showProgress(this, getString(R.string.logging_out));
 		
@@ -99,7 +121,7 @@ public abstract class Dashboard extends BaseActivity {
 
     			DialogUtils.hideProgress();
     			
-    	    	Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+    	    	Intent i = new Intent(getApplicationContext(), isTablet ? LoginTabletActivity.class : LoginHandsetActivity.class);
     	    	startActivity(i);
     	    	finish();
     		}

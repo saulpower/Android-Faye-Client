@@ -1,9 +1,5 @@
 package com.moneydesktop.finance.views;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -19,12 +15,15 @@ import android.widget.Toast;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.BankAccount;
-import com.moneydesktop.finance.util.UiUtils;
+
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class AccountTypeChildView extends FrameLayout {
 
-	private NumberFormat formatter = NumberFormat.getCurrencyInstance();
+	private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();
     private View mChildView;
     private Context mContext;
     private List<BankAccount> mBankAccounts;
@@ -49,7 +48,7 @@ public class AccountTypeChildView extends FrameLayout {
         	ImageView bankLogo = (ImageView)view.findViewById(R.id.tablet_account_type_bank_logo);
         		
         	accountName.setText(account.getAccountName() == null ? "" : account.getAccountName());
-        	accountSum.setText(account.getBalance() == null ? "" : formatter.format(account.getBalance()));
+        	accountSum.setText(account.getBalance() == null ? "" : mFormatter.format(account.getBalance()));
         	BankLogoManager.getBankImage(bankLogo, account.getInstitutionId());
         	
         	

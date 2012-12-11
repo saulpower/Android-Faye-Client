@@ -7,11 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.moneydesktop.finance.BaseActivity.AppearanceListener;
 import com.moneydesktop.finance.BaseTabletFragment;
 import com.moneydesktop.finance.R;
 
-public class AccountSummaryTabletFragment extends BaseTabletFragment implements AppearanceListener {
+public class AccountSummaryTabletFragment extends BaseTabletFragment {
 
 	Button mLaunchNav;
 	
@@ -30,28 +29,22 @@ public class AccountSummaryTabletFragment extends BaseTabletFragment implements 
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         
-        this.activity.onFragmentAttached(this);
+        this.mActivity.onFragmentAttached();
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
-		root = inflater.inflate(R.layout.tablet_account_summary, null);
-		mLaunchNav = (Button)root.findViewById(R.id.view_nav_button);
+		mRoot = inflater.inflate(R.layout.tablet_account_summary, null);
+		mLaunchNav = (Button)mRoot.findViewById(R.id.view_nav_button);
 		
-		return root;
+		return mRoot;
 	}
 
 	@Override
 	public String getFragmentTitle() {
-		return null;
-	}
-
-	@Override
-	public void onViewDidAppear() {
-		// TODO Auto-generated method stub
-		
+		return getString(R.string.title_activity_accounts);
 	}
 
 }

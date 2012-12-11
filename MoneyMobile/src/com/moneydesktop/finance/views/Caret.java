@@ -14,47 +14,47 @@ import com.moneydesktop.finance.R;
 
 public class Caret extends ImageView {
 	
-	private int color = Color.BLUE;
-	private float width = 10;
-	private float height = 10;
+	private int mColor = Color.BLUE;
+	private float mWidth = 10;
+	private float mHeight = 10;
 	
-	private PointF point1;        
-	private PointF point2;    
-	private PointF point3;
-	private Path path;
+	private PointF mPoint1;        
+	private PointF mPoint2;    
+	private PointF mPoint3;
+	private Path mPath;
 
-	private Paint paint;
+	private Paint mPaint;
 	
 	public int getColor() {
-		return color;
+		return mColor;
 	}
 
 	public void setColor(int color) {
-		this.color = color;
+		this.mColor = color;
 		
-		paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-	    paint.setStrokeWidth(1);
-	    paint.setColor(color);     
-	    paint.setStyle(Paint.Style.FILL_AND_STROKE);
-	    paint.setAntiAlias(true);
+	    mPaint.setStrokeWidth(1);
+	    mPaint.setColor(color);     
+	    mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+	    mPaint.setAntiAlias(true);
 	}
 
 	public float getCaretWidth() {
-		return width;
+		return mWidth;
 	}
 
 	public void setCaretWidth(float width) {
-		this.width = width;
+		this.mWidth = width;
 		createPath();
 	}
 
 	public float getCaretHeight() {
-		return height;
+		return mHeight;
 	}
 
 	public void setCaretHeight(float height) {
-		this.height = height;
+		this.mHeight = height;
 		createPath();
 	}
 
@@ -78,20 +78,20 @@ public class Caret extends ImageView {
 	
 	private void createPath() {
 		
-		float center = height/5;
+		float center = mHeight/5;
 		
-		point1 = new PointF(0, (height/2 - center));  
-		point2 = new PointF(width, (height/2 - center));    
-		point3 = new PointF((width/2), (height - center));
+		mPoint1 = new PointF(0, (mHeight/2 - center));  
+		mPoint2 = new PointF(mWidth, (mHeight/2 - center));    
+		mPoint3 = new PointF((mWidth/2), (mHeight - center));
 
-	    path = new Path();
-	    path.setFillType(Path.FillType.EVEN_ODD);
+	    mPath = new Path();
+	    mPath.setFillType(Path.FillType.EVEN_ODD);
 	    
-	    path.moveTo(point1.x,point1.y);
-	    path.lineTo(point2.x,point2.y);
-	    path.lineTo(point3.x,point3.y);
-	    path.lineTo(point1.x,point1.y);
-	    path.close();
+	    mPath.moveTo(mPoint1.x,mPoint1.y);
+	    mPath.lineTo(mPoint2.x,mPoint2.y);
+	    mPath.lineTo(mPoint3.x,mPoint3.y);
+	    mPath.lineTo(mPoint1.x,mPoint1.y);
+	    mPath.close();
 	}
 
     /**
@@ -117,7 +117,7 @@ public class Caret extends ImageView {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
-	    canvas.drawPath(path, paint);
+	    canvas.drawPath(mPath, mPaint);
 	}
 
 }

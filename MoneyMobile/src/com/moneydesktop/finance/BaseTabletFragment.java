@@ -7,25 +7,27 @@ import android.view.View;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 
 public abstract class BaseTabletFragment extends Fragment {
+    
+    public final String TAG = this.getClass().getSimpleName();
 
-	private int position = -1;
+	private int mPosition = -1;
 	
-	protected DashboardTabletActivity activity;
-	protected View root;
+	protected DashboardTabletActivity mActivity;
+	protected View mRoot;
     
 	public int getPosition() {
-		return position;
+		return mPosition;
 	}
 
 	public void setPosition(int position) {
-		this.position = position;
+		this.mPosition = position;
 	}
 	
 	@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         
-        this.activity = (DashboardTabletActivity) activity;
+        this.mActivity = (DashboardTabletActivity) activity;
 	}
 	
 	public abstract String getFragmentTitle();

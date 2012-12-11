@@ -58,7 +58,7 @@ public class WheelView extends View {
 		
 		// Setup the various paints we will need
 		paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		paint.setColor(res.getColor(R.color.light_blue));
+		paint.setColor(res.getColor(R.color.primaryColor));
 		paint.setStyle(Paint.Style.FILL);
 	    paint.setAntiAlias(true);
 	    

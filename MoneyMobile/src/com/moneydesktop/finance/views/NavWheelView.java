@@ -1,8 +1,5 @@
 package com.moneydesktop.finance.views;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorSet;
@@ -27,6 +24,9 @@ import com.moneydesktop.finance.util.UiUtils;
 
 import de.greenrobot.event.EventBus;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @TargetApi(11)
 public class NavWheelView extends View {
 	
@@ -34,59 +34,59 @@ public class NavWheelView extends View {
 
 	private final float RADIUS = 200;
 	
-	private PointF center;
-	private List<NavItemDrawable> mItems;
-	private List<Integer> items;
+	private PointF mCenter;
+	private List<NavItemDrawable> mDrawables;
+	private List<Integer> mItems;
 	
 	private float mLastTouchY, mLastTouchX;
 	private PointF mDistance;
 
-	private Paint bg;
+	private Paint mBg;
 
-	private PointerDrawable pointer;
+	private PointerDrawable mPointer;
 
-	private boolean rotating = false;
-	private boolean animating = false;
+	private boolean mRotating = false;
+	private boolean mShowing = false;
+
+    private boolean mShouldHide = false;
 	
-	private double degreeChange = 0.0;
-	private int currentIndex = 0;
-	private int lastIndex = 0;
+	private double mDegreeChange = 0.0;
+	private int mCurrentIndex = 0;
+	private int mLastIndex = 0;
 	
 	// Trigger timer that the exit animations have completed
-	private Handler handler = new Handler();
-	private Runnable task = new Runnable() {
+	private Handler mHandler = new Handler();
+	private Runnable mTask = new Runnable() {
 		
 		@Override
 		public void run() {
 			
 			setVisibility(View.GONE);
-			
-			for (NavItemDrawable item : mItems) {
-				item.reset();
-			}
-			
-			animating = false;
 		}
 	};
 
 	private onNavigationChangeListener listener;
 	
 	public int getMAlpha() {
-		return bg.getAlpha();
+		return mBg.getAlpha();
 	}
 
 	public void setMAlpha(int mAlpha) {
-		bg.setAlpha(mAlpha);
+		mBg.setAlpha(mAlpha);
 		invalidate();
 	}
 
 	public void setItems(List<Integer> items) {
-		this.items = items;
+		this.mItems = items;
 		initializeItems();
 	}
 	
+    public boolean isShowing() {
+        return mShowing;
+    }
+	
 	public int getCurrentIndex() {
-		return currentIndex;
+		return mCurrentIndex;
 	}
 
 	/**
@@ -97,10 +97,10 @@ public class NavWheelView extends View {
 	 */
 	public void setCurrentIndex(int currentIndex) {
 		
-		if (rotating || this.currentIndex == currentIndex)
+		if (mRotating || this.mCurrentIndex == currentIndex)
 			return;
 		
-		this.currentIndex = currentIndex;
+		this.mCurrentIndex = currentIndex;
 		rotatePointer();
 	}
 	
@@ -120,11 +120,11 @@ public class NavWheelView extends View {
 		super(context, attrs);
         
 		float[] size = UiUtils.getScreenMeasurements(context);
-		center = new PointF((size[0] / 2.0f), (size[1] / 2.0f));
+		mCenter = new PointF((size[0] / 2.0f), (size[1] / 2.0f));
 		
-		bg = new Paint(Paint.ANTI_ALIAS_FLAG);
-		bg.setStyle(Paint.Style.FILL);
-		bg.setColor(context.getResources().getColor(R.color.transparent50percent));
+		mBg = new Paint(Paint.ANTI_ALIAS_FLAG);
+		mBg.setStyle(Paint.Style.FILL);
+		mBg.setColor(context.getResources().getColor(R.color.transparent50percent));
 		
 		EventBus.getDefault().register(this);
 	}
@@ -136,34 +136,34 @@ public class NavWheelView extends View {
 	 */
 	private void initializeItems() {
 
-		pointer = new PointerDrawable(getContext(), center, items.size());
-		pointer.setCallback(this);
+		mPointer = new PointerDrawable(getContext(), mCenter, mItems.size());
+		mPointer.setCallback(this);
 		
-		mItems = new ArrayList<NavItemDrawable>();
-		mItems.add(pointer);
+		mDrawables = new ArrayList<NavItemDrawable>();
+		mDrawables.add(mPointer);
 
-		degreeChange = 360.0 / (double) items.size();
+		mDegreeChange = 360.0 / (double) mItems.size();
 		
 		float radiusDp = UiUtils.getDynamicPixels(getContext(), RADIUS);
 		
-		for (int i = 0; i < items.size(); i++) {
+		for (int i = 0; i < mItems.size(); i++) {
 			
 			// Determine the x, y position of the item at the given index so all
 			// are distributed equally in a circular pattern
-			double radians = Math.toRadians(((degreeChange * (double) i) + 90.0) % 360.0);
+			double radians = Math.toRadians(((mDegreeChange * (double) i) + 90.0) % 360.0);
 			
 			float x = (float) (radiusDp * Math.cos(radians)) * -1;
 			float y = (float) (radiusDp * Math.sin(radians)) * -1;
 			
-			x += center.x;
-			y += center.y;
+			x += mCenter.x;
+			y += mCenter.y;
 			
 			PointF position = new PointF(x, y);
 			
 			// Create the drawable and add it to our array
-			NavItemDrawable mItem = new NavItemDrawable(getContext(), items.get(i), i, position, center);
+			NavItemDrawable mItem = new NavItemDrawable(getContext(), mItems.get(i), i, position, mCenter);
 			mItem.setCallback(this);
-			mItems.add(mItem);
+			mDrawables.add(mItem);
 		}
 		
 		// Initial draw of the items
@@ -176,26 +176,26 @@ public class NavWheelView extends View {
 	 * current index by the most efficient and logical route.
 	 */
 	private void rotatePointer() {
-		
+
+        mRotating = true;
+        
 		// Degree position of the index
-		float rotateTo = (float) (currentIndex * degreeChange);
+		float rotateTo = (float) (mCurrentIndex * mDegreeChange);
 		
 		// Determine if we need to rotate outside of the established pattern
-		final boolean change = Math.abs(lastIndex - currentIndex) > (items.size() / 2.0f);
+		final boolean change = Math.abs(mLastIndex - mCurrentIndex) > (mItems.size() / 2.0f);
 		
 		// Make sure we rotate the quickest way to the selected index
 		if (change)
-			rotateTo = rotateTo + Math.signum(lastIndex - currentIndex) * 360;
+			rotateTo = rotateTo + Math.signum(mLastIndex - mCurrentIndex) * 360;
 		
 		// Animate to the correct rotation
-		ObjectAnimator rotate = ObjectAnimator.ofFloat(pointer, "rotation", rotateTo);
+		ObjectAnimator rotate = ObjectAnimator.ofFloat(mPointer, "rotation", rotateTo);
 		rotate.setDuration(200);
 		rotate.addListener(new AnimatorListener() {
 			
 			@Override
-			public void onAnimationStart(Animator animation) {
-				rotating = true;
-			}
+			public void onAnimationStart(Animator animation) {}
 			
 			@Override
 			public void onAnimationRepeat(Animator animation) {}
@@ -205,14 +205,19 @@ public class NavWheelView extends View {
 				
 				// Adjustment for irregular movement
 				if (change)
-					pointer.fixRotation((float) (currentIndex * degreeChange));
+					mPointer.fixRotation((float) (mCurrentIndex * mDegreeChange));
 				
-				rotating = false;
+				mRotating = false;
+				
+				if (mShouldHide) {
+				    mShouldHide = false;
+				    hideNav();
+				}
 			}
 			
 			@Override
 			public void onAnimationCancel(Animator animation) {
-				rotating = false;
+				mRotating = false;
 			}
 		});
 		
@@ -221,7 +226,7 @@ public class NavWheelView extends View {
 		set.start();
 		
 		// Update the last selected index
-		lastIndex = currentIndex;
+		mLastIndex = mCurrentIndex;
 	}
 	
 	/**
@@ -232,7 +237,7 @@ public class NavWheelView extends View {
 	 */
 	private ObjectAnimator growIcon() {
 		
-		NavItemDrawable item = mItems.get(currentIndex + 1);
+		NavItemDrawable item = mDrawables.get(mCurrentIndex + 1);
 		
 		PointF orig = new PointF(1.0f, 1.0f);
 		PointF bigger = new PointF(1.3f, 1.3f);
@@ -251,8 +256,8 @@ public class NavWheelView extends View {
 	 */
 	private boolean itemTouchCheck() {
 
-		for (NavItemDrawable item : mItems) {
-        	
+		for (NavItemDrawable item : mDrawables) {
+		    
         	if (item.getBounds().contains((int) mLastTouchX, (int) mLastTouchY)) {
         	
         		setCurrentIndex(item.getIndex());
@@ -267,16 +272,17 @@ public class NavWheelView extends View {
 	 * Show the navigation wheel on screen with the appropriate animations
 	 */
 	public void showNav() {
-
-		if (animating)
-			return;
 		
+	    mShowing = true;
+	    
+	    mHandler.removeCallbacks(mTask);
+	    
 		setVisibility(View.VISIBLE);
 		ObjectAnimator fade = ObjectAnimator.ofInt(this, "mAlpha", 0, 255);
 		fade.setDuration(250);
 		fade.start();
 		
-		for (NavItemDrawable item : mItems)
+		for (NavItemDrawable item : mDrawables)
 			item.playIntro();
 		
 		// Notify the system the navigation wheel is showing
@@ -288,27 +294,25 @@ public class NavWheelView extends View {
 	 */
 	public void hideNav() {
 
-		if (animating)
-			return;
-		
-		animating = true;
+        mShowing = false;
 		
 		ObjectAnimator fade = ObjectAnimator.ofInt(this, "mAlpha", 255, 0);
 		fade.setDuration(250);
 		fade.start();
 		
-		for (NavItemDrawable item : mItems)
-			item.playOutro(currentIndex);
+		for (NavItemDrawable item : mDrawables)
+			item.playOutro(mCurrentIndex);
 		
 		// Timer to handle hide animations have completed
-		handler.postDelayed(task, 1100);
+		mHandler.postDelayed(mTask, 1200);
 		
 		// Notify the system the navigation is no longer showing
 		EventBus.getDefault().post(new EventMessage().new NavigationEvent(false));
 		
 		// Update any listener of the index change
-		if (listener != null)
-			listener.onNavigationChanged(currentIndex);
+		if (listener != null) {
+			listener.onNavigationChanged(mCurrentIndex);
+		}
 	}
 	
 	/**
@@ -333,9 +337,9 @@ public class NavWheelView extends View {
 	 */
 	private void toNext() {
 		
-		int index = currentIndex + 1;
+		int index = mCurrentIndex + 1;
 		
-		if (index == items.size())
+		if (index == mItems.size())
 			index = 0;
 		
 		setCurrentIndex(index);
@@ -346,10 +350,10 @@ public class NavWheelView extends View {
 	 */
 	private void toPrevious() {
 
-		int index = currentIndex - 1;
+		int index = mCurrentIndex - 1;
 		
 		if (index < 0)
-			index = items.size() - 1;
+			index = mItems.size() - 1;
 		
 		setCurrentIndex(index);
 	}
@@ -357,6 +361,10 @@ public class NavWheelView extends View {
 	@Override
     public boolean onTouchEvent(MotionEvent ev) {
 
+	    if (!mShowing) {
+	        return false;
+	    }
+	    
         final int action = ev.getAction();
         
         switch (action) {
@@ -370,6 +378,27 @@ public class NavWheelView extends View {
 	            
 	            break;
 	        }
+            
+            case MotionEvent.ACTION_UP: {
+
+                mLastTouchY = ev.getY();
+                mLastTouchX = ev.getX();
+
+                // Touched to dismiss navigation
+                if (mDistance.x <= 10.0f && mDistance.y <= 10.0f) {
+                    
+                    mShouldHide = true;
+                    
+                    if (!itemTouchCheck() || (mShowing && !mRotating)) {
+                        mShouldHide = false;
+                        hideNav();
+                    }
+                    
+                    return true;
+                }
+                
+                break;
+            }
 	            
 	        case MotionEvent.ACTION_MOVE: {
 	        	
@@ -388,23 +417,6 @@ public class NavWheelView extends View {
 	            mLastTouchX = x;
 	            
 	            break;
-	        }
-	        
-	        case MotionEvent.ACTION_UP: {
-
-	            mLastTouchY = ev.getY();
-	            mLastTouchX = ev.getX();
-
-	            // Touched to dismiss navigation
-	            if (mDistance.x <= 10.0f && mDistance.y <= 10.0f) {
-	            	
-	            	itemTouchCheck();
-		            hideNav();
-		            
-		            return true;
-	            }
-	            
-	        	break;
 	        }
         }
         
@@ -430,11 +442,11 @@ public class NavWheelView extends View {
 		super.onDraw(c);
 		
 		// Draw the pointer and background
-		c.drawRect(0, 0, getWidth(), getHeight(), bg);
-		pointer.draw(c);
+		c.drawRect(0, 0, getWidth(), getHeight(), mBg);
+		mPointer.draw(c);
 		
 		// Draw all of the navigation items
-		for (NavItemDrawable item : mItems)
+		for (NavItemDrawable item : mDrawables)
 			item.draw(c);
 	}
 	

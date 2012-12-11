@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/lblue_to_white" >
+    android:background="@drawable/primary_to_white" >
 	    
     <View
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
         android:id="@+id/header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        layout="@layout/item_transaction_header" />
+        layout="@layout/handset_item_transaction_header" />
     
 	<LinearLayout
 	    android:id="@id/cell"

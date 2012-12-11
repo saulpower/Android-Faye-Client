@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    android:id="@id/cell"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="@dimen/tablet_transaction_item"
+	    android:background="@drawable/transaction_item"
+	    android:orientation="horizontal" >
+
+	    <RelativeLayout
+	        android:layout_width="0dp"
+	        android:layout_weight="3"
+	        android:layout_height="match_parent" >
+	
+		    <com.moneydesktop.finance.views.VerticalTextView
+		        android:id="@+id/text_new"
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:background="@drawable/primary_to_white"
+		        android:gravity="center"
+		        android:text="@string/text_new"
+		        android:textColor="@drawable/white_to_primary_text"
+		        app:isLeft="false" />
+	    
+	    </RelativeLayout>
+	
+	    <TextView
+	        android:id="@+id/date"
+	        style="@style/tablet_txn_text"
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight="11"
+	        android:gravity="center" />
+	
+	    <View
+	        android:id="@+id/dotted1"
+	        android:layout_width="@dimen/tablet_transaction_item"
+	        android:layout_height="match_parent"
+	        android:layout_marginBottom="1dp"
+	        android:layout_marginTop="1dp"
+	        android:layout_marginLeft="@dimen/tablet_transaction_vert"
+	        android:layout_marginRight="@dimen/tablet_transaction_vert"
+	        android:background="@drawable/dotted_line_spaced_vertical_blue" />
+	
+	    <TextView
+	        android:id="@+id/payee"
+	        style="@style/tablet_txn_text"
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight="35"
+	        android:gravity="center_vertical|left" />
+	
+	    <View
+	        android:id="@+id/dotted2"
+	        android:layout_width="@dimen/tablet_transaction_item"
+	        android:layout_height="match_parent"
+	        android:layout_marginBottom="1dp"
+	        android:layout_marginTop="1dp"
+	        android:layout_marginLeft="@dimen/tablet_transaction_vert"
+	        android:layout_marginRight="@dimen/tablet_transaction_vert"
+	        android:background="@drawable/dotted_line_spaced_vertical_blue" />
+	
+	    <TextView
+	        android:id="@+id/category"
+	        style="@style/tablet_txn_text"
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight="26"
+	        android:gravity="center_vertical|left" />
+	
+	    <View
+	        android:id="@+id/dotted3"
+	        android:layout_width="@dimen/tablet_transaction_item"
+	        android:layout_height="match_parent"
+	        android:layout_marginBottom="1dp"
+	        android:layout_marginTop="1dp"
+	        android:layout_marginLeft="@dimen/tablet_transaction_vert"
+	        android:layout_marginRight="@dimen/tablet_transaction_vert"
+	        android:background="@drawable/dotted_line_spaced_vertical_blue" />
+	
+	    <TextView
+	        android:id="@+id/amount"
+	        style="@style/tablet_txn_text"
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight="15"
+	        android:gravity="center_vertical|right"
+	        android:textColor="@drawable/primary_to_white_text" />
+	
+	    <View
+	        android:id="@+id/dotted4"
+	        android:layout_width="@dimen/tablet_transaction_item"
+	        android:layout_height="match_parent"
+	        android:layout_marginBottom="1dp"
+	        android:layout_marginTop="1dp"
+	        android:layout_marginLeft="@dimen/tablet_transaction_vert"
+	        android:layout_marginRight="@dimen/tablet_transaction_vert"
+	        android:background="@drawable/dotted_line_spaced_vertical_blue" />
+	
+	    <View
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight="10" />
+	
+	</LinearLayout>
+
+</RelativeLayout>

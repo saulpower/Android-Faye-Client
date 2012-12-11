@@ -24,14 +24,14 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 
 	private static Map<Class<?>, Query<?>> queries = new HashMap<Class<?>, Query<?>>();
 	
-	protected DataState dataStateEnum;
-	protected DataState previousDataStateEnum;
-	protected boolean isNew = false;
-	protected boolean syncImmediately = false;
-	protected boolean syncSuspended = false;
-	protected boolean ignoreWillSave = false;
-	protected boolean suspendChangeTracking = false;
-	protected boolean isDeleted = false;
+	protected DataState mDataStateEnum;
+	protected DataState mPreviousDataStateEnum;
+	protected boolean mIsNew = false;
+	protected boolean mSyncImmediately = false;
+	protected boolean mSyncSuspended = false;
+	protected boolean mIgnoreWillSave = false;
+	protected boolean mSuspendChangeTracking = false;
+	protected boolean mIsDeleted = false;
 	
 	/********************************************************************************
 	 * Property Access Methods
@@ -39,38 +39,38 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 	
 	public DataState getDataStateEnum() {
 		
-		if (dataStateEnum == null && getBusinessObjectBase() != null) {
-			dataStateEnum = DataState.fromInteger(getBusinessObjectBase().getDataState());
+		if (mDataStateEnum == null && getBusinessObjectBase() != null) {
+			mDataStateEnum = DataState.fromInteger(getBusinessObjectBase().getDataState());
 		}
 		
-		return dataStateEnum;
+		return mDataStateEnum;
 	}
 
 	public void setDataStateEnum(DataState dataStateEnum) {
 		
-		this.dataStateEnum = dataStateEnum;
+		this.mDataStateEnum = dataStateEnum;
 		
 		getBusinessObjectBase().setDataState(dataStateEnum.index());
 	}
 
 	public boolean isNew() {
-		return isNew;
+		return mIsNew;
 	}
 
 	public void setNew(boolean isNew) {
-		this.isNew = isNew;
+		this.mIsNew = isNew;
 	}
 
 	public void setIgnoreWillSave(boolean ignoreWillSave) {
-		this.ignoreWillSave = ignoreWillSave;
+		this.mIgnoreWillSave = ignoreWillSave;
 	}
 	
 	public boolean isDeleted() {
-		return isDeleted;
+		return mIsDeleted;
 	}
 
 	public void setDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted;
+		this.mIsDeleted = isDeleted;
 	}
 	
 	/********************************************************************************
@@ -85,7 +85,7 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 		if (this instanceof BusinessObjectBase)
 			return;
 		
-		previousDataStateEnum = getDataStateEnum();
+		mPreviousDataStateEnum = getDataStateEnum();
 		
 		try {
 			
@@ -94,7 +94,7 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 			
 		} catch (DaoException ex) {}
 		
-		syncImmediately = false;
+		mSyncImmediately = false;
 		
 		if (getDataStateEnum() != DataState.DATA_STATE_UNCHANGED) {
 			setDataStateEnum(DataState.DATA_STATE_UNCHANGED);
@@ -108,16 +108,16 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 	 */
 	public void willSave(boolean isDeleted) {
 		
-		if (ignoreWillSave)
+		if (mIgnoreWillSave)
 			return;
 
-		this.isDeleted = isDeleted;
+		this.mIsDeleted = isDeleted;
 		
 		if (isDeleted) {
 			// TODO: notification of deleted object
 		}
 		
-		if (!suspendChangeTracking) {
+		if (!mSuspendChangeTracking) {
 			
 			if (getBusinessObjectBase() != null)
 				getBusinessObjectBase().setDateModified(new Date());
@@ -135,7 +135,7 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 	}
 	
 	public void suspendDataState() {
-		suspendChangeTracking = true;
+		mSuspendChangeTracking = true;
 	}
 	
 	public boolean containsTag(String tagId) {

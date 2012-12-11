@@ -20,8 +20,8 @@ import com.moneydesktop.finance.adapters.AmazingAdapter.HasMorePagesListener;
 public class AmazingListView extends ListView implements HasMorePagesListener {
 	public static final String TAG = AmazingListView.class.getSimpleName();
 	
-	View listFooter;
-	boolean footerViewAttached = false;
+	View mListFooter;
+	boolean mFooterViewAttached = false;
 
     private View mHeaderView;
     private boolean mHeaderViewVisible;
@@ -29,7 +29,7 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     private int mHeaderViewWidth;
     private int mHeaderViewHeight;
 
-    private AmazingAdapter adapter;
+    private AmazingAdapter mAdapter;
     
     public void setPinnedHeaderView(View view) {
         mHeaderView = view;
@@ -67,7 +67,7 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
             return;
         }
 
-        int state = adapter.getPinnedHeaderState(position);
+        int state = mAdapter.getPinnedHeaderState(position);
         switch (state) {
             case AmazingAdapter.PINNED_HEADER_GONE: {
                 mHeaderViewVisible = false;
@@ -75,7 +75,7 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
             }
 
             case AmazingAdapter.PINNED_HEADER_VISIBLE: {
-            	adapter.configurePinnedHeader(mHeaderView, position, 255);
+            	mAdapter.configurePinnedHeader(mHeaderView, position, 255);
                 if (mHeaderView.getTop() != 0) {
                     mHeaderView.layout(0, 0, mHeaderViewWidth, mHeaderViewHeight);
                 }
@@ -97,7 +97,7 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
 	                    y = 0;
 	                    alpha = 255;
 	                }
-	                adapter.configurePinnedHeader(mHeaderView, position, alpha);
+	                mAdapter.configurePinnedHeader(mHeaderView, position, alpha);
 	                if (mHeaderView.getTop() != y) {
 	                    mHeaderView.layout(0, y, mHeaderViewWidth, mHeaderViewHeight + y);
 	                }
@@ -130,11 +130,11 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     }
     
     public void setLoadingView(View listFooter) {
-		this.listFooter = listFooter;
+		this.mListFooter = listFooter;
 	}
     
     public View getLoadingView() {
-		return listFooter;
+		return mListFooter;
 	}
     
     @Override
@@ -144,12 +144,12 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     	}
     	
     	// previous adapter
-    	if (this.adapter != null) {
-    		this.adapter.setHasMorePagesListener(null);
+    	if (this.mAdapter != null) {
+    		this.mAdapter.setHasMorePagesListener(null);
     		this.setOnScrollListener(null);
     	}
     	
-    	this.adapter = (AmazingAdapter) adapter;
+    	this.mAdapter = (AmazingAdapter) adapter;
     	((AmazingAdapter)adapter).setHasMorePagesListener(this);
 		this.setOnScrollListener((AmazingAdapter) adapter);
     	
@@ -161,26 +161,26 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     
     @Override
     public AmazingAdapter getAdapter() {
-    	return adapter;
+    	return mAdapter;
     }
 
 	@Override
 	public void noMorePages() {
-		if (listFooter != null) {
-			this.removeFooterView(listFooter);
+		if (mListFooter != null) {
+			this.removeFooterView(mListFooter);
 		}
-		footerViewAttached = false;
+		mFooterViewAttached = false;
 	}
 
 	@Override
 	public void mayHaveMorePages() {
-		if (!footerViewAttached && listFooter != null) {
-			this.addFooterView(listFooter);
-			footerViewAttached = true;
+		if (!mFooterViewAttached && mListFooter != null) {
+			this.addFooterView(mListFooter);
+			mFooterViewAttached = true;
 		}
 	}
 	
 	public boolean isLoadingViewVisible() {
-		return footerViewAttached;
+		return mFooterViewAttached;
 	}
 }
