@@ -7,7 +7,11 @@
         <attr name="radius" format="float" />
         <attr name="android:background" />
     </declare-styleable>
-    
+    <declare-styleable name="LabelEditText">
+        <attr name="labelColor" format="color" />
+        <attr name="labelSize" format="dimension" />
+        <attr name="labelText" format="string" />
+    </declare-styleable>
     <declare-styleable name="Caret">
         <attr name="color" format="color" />
         <attr name="secondaryColor" format="color" />
