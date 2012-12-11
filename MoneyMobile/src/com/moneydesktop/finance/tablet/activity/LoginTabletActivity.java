@@ -123,15 +123,16 @@ public class LoginTabletActivity extends BaseActivity {
 		loginText = (TextView) findViewById(R.id.login_text);
 		messageTitle = (TextView) findViewById(R.id.message_title);
 		messageBody = (TextView) findViewById(R.id.message_body);
-		
-		Fonts.applyPrimaryBoldFont(loginViewButton, 15);
-		Fonts.applyPrimaryBoldFont(demoButton, 15);
-		Fonts.applyPrimaryBoldFont(loginButton, 15);
-		Fonts.applyPrimaryBoldFont(cancelButton, 15);
-		Fonts.applyPrimaryBoldFont(signupText, 12);
-		Fonts.applySecondaryItalicFont(loginText, 12);
-		Fonts.applyPrimaryItalicFont(username, 9);
-		Fonts.applyPrimaryItalicFont(password, 9);
+		//Fonts.applyPrimarySemiBoldFont((TextView)username.getEditableText(), 25);
+		//Fonts.applyPrimarySemiBoldFont((TextView)password.getEditableText(), 25);
+		Fonts.applyPrimaryFont(loginViewButton, 20);
+		Fonts.applyPrimaryFont(demoButton, 20);
+		Fonts.applyPrimaryFont(loginButton, 20);
+		Fonts.applyPrimaryFont(cancelButton, 20);
+		Fonts.applyPrimaryFont(signupText, 15);
+		Fonts.applyPrimaryFont(loginText, 15);
+		Fonts.applyPrimarySemiBoldFont(username, 25);
+		Fonts.applyPrimarySemiBoldFont(password, 25);
 			if (android.os.Build.VERSION.SDK_INT >= 11) {
 				findViewById(R.id.logindotted1).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 				findViewById(R.id.logindotted2).setLayerType(View.LAYER_TYPE_SOFTWARE, null);

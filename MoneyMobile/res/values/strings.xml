@@ -111,7 +111,7 @@
     <string name="text_lock">Enter your current code</string>
     <string name="text_lock_confirm">Confirm secret code</string>
     <string name="text_lock_create">Create your secret code</string>
-    <string name="text_login">How do I set up my mobile account?</string>
+    <string name="text_login">Learn More.</string>
     <string name="text_signup">Need an account?</string>
     <string name="panel_title">MY INSTITUTIONS</string>
     <string name="text_syncing">Syncing Data&#8230;</string>
