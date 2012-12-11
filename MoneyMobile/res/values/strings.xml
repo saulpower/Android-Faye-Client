@@ -6,6 +6,13 @@
         <item>SHOW/HIDE DATA</item>
         <item>DELETE THIS ACCOUNT</item>
     </string-array>    
+    
+    <string-array name="bank_selection_popup">
+        <item>REFRESH DATA</item>
+        <item>REMOVE</item>
+        <item>UPDATE USERNAME AND PASSWORD</item>
+    </string-array> 
+    
     <string name="account_types_title">Accounts</string>
     <string name="account_types_indicator_show">Show</string>
     <string name="account_types_indicator_hide">Hide</string>

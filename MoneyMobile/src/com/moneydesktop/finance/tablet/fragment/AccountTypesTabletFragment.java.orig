@@ -22,8 +22,11 @@ import android.widget.Toast;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseTabletFragment;
 import com.moneydesktop.finance.R;
+<<<<<<< HEAD
+=======
 import com.moneydesktop.finance.adapters.AccountTypesAdapter;
 import com.moneydesktop.finance.data.BankLogoManager;
+>>>>>>> master
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.tablet.adapter.AccountTypesAdapter;
@@ -36,8 +39,12 @@ import java.util.List;
 
 public class AccountTypesTabletFragment extends BaseTabletFragment {
     private ExpandableListView mExpandableListView;
+<<<<<<< HEAD
+    private static SlidingDrawerRightSide sRightDrawer;
+=======
     private static SlidingDrawerRightSide mRightDrawer;
     private View mFooter;
+>>>>>>> master
 	
 	public static AccountTypesTabletFragment newInstance(int position) {	
 		AccountTypesTabletFragment frag = new AccountTypesTabletFragment();
@@ -60,10 +67,16 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
+<<<<<<< HEAD
+		mRoot = inflater.inflate(R.layout.activity_account_types, null);
+		mExpandableListView = (ExpandableListView)mRoot.findViewById(R.id.accounts_expandable_list_view);
+		sRightDrawer = (SlidingDrawerRightSide)mRoot.findViewById(R.id.account_slider);
+=======
 		root = inflater.inflate(R.layout.activity_account_types, null);
 		mFooter = inflater.inflate(R.layout.account_type_list_footer, null);
 		mExpandableListView = (ExpandableListView)root.findViewById(R.id.accounts_expandable_list_view);
 		mRightDrawer = (SlidingDrawerRightSide)root.findViewById(R.id.account_slider);
+>>>>>>> master
 		setupView();
 		
 		return mRoot;
@@ -82,9 +95,14 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
         	}
         }
         
+<<<<<<< HEAD
+        if (!accountTypesFiltered.isEmpty()) {
+        	mExpandableListView.setAdapter(new AccountTypesAdapter(accountTypesFiltered, mActivity, mExpandableListView));
+=======
         if (!accountTypesFiltered.isEmpty()) {        	
         	mExpandableListView.addFooterView(mFooter);
         	mExpandableListView.setAdapter(new AccountTypesAdapter(accountTypesFiltered, activity, mExpandableListView));
+>>>>>>> master
         } else {
         	Toast.makeText(mActivity, "No Accounts types that have bank accounts...show empty state", Toast.LENGTH_SHORT).show();
         }
@@ -138,6 +156,10 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
 		return headerView;
 	}
 
+<<<<<<< HEAD
+	private View populateDrawerView (final Bank banks) {
+        LayoutInflater layoutInflater = mActivity.getLayoutInflater();
+=======
     /**
      * Creates a View of a bank represented on the right panel.
      * @param bank -the bank to be added
@@ -146,6 +168,7 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
      */
 	private View populateDrawerView (final Bank bank, final LinearLayout panelLayoutHolder) {
         LayoutInflater layoutInflater = activity.getLayoutInflater();
+>>>>>>> master
         final View bankTypeAccountView = layoutInflater.inflate(R.layout.bank_account, null);
         ImageView bankImage = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_image);
         
@@ -208,9 +231,9 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
 
         drawerLayoutParams.width = layoutParams.width + width;
         drawerLayoutParams.height = UiUtils.getScreenHeight(activity) ;
-        mRightDrawer.setLayoutParams(drawerLayoutParams);
+        sRightDrawer.setLayoutParams(drawerLayoutParams);
 
-        return mRightDrawer;
+        return sRightDrawer;
     }
 	
 	@Override

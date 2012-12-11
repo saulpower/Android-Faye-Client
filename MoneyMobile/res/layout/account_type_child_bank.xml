@@ -24,8 +24,7 @@
 	            android:id="@+id/tablet_account_type_bank_logo"
 	            android:layout_width="50dip"
 	            android:layout_height="50dip"
-	            android:gravity="center_vertical"
-	            android:src="@drawable/bank1" />
+	            android:gravity="center_vertical"/>
 	        
 	    </LinearLayout>
 	 

@@ -4,6 +4,8 @@ import java.text.DecimalFormat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
@@ -13,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.R.drawable;
 import com.moneydesktop.finance.data.Constant;
 
 public class UiUtils {
@@ -45,6 +48,35 @@ public class UiUtils {
         final Display display = context.getWindowManager().getDefaultDisplay();
         display.getMetrics(metrics);
         return (metrics.densityDpi / Constant.STANDARD_DPI);
+    }
+    
+    /**
+     * This method convets dp unit to equivalent device specific value in pixels. 
+     * 
+     * @param dp      -- A value in dp. Which we need to convert into pixels
+     * @param context -- Context to get resources and device specific display metrics
+     * @return A float value to represent Pixels equivalent to dp according to device
+     */
+    public static float convertDpToPixel(float dp,Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * (metrics.densityDpi/160f);
+        return px;
+    }
+    
+    /**
+     * This method converts device specific pixels to device independent pixels.
+     * 
+     * @param px      -- A value in pixels. Which we need to convert into db
+     * @param context -- Context to get resources and device specific display metrics
+     * @return A float value to represent db equivalent to px value
+     */
+    public static float convertPixelsToDp(float px,Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float dp = px / (metrics.densityDpi / 160f);
+        return dp;
+
     }
 
     /**
@@ -100,11 +132,5 @@ public class UiUtils {
     public static float getDynamicPixels(Context context, float pixels) {
     	return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixels, context.getResources().getDisplayMetrics());
     }
-
-	public static String customFormat(String pattern, Double d) {
-        DecimalFormat myFormatter = new DecimalFormat(pattern); 
-        String stringformatoutput = myFormatter.format(d); 
-        return stringformatoutput; 
-	}
 
 }
