@@ -5,14 +5,13 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
-
-import de.greenrobot.event.EventBus;
+import com.moneydesktop.finance.shared.DashboardBaseActivity;
 
 public abstract class BaseFragment extends Fragment {
 
 	private int mPosition = -1;
 	
-	protected DashboardHandsetActivity mActivity;
+	protected DashboardBaseActivity mActivity;
 	protected View mRoot;
     
 	public int getPosition() {
@@ -27,21 +26,17 @@ public abstract class BaseFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         
-        this.mActivity = (DashboardHandsetActivity) activity;
+        this.mActivity = (DashboardBaseActivity) activity;
 	}
     
     @Override
     public void onResume() {
         super.onResume();
-        
-        EventBus.getDefault().register(this);
     }
     
     @Override
     public void onPause() {
         super.onPause();
-        
-        EventBus.getDefault().unregister(this);
     }
 	
 	public abstract String getFragmentTitle();

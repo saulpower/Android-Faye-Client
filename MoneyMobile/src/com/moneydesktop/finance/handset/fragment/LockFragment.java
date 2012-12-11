@@ -46,7 +46,7 @@ public class LockFragment extends BaseFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         
-        this.mActivity.onFragmentAttached();
+        mActivity.onFragmentAttached();
 	}
 	
 	@Override

@@ -269,6 +269,16 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 			mNavigation.hideNav();
 		}
 	}
+	
+	public void showPopupFragment(Fragment fragment) {
+
+	    if (fragment != null) {
+            
+            FragmentTransaction ft = mFm.beginTransaction();
+            ft.replace(R.id.popup_fragment, fragment);
+            ft.commit();
+        }
+	}
 
     public void showFragment(int index) {
     	

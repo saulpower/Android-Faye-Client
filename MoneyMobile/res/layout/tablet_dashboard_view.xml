@@ -25,6 +25,11 @@
         
     </ViewFlipper>
 
+    <FrameLayout
+        android:id="@+id/popup_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <include
         android:id="@+id/navigation"
         layout="@layout/title_bar" />

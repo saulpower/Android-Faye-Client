@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.moneydesktop.finance.BaseTabletFragment;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.handset.fragment.LockFragment;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.views.SettingButton;
 
@@ -88,8 +90,9 @@ public class SettingsTabletFragment extends BaseTabletFragment {
 			
 			@Override
 			public void onClick(View v) {
-				
-				mActivity.showFragment(getPosition());
+
+	            Fragment frag = LockFragment.newInstance();
+				mActivity.showPopupFragment(frag);
 			}
 		});
 		
