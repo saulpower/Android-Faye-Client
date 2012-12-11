@@ -1,7 +1,6 @@
 package com.moneydesktop.finance.tablet.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -15,14 +14,12 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseTabletFragment;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.adapters.AccountTypesAdapter;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.Bank;
@@ -36,7 +33,7 @@ import java.util.List;
 
 public class AccountTypesTabletFragment extends BaseTabletFragment {
     private ExpandableListView mExpandableListView;
-    private static SlidingDrawerRightSide mRightDrawer;
+    private static SlidingDrawerRightSide sRightDrawer;
     private View mFooter;
 	
 	public static AccountTypesTabletFragment newInstance(int position) {	
@@ -60,10 +57,10 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
-		root = inflater.inflate(R.layout.activity_account_types, null);
+		mRoot = inflater.inflate(R.layout.activity_account_types, null);
 		mFooter = inflater.inflate(R.layout.account_type_list_footer, null);
-		mExpandableListView = (ExpandableListView)root.findViewById(R.id.accounts_expandable_list_view);
-		mRightDrawer = (SlidingDrawerRightSide)root.findViewById(R.id.account_slider);
+		mExpandableListView = (ExpandableListView) mRoot.findViewById(R.id.accounts_expandable_list_view);
+		sRightDrawer = (SlidingDrawerRightSide) mRoot.findViewById(R.id.account_slider);
 		setupView();
 		
 		return mRoot;
@@ -84,7 +81,7 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
         
         if (!accountTypesFiltered.isEmpty()) {        	
         	mExpandableListView.addFooterView(mFooter);
-        	mExpandableListView.setAdapter(new AccountTypesAdapter(accountTypesFiltered, activity, mExpandableListView));
+        	mExpandableListView.setAdapter(new AccountTypesAdapter(accountTypesFiltered, mActivity, mExpandableListView));
         } else {
         	Toast.makeText(mActivity, "No Accounts types that have bank accounts...show empty state", Toast.LENGTH_SHORT).show();
         }
@@ -145,7 +142,7 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
      * @return bank view 
      */
 	private View populateDrawerView (final Bank bank, final LinearLayout panelLayoutHolder) {
-        LayoutInflater layoutInflater = activity.getLayoutInflater();
+        LayoutInflater layoutInflater = mActivity.getLayoutInflater();
         final View bankTypeAccountView = layoutInflater.inflate(R.layout.bank_account, null);
         ImageView bankImage = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_image);
         
@@ -185,7 +182,7 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
 					}
 				});
 				
-				new PopupWindowAtLocation(getActivity(), (ViewGroup) bankTypeAccountView, parentView, mRightDrawer.getLeft() - bankTypeAccountView.getWidth(), (int)bankTypeAccountView.getTop() + 10, getActivity().getResources().getStringArray(R.array.bank_selection_popup), onClickListeners);
+				new PopupWindowAtLocation(getActivity(), (ViewGroup) bankTypeAccountView, parentView, sRightDrawer.getLeft() - bankTypeAccountView.getWidth(), (int)bankTypeAccountView.getTop() + 10, getActivity().getResources().getStringArray(R.array.bank_selection_popup), onClickListeners);
 			}
 		});
 
@@ -208,9 +205,9 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
 
         drawerLayoutParams.width = layoutParams.width + width;
         drawerLayoutParams.height = UiUtils.getScreenHeight(activity) ;
-        mRightDrawer.setLayoutParams(drawerLayoutParams);
+        sRightDrawer.setLayoutParams(drawerLayoutParams);
 
-        return mRightDrawer;
+        return sRightDrawer;
     }
 	
 	@Override
