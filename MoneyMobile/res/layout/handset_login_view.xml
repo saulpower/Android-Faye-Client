@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ViewFlipper
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
     android:id="@+id/flipper"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -104,20 +105,25 @@
 	        android:gravity="center">
 		    
 		    <ImageView
+		        android:id="@+id/dottedline1"
 			    android:layout_width="match_parent"
 			    android:layout_height="wrap_content"
 			    android:layout_marginBottom="1dp"
 			    android:src="@drawable/dotted_line"
 			    android:contentDescription="@string/description" />
 			    
-		    <EditText
+		    <com.moneydesktop.finance.views.LabelEditText
 		        android:id="@+id/username_field"
 		        android:layout_width="match_parent"
 		        android:layout_height="50dp"
 		        android:inputType="textEmailAddress"
+		        app:labelColor="@color/light_gray1"
+		        app:labelSize="12sp"
+		        app:labelText="@string/label_email"
 		        style="@style/field" />
 		    
 		    <ImageView
+		        android:id="@+id/dottedline2"
 			    android:layout_width="match_parent"
 			    android:layout_height="wrap_content"
 			    android:layout_marginTop="1dp"
@@ -125,11 +131,14 @@
 			    android:src="@drawable/dotted_line"
 			    android:contentDescription="@string/description" />
 		    
-		    <EditText
+		    <com.moneydesktop.finance.views.LabelEditText
 		        android:id="@+id/password_field"
 		        android:layout_width="match_parent"
 		        android:layout_height="50dp"
 		        android:inputType="textPassword"
+		        app:labelColor="@color/light_gray1"
+		        app:labelSize="12sp"
+		        app:labelText="@string/label_password"
 		        style="@style/field" />
 		    
 		    <requestFocus />
@@ -143,23 +152,6 @@
 	        
 	    </LinearLayout>
 			    
-	    <TextView 
-	        android:id="@+id/email_label"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_marginBottom="88dp"
-	        android:layout_alignBottom="@id/credentials"
-	        android:text="@string/label_email"
-	        style="@style/label" />
-			    
-	    <TextView 
-	        android:id="@+id/password_label"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_marginBottom="34dp"
-	        android:layout_alignBottom="@id/credentials"
-	        android:text="@string/label_password"
-	        style="@style/label" />
 	    
 		<LinearLayout
 		    android:id="@+id/button_view"
@@ -168,7 +160,7 @@
 	        android:layout_below="@id/credentials"
 	        android:layout_marginTop="1dp"
 		    android:orientation="vertical"
-		    android:gravity="center_horizontal" >
+		    android:layout_centerHorizontal="true" >
 			
 		    <Button
 		        android:id="@+id/login_button"

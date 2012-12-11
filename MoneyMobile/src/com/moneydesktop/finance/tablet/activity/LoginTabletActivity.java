@@ -102,6 +102,7 @@ public class LoginTabletActivity extends BaseActivity {
 	
 	@SuppressLint("NewApi")
 	private void setupView() {
+		
 		viewFlipper = (ViewFlipper) findViewById(R.id.flipper);
 		buttonView = (LinearLayout) findViewById(R.id.button_view);
 		credentialView = (LinearLayout) findViewById(R.id.credentials);
@@ -414,6 +415,7 @@ private void toggleAnimations(boolean reset) {
 	}
 
 	private void cancel() {
+		
 		if (failed) {
 			
 			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.setup_url)));
@@ -423,6 +425,7 @@ private void toggleAnimations(boolean reset) {
 			
 			return;
 		}
+		
 		username.clearFocus();
 		password.clearFocus();
 		hideKeyboard();
