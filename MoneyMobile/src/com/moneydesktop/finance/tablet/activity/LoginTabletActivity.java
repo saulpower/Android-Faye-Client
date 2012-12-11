@@ -133,8 +133,9 @@ public class LoginTabletActivity extends BaseActivity {
 		Fonts.applyPrimaryItalicFont(username, 9);
 		Fonts.applyPrimaryItalicFont(password, 9);
 			if (android.os.Build.VERSION.SDK_INT >= 11) {
-				findViewById(R.id.dottedline1).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-				findViewById(R.id.dottedline2).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+				findViewById(R.id.logindotted1).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+				findViewById(R.id.logindotted2).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+				findViewById(R.id.logindotted3).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 			}
 		addListeners();
 	}

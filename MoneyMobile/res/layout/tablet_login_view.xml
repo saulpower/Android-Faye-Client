@@ -104,13 +104,11 @@
 	        android:orientation="vertical"
 	        android:gravity="center">
 		    
-		    <ImageView
-		        android:id="@+id/dottedline1"
-			    android:layout_width="300dp"
-			    android:layout_height="wrap_content"
-			    android:layout_marginBottom="1dp"
-			    android:src="@drawable/dotted_line"
-			    android:contentDescription="@string/description" />
+		     <View
+	        android:id="@+id/logindotted1"
+	        android:layout_width="300dp"
+	        android:layout_height="2dp"
+	        android:background="@drawable/dotted_line_long" />
 			    
 		    <com.moneydesktop.finance.views.LabelEditText
 		        android:id="@+id/username_field"
@@ -122,14 +120,12 @@
 		        app:labelText="@string/label_email"
 		        style="@style/field" />
 		    
-		    <ImageView
-		        android:id="@+id/dottedline2"
-			    android:layout_width="300dp"
-			    android:layout_height="wrap_content"
-			    android:layout_marginTop="1dp"
-			    android:layout_marginBottom="1dp"
-			    android:src="@drawable/dotted_line"
-			    android:contentDescription="@string/description" />
+		     <View
+	        android:id="@+id/logindotted2"
+	        android:layout_width="300dp"
+	        android:layout_height="2dp"
+	        android:background="@drawable/dotted_line_long" />
+		        
 		    
 		    <com.moneydesktop.finance.views.LabelEditText
 		        android:id="@+id/password_field"
@@ -143,12 +139,12 @@
 		    
 		    <requestFocus />
 		    
-		    <ImageView
-			    android:layout_width="match_parent"
-			    android:layout_height="wrap_content"
-			    android:layout_marginTop="1dp"
-			    android:src="@drawable/dotted_line"
-			    android:contentDescription="@string/description" />
+		    <View
+	        android:id="@+id/logindotted3"
+	        android:layout_width="300dp"
+	        android:layout_height="2dp"
+	        android:background="@drawable/dotted_line_long" />
+			    
 	        
 	    </LinearLayout>
 			    
