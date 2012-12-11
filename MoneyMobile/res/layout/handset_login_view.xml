@@ -105,7 +105,7 @@
 	        android:gravity="center">
 		    
 	        <View
-	        android:tag="dotted"
+	        android:id="@+id/logindotted1"
 	        android:layout_width="match_parent"
 	        android:layout_height="2dp"
 	        android:background="@drawable/dotted_line_long" />  
@@ -121,7 +121,7 @@
 		        style="@style/field" />
 		   
 		    <View
-	        android:tag="dotted"
+	        android:id="@+id/logindotted2"
 	        android:layout_width="match_parent"
 	        android:layout_height="2dp"
 	        android:background="@drawable/dotted_line_long" />
@@ -139,7 +139,7 @@
 		    <requestFocus />
 		    
 		    <View
-	        android:tag="dotted"
+	        android:id="@+id/logindotted3"
 	        android:layout_width="match_parent"
 	        android:layout_height="2dp"
 	        android:background="@drawable/dotted_line_long" />
