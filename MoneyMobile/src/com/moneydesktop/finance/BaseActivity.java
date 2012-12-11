@@ -2,8 +2,6 @@ package com.moneydesktop.finance;
 
 import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
-import java.util.ArrayList;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +29,7 @@ import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
 import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.handset.activity.LockCodeActivity;
+import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.LockEvent;
 import com.moneydesktop.finance.util.Enums.LockType;
 import com.moneydesktop.finance.util.Fonts;
@@ -47,7 +46,7 @@ abstract public class BaseActivity extends FragmentActivity {
     // We decided to call anything 7" or over a "tablet".
     private static final float MINIMUM_TABLET_SCREEN_INCHES = 7f;
     
-    public static boolean isTablet (final Context context) {
+    public static boolean isTablet(final Context context) {
 
         final DisplayMetrics metrics = new DisplayMetrics();
         final WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -70,26 +69,25 @@ abstract public class BaseActivity extends FragmentActivity {
     
 	protected final long TRANSITION_DURATION = 300;
 
-	protected FragmentManager fm;
+	protected FragmentManager mFm;
 	
-	private ViewFlipper navFlipper;
-    protected RelativeLayout navBar;
-    private LinearLayout info;
-    private TextView title;
-    private ImageButton back;
+	private ViewFlipper mNavFlipper;
+    protected RelativeLayout mNavBar;
+    private LinearLayout mInfo;
+    private TextView mTitle;
+    private ImageButton mBack;
     
-    protected Animation pushDown, pushUp;
+    protected Animation mPushDown, mPushUp;
     
-    protected int fragmentCount = 0;
-    private boolean backShowing = false;
-	protected boolean onFragment = false;
+    protected int mFragmentCount = 0;
+    private boolean mBackShowing = false;
+	protected boolean mOnFragment = false;
 	
 	private SharedPreferences mPreferences;
-	private ArrayList<AppearanceListener> listeners = new ArrayList<AppearanceListener>();
 	
-	private static long pause;
+	private static long sPause;
 	
-	public static boolean inForeground = false;
+	public static boolean sInForeground = false;
 	
     public SharedPreferences getSharedPreferences () {
         return mPreferences;
@@ -99,7 +97,7 @@ abstract public class BaseActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-    	fm = getSupportFragmentManager();
+    	mFm = getSupportFragmentManager();
     	
 		mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		navigationCheck();
@@ -110,7 +108,7 @@ abstract public class BaseActivity extends FragmentActivity {
 	protected void onResume() {
 		super.onResume();
 		
-		inForeground = true;
+		sInForeground = true;
 		EventBus.getDefault().register(this);
 		
 		lockScreenCheck();
@@ -120,15 +118,15 @@ abstract public class BaseActivity extends FragmentActivity {
 	protected void onPause() {
 		super.onPause();
 		
-		inForeground = false;
+		sInForeground = false;
 		if (!(this instanceof SplashActivity))
-			pause = System.currentTimeMillis();
+			sPause = System.currentTimeMillis();
 		EventBus.getDefault().unregister(this);
 	}
 	
 	private void setupAnimations() {
-		pushDown = AnimationUtils.loadAnimation(this, R.anim.in_down);
-		pushUp = AnimationUtils.loadAnimation(this, R.anim.out_up);
+		mPushDown = AnimationUtils.loadAnimation(this, R.anim.in_down);
+		mPushUp = AnimationUtils.loadAnimation(this, R.anim.out_up);
 	}
 	
 	/**
@@ -137,12 +135,12 @@ abstract public class BaseActivity extends FragmentActivity {
 	 */
 	private void navigationCheck() {
 		
-		if (navFlipper == null) {
+		if (mNavFlipper == null) {
 			
-			navFlipper = (ViewFlipper) findViewById(R.id.nav_flipper);
-			navBar = (RelativeLayout) findViewById(R.id.nav_bar);
+			mNavFlipper = (ViewFlipper) findViewById(R.id.nav_flipper);
+			mNavBar = (RelativeLayout) findViewById(R.id.nav_bar);
 			
-			if (navBar != null) {
+			if (mNavBar != null) {
 				
 				setupNavigation();
 				updateNavBar(getActivityTitle());
@@ -155,11 +153,11 @@ abstract public class BaseActivity extends FragmentActivity {
 	 */
 	private void setupNavigation() {
 
-		info = (LinearLayout) navBar.findViewById(R.id.info);
-		title = (TextView) navBar.findViewById(R.id.title);
-		Fonts.applyPrimaryFont(title, 16);
-		back = (ImageButton) navBar.findViewById(R.id.back_button);
-		back.setOnClickListener(new OnClickListener() {
+		mInfo = (LinearLayout) mNavBar.findViewById(R.id.info);
+		mTitle = (TextView) mNavBar.findViewById(R.id.title);
+		Fonts.applyPrimaryFont(mTitle, 16);
+		mBack = (ImageButton) mNavBar.findViewById(R.id.back_button);
+		mBack.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
 				
@@ -176,19 +174,19 @@ abstract public class BaseActivity extends FragmentActivity {
 	 */
 	public void updateNavBar(String titleString) {
 		
-		if (navBar != null) {
+		if (mNavBar != null) {
 			
 			if (titleString != null)
-				title.setText(titleString.toUpperCase());
+				mTitle.setText(titleString.toUpperCase());
 			
-			if (fragmentCount > 1 && !backShowing) {
+			if (mFragmentCount > 1 && !mBackShowing) {
 				
-				backShowing = true;
+				mBackShowing = true;
 				configureBackButton(true);
 				
-			} else if (fragmentCount <= 1 && backShowing) {
+			} else if (mFragmentCount <= 1 && mBackShowing) {
 				
-				backShowing = false;
+				mBackShowing = false;
 				configureBackButton(false);
 				
 			}
@@ -203,16 +201,16 @@ abstract public class BaseActivity extends FragmentActivity {
 	 */
 	public void configureView(final boolean home) {
 		
-		if (navFlipper == null)
+		if (mNavFlipper == null)
 			return;
 		
 		if (home) {
     		
-			AnimationFactory.flipTransition(navFlipper, home ? FlipDirection.RIGHT_LEFT : FlipDirection.LEFT_RIGHT, TRANSITION_DURATION);
+			AnimationFactory.flipTransition(mNavFlipper, home ? FlipDirection.RIGHT_LEFT : FlipDirection.LEFT_RIGHT, TRANSITION_DURATION);
 			
     	} else {
 	    	
-	        AnimationFactory.flipTransition(navFlipper, home ? FlipDirection.RIGHT_LEFT : FlipDirection.LEFT_RIGHT, TRANSITION_DURATION);
+	        AnimationFactory.flipTransition(mNavFlipper, home ? FlipDirection.RIGHT_LEFT : FlipDirection.LEFT_RIGHT, TRANSITION_DURATION);
     	}
 	}
 	
@@ -226,7 +224,7 @@ abstract public class BaseActivity extends FragmentActivity {
 		int direction = show ? 1 : 0;
 		
 		int dp = (int) getResources().getDimension(R.dimen.navbar_text_slide);
-		animate(info).setDuration(400).translationX(dp * direction).setInterpolator(new OvershootInterpolator());
+		animate(mInfo).setDuration(400).translationX(dp * direction).setInterpolator(new OvershootInterpolator());
 
 		Animation fade = new AlphaAnimation(show ? 0.0f : 1.0f, show ? 1.0f : 0.0f);
 		fade.setDuration(400);
@@ -236,7 +234,7 @@ abstract public class BaseActivity extends FragmentActivity {
 			public void onAnimationStart(Animation animation) {
 
 				if (show)
-					back.setVisibility(View.VISIBLE);
+					mBack.setVisibility(View.VISIBLE);
 			}
 			
 			public void onAnimationRepeat(Animation animation) {}
@@ -244,11 +242,11 @@ abstract public class BaseActivity extends FragmentActivity {
 			public void onAnimationEnd(Animation animation) {
 
 				if (!show)
-					back.setVisibility(View.GONE);
+					mBack.setVisibility(View.GONE);
 			}
 		});
 		
-		back.startAnimation(fade);
+		mBack.startAnimation(fade);
 	}
 	
 	/**
@@ -257,14 +255,13 @@ abstract public class BaseActivity extends FragmentActivity {
 	 */
 	protected void navigateBack() {
 		
-		fragmentCount--;
-		listeners.remove(listeners.size() - 1);
+		mFragmentCount--;
 		getSupportFragmentManager().popBackStack();
 		
-		updateNavBar(fragmentCount == 0 ? getActivityTitle() : null);
+		updateNavBar(mFragmentCount == 0 ? getActivityTitle() : null);
 		
-		if (fragmentCount == 0)
-			onFragment = false;
+		if (mFragmentCount == 0)
+			mOnFragment = false;
 	}
 	
 	/**
@@ -273,14 +270,10 @@ abstract public class BaseActivity extends FragmentActivity {
 	 * 
 	 * @param fragment
 	 */
-	public void onFragmentAttached(AppearanceListener fragment) {
+	public void onFragmentAttached() {
 		
-		if (onFragment) {
-			
-			fragmentCount++;
-			
-			if (fragment != null)
-				listeners.add(fragment);
+		if (mOnFragment) {
+			mFragmentCount++;
 		}
 	}
 	
@@ -298,7 +291,7 @@ abstract public class BaseActivity extends FragmentActivity {
 	
 	private void lockScreenCheck() {
 
-		if (500 < (System.currentTimeMillis() - pause) && !(this instanceof SplashActivity)) {
+		if (500 < (System.currentTimeMillis() - sPause) && !(this instanceof SplashActivity)) {
 			
 			String code = Preferences.getString(Preferences.KEY_LOCK_CODE, "");
 			
@@ -309,9 +302,9 @@ abstract public class BaseActivity extends FragmentActivity {
 	
 	private void showLockScreen(LockType type) {
 		
-		if (!LockCodeActivity.showing) {
+		if (!LockCodeActivity.sShowing) {
 			
-			LockCodeActivity.showing = true;
+			LockCodeActivity.sShowing = true;
 			
 			Intent intent = new Intent(this, LockCodeActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -327,16 +320,8 @@ abstract public class BaseActivity extends FragmentActivity {
 	 */
 	protected void viewDidAppear() {
 		
-		for (AppearanceListener listener : listeners) {
-			
-			if (listener != null)
-				listener.onViewDidAppear();
-		}
+		EventBus.getDefault().post(new EventMessage().new ParentAnimationEvent(true, true));
 	}
     
     public abstract String getActivityTitle();
-	
-	public interface AppearanceListener {
-		public abstract void onViewDidAppear();
-	}
 }

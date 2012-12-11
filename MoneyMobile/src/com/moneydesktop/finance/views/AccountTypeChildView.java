@@ -20,7 +20,7 @@ import com.moneydesktop.finance.database.BankAccount;
 
 public class AccountTypeChildView extends FrameLayout {
 
-	private NumberFormat formatter = NumberFormat.getCurrencyInstance();
+	private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();
     private View mChildView;
     private Context mContext;
     private List<BankAccount> mBankAccounts;
@@ -44,7 +44,7 @@ public class AccountTypeChildView extends FrameLayout {
         	final TextView accountSum = (TextView)view.findViewById(R.id.tablet_account_type_bank_sum);
         		
         	accountName.setText(account.getAccountName() == null ? "" : account.getAccountName());
-        	accountSum.setText(account.getBalance() == null ? "" : formatter.format(account.getBalance()));
+        	accountSum.setText(account.getBalance() == null ? "" : mFormatter.format(account.getBalance()));
         	
         	
         	accountName.setOnClickListener(new OnClickListener() {

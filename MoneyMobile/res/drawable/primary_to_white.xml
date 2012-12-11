@@ -2,13 +2,13 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
 		android:state_pressed="true"
-		android:color="@color/white" />
+		android:drawable="@color/white" />
 	<item
 		android:state_focused="true"
-		android:color="@color/white" />
+		android:drawable="@color/white" />
 	<item
 		android:state_selected= "true"
-		android:color="@color/white" />
+		android:drawable="@color/white" />
 	<item
-		android:color="@color/primaryColor" />
+		android:drawable="@color/primaryColor" />
 </selector>

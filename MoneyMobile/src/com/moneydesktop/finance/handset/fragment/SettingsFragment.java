@@ -19,76 +19,99 @@ import de.greenrobot.event.EventBus;
 
 public class SettingsFragment extends BaseFragment {
 
-	private TextView lockIcon, feedbackIcon, logoutIcon, logoutLabel;
-	private LinearLayout lock, feedback, logout;
+    private static SettingsFragment sFragment;
+    
+	private TextView mLockIcon, mFeedbackIcon, mLogoutIcon, mLogoutLabel;
+	private LinearLayout mLock, mFeedback, mLogout;
 	
-	public static SettingsFragment newInstance(int position) {
+	public static SettingsFragment getInstance(int position) {
 		
-		SettingsFragment frag = new SettingsFragment();
-		frag.setPosition(position);
+	    if (sFragment != null) {
+	        return sFragment;
+	    }
+	    
+	    sFragment = new SettingsFragment();
+	    sFragment.setPosition(position);
+        sFragment.setRetainInstance(true);
 		
         Bundle args = new Bundle();
-        frag.setArguments(args);
+        sFragment.setArguments(args);
         
-        return frag;
+        return sFragment;
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
-		root = inflater.inflate(R.layout.handset_settings_view, null);
+		mRoot = inflater.inflate(R.layout.handset_settings_view, null);
 		setupViews();
+		configureView();
 		
-		return root;
+		return mRoot;
 	}
+    
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        configureView();
+    }
+    
+    @Override
+    public void onSaveInstanceState(Bundle outState)  {
+        super.onSaveInstanceState(outState);
+    }
 	
 	private void setupViews() {
 		
-		lock = (LinearLayout) root.findViewById(R.id.lock);
-		lockIcon = (TextView) root.findViewById(R.id.lock_icon);
-		feedback = (LinearLayout) root.findViewById(R.id.feedback);
-		feedbackIcon = (TextView) root.findViewById(R.id.feedback_icon);
-		logout = (LinearLayout) root.findViewById(R.id.logout);
-		logoutIcon = (TextView) root.findViewById(R.id.logout_icon);
-		logoutLabel = (TextView) root.findViewById(R.id.logout_label);
-		
-		Fonts.applyGlyphFont(lockIcon, 50);
-		Fonts.applyGlyphFont(feedbackIcon, 50);
-		Fonts.applyGlyphFont(logoutIcon, 50);
-		
-		String logoutText = Preferences.getBoolean(Preferences.KEY_IS_DEMO_MODE, false) ? getString(R.string.label_exit) : getString(R.string.label_unlink);
-		logoutLabel.setText(logoutText.toUpperCase());
-		
-		setupListeners();
+		mLock = (LinearLayout) mRoot.findViewById(R.id.lock);
+		mLockIcon = (TextView) mRoot.findViewById(R.id.lock_icon);
+		mFeedback = (LinearLayout) mRoot.findViewById(R.id.feedback);
+		mFeedbackIcon = (TextView) mRoot.findViewById(R.id.feedback_icon);
+		mLogout = (LinearLayout) mRoot.findViewById(R.id.logout);
+		mLogoutIcon = (TextView) mRoot.findViewById(R.id.logout_icon);
+		mLogoutLabel = (TextView) mRoot.findViewById(R.id.logout_label);
+	}
+	
+	private void configureView() {
+
+        Fonts.applyGlyphFont(mLockIcon, 50);
+        Fonts.applyGlyphFont(mFeedbackIcon, 50);
+        Fonts.applyGlyphFont(mLogoutIcon, 50);
+        
+        String logoutText = Preferences.getBoolean(Preferences.KEY_IS_DEMO_MODE, false) ? getString(R.string.label_exit) : getString(R.string.label_unlink);
+        mLogoutLabel.setText(logoutText.toUpperCase());
+        
+        setupListeners();
 	}
 	
 	private void setupListeners() {
 		
-		lock.setOnClickListener(new OnClickListener() {
+		mLock.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				
-				activity.showFragment(getPosition());
+				mActivity.showFragment(getPosition());
 			}
 		});
 		
-		feedback.setOnClickListener(new OnClickListener() {
+		mFeedback.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 
 			    Intent intent = new Intent(Intent.ACTION_SEND);
 			    intent.setType("plain/text");
-			    intent.putExtra(Intent.EXTRA_EMAIL,new String[] { activity.getString(R.string.feedback_email) });
-			    intent.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.feedback_subject));
+			    intent.putExtra(Intent.EXTRA_EMAIL,new String[] { mActivity.getString(R.string.feedback_email) });
+			    intent.putExtra(Intent.EXTRA_SUBJECT, mActivity.getString(R.string.feedback_subject));
 			    intent.putExtra(Intent.EXTRA_TEXT, "");
-			    startActivity(Intent.createChooser(intent, activity.getString(R.string.feedback_title)));
+			    startActivity(Intent.createChooser(intent, mActivity.getString(R.string.feedback_title)));
 			}
 		});
 
-		logout.setOnClickListener(new OnClickListener() {
+		mLogout.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {

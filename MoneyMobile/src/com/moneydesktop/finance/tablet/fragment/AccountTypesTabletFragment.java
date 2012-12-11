@@ -1,8 +1,5 @@
 package com.moneydesktop.finance.tablet.fragment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,19 +13,20 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.BaseActivity.AppearanceListener;
 import com.moneydesktop.finance.BaseTabletFragment;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.adapters.AccountTypesAdapter;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.tablet.adapter.AccountTypesAdapter;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.SlidingDrawerRightSide;
 
-public class AccountTypesTabletFragment extends BaseTabletFragment implements AppearanceListener {
+import java.util.ArrayList;
+import java.util.List;
+
+public class AccountTypesTabletFragment extends BaseTabletFragment {
     private ExpandableListView mExpandableListView;
-    private static SlidingDrawerRightSide mRightDrawer;
+    private static SlidingDrawerRightSide sRightDrawer;
 	
 	public static AccountTypesTabletFragment newInstance(int position) {
 		
@@ -45,23 +43,23 @@ public class AccountTypesTabletFragment extends BaseTabletFragment implements Ap
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         
-        this.activity.onFragmentAttached(this);
+        this.mActivity.onFragmentAttached();
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
-		root = inflater.inflate(R.layout.activity_account_types, null);
-		mExpandableListView = (ExpandableListView)root.findViewById(R.id.accounts_expandable_list_view);
-		mRightDrawer = (SlidingDrawerRightSide)root.findViewById(R.id.account_slider);
+		mRoot = inflater.inflate(R.layout.activity_account_types, null);
+		mExpandableListView = (ExpandableListView)mRoot.findViewById(R.id.accounts_expandable_list_view);
+		sRightDrawer = (SlidingDrawerRightSide)mRoot.findViewById(R.id.account_slider);
 		setupView();
 		
-		return root;
+		return mRoot;
 	}
 	
 	private void setupView() {
-		final LinearLayout panelLayoutHolder = (LinearLayout)root.findViewById(R.id.panel_layout_holder);
+		final LinearLayout panelLayoutHolder = (LinearLayout)mRoot.findViewById(R.id.panel_layout_holder);
         mExpandableListView.setGroupIndicator(null);
         
         List<AccountType> accountTypes = ApplicationContext.getDaoSession().getAccountTypeDao().loadAll();
@@ -75,9 +73,9 @@ public class AccountTypesTabletFragment extends BaseTabletFragment implements Ap
         }
         
         if (!accountTypesFiltered.isEmpty()) {
-        	mExpandableListView.setAdapter(new AccountTypesAdapter(accountTypesFiltered, activity, mExpandableListView));
+        	mExpandableListView.setAdapter(new AccountTypesAdapter(accountTypesFiltered, mActivity, mExpandableListView));
         } else {
-        	Toast.makeText(activity, "No Accounts types that have bank accounts...show empty state", Toast.LENGTH_SHORT).show();
+        	Toast.makeText(mActivity, "No Accounts types that have bank accounts...show empty state", Toast.LENGTH_SHORT).show();
         }
 
         mExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
@@ -95,10 +93,10 @@ public class AccountTypesTabletFragment extends BaseTabletFragment implements Ap
 
         
         final ViewGroup.LayoutParams layoutParams = panelLayoutHolder.getLayoutParams();
-        layoutParams.width = UiUtils.getMinimumPanalWidth(activity);
+        layoutParams.width = UiUtils.getMinimumPanalWidth(mActivity);
         panelLayoutHolder.setLayoutParams(layoutParams);
 
-        setupDrawer(layoutParams, activity);
+        setupDrawer(layoutParams, mActivity);
         initializeDrawer(panelLayoutHolder);
 	}
 	
@@ -120,13 +118,13 @@ public class AccountTypesTabletFragment extends BaseTabletFragment implements Ap
     }
 
     private View getPanelHeader() {
-    	LayoutInflater layoutInflater = activity.getLayoutInflater();
+    	LayoutInflater layoutInflater = mActivity.getLayoutInflater();
     	final View headerView = layoutInflater.inflate(R.layout.tablet_panel_header, null); 
 		return headerView;
 	}
 
 	private View populateDrawerView (final Bank banks) {
-        LayoutInflater layoutInflater = activity.getLayoutInflater();
+        LayoutInflater layoutInflater = mActivity.getLayoutInflater();
         final View bankTypeAccountView = layoutInflater.inflate(R.layout.bank_account, null);
 
         //ImageView bankImage = (ImageView) bankAccountView.findViewById(R.id.bank_account_image);
@@ -139,7 +137,7 @@ public class AccountTypesTabletFragment extends BaseTabletFragment implements Ap
 
 
     public static SlidingDrawerRightSide setupDrawer (final ViewGroup.LayoutParams layoutParams, Activity activity) {
-        final ViewGroup.LayoutParams drawerLayoutParams = mRightDrawer.getLayoutParams();
+        final ViewGroup.LayoutParams drawerLayoutParams = sRightDrawer.getLayoutParams();
 
         Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon);
         int width = bitmap.getWidth();
@@ -147,20 +145,14 @@ public class AccountTypesTabletFragment extends BaseTabletFragment implements Ap
 
         drawerLayoutParams.width = layoutParams.width + width;
         drawerLayoutParams.height = UiUtils.getScreenHeight(activity) ;
-        mRightDrawer.setLayoutParams(drawerLayoutParams);
+        sRightDrawer.setLayoutParams(drawerLayoutParams);
 
-        return mRightDrawer;
+        return sRightDrawer;
     }
 	
 	@Override
 	public String getFragmentTitle() {
 		return null;
-	}
-
-	@Override
-	public void onViewDidAppear() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

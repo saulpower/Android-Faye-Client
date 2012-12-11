@@ -12,40 +12,57 @@ import com.moneydesktop.finance.R;
 
 public class TransactionSummaryFragment extends BaseFragment {
 
-	public static TransactionSummaryFragment newInstance(int position) {
+    private static TransactionSummaryFragment sFragment;
+    
+	public static TransactionSummaryFragment getInstance(int position) {
 		
-		TransactionSummaryFragment frag = new TransactionSummaryFragment();
-		frag.setPosition(position);
+	    if (sFragment != null) {
+	        return sFragment;
+	    }
+	    
+	    sFragment = new TransactionSummaryFragment();
+	    sFragment.setPosition(position);
+        sFragment.setRetainInstance(true);
 		
         Bundle args = new Bundle();
-        frag.setArguments(args);
+        sFragment.setArguments(args);
         
-        return frag;
+        return sFragment;
 	}
 	
-	Button button;
+	private Button mButton;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
-		root = inflater.inflate(R.layout.handset_transaction_summary_view, null);
+		mRoot = inflater.inflate(R.layout.handset_transaction_summary_view, null);
 		setupView();
 		
-		return root;
+		return mRoot;
 	}
 	
 	private void setupView() {
 
-		button = (Button) root.findViewById(R.id.button);		
-		button.setOnClickListener(new OnClickListener() {
+		mButton = (Button) mRoot.findViewById(R.id.button);		
+		mButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
 
-				activity.showFragment(getPosition());
+				mActivity.showFragment(getPosition());
 			}
 		});
 	}
+    
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+    }
+    
+    @Override
+    public void onSaveInstanceState(Bundle outState)  {
+        super.onSaveInstanceState(outState);
+    }
 	
 	@Override
 	public String getFragmentTitle() {

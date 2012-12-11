@@ -21,56 +21,56 @@ public class User {
 	private static final String DEMO_LAST_NAME = "User";
 	private static final String DEMO_ENTITY = "demoentity";
 	
-	private static User sharedInstance;
+	private static User sSharedInstance;
 	
-	private String userId;
-	private String userName;
-	private String firstName;
-	private String lastName;
-	private String systemDeviceId;
-	private String currentEntityId;
-	private String defaultEntityId;
-	private boolean canSync;
+	private String mUserId;
+	private String mUserName;
+	private String mFirstName;
+	private String mLastName;
+	private String mSystemDeviceId;
+	private String mCurrentEntityId;
+	private String mDefaultEntityId;
+	private boolean mCanSync;
 	
 	public static User getCurrentUser() {
 		
-		if (sharedInstance == null) {
-			sharedInstance = load();
+		if (sSharedInstance == null) {
+			sSharedInstance = load();
 		}
 		
-		return sharedInstance;
+		return sSharedInstance;
 	}
 	
 	public User() {}
 	
 	public static void registerUser(JSONObject data, Context context) {
 		
-		sharedInstance = new User();
-		sharedInstance.setUserName(data.optString(Constant.KEY_USERNAME));
-		sharedInstance.setUserId(data.optString(Constant.KEY_USER_GUID));
-		sharedInstance.setSystemDeviceId(data.optString(Constant.KEY_GUID));
-		sharedInstance.setCurrentEntityId(sharedInstance.getUserId());
-		sharedInstance.setDefaultEntityId(sharedInstance.getCurrentEntityId());
-		sharedInstance.setCanSync(true);
+		sSharedInstance = new User();
+		sSharedInstance.setUserName(data.optString(Constant.KEY_USERNAME));
+		sSharedInstance.setUserId(data.optString(Constant.KEY_USER_GUID));
+		sSharedInstance.setSystemDeviceId(data.optString(Constant.KEY_GUID));
+		sSharedInstance.setCurrentEntityId(sSharedInstance.getUserId());
+		sSharedInstance.setDefaultEntityId(sSharedInstance.getCurrentEntityId());
+		sSharedInstance.setCanSync(true);
 		
 		Preferences.saveUserToken(data.optString(Constant.KEY_LOGIN_TOKEN));
 		
-		sharedInstance.save();
+		sSharedInstance.save();
 	}
 	
 	public static void registerDemoUser() {
 		
-		sharedInstance = new User();
-		sharedInstance.setUserName(DEMO_NAME);
-		sharedInstance.setUserId(DEMO_ID);
-		sharedInstance.setFirstName(DEMO_FIRST_NAME);
-		sharedInstance.setLastName(DEMO_LAST_NAME);
-		sharedInstance.setSystemDeviceId(MacUtil.getMACAddress());
-		sharedInstance.setCurrentEntityId(DEMO_ENTITY);
-		sharedInstance.setDefaultEntityId(DEMO_ENTITY);
-		sharedInstance.setCanSync(false);
+		sSharedInstance = new User();
+		sSharedInstance.setUserName(DEMO_NAME);
+		sSharedInstance.setUserId(DEMO_ID);
+		sSharedInstance.setFirstName(DEMO_FIRST_NAME);
+		sSharedInstance.setLastName(DEMO_LAST_NAME);
+		sSharedInstance.setSystemDeviceId(MacUtil.getMACAddress());
+		sSharedInstance.setCurrentEntityId(DEMO_ENTITY);
+		sSharedInstance.setDefaultEntityId(DEMO_ENTITY);
+		sSharedInstance.setCanSync(false);
 		
-		sharedInstance.save();
+		sSharedInstance.save();
 	}
 	
 	@JsonIgnore
@@ -103,7 +103,7 @@ public class User {
 		Preferences.saveString(Preferences.KEY_USER, "");
 		Preferences.saveUserToken("");
 		
-		sharedInstance = null;
+		sSharedInstance = null;
 	}
 	
 	public static User load() {
@@ -125,66 +125,66 @@ public class User {
 	}
 	
 	public String getUserId() {
-		return userId;
+		return mUserId;
 	}
 	
 	public void setUserId(String userId) {
-		this.userId = userId;
+		this.mUserId = userId;
 	}
 	
 	public String getUserName() {
-		return userName;
+		return mUserName;
 	}
 	
 	public void setUserName(String userName) {
-		this.userName = userName;
+		this.mUserName = userName;
 	}
 	
 	public String getFirstName() {
-		return firstName;
+		return mFirstName;
 	}
 	
 	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+		this.mFirstName = firstName;
 	}
 	
 	public String getLastName() {
-		return lastName;
+		return mLastName;
 	}
 	
 	public void setLastName(String lastName) {
-		this.lastName = lastName;
+		this.mLastName = lastName;
 	}
 	
 	public String getSystemDeviceId() {
-		return systemDeviceId;
+		return mSystemDeviceId;
 	}
 	
 	public void setSystemDeviceId(String systemDeviceId) {
-		this.systemDeviceId = systemDeviceId;
+		this.mSystemDeviceId = systemDeviceId;
 	}
 	
 	public String getCurrentEntityId() {
-		return currentEntityId;
+		return mCurrentEntityId;
 	}
 	
 	public void setCurrentEntityId(String currentEntityId) {
-		this.currentEntityId = currentEntityId;
+		this.mCurrentEntityId = currentEntityId;
 	}
 	
 	public String getDefaultEntityId() {
-		return defaultEntityId;
+		return mDefaultEntityId;
 	}
 	
 	public void setDefaultEntityId(String defaultEntityId) {
-		this.defaultEntityId = defaultEntityId;
+		this.mDefaultEntityId = defaultEntityId;
 	}
 	
 	public boolean getCanSync() {
-		return canSync;
+		return mCanSync;
 	}
 	
 	public void setCanSync(boolean canSync) {
-		this.canSync = canSync;
+		this.mCanSync = canSync;
 	}
 }

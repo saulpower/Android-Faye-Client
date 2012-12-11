@@ -8,8 +8,8 @@ import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.util.Log;
 
+import com.crittercism.app.Crittercism;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,35 +31,37 @@ import de.greenrobot.event.EventBus;
 
 public class ApplicationContext extends Application {
 	
-	private final String TAG = "ApplicationContext";
+	public final String TAG = "ApplicationContext";
 
 	final static String WAKE_TAG = "wake_lock";
 
-	private static ApplicationContext instance;
+	private static ApplicationContext sInstance;
 	
-	private static ObjectMapper mapper;
+	private static ObjectMapper sMapper;
 	
-    private static SQLiteDatabase db;
-    private static DaoMaster daoMaster;
-    private static DaoSession daoSession;
+    private static SQLiteDatabase sDb;
+    private static DaoMaster sDaoMaster;
+    private static DaoSession sDaoSession;
 	
-	private static WakeLock wl;
+	private static WakeLock sWl;
 	
-	private static boolean screenOn = true;
-	private BroadcastReceiver screenLock = new BroadcastReceiver() {
+	private static boolean sScreenOn = true;
+	private static boolean sIsTablet = false;
+
+    private BroadcastReceiver sScreenLock = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			
 			if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-				screenOn = true;
+				sScreenOn = true;
 			}
 			
 			if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-				screenOn = false;
+				sScreenOn = false;
 			}
 			
-			if (intent.getAction().equals(Intent.ACTION_USER_PRESENT) && screenOn && BaseActivity.inForeground) {
+			if (intent.getAction().equals(Intent.ACTION_USER_PRESENT) && sScreenOn && BaseActivity.sInForeground) {
 				
 				String code = Preferences.getString(Preferences.KEY_LOCK_CODE, "");
 				if (!code.equals("")) {
@@ -71,7 +73,8 @@ public class ApplicationContext extends Application {
 	
 	public void onCreate() {
 		super.onCreate();
-		
+
+        Crittercism.init(this, "50258d166c36f91a1b000004");
         Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler());
 
         initializeDatabase();
@@ -91,19 +94,18 @@ public class ApplicationContext extends Application {
 		
 		EventBus.getDefault().unregister(this);
 		
-		Log.i(TAG, "Savig BusinessObjectBase ID count");
 		Preferences.saveLong(Preferences.KEY_BOB_ID, BusinessObjectBase.getIdCount());
 		
-		unregisterReceiver(screenLock);
+		unregisterReceiver(sScreenLock);
 		releaseWakeLock();
 	}
 	
 	private void initializeDatabase() {
 
         DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "finance-db", null);
-        db = helper.getWritableDatabase();
-        daoMaster = new DaoMaster(db);
-        daoSession = daoMaster.newSession();
+        sDb = helper.getWritableDatabase();
+        sDaoMaster = new DaoMaster(sDb);
+        sDaoSession = sDaoMaster.newSession();
 	}
 	
 	private void registerScreenLock() {
@@ -111,7 +113,7 @@ public class ApplicationContext extends Application {
         IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(Intent.ACTION_USER_PRESENT);
-    	registerReceiver(screenLock, filter);
+    	registerReceiver(sScreenLock, filter);
 	}
 	
 	private void showLockScreen() {
@@ -139,35 +141,43 @@ public class ApplicationContext extends Application {
 	 *********************************************************************************/
 	
     public ApplicationContext() {
-        instance = this;
+        sInstance = this;
     }
     
     public static Context getContext() {
-        return instance;
+        return sInstance;
     }
     
     public static ObjectMapper getObjectMapper() {
     	
-    	if (mapper == null) {
-    		mapper = new ObjectMapper();
-    		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    		mapper.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
+    	if (sMapper == null) {
+    		sMapper = new ObjectMapper();
+    		sMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    		sMapper.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
     	}
     	
-    	return mapper;
+    	return sMapper;
     }
 
 	public static SQLiteDatabase getDb() {
-		return db;
+		return sDb;
 	}
 
 	public static DaoMaster getDaoMaster() {
-		return daoMaster;
+		return sDaoMaster;
 	}
 
 	public static DaoSession getDaoSession() {
-		return daoSession;
+		return sDaoSession;
 	}
+	
+    public static boolean isTablet() {
+        return sIsTablet;
+    }
+
+    public static void setIsTablet(boolean sIsTablet) {
+        ApplicationContext.sIsTablet = sIsTablet;
+    }
 	
 	/*********************************************************************************
 	 * Misc.
@@ -176,16 +186,16 @@ public class ApplicationContext extends Application {
 	public void acquireWakeLock() {
 			
 		PowerManager pm = (PowerManager) ApplicationContext.getContext().getSystemService(Context.POWER_SERVICE);
-		wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, WAKE_TAG);
-		wl.acquire();
+		sWl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, WAKE_TAG);
+		sWl.acquire();
 	}
 
 	private void releaseWakeLock() {
 		
-		if (wl != null) {
+		if (sWl != null) {
 			
-			wl.release();
-			wl = null;
+			sWl.release();
+			sWl = null;
 		}
 	}
 }

@@ -2,33 +2,42 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/accounts_title_bar"
     android:layout_width="fill_parent"
-    android:layout_height="50dip"
-    android:layout_alignParentTop="true"
+    android:layout_height="40dp"
     android:background="@drawable/top_nav_wood" >
 
-    <TextView
+    <ImageView
+        android:id="@+id/home"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="7dp"
+        android:scaleType="fitCenter"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:src="@drawable/ipad_button_home"
+        android:contentDescription="@string/description" />
+    
+    <TextSwitcher
         android:id="@+id/title_bar_name"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="10dip"
-        android:gravity="center_vertical"
-        android:text="title bar"
-        android:textColor="@android:color/white"
-        android:textSize="20dip" />
+        android:layout_height="match_parent"
+        android:layout_marginBottom="7dp"
+        android:layout_toRightOf="@id/home"
+        android:paddingTop="2dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_alignParentRight="true"
         android:gravity="center_vertical"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:visibility="gone" >
 
         <ImageView
             android:id="@+id/title_bar_icon4"
             android:layout_width="35dip"
             android:layout_height="35dip"
             android:layout_marginRight="10dip"
+            android:contentDescription="@string/description"
             android:visibility="gone" />
 
         <ImageView
@@ -36,6 +45,7 @@
             android:layout_width="35dip"
             android:layout_height="35dip"
             android:layout_marginRight="10dip"
+            android:contentDescription="@string/description"
             android:visibility="gone" />
 
         <ImageView
@@ -43,6 +53,7 @@
             android:layout_width="35dip"
             android:layout_height="35dip"
             android:layout_marginRight="10dip"
+            android:contentDescription="@string/description"
             android:visibility="gone" />
 
         <ImageView
@@ -50,7 +61,9 @@
             android:layout_width="35dip"
             android:layout_height="35dip"
             android:layout_marginRight="10dip"
+            android:contentDescription="@string/description"
             android:visibility="gone" />
+        
     </LinearLayout>
 
 </RelativeLayout>

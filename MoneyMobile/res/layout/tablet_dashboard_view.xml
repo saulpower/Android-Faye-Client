@@ -5,15 +5,12 @@
     android:layout_height="match_parent"
     android:background="@drawable/tablet_wood" >
 
-    <include
-        android:id="@+id/navigation"
-        layout="@layout/title_bar" />
-
     <ViewFlipper
         android:id="@+id/flipper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/navigation" >
+        android:layout_marginTop="-7dp"
+        android:layout_below="@+id/navigation" >
 
         <com.moneydesktop.finance.views.GrowViewPager
             android:id="@+id/tablet_pager"
@@ -27,6 +24,10 @@
             android:layout_height="match_parent" />
         
     </ViewFlipper>
+
+    <include
+        android:id="@+id/navigation"
+        layout="@layout/title_bar" />
     
     <com.moneydesktop.finance.views.NavWheelView
         android:id="@+id/nav_wheel"

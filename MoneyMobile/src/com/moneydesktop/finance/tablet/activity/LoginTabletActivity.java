@@ -16,31 +16,30 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ViewFlipper;
 
-import com.moneydesktop.finance.BaseActivity;
 import com.moneydesktop.finance.DebugActivity;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.DataBridge;
-import com.moneydesktop.finance.data.DemoData;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
+import com.moneydesktop.finance.shared.LoginBaseActivity;
 import com.moneydesktop.finance.util.DialogUtils;
 
 import de.greenrobot.event.EventBus;
 
-public class LoginTabletActivity extends BaseActivity {
+public class LoginTabletActivity extends LoginBaseActivity {
 	
 	private final String TAG = "LoginActivity";
 	
-	private ViewFlipper viewFlipper;
-	private Button loginViewButton, demoButton, loginButton, cancelButton;
-	private EditText username, password;
-	private ImageView logo;
+	private ViewFlipper mViewFlipper;
+	private Button mLoginViewButton, mDemoButton, mLoginButton, mCancelButton;
+	private EditText mUsername, mPassword;
+	private ImageView mLogo;
 	
-	private Animation inLeft, inRight, outLeft, outRight;
+	private Animation mInLeft, mInRight, mOutLeft, mOutRight;
 	
 	@Override
 	public void onBackPressed() {
-		if (viewFlipper.indexOfChild(viewFlipper.getCurrentView()) == 1) {
+		if (mViewFlipper.indexOfChild(mViewFlipper.getCurrentView()) == 1) {
 			cancel();
 		} else {
 			super.onBackPressed();
@@ -55,8 +54,6 @@ public class LoginTabletActivity extends BaseActivity {
 
         setupAnimations();
         setupView();
-        
-        addDemoCredentials();
     }
 	
 	@Override
@@ -66,45 +63,42 @@ public class LoginTabletActivity extends BaseActivity {
 		toDashboard();
 	}
 	
-	private void toDashboard() {
+	@Override
+	protected void toDashboard() {
 
 		DialogUtils.hideProgress();
 		
 		if (User.getCurrentUser() != null) {
 			
+			Log.i(TAG, "toDashboard");
 	    	Intent i = new Intent(this, DashboardTabletActivity.class);
 	    	startActivity(i);
+	    	overridePendingTransition(R.anim.fade_in_fast, R.anim.none);
 		}
-	}
-	
-	private void addDemoCredentials() {
-		
-		username.setText("saul.howard@moneydesktop.com");
-		password.setText("password123");
 	}
 	
 	private void setupView() {
 		
-		viewFlipper = (ViewFlipper) findViewById(R.id.flipper);
+		mViewFlipper = (ViewFlipper) findViewById(R.id.flipper);
 		configureFlipper();
 		
-		username = (EditText) findViewById(R.id.username_field);
-		password = (EditText) findViewById(R.id.password_field);
+		mUsername = (EditText) findViewById(R.id.username_field);
+		mPassword = (EditText) findViewById(R.id.password_field);
 		
-		loginViewButton = (Button) findViewById(R.id.login_view_button);
-		demoButton = (Button) findViewById(R.id.demo_button);
+		mLoginViewButton = (Button) findViewById(R.id.login_view_button);
+		mDemoButton = (Button) findViewById(R.id.demo_button);
 		
-		loginButton = (Button) findViewById(R.id.login_button);
-		cancelButton = (Button) findViewById(R.id.cancel_button);
+		mLoginButton = (Button) findViewById(R.id.login_button);
+		mCancelButton = (Button) findViewById(R.id.cancel_button);
 		
-		logo = (ImageView) findViewById(R.id.logo);
+		mLogo = (ImageView) findViewById(R.id.logo);
 		
 		addListeners();
 	}
 	
 	private void addListeners() {
 		
-		loginViewButton.setOnClickListener(new OnClickListener() {
+		mLoginViewButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
 				
@@ -112,7 +106,7 @@ public class LoginTabletActivity extends BaseActivity {
 			}
 		});
 		
-		demoButton.setOnClickListener(new OnClickListener() {
+		mDemoButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
 				
@@ -120,7 +114,7 @@ public class LoginTabletActivity extends BaseActivity {
 			}
 		});
 		
-		loginButton.setOnClickListener(new OnClickListener() {
+		mLoginButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
 				
@@ -128,7 +122,7 @@ public class LoginTabletActivity extends BaseActivity {
 			}
 		});
 		
-		cancelButton.setOnClickListener(new OnClickListener() {
+		mCancelButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
 				
@@ -136,7 +130,7 @@ public class LoginTabletActivity extends BaseActivity {
 			}
 		});
 		
-		logo.setOnClickListener(new OnClickListener() {
+		mLogo.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
 				
@@ -148,12 +142,12 @@ public class LoginTabletActivity extends BaseActivity {
 	
 	private void setupAnimations() {
 		
-		inLeft = AnimationUtils.loadAnimation(this, R.anim.in_left);
-		outRight = AnimationUtils.loadAnimation(this, R.anim.out_right);
-		outLeft = AnimationUtils.loadAnimation(this, R.anim.out_left);
-		inRight = AnimationUtils.loadAnimation(this, R.anim.in_right);
+		mInLeft = AnimationUtils.loadAnimation(this, R.anim.in_left);
+		mOutRight = AnimationUtils.loadAnimation(this, R.anim.out_right);
+		mOutLeft = AnimationUtils.loadAnimation(this, R.anim.out_left);
+		mInRight = AnimationUtils.loadAnimation(this, R.anim.in_right);
 		
-		inLeft.setAnimationListener(new AnimationListener() {
+		mInLeft.setAnimationListener(new AnimationListener() {
 			
 			public void onAnimationStart(Animation animation) {
 
@@ -168,7 +162,7 @@ public class LoginTabletActivity extends BaseActivity {
 			}
 		});
 		
-		inRight.setAnimationListener(new AnimationListener() {
+		mInRight.setAnimationListener(new AnimationListener() {
 			
 			public void onAnimationStart(Animation animation) {
 
@@ -186,68 +180,33 @@ public class LoginTabletActivity extends BaseActivity {
 	
 	private void configureFlipper() {
 
-		viewFlipper.setInAnimation(inRight);
-		viewFlipper.setOutAnimation(outLeft);
+		mViewFlipper.setInAnimation(mInRight);
+		mViewFlipper.setOutAnimation(mOutLeft);
 	}
 	
 	private void configureButtons(boolean enabled) {
 		
-		loginViewButton.setEnabled(enabled);
-		demoButton.setEnabled(enabled);
-		loginButton.setEnabled(enabled);
-		cancelButton.setEnabled(enabled);
+		mLoginViewButton.setEnabled(enabled);
+		mDemoButton.setEnabled(enabled);
+		mLoginButton.setEnabled(enabled);
+		mCancelButton.setEnabled(enabled);
 	}
 	
 	private void toLoginView() {
 		
-		viewFlipper.showNext();
-		viewFlipper.setInAnimation(outRight);
-		viewFlipper.setOutAnimation(inLeft);
+		mViewFlipper.showNext();
+		mViewFlipper.setInAnimation(mOutRight);
+		mViewFlipper.setOutAnimation(mInLeft);
 	}
 	
-	private void demoMode() {
+	@Override
+	protected boolean loginCheck() {
 		
-		User.registerDemoUser();
-		
-		DialogUtils.showProgress(this, getString(R.string.demo_message));
-		
-		new AsyncTask<Void, Void, Boolean>() {
-    		
-			@Override
-			protected Boolean doInBackground(Void... params) {
-
-				DemoData.createDemoData();
-
-				return true;
-			}
-    		
-    		@Override
-    		protected void onPostExecute(Boolean result) {
-
-    			toDashboard();
-    		}
-			
-		}.execute();
+		return !mUsername.getText().toString().equals("") && !mPassword.getText().toString().equals("");
 	}
 	
-	private void login() {
-        
-		if (loginCheck()) {
-	        
-			authenticate();
-	        
-		} else {
-			
-			DialogUtils.alertDialog(getString(R.string.error_title), getString(R.string.error_login_incomplete), this, null);
-		}
-	}
-	
-	private boolean loginCheck() {
-		
-		return !username.getText().toString().equals("") && !password.getText().toString().equals("");
-	}
-	
-	private void authenticate() {
+	@Override
+	protected void authenticate() {
 
 		DialogUtils.showProgress(this, getString(R.string.loading));
 		
@@ -260,7 +219,7 @@ public class LoginTabletActivity extends BaseActivity {
 		        
 		        try {
 		        	
-					dataBridge.authenticateUser(username.getText().toString(), password.getText().toString());
+					dataBridge.authenticateUser(mUsername.getText().toString(), mPassword.getText().toString());
 					
 				} catch (Exception e) {
 					
@@ -294,19 +253,19 @@ public class LoginTabletActivity extends BaseActivity {
 	
 	private void cancel() {
 		
-		username.clearFocus();
-		password.clearFocus();
+		mUsername.clearFocus();
+		mPassword.clearFocus();
 		hideKeyboard();
 		
-		viewFlipper.showPrevious();
-		viewFlipper.setInAnimation(inRight);
-		viewFlipper.setOutAnimation(outLeft);
+		mViewFlipper.showPrevious();
+		mViewFlipper.setInAnimation(mInRight);
+		mViewFlipper.setOutAnimation(mOutLeft);
 	}
 	
 	private void hideKeyboard() {
 
     	InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        in.hideSoftInputFromWindow(viewFlipper.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        in.hideSoftInputFromWindow(mViewFlipper.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 
 	@Override

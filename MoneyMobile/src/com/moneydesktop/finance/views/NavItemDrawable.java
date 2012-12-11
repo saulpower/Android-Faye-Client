@@ -22,38 +22,39 @@ public class NavItemDrawable extends Drawable {
 	
 	public final String TAG = this.getClass().getSimpleName();
 
-	protected int index;
+	protected int mIndex;
 
-	protected Context context;
+	protected Context mContext;
 	
-	protected Bitmap image;
-	protected Paint paint;
-	protected PointF targetPosition;
-	protected PointF position;
-	protected PointF center;
-	protected float rotation = 0.0f;
-	protected PointF scale;
+	protected Bitmap mImage;
+	protected Paint mPaint;
+	protected PointF mTargetPosition;
+	protected PointF mPosition;
+	protected PointF mCenter;
+	protected float mRotation = 0.0f;
+	protected PointF mScale;
+	protected AnimatorSet mOutroSet, mIntroSet;
 	
 	public int getIndex() {
-		return index;
+		return mIndex;
 	}
 	
 	public NavItemDrawable(Context context, int resource, int index, PointF position, PointF center) {
 		
-		this.context = context;
+		this.mContext = context;
 		
 		if (resource != -1)
-			image = BitmapFactory.decodeResource(context.getResources(), resource);
+			mImage = BitmapFactory.decodeResource(context.getResources(), resource);
 		
-		paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		paint.setAlpha(0);
+		mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		mPaint.setAlpha(0);
 		
-		scale = new PointF(1.0f, 1.0f);
+		mScale = new PointF(1.0f, 1.0f);
 		
-		this.index = index;
-		this.position = position;
-		this.center = center;
-		this.targetPosition = position;
+		this.mIndex = index;
+		this.mPosition = position;
+		this.mCenter = center;
+		this.mTargetPosition = position;
 		
 		updatePosition();
 	}
@@ -62,10 +63,10 @@ public class NavItemDrawable extends Drawable {
 	public void draw(Canvas canvas) {
 		
 		canvas.save();
-		canvas.rotate(rotation, position.x, position.y);
-		canvas.scale(scale.x, scale.y, position.x, position.y);
+		canvas.rotate(mRotation, mPosition.x, mPosition.y);
+		canvas.scale(mScale.x, mScale.y, mPosition.x, mPosition.y);
 		
-		canvas.drawBitmap(image, getBounds().left, getBounds().top, paint);
+		canvas.drawBitmap(mImage, getBounds().left, getBounds().top, mPaint);
 		
 		canvas.restore();
 	}
@@ -77,57 +78,57 @@ public class NavItemDrawable extends Drawable {
 
 	@Override
 	public void setAlpha(int alpha) {
-		paint.setAlpha(alpha);
+		mPaint.setAlpha(alpha);
 		invalidateSelf();
 	}
 	
 	public int getAlpha() {
-		return paint.getAlpha();
+		return mPaint.getAlpha();
 	}
 	
 	public PointF getPosition() {
-		return position;
+		return mPosition;
 	}
 
 	public void setPosition(PointF position) {
-		this.position = position;
+		this.mPosition = position;
 		updatePosition();
 	}
 
 	public float getRotation() {
-		return rotation;
+		return mRotation;
 	}
 
 	public void setRotation(float rotation) {
-		this.rotation = rotation;
+		this.mRotation = rotation;
 		invalidateSelf();
 	}
 	
 	public void fixRotation(float rotation) {
-		this.rotation = rotation;
+		this.mRotation = rotation;
 	}
 
 	@Override
 	public void setColorFilter(ColorFilter cf) {}
 
 	public PointF getScale() {
-		return scale;
+		return mScale;
 	}
 
 	public void setScale(PointF scale) {
-		this.scale = scale;
+		this.mScale = scale;
 		invalidateSelf();
 	}
 
 	// Updates the drawables bounds when it has been translated
 	private void updatePosition() {
 
-		if (image != null) {
+		if (mImage != null) {
 			
-			int left = (int) (position.x - (image.getWidth()/2));
-			int top = (int) (position.y - (image.getHeight()/2));
-			int right = left + image.getWidth();
-			int bottom = top + image.getHeight();
+			int left = (int) (mPosition.x - (mImage.getWidth()/2));
+			int top = (int) (mPosition.y - (mImage.getHeight()/2));
+			int right = left + mImage.getWidth();
+			int bottom = top + mImage.getHeight();
 			
 			setBounds(left, top, right, bottom);
 			
@@ -140,18 +141,24 @@ public class NavItemDrawable extends Drawable {
 	 * first displayed.
 	 */
 	public void playIntro() {
-		
+
+        if (mOutroSet != null) {
+            mOutroSet.cancel();
+        }
+        
+	    reset();
+	    
 		ObjectAnimator fade = ObjectAnimator.ofInt(this, "alpha", 0, 255);
 		fade.setDuration(150);
 		
-		ObjectAnimator translate = ObjectAnimator.ofObject(this, "position", new PointEvaluator(), center, targetPosition);
+		ObjectAnimator translate = ObjectAnimator.ofObject(this, "position", new PointEvaluator(), mCenter, mTargetPosition);
 		translate.setDuration(500);
 		translate.setInterpolator(new OvershootInterpolator(2.0f));
 		
-		AnimatorSet set = new AnimatorSet();
-		set.play(translate).with(fade);
-		set.setStartDelay(100);
-		set.start();
+		mIntroSet = new AnimatorSet();
+		mIntroSet.play(translate).with(fade);
+		mIntroSet.setStartDelay(100);
+		mIntroSet.start();
 	}
 	
 	/**
@@ -163,10 +170,14 @@ public class NavItemDrawable extends Drawable {
 	 */
 	public void playOutro(int selectedIndex) {
 		
+	    if (mIntroSet != null) {
+	        mIntroSet.cancel();
+	    }
+	    
 		ObjectAnimator fade = ObjectAnimator.ofInt(this, "alpha", 255, 0);
 		fade.setDuration(1000);
 		
-		ObjectAnimator translate = ObjectAnimator.ofObject(this, "position", new PointEvaluator(), targetPosition, center);
+		ObjectAnimator translate = ObjectAnimator.ofObject(this, "position", new PointEvaluator(), mTargetPosition, mCenter);
 		translate.setDuration(500);
 		translate.setInterpolator(new AnticipateInterpolator(2.0f));
 		
@@ -179,26 +190,26 @@ public class NavItemDrawable extends Drawable {
 		ObjectAnimator pop = ObjectAnimator.ofObject(this, "scale", new PointEvaluator(), orig, bigger);
 		pop.setDuration(1000);
 
-		AnimatorSet set = new AnimatorSet();
+		mOutroSet = new AnimatorSet();
 		
-		if (index == selectedIndex) {
+		if (mIndex == selectedIndex) {
 			
-			set.play(fade).with(pop);
+		    mOutroSet.play(fade).with(pop);
 			
 		} else {
 			
 			fade.setDuration(600);
-			set.play(fade).with(translate).with(rotate);
+			mOutroSet.play(fade).with(translate).with(rotate);
 		}
 
-		set.start();
+		mOutroSet.start();
 	}
 	
 	/**
 	 * Reset the drawable to a beginning scale and rotation.
 	 */
 	public void reset() {
-		rotation = 0;
-		scale = new PointF(1.0f, 1.0f);
+		setRotation(0);
+		setScale(new PointF(1.0f, 1.0f));
 	}
 }
