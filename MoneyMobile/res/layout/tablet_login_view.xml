@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white" >
-    
+    <!-- First boot login screen, ID 0 -->
 	<LinearLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
@@ -60,7 +60,7 @@
 	    </LinearLayout>
 	    
 	</LinearLayout>
-    
+    <!-- Login Screen that prompts for username and password, ID 1 -->
 	<RelativeLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
@@ -103,11 +103,9 @@
 	        android:orientation="vertical"
 	        android:gravity="center">
 		    
-		     <View
-	        android:id="@+id/logindotted1"
+		   <com.moneydesktop.finance.views.DottedLineView
 	        android:layout_width="450dp"
-	        android:layout_height="1.5dp"
-	        android:background="@drawable/dotted_line_long" />
+	        android:layout_height="wrap_content"/>
 			    
 		    <com.moneydesktop.finance.views.LabelEditText
 		        android:id="@+id/username_field"
@@ -120,12 +118,9 @@
 		        app:labelText="@string/label_email"
 		        style="@style/field" />
 		    
-		     <View
-	        android:id="@+id/logindotted2"
+		   <com.moneydesktop.finance.views.DottedLineView
 	        android:layout_width="450dp"
-	        android:layout_height="1.5dp"
-	        android:background="@drawable/dotted_line_long" />
-		        
+	        android:layout_height="wrap_content"/>
 		    
 		    <com.moneydesktop.finance.views.LabelEditText
 		        android:id="@+id/password_field"
@@ -140,11 +135,9 @@
 		    
 		    <requestFocus />
 		    
-		    <View
-	        android:id="@+id/logindotted3"
+		   <com.moneydesktop.finance.views.DottedLineView
 	        android:layout_width="450dp"
-	        android:layout_height="1.5dp"
-	        android:background="@drawable/dotted_line_long" />
+	        android:layout_height="wrap_content"/>
 			    
 	        
 	    </LinearLayout>
@@ -176,9 +169,128 @@
 	        android:id="@+id/login_text"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-		    android:layout_alignParentBottom="true"
 		    android:paddingTop="20dp"
 	        android:text="@string/text_login"
+	        style="@style/text" />
+	    </LinearLayout>
+			    
+	   
+	    
+	</RelativeLayout>
+	<!-- Screen that allows users to submit their banks' info to us, ID 2 -->
+		<RelativeLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:background="@color/white" >
+		
+		<TextView
+		    android:id="@+id/need_account"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="20dp"
+		    android:text="@string/need_account"	
+		    android:gravity="center"
+		    android:textColor="@color/gray7"/>
+		<TextView
+		    android:id="@+id/nag_bank"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="5dp"
+		    android:text="@string/nag_bank"
+		    android:gravity="center"
+		    android:textColor="@color/gray7"
+		    android:layout_below="@id/need_account"
+		    android:lineSpacingExtra="2dp"/>
+	        
+	    
+	    <LinearLayout
+	        android:id="@+id/signup_info"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="20dp"
+	        android:layout_below="@id/nag_bank"
+	        android:background="@color/white"
+	        android:orientation="vertical"
+	        android:gravity="center">
+		    
+		     <com.moneydesktop.finance.views.DottedLineView
+	        android:id="@+id/logindotted4"
+	        android:layout_width="550dp"
+	        android:layout_height="1dp"/>
+			    
+		    <com.moneydesktop.finance.views.LabelEditText
+		        android:id="@+id/signup_name"
+		        android:layout_width="550dp"
+		        android:layout_height="50dp"
+		        android:inputType="text"
+		        android:textSize="25sp"
+		        app:labelColor="@color/light_gray1"
+		        app:labelSize="12sp"
+		        app:labelText="@string/signup_name"
+		        style="@style/field" />
+		    
+		     <com.moneydesktop.finance.views.DottedLineView
+	        android:id="@+id/logindotted5"
+	        android:layout_width="550dp"
+	        android:layout_height="wrap_content" />
+		        
+		    
+		    <com.moneydesktop.finance.views.LabelEditText
+		        android:id="@+id/signup_email"
+		        android:layout_width="550dp"
+		        android:layout_height="50dp"
+		        android:inputType="textEmailAddress"
+		        app:labelColor="@color/light_gray1"
+		        android:textSize="25sp"
+		        app:labelSize="12sp"
+		        app:labelText="@string/signup_email"
+		        style="@style/field" />
+		    	
+		   <com.moneydesktop.finance.views.DottedLineView
+	        android:layout_width="550dp"
+	        android:layout_height="wrap_content"/>
+			    		    
+		   <com.moneydesktop.finance.views.LabelEditText
+		        android:id="@+id/signup_bank"
+		        android:layout_width="550dp"
+		        android:layout_height="50dp"
+		        android:inputType="text"
+		        app:labelColor="@color/light_gray1"
+		        android:textSize="25sp"
+		        app:labelSize="12sp"
+		        app:labelText="@string/signup_bank"
+		        style="@style/field" />
+		    <requestFocus />
+		    
+		   <com.moneydesktop.finance.views.DottedLineView
+	        android:layout_width="550dp"
+	        android:layout_height="wrap_content"/>
+			    
+	        
+	    </LinearLayout>
+			    
+			    
+		<LinearLayout
+		    android:id="@+id/button_view_signup"
+		    android:layout_width="550dp"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/signup_info"
+		    android:orientation="vertical"
+		    android:layout_centerHorizontal="true" >
+			
+		    <Button
+		        android:id="@+id/submit_button"
+		        android:layout_width="match_parent"
+		        android:layout_height="50dp"
+		        android:text="@string/button_submit"
+		        style="@style/button" />
+		    <TextView 
+	        android:id="@+id/cancel_text"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+		    android:layout_alignParentBottom="true"
+		    android:paddingTop="20dp"
+	        android:text="@string/button_cancel"
 	        style="@style/text" />
 	    </LinearLayout>
 			    

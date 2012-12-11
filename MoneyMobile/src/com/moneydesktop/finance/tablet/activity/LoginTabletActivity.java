@@ -43,11 +43,10 @@ public class LoginTabletActivity extends BaseActivity {
 	
 	private ViewFlipper viewFlipper;
 	private LinearLayout buttonView, credentialView;
-	private Button loginViewButton, demoButton, loginButton, cancelButton;
-	private LabelEditText username, password;
+	private Button loginViewButton, demoButton, loginButton, cancelButton, submitButton;
+	private LabelEditText username, password, signupName, signupEmail, signupBank;
 	private ImageView logo;
-	private TextView signupText, loginText, messageTitle, messageBody;
-	
+	private TextView signupText, loginText, messageTitle, messageBody, cancelText, needAccount, nagBank;
 	private Animation inLeft, inRight, outLeft, outRight;
 	
 	private boolean failed = false;
@@ -118,28 +117,38 @@ public class LoginTabletActivity extends BaseActivity {
 		
 		signupText = (TextView) findViewById(R.id.signup);
 		loginText = (TextView) findViewById(R.id.login_text);
+	    signupName = (LabelEditText) findViewById(R.id.signup_name);
+		signupEmail = (LabelEditText) findViewById(R.id.signup_email);
+	    signupBank = (LabelEditText) findViewById(R.id.signup_bank);
 		messageTitle = (TextView) findViewById(R.id.message_title);
 		messageBody = (TextView) findViewById(R.id.message_body);
-		//Fonts.applyPrimarySemiBoldFont((TextView)username.getEditableText(), 25);
-		//Fonts.applyPrimarySemiBoldFont((TextView)password.getEditableText(), 25);
+		cancelText = (TextView) findViewById(R.id.cancel_text);
+		submitButton = (Button) findViewById(R.id.submit_button);
+		needAccount = (TextView) findViewById(R.id.need_account);
+		nagBank = (TextView) findViewById(R.id.nag_bank);
 		Fonts.applyPrimaryFont(loginViewButton, 20);
 		Fonts.applyPrimaryFont(demoButton, 20);
 		Fonts.applyPrimaryFont(loginButton, 20);
 		Fonts.applyPrimaryFont(cancelButton, 20);
+		Fonts.applyPrimaryFont(submitButton, 20);
 		Fonts.applyPrimaryFont(signupText, 15);
 		Fonts.applyPrimaryFont(loginText, 15);
+		Fonts.applyPrimaryFont(cancelText, 15);
 		Fonts.applyPrimarySemiBoldFont(username, 25);
 		Fonts.applyPrimarySemiBoldFont(password, 25);
-			if (android.os.Build.VERSION.SDK_INT >= 11) {
-				findViewById(R.id.logindotted1).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-				findViewById(R.id.logindotted2).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-				findViewById(R.id.logindotted3).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-			}
+		Fonts.applyPrimaryBoldFont(needAccount, 25);
+		Fonts.applySecondaryItalicFont(nagBank, 15);
 		addListeners();
 	}
 	
 	private void addListeners() {
-		
+	    cancelText.setOnClickListener(new OnClickListener() {
+            
+            public void onClick(View v) {
+                
+                cancel();
+            }
+        });
 		loginViewButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
@@ -203,7 +212,27 @@ public class LoginTabletActivity extends BaseActivity {
 				return true;
 			}
 		});
-		
+	    signupName.setOnFocusChangeListener(new OnFocusChangeListener() {
+            
+            public void onFocusChange(View v, boolean hasFocus) {
+                
+                signupName.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
+            }
+        });
+	    signupEmail.setOnFocusChangeListener(new OnFocusChangeListener() {
+            
+            public void onFocusChange(View v, boolean hasFocus) {
+                
+                signupEmail.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
+            }
+        });
+	    signupBank.setOnFocusChangeListener(new OnFocusChangeListener() {
+            
+            public void onFocusChange(View v, boolean hasFocus) {
+                
+                signupBank.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
+            }
+        });
 		messageTitle.setOnTouchListener(new OnTouchListener() {
 			
 			public boolean onTouch(View v, MotionEvent event) {
@@ -218,8 +247,15 @@ public class LoginTabletActivity extends BaseActivity {
 
 				Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.setup_url)));
 				startActivity(browserIntent);
-			}
+			}	
 		});
+	    signupText.setOnClickListener(new OnClickListener() {
+	            
+	            public void onClick(View v) {
+
+	                toSignupView();
+	            }
+	    });
 	}
 	
 	private void setupAnimations() {
@@ -276,11 +312,15 @@ public class LoginTabletActivity extends BaseActivity {
 	
 	private void toLoginView() {
 		
-		viewFlipper.showNext();
+		viewFlipper.setDisplayedChild(1);
 		viewFlipper.setInAnimation(outRight);
 		viewFlipper.setOutAnimation(inLeft);
 	}
-	
+	private void toSignupView() {
+	    viewFlipper.setDisplayedChild(2);
+	    viewFlipper.setInAnimation(outRight);
+	    viewFlipper.setInAnimation(inLeft);
+	}
 	private void demoMode() {
 		
 		User.registerDemoUser();
@@ -429,7 +469,7 @@ private void toggleAnimations(boolean reset) {
 		password.clearFocus();
 		hideKeyboard();
 		
-		viewFlipper.showPrevious();
+		viewFlipper.setDisplayedChild(0);
 		viewFlipper.setInAnimation(inRight);
 		viewFlipper.setOutAnimation(outLeft);
 	}
