@@ -10,29 +10,51 @@ import com.moneydesktop.finance.R;
 
 public class BudgetSummaryFragment extends BaseFragment {
 
-	public static BudgetSummaryFragment newInstance(int position) {
+    private static BudgetSummaryFragment sFragment;
+    
+	public static BudgetSummaryFragment getInstance(int position) {
 		
-		BudgetSummaryFragment frag = new BudgetSummaryFragment();
-		frag.setPosition(position);
+	    if (sFragment != null) {
+	        return sFragment;
+	    }
+	    
+	    sFragment = new BudgetSummaryFragment();
+	    sFragment.setPosition(position);
+        sFragment.setRetainInstance(true);
 		
         Bundle args = new Bundle();
-        frag.setArguments(args);
+        sFragment.setArguments(args);
         
-        return frag;
+        return sFragment;
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
-		root = inflater.inflate(R.layout.handset_budget_summary_view, null);
+		mRoot = inflater.inflate(R.layout.handset_budget_summary_view, null);
 		
-		return root;
+		return mRoot;
 	}
+    
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+    }
+    
+    @Override
+    public void onSaveInstanceState(Bundle outState)  {
+        super.onSaveInstanceState(outState);
+    }
 	
 	@Override
 	public String getFragmentTitle() {
 		return null;
 	}
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
 
 }

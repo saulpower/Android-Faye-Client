@@ -1,10 +1,5 @@
 package com.moneydesktop.finance.handset.fragment;
 
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-
-import org.apache.commons.lang.WordUtils;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Bundle;
@@ -19,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.moneydesktop.finance.BaseActivity.AppearanceListener;
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
@@ -29,20 +23,25 @@ import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.util.Fonts;
 
-public class TransactionDetailFragment extends BaseFragment implements AppearanceListener {
+import org.apache.commons.lang.WordUtils;
+
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+
+public class TransactionDetailFragment extends BaseFragment {
 	
 	public final String TAG = this.getClass().getSimpleName();
 
-	private NumberFormat formatter = NumberFormat.getCurrencyInstance();
-	private SimpleDateFormat dateFormatter = new SimpleDateFormat("MM.dd.yyyy");
+	private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();
+	private SimpleDateFormat mDateFormatter = new SimpleDateFormat("MM.dd.yyyy");
 	
-	private TransactionsDao dao;
-	private Transactions transaction;
+	private TransactionsDao mDao;
+	private Transactions mTransaction;
 	
-	private TextView accountName, bankName, category, tags;
-	private EditText payee, amount, date, memo, statement;
-	private ImageView bankIcon;
-	private ToggleButton business, personal, cleared, flagged;
+	private TextView mAccountName, mBankName, mCategory, mTags;
+	private EditText mPayee, mAmount, mDate, mMemo, mStatement;
+	private ImageView mBankIcon;
+	private ToggleButton mBusiness, mPersonal, mCleared, mFlagged;
 	
 	public static TransactionDetailFragment newInstance(long guid) {
 		
@@ -59,61 +58,61 @@ public class TransactionDetailFragment extends BaseFragment implements Appearanc
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         
-        this.activity.onFragmentAttached(this);
+        this.mActivity.onFragmentAttached(this);
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
 		
-        this.activity.updateNavBar(getFragmentTitle());
+        this.mActivity.updateNavBar(getFragmentTitle());
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
-		root = inflater.inflate(R.layout.handset_transaction_detail_view, null);
+		mRoot = inflater.inflate(R.layout.handset_transaction_detail_view, null);
 		setupViews();
 		
 		getTransaction();
 		loadTransaction();
-		Log.i(TAG, "Loaded Transaction: " + transaction.getTitle());
+		Log.i(TAG, "Loaded Transaction: " + mTransaction.getTitle());
 		
-		return root;
+		return mRoot;
 	}
 	
 	private void setupViews() {
 		
-		accountName = (TextView) root.findViewById(R.id.account_name);
-		bankName = (TextView) root.findViewById(R.id.bank_name);
-		category = (TextView) root.findViewById(R.id.category_name);
-		tags = (TextView) root.findViewById(R.id.tags);
+		mAccountName = (TextView) mRoot.findViewById(R.id.account_name);
+		mBankName = (TextView) mRoot.findViewById(R.id.bank_name);
+		mCategory = (TextView) mRoot.findViewById(R.id.category_name);
+		mTags = (TextView) mRoot.findViewById(R.id.tags);
 		
-		payee = (EditText) root.findViewById(R.id.payee_name);
-		amount = (EditText) root.findViewById(R.id.amount);
-		date = (EditText) root.findViewById(R.id.date);
-		memo = (EditText) root.findViewById(R.id.memo);
-		statement = (EditText) root.findViewById(R.id.stmt);
+		mPayee = (EditText) mRoot.findViewById(R.id.payee_name);
+		mAmount = (EditText) mRoot.findViewById(R.id.amount);
+		mDate = (EditText) mRoot.findViewById(R.id.date);
+		mMemo = (EditText) mRoot.findViewById(R.id.memo);
+		mStatement = (EditText) mRoot.findViewById(R.id.stmt);
 		
-		bankIcon = (ImageView) root.findViewById(R.id.bank_image);
+		mBankIcon = (ImageView) mRoot.findViewById(R.id.bank_image);
 		
-		business = (ToggleButton) root.findViewById(R.id.flag_b);
-		personal = (ToggleButton) root.findViewById(R.id.flag_p);
-		cleared = (ToggleButton) root.findViewById(R.id.flag_c);
-		flagged = (ToggleButton) root.findViewById(R.id.flag);
+		mBusiness = (ToggleButton) mRoot.findViewById(R.id.flag_b);
+		mPersonal = (ToggleButton) mRoot.findViewById(R.id.flag_p);
+		mCleared = (ToggleButton) mRoot.findViewById(R.id.flag_c);
+		mFlagged = (ToggleButton) mRoot.findViewById(R.id.flag);
 		
 		// Currently we are read-only, disable all input fields
-		payee.setEnabled(false);
-		amount.setEnabled(false);
-		date.setEnabled(false);
-		memo.setEnabled(false);
-		statement.setEnabled(false);
+		mPayee.setEnabled(false);
+		mAmount.setEnabled(false);
+		mDate.setEnabled(false);
+		mMemo.setEnabled(false);
+		mStatement.setEnabled(false);
 		
-		business.setEnabled(false);
-		personal.setEnabled(false);
-		cleared.setEnabled(false);
-		flagged.setEnabled(false);
+		mBusiness.setEnabled(false);
+		mPersonal.setEnabled(false);
+		mCleared.setEnabled(false);
+		mFlagged.setEnabled(false);
 		
 		fixDottedLine();
 		applyFonts();
@@ -123,7 +122,7 @@ public class TransactionDetailFragment extends BaseFragment implements Appearanc
 	@TargetApi(11)
 	private void fixDottedLine() {
 
-		LinearLayout container = (LinearLayout) root.findViewById(R.id.root);
+		LinearLayout container = (LinearLayout) mRoot.findViewById(R.id.root);
 		
 		if (android.os.Build.VERSION.SDK_INT >= 11) {
 			
@@ -139,42 +138,42 @@ public class TransactionDetailFragment extends BaseFragment implements Appearanc
 	
 	private void applyFonts() {
 		
-		Fonts.applyPrimaryFont(accountName, 12);
-		Fonts.applySecondaryItalicFont(bankName, 10);
-		Fonts.applyPrimarySemiBoldFont(payee, 24);
-		Fonts.applyPrimaryBoldFont(amount, 48);
-		Fonts.applyPrimarySemiBoldFont(date, 24);
-		Fonts.applyPrimarySemiBoldFont(category, 24);
-		Fonts.applyPrimarySemiBoldFont(tags, 24);
-		Fonts.applyPrimarySemiBoldFont(memo, 24);
-		Fonts.applyPrimaryBoldFont(statement, 12);
+		Fonts.applyPrimaryFont(mAccountName, 12);
+		Fonts.applySecondaryItalicFont(mBankName, 10);
+		Fonts.applyPrimarySemiBoldFont(mPayee, 24);
+		Fonts.applyPrimaryBoldFont(mAmount, 48);
+		Fonts.applyPrimarySemiBoldFont(mDate, 24);
+		Fonts.applyPrimarySemiBoldFont(mCategory, 24);
+		Fonts.applyPrimarySemiBoldFont(mTags, 24);
+		Fonts.applyPrimarySemiBoldFont(mMemo, 24);
+		Fonts.applyPrimaryBoldFont(mStatement, 12);
 		
 		// labels
-		Fonts.applySecondaryItalicFont((TextView) root.findViewById(R.id.payee), 12);
-		Fonts.applySecondaryItalicFont((TextView) root.findViewById(R.id.amount_label), 12);
-		Fonts.applySecondaryItalicFont((TextView) root.findViewById(R.id.date_label), 12);
-		Fonts.applySecondaryItalicFont((TextView) root.findViewById(R.id.category), 12);
-		Fonts.applySecondaryItalicFont((TextView) root.findViewById(R.id.tags_label), 12);
-		Fonts.applySecondaryItalicFont((TextView) root.findViewById(R.id.markers_label), 12);
-		Fonts.applySecondaryItalicFont((TextView) root.findViewById(R.id.memo_label), 12);
-		Fonts.applySecondaryItalicFont((TextView) root.findViewById(R.id.stmt_label), 12);
+		Fonts.applySecondaryItalicFont((TextView) mRoot.findViewById(R.id.payee), 12);
+		Fonts.applySecondaryItalicFont((TextView) mRoot.findViewById(R.id.amount_label), 12);
+		Fonts.applySecondaryItalicFont((TextView) mRoot.findViewById(R.id.date_label), 12);
+		Fonts.applySecondaryItalicFont((TextView) mRoot.findViewById(R.id.category), 12);
+		Fonts.applySecondaryItalicFont((TextView) mRoot.findViewById(R.id.tags_label), 12);
+		Fonts.applySecondaryItalicFont((TextView) mRoot.findViewById(R.id.markers_label), 12);
+		Fonts.applySecondaryItalicFont((TextView) mRoot.findViewById(R.id.memo_label), 12);
+		Fonts.applySecondaryItalicFont((TextView) mRoot.findViewById(R.id.stmt_label), 12);
 	}
 	
 	private void configureListeners() {
 		
-		business.setOnClickListener(new OnClickListener() {
+		mBusiness.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
 				
-				personal.setChecked(!business.isChecked());
+				mPersonal.setChecked(!mBusiness.isChecked());
 			}
 		});
 		
-		personal.setOnClickListener(new OnClickListener() {
+		mPersonal.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
 				
-				business.setChecked(!personal.isChecked());
+				mBusiness.setChecked(!mPersonal.isChecked());
 			}
 		});
 	}
@@ -188,30 +187,30 @@ public class TransactionDetailFragment extends BaseFragment implements Appearanc
 			return;
 		}
 
-		dao = (TransactionsDao) DataController.getDao(Transactions.class);
-		transaction = dao.load(guid);
+		mDao = (TransactionsDao) DataController.getDao(Transactions.class);
+		mTransaction = mDao.load(guid);
 	}
 	
 	private void loadTransaction() {
 		
-		if (transaction.getBankAccount() != null)
-			BankLogoManager.getBankImage(bankIcon, transaction.getBankAccount().getInstitutionId());
+		if (mTransaction.getBankAccount() != null)
+			BankLogoManager.getBankImage(mBankIcon, mTransaction.getBankAccount().getInstitutionId());
 		
-		accountName.setText(transaction.getBankAccount().getAccountName());
-		bankName.setText(transaction.getBankAccount().getBank().getBankName());
-		category.setText(transaction.getCategory().getCategoryName());
-		tags.setText(transaction.getTagString());
+		mAccountName.setText(mTransaction.getBankAccount().getAccountName());
+		mBankName.setText(mTransaction.getBankAccount().getBank().getBankName());
+		mCategory.setText(mTransaction.getCategory().getCategoryName());
+		mTags.setText(mTransaction.getTagString());
 		
-		payee.setText(WordUtils.capitalize(transaction.getTitle().toLowerCase()));
-		amount.setText(formatter.format(transaction.getRawAmount()));
-		date.setText(dateFormatter.format(transaction.getDate()));
-		memo.setText(transaction.getMemo());
-		statement.setText(transaction.getOriginalTitle());
+		mPayee.setText(WordUtils.capitalize(mTransaction.getTitle().toLowerCase()));
+		mAmount.setText(mFormatter.format(mTransaction.getRawAmount()));
+		mDate.setText(mDateFormatter.format(mTransaction.getDate()));
+		mMemo.setText(mTransaction.getMemo());
+		mStatement.setText(mTransaction.getOriginalTitle());
 		
-		business.setChecked(transaction.getIsBusiness());
-		personal.setChecked(!transaction.getIsBusiness());
-		cleared.setChecked(transaction.getIsCleared());
-		flagged.setChecked(transaction.getIsFlagged());
+		mBusiness.setChecked(mTransaction.getIsBusiness());
+		mPersonal.setChecked(!mTransaction.getIsBusiness());
+		mCleared.setChecked(mTransaction.getIsCleared());
+		mFlagged.setChecked(mTransaction.getIsFlagged());
 	}
 
 	@Override
@@ -219,7 +218,8 @@ public class TransactionDetailFragment extends BaseFragment implements Appearanc
 		return getString(R.string.title_activity_transaction);
 	}
 
-	public void onViewDidAppear() {
-		
-	}
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
 }

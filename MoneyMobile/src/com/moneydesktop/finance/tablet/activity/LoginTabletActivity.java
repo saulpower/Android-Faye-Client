@@ -1,19 +1,25 @@
 package com.moneydesktop.finance.tablet.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
+import android.view.View.OnTouchListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.moneydesktop.finance.BaseActivity;
@@ -23,7 +29,11 @@ import com.moneydesktop.finance.data.DataBridge;
 import com.moneydesktop.finance.data.DemoData;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
+import com.moneydesktop.finance.util.Animator;
 import com.moneydesktop.finance.util.DialogUtils;
+import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.LabelEditText;
 
 import de.greenrobot.event.EventBus;
 
@@ -32,11 +42,15 @@ public class LoginTabletActivity extends BaseActivity {
 	private final String TAG = "LoginActivity";
 	
 	private ViewFlipper viewFlipper;
+	private LinearLayout buttonView, credentialView;
 	private Button loginViewButton, demoButton, loginButton, cancelButton;
-	private EditText username, password;
+	private LabelEditText username, password;
 	private ImageView logo;
+	private TextView signupText, loginText, messageTitle, messageBody;
 	
 	private Animation inLeft, inRight, outLeft, outRight;
+	
+	private boolean failed = false;
 	
 	@Override
 	public void onBackPressed() {
@@ -51,7 +65,7 @@ public class LoginTabletActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        setContentView(R.layout.login_view);
+        setContentView(R.layout.tablet_login_view);
 
         setupAnimations();
         setupView();
@@ -83,13 +97,16 @@ public class LoginTabletActivity extends BaseActivity {
 		password.setText("password123");
 	}
 	
+	@SuppressLint("NewApi")
 	private void setupView() {
 		
 		viewFlipper = (ViewFlipper) findViewById(R.id.flipper);
+		buttonView = (LinearLayout) findViewById(R.id.button_view);
+		credentialView = (LinearLayout) findViewById(R.id.credentials);
 		configureFlipper();
 		
-		username = (EditText) findViewById(R.id.username_field);
-		password = (EditText) findViewById(R.id.password_field);
+		username = (LabelEditText) findViewById(R.id.username_field);
+		password = (LabelEditText) findViewById(R.id.password_field);
 		
 		loginViewButton = (Button) findViewById(R.id.login_view_button);
 		demoButton = (Button) findViewById(R.id.demo_button);
@@ -99,6 +116,25 @@ public class LoginTabletActivity extends BaseActivity {
 		
 		logo = (ImageView) findViewById(R.id.logo);
 		
+		signupText = (TextView) findViewById(R.id.signup);
+		loginText = (TextView) findViewById(R.id.login_text);
+		messageTitle = (TextView) findViewById(R.id.message_title);
+		messageBody = (TextView) findViewById(R.id.message_body);
+		//Fonts.applyPrimarySemiBoldFont((TextView)username.getEditableText(), 25);
+		//Fonts.applyPrimarySemiBoldFont((TextView)password.getEditableText(), 25);
+		Fonts.applyPrimaryFont(loginViewButton, 20);
+		Fonts.applyPrimaryFont(demoButton, 20);
+		Fonts.applyPrimaryFont(loginButton, 20);
+		Fonts.applyPrimaryFont(cancelButton, 20);
+		Fonts.applyPrimaryFont(signupText, 15);
+		Fonts.applyPrimaryFont(loginText, 15);
+		Fonts.applyPrimarySemiBoldFont(username, 25);
+		Fonts.applyPrimarySemiBoldFont(password, 25);
+			if (android.os.Build.VERSION.SDK_INT >= 11) {
+				findViewById(R.id.logindotted1).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+				findViewById(R.id.logindotted2).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+				findViewById(R.id.logindotted3).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+			}
 		addListeners();
 	}
 	
@@ -142,6 +178,46 @@ public class LoginTabletActivity extends BaseActivity {
 				
 		    	Intent i = new Intent(LoginTabletActivity.this, DebugActivity.class);
 		    	startActivity(i);
+			}
+		});
+		username.setOnFocusChangeListener(new OnFocusChangeListener() {
+			
+			public void onFocusChange(View v, boolean hasFocus) {
+				
+				username.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
+			}
+		});
+		
+		password.setOnFocusChangeListener(new OnFocusChangeListener() {
+			
+			public void onFocusChange(View v, boolean hasFocus) {
+				
+				password.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
+			}
+		});
+		
+		messageBody.setOnTouchListener(new OnTouchListener() {
+			
+			public boolean onTouch(View v, MotionEvent event) {
+				
+				return true;
+			}
+		});
+		
+		messageTitle.setOnTouchListener(new OnTouchListener() {
+			
+			public boolean onTouch(View v, MotionEvent event) {
+				
+				return true;
+			}
+		});
+		
+		loginText.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+
+				Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.setup_url)));
+				startActivity(browserIntent);
 			}
 		});
 	}
@@ -231,7 +307,14 @@ public class LoginTabletActivity extends BaseActivity {
 	}
 	
 	private void login() {
-        
+		
+		if (failed) {
+			
+			resetLogin();
+			
+			return;
+		}
+		
 		if (loginCheck()) {
 	        
 			authenticate();
@@ -240,6 +323,16 @@ public class LoginTabletActivity extends BaseActivity {
 			
 			DialogUtils.alertDialog(getString(R.string.error_title), getString(R.string.error_login_incomplete), this, null);
 		}
+	}
+	
+	private void resetLogin() {
+		
+		toggleAnimations(true);
+		
+		loginButton.setText(getString(R.string.button_login));
+		cancelButton.setText(getString(R.string.button_cancel));
+		
+		failed = false;
 	}
 	
 	private boolean loginCheck() {
@@ -276,9 +369,17 @@ public class LoginTabletActivity extends BaseActivity {
 
     			DialogUtils.hideProgress();
     			
+    			failed = !result;
+				
     			if (!result) {
     				
-    				DialogUtils.alertDialog(getString(R.string.error_login_failed), getString(R.string.error_login_invalid), LoginTabletActivity.this, null);
+    				messageTitle.setText(getString(R.string.error_login_failed));
+    				messageBody.setText(getString(R.string.error_login_invalid));
+							
+					toggleAnimations(false);
+					
+					loginButton.setText(getString(R.string.button_return_login));
+					cancelButton.setText(getString(R.string.button_setup));
     			
     			} else {
     				
@@ -292,7 +393,37 @@ public class LoginTabletActivity extends BaseActivity {
 		}.execute();
 	}
 	
+private void toggleAnimations(boolean reset) {
+		
+		int offset = (int) (.20 * UiUtils.getScreenMeasurements(this)[1]) * (reset ? -1 : 1);
+		long duration = 750;
+		long delay = reset ? 250 : 0;
+		
+		Animator.translateView(buttonView, new float[] {0, offset}, duration);
+		Animator.fadeView(loginText, !reset, duration, delay);
+		Animator.fadeView(credentialView, !reset, duration, delay);
+		Animator.fadeView(username, !reset, duration, delay);
+		Animator.fadeView(password, !reset, duration, delay);
+		
+		delay = reset ? 0 : 250;
+		
+		Animator.fadeView(messageTitle, reset, duration, delay);
+		Animator.fadeView(messageBody, reset, duration, delay);
+		
+		Animator.startAnimations();
+	}
+
 	private void cancel() {
+		
+		if (failed) {
+			
+			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.setup_url)));
+			startActivity(browserIntent);
+			
+			resetLogin();
+			
+			return;
+		}
 		
 		username.clearFocus();
 		password.clearFocus();

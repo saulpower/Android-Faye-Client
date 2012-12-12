@@ -20,13 +20,13 @@ public abstract class AmazingAdapter extends BaseAdapter implements SectionIndex
 	/**
 	 * The <em>current</em> page, not the page that is going to be loaded.
 	 */
-	int page = 1;
-	int initialPage = 1;
-	boolean automaticNextPageLoading = false;
-	HasMorePagesListener hasMorePagesListener;
+	int mPage = 1;
+	int mInitialPage = 1;
+	boolean mAutomaticNextPageLoading = false;
+	HasMorePagesListener mHasMorePagesListener;
 	
 	public void setHasMorePagesListener(HasMorePagesListener hasMorePagesListener) {
-		this.hasMorePagesListener = hasMorePagesListener;
+		this.mHasMorePagesListener = hasMorePagesListener;
 	}
 	
     /**
@@ -72,21 +72,21 @@ public abstract class AmazingAdapter extends BaseAdapter implements SectionIndex
      * Default is 1 (for APIs with 1-based page number).
      */
     public void setInitialPage(int initialPage) {
-		this.initialPage = initialPage;
+		this.mInitialPage = initialPage;
 	}
     
     /**
      * Resets the current page to the page specified in {@link #setInitialPage(int)}.
      */
     public void resetPage() {
-    	this.page = this.initialPage;
+    	this.mPage = this.mInitialPage;
     }
     
     /**
      * Increases the current page number.
      */
     public void nextPage() {
-    	this.page++;
+    	this.mPage++;
     }
     
 	@Override
@@ -106,8 +106,8 @@ public abstract class AmazingAdapter extends BaseAdapter implements SectionIndex
 		
 		View res = getAmazingView(position, convertView, parent);
 		
-		if (position == getCount() - 1 && automaticNextPageLoading) {
-			onNextPageRequested(page + 1);
+		if (position == getCount() - 1 && mAutomaticNextPageLoading) {
+			onNextPageRequested(mPage + 1);
 		}
 		
 		final int section = getSectionForPosition(position);
@@ -119,13 +119,13 @@ public abstract class AmazingAdapter extends BaseAdapter implements SectionIndex
 	}
     
 	public void notifyNoMorePages() {
-		automaticNextPageLoading = false;
-		if (hasMorePagesListener != null) hasMorePagesListener.noMorePages();
+		mAutomaticNextPageLoading = false;
+		if (mHasMorePagesListener != null) mHasMorePagesListener.noMorePages();
 	}
 	
 	public void notifyMayHaveMorePages() {
-		automaticNextPageLoading = true;
-		if (hasMorePagesListener != null) hasMorePagesListener.mayHaveMorePages();
+		mAutomaticNextPageLoading = true;
+		if (mHasMorePagesListener != null) mHasMorePagesListener.mayHaveMorePages();
 	}
 	
 	/**

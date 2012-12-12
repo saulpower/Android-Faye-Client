@@ -15,8 +15,8 @@ import com.moneydesktop.finance.R;
 
 public class DialogUtils {
 	
-	private static Dialog dialog;
-	private static AlertDialog alert;
+	private static Dialog sDialog;
+	private static AlertDialog sAlert;
     
     public static void showProgress(Context context, String message) {
 
@@ -35,61 +35,70 @@ public class DialogUtils {
 	    	TextView text = (TextView) progressView.findViewById(R.id.spinner_text);
 	    	text.setText(message);
 	    	
-	    	dialog = new Dialog(context, R.style.MyDialog);
-	    	dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-	    	dialog.setContentView(progressView);
-	    	dialog.show();
+	    	sDialog = new Dialog(context, R.style.MyDialog);
+	    	sDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+	    	sDialog.setContentView(progressView);
+	    	sDialog.show();
 	    	
 		} catch (Exception ex) {}
     }
     
     public static void hideProgress() {
     	
-    	if (dialog != null) {
+    	if (sDialog != null) {
     		try {
-    			dialog.dismiss();
+    			sDialog.dismiss();
     		} catch (Exception ex) {}
-    		dialog = null;
+    		sDialog = null;
     	}
     }
     
     public static void alertDialog(String title, String message, Context context) {
-    	alertDialog(title, message, context.getString(R.string.button_ok), context, null);
+    	alertDialog(title, message, context.getString(R.string.button_ok), null, context, null);
     }
     
     public static void alertDialog(String title, String message, Context context, DialogInterface.OnClickListener clickListener) {
-    	alertDialog(title, message, context.getString(R.string.button_ok), context, clickListener);
+    	alertDialog(title, message, context.getString(R.string.button_ok), null, context, clickListener);
     }
 
     public static void alertDialog(String title, String message, String positiveButton, Context context, DialogInterface.OnClickListener clickListener) {
+        alertDialog(title, message, context.getString(R.string.button_ok), null, context, clickListener);
+    }
+    
+    public static void alertDialog(String title, String message, String positiveButton, String negativeButton, Context context, DialogInterface.OnClickListener clickListener) {
     	
-    	if (alert != null)
+    	if (sAlert != null)
     		dismissAlert();
     	
     	AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
 		alertBuilder.setMessage(message)
 				.setCancelable(false)
-				.setPositiveButton(positiveButton, clickListener);
-		alert = alertBuilder.create();
+				.setNegativeButton(positiveButton, clickListener);
+		
+		if (negativeButton != null) {
+		    alertBuilder.setPositiveButton(negativeButton, clickListener);
+		}
+		
+		sAlert = alertBuilder.create();
 		
 		// Title for AlertDialog
-		alert.setTitle(title);
-		alert.show();
+		sAlert.setTitle(title);
+		sAlert.show();
     }
     
     public static void dismissAlert() {
     	
-    	if (alert != null) {
-    		alert.dismiss();
-    		alert = null;
+    	if (sAlert != null) {
+    		sAlert.dismiss();
+    		sAlert = null;
     	}
     }
     
     public static void clickAlert() {
     	
-    	if (alert != null) {
-    		alert.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
-    		alert = null;
+    	if (sAlert != null) {
+    		sAlert.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+    		sAlert = null;
     	}
     }
 }

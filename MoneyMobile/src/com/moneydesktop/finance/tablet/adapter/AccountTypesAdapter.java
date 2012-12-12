@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.adapters;
+package com.moneydesktop.finance.tablet.adapter;
 
 import java.util.List;
 

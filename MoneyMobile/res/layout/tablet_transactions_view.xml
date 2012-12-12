@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="74"
+        android:background="@color/gray1" >
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:background="@color/white" />
+
+        <ImageView
+            android:id="@+id/spiral"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/spiral_background"
+            android:contentDescription="@string/description" />
+
+        <View
+            android:id="@+id/white_right"
+            android:layout_width="15dp"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/spiral"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/header_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/white_right"
+            android:background="@color/white"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/tablet_header_1"
+                android:orientation="horizontal" >
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="46"
+                    android:background="@color/white"
+                    android:paddingLeft="10dp"
+                    android:text="@string/label_stmt" />
+
+                <View
+                    android:layout_width="@dimen/tablet_header_1"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="-20dp"
+                    android:layout_marginRight="-6dp"
+                    android:background="@drawable/line_vertical" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="51"
+                    android:layout_marginRight="3dp"
+                    android:background="@color/white"
+                    android:gravity="center_vertical|right" />
+
+                <View
+                    android:layout_width="@dimen/tablet_header_2"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/tablet_header_1_half"
+                    android:layout_marginRight="@dimen/tablet_header_1_half"
+                    android:background="@color/transparent" />
+                
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="-1dp"
+                android:background="@color/gray2" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/tablet_header_2"
+                android:orientation="horizontal" >
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="11"
+                    android:gravity="center_vertical|left"
+                    android:paddingLeft="10dp"
+                    android:text="@string/label_date" />
+
+                <View
+                    android:layout_width="@dimen/tablet_header_2"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/tablet_header_2l_half"
+                    android:layout_marginRight="@dimen/tablet_header_2r_half"
+                    android:background="@drawable/line_vertical" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="35"
+                    android:gravity="center_vertical|left"
+                    android:paddingLeft="10dp"
+                    android:text="@string/label_payee" />
+
+                <View
+                    android:layout_width="@dimen/tablet_header_2"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/tablet_header_2r_half"
+                    android:layout_marginRight="@dimen/tablet_header_2r_half"
+                    android:background="@drawable/line_vertical" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="26"
+                    android:gravity="center_vertical|left"
+                    android:paddingLeft="10dp"
+                    android:text="@string/label_category" />
+
+                <View
+                    android:layout_width="@dimen/tablet_header_2"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/tablet_header_2l_half"
+                    android:layout_marginRight="@dimen/tablet_header_2l_half"
+                    android:background="@drawable/line_vertical" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="15"
+                    android:gravity="center_vertical|left"
+                    android:paddingLeft="10dp"
+                    android:text="@string/label_amount" />
+
+                <View
+                    android:layout_width="@dimen/tablet_header_2"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/tablet_header_2l_half"
+                    android:layout_marginRight="@dimen/tablet_header_2r_half"
+                    android:background="@drawable/line_vertical" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="10" />
+                
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray2" />
+            
+        </LinearLayout>
+
+        <com.moneydesktop.finance.views.AmazingListView
+            android:id="@+id/transactions"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/header_row"
+            android:layout_toRightOf="@id/white_right"
+            android:divider="@color/gray1"
+            android:dividerHeight="1dp"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/progress_dialog" />
+        
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="26"
+        android:background="@color/gray1"
+        android:orientation="vertical" >
+
+        <TextView
+            style="@style/tablet_txn_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center" />
+        
+    </RelativeLayout>
+
+</LinearLayout>

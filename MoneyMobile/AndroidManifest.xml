@@ -22,18 +22,6 @@
         android:hardwareAccelerated="true" >
         
         <activity android:name="com.crittercism.NotificationActivity" />
-
-        <activity
-            android:name="com.moneydesktop.finance.tablet.activity.AccountSummaryTabletActivity"
-            android:screenOrientation="landscape" />
-        
-        <activity
-            android:name=".handset.activity.DashboardActivity"
-            android:screenOrientation="portrait" />
-            
-        <activity
-            android:name=".tablet.activity.DashboardTabletActivity"
-            android:screenOrientation="landscape" />
         
         <activity
             android:name=".DebugActivity"
@@ -41,26 +29,49 @@
         
         
         <activity
-            android:name=".handset.activity.LockCodeActivity"
+            android:name=".handset.activity.DashboardHandsetActivity"
             android:screenOrientation="portrait" />
         
         <activity
-            android:name=".handset.activity.LoginActivity"
+            android:name=".handset.activity.LockCodeHandsetActivity"
             android:screenOrientation="portrait" />
         
         <activity
-            android:name=".tablet.activity.LoginTabletActivity"
-            android:screenOrientation="landscape" />
+            android:name=".handset.activity.LoginHandsetActivity"
+            android:screenOrientation="portrait" />
                 
         <activity
             android:name=".SplashActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".tablet.activity.AccountSummaryTabletActivity"
+            android:screenOrientation="landscape" />
+            
+        <activity
+            android:name=".tablet.activity.DashboardTabletActivity"
+            android:screenOrientation="landscape" />
+        
+        <activity
+            android:name=".tablet.activity.LockCodeTabletActivity"
+            android:screenOrientation="landscape" />
+        
+ 		<activity
+			android:name=".tablet.activity.PopupTabletActivity"
+			android:theme="@android:style/Theme.Dialog"
+			android:screenOrientation="landscape" />
+        
+        <activity
+            android:name=".tablet.activity.LoginTabletActivity"
+            android:screenOrientation="landscape" />
+        
     </application>
 
 </manifest>

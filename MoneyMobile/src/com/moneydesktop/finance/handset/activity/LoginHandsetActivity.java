@@ -1,5 +1,6 @@
 package com.moneydesktop.finance.handset.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -33,19 +34,20 @@ import com.moneydesktop.finance.util.Animator;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.LabelEditText;
 
 import de.greenrobot.event.EventBus;
 
-public class LoginActivity extends BaseActivity {
+public class LoginHandsetActivity extends BaseActivity {
 	
 	private final String TAG = "LoginActivity";
 	
 	private ViewFlipper viewFlipper;
 	private LinearLayout buttonView, credentialView;
 	private Button loginViewButton, demoButton, loginButton, cancelButton;
-	private EditText username, password;
+	private LabelEditText username, password;
 	private ImageView logo;
-	private TextView signupText, loginText, usernameLabel, passwordLabel, messageTitle, messageBody;
+	private TextView signupText, loginText, messageTitle, messageBody;
 	
 	private Animation inLeft, inRight, outLeft, outRight;
 	
@@ -85,7 +87,7 @@ public class LoginActivity extends BaseActivity {
 		
 		if (User.getCurrentUser() != null) {
 			
-	    	Intent i = new Intent(this, DashboardActivity.class);
+	    	Intent i = new Intent(this, DashboardHandsetActivity.class);
 	    	startActivity(i);
 		}
 	}
@@ -96,6 +98,7 @@ public class LoginActivity extends BaseActivity {
 		password.setText("password123");
 	}
 	
+	@SuppressLint("NewApi")
 	private void setupView() {
 		
 		viewFlipper = (ViewFlipper) findViewById(R.id.flipper);
@@ -103,8 +106,8 @@ public class LoginActivity extends BaseActivity {
 		credentialView = (LinearLayout) findViewById(R.id.credentials);
 		configureFlipper();
 		
-		username = (EditText) findViewById(R.id.username_field);
-		password = (EditText) findViewById(R.id.password_field);
+		username = (LabelEditText) findViewById(R.id.username_field);
+		password = (LabelEditText) findViewById(R.id.password_field);
 		
 		loginViewButton = (Button) findViewById(R.id.login_view_button);
 		demoButton = (Button) findViewById(R.id.demo_button);
@@ -116,8 +119,6 @@ public class LoginActivity extends BaseActivity {
 		
 		signupText = (TextView) findViewById(R.id.signup);
 		loginText = (TextView) findViewById(R.id.login_text);
-		usernameLabel = (TextView) findViewById(R.id.email_label);
-		passwordLabel = (TextView) findViewById(R.id.password_label);
 		messageTitle = (TextView) findViewById(R.id.message_title);
 		messageBody = (TextView) findViewById(R.id.message_body);
 		
@@ -127,8 +128,13 @@ public class LoginActivity extends BaseActivity {
 		Fonts.applyPrimaryBoldFont(cancelButton, 15);
 		Fonts.applyPrimaryBoldFont(signupText, 12);
 		Fonts.applySecondaryItalicFont(loginText, 12);
-		Fonts.applyPrimaryItalicFont(usernameLabel, 9);
-		Fonts.applyPrimaryItalicFont(passwordLabel, 9);
+		Fonts.applyPrimarySemiBoldFont(username, 25);
+		Fonts.applyPrimarySemiBoldFont(password, 25);
+		if (android.os.Build.VERSION.SDK_INT >= 11) {
+			findViewById(R.id.logindotted1).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+			findViewById(R.id.logindotted2).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+			findViewById(R.id.logindotted3).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+		}
 		
 		addListeners();
 	}
@@ -171,7 +177,7 @@ public class LoginActivity extends BaseActivity {
 			
 			public void onClick(View v) {
 				
-		    	Intent i = new Intent(LoginActivity.this, DebugActivity.class);
+		    	Intent i = new Intent(LoginHandsetActivity.this, DebugActivity.class);
 		    	startActivity(i);
 			}
 		});
@@ -180,7 +186,7 @@ public class LoginActivity extends BaseActivity {
 			
 			public void onFocusChange(View v, boolean hasFocus) {
 				
-				usernameLabel.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
+				username.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
 			}
 		});
 		
@@ -188,7 +194,7 @@ public class LoginActivity extends BaseActivity {
 			
 			public void onFocusChange(View v, boolean hasFocus) {
 				
-				passwordLabel.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
+				password.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
 			}
 		});
 		
@@ -398,8 +404,6 @@ public class LoginActivity extends BaseActivity {
 		Animator.translateView(buttonView, new float[] {0, offset}, duration);
 		Animator.fadeView(loginText, !reset, duration, delay);
 		Animator.fadeView(credentialView, !reset, duration, delay);
-		Animator.fadeView(usernameLabel, !reset, duration, delay);
-		Animator.fadeView(passwordLabel, !reset, duration, delay);
 		Animator.fadeView(password, !reset, duration, delay);
 		Animator.fadeView(username, !reset, duration, delay);
 		

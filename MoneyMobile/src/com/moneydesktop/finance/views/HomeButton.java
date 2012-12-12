@@ -1,5 +1,7 @@
 package com.moneydesktop.finance.views;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -13,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.BounceInterpolator;
+import android.view.animation.OvershootInterpolator;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.model.EventMessage;
@@ -28,51 +31,61 @@ public class HomeButton extends View {
 
 	private final float SCROLL_DISTANCE = 17.0f;
 	
-	// Drawing
-	private Bitmap home;
-	private int color = Color.BLUE, secondaryColor = Color.CYAN;
-	private Paint paint, stroke, paintSlider, strokeSlider;
-	private float radius;
-	private boolean showSlider = false;
+	// Button
+	private Bitmap mHome;
+	private int mColor = Color.BLUE, mSecondaryColor = Color.CYAN;
+	private Paint mPaint, mStroke;
+	private float mRadius;
+	
+	// Slider
+	private Paint mPaintSlider, mStrokeSlider;
+	private boolean mShowSlider = false;
+    private float mSliderRadius = 0;
+    private float mSliderMaxRadius = 30;
 
 	// Positioning
-	private int mLeft, mTop, mMid, center;
-	private float width = 10;
-	private float height = 10;
+	private int mLeft, mTop, mMid, mCenter;
+	private float mWidth = 10;
+	private float mHeight = 10;
 
     private float mPosY;
     
     private float mLastTouchY, mLastTouchX, mLastDy, mLastDx;
     
     // Scrolling
-    private float scrollX = 0.0f, scrollY = 0.0f;
-    private boolean above = false;
-    private float moveDistance, startPos;
+    private float mScrollX = 0.0f, mScrollY = 0.0f;
+    private boolean mAbove = false;
+    private float mMoveDistance, mStartPos;
     
 	// Touching
-	private boolean touching = false, touchingSlider = false;
+	private boolean mTouching = false, mTouchingSlider = false;
     private float mDistance = 0.0f;
 	
 	// Animation
-	private BounceInterpolator bounce = new BounceInterpolator();
-	private AccelerateDecelerateInterpolator accelDecel = new AccelerateDecelerateInterpolator();
-	private long duration = 500;
-	private long start, sliderStart, positionStart;
-	private boolean animatingButton = false, animatingSlider = false, animatingPosition = false;
+	private long mDuration = 500;
 
 	/*******************************************************************************
 	 * Accessory Methods
 	 *******************************************************************************/
 	
-	/**
+	public float getRadius() {
+        return mRadius;
+    }
+
+    public void setRadius(float radius) {
+        this.mRadius = radius;
+        invalidate();
+    }
+
+    /**
 	 * Setter used to show or hide the outer slider button.
 	 * 
 	 * @param showSlider
 	 */
 	public void setShowSlider(boolean showSlider) {
 		
-		this.showSlider = showSlider;
-		setAnimatingSlider(true);
+		this.mShowSlider = showSlider;
+		animateSlider(showSlider);
 		invalidate();
 	}
 	
@@ -85,12 +98,12 @@ public class HomeButton extends View {
 	 */
 	public void setTouching(boolean touching) {
 		
-		boolean wasTouching = this.touching;
+		boolean wasTouching = this.mTouching;
 		
-		this.touching = touching && touchingButton();
+		this.mTouching = touching && touchingButton();
     	
-		if (this.touching || (wasTouching && !this.touching))
-			setAnimating(true);
+		if (this.mTouching || (wasTouching && !this.mTouching))
+			animateButtonBounce();
 		
 		configurePaint();
 		configureButton();
@@ -104,7 +117,7 @@ public class HomeButton extends View {
 	 */
 	public void setTouchingSlider(boolean touchingSlider) {
 			
-		this.touchingSlider = touchingSlider && touchingSlider() && showSlider;
+		this.mTouchingSlider = touchingSlider && touchingSlider() && mShowSlider;
 	}
 
 	/**
@@ -113,11 +126,12 @@ public class HomeButton extends View {
 	 * 
 	 * @param animatingButton
 	 */
-	public void setAnimating(boolean animatingButton) {
-		this.animatingButton = animatingButton;
-		start = System.currentTimeMillis();
-    	
-        invalidate();
+	public void animateButtonBounce() {
+        
+        ObjectAnimator button = ObjectAnimator.ofFloat(this, "radius", mTouching ? mWidth : mWidth + 15, mTouching ? mWidth + 15 : mWidth);
+        button.setDuration(mDuration);
+        button.setInterpolator(new BounceInterpolator());
+        button.start();
 	}
 
 	/**
@@ -126,42 +140,88 @@ public class HomeButton extends View {
 	 * 
 	 * @param animatingSlider
 	 */
-	public void setAnimatingSlider(boolean animatingSlider) {
-		this.animatingSlider = animatingSlider;
-		sliderStart = System.currentTimeMillis();
-    	
-        invalidate();
+	public void animateSlider(boolean showSlider) {
+	    
+	    ObjectAnimator slider = ObjectAnimator.ofFloat(this, "sliderRadius", showSlider ? 0 : mSliderMaxRadius, showSlider ? mSliderMaxRadius : 0);
+        slider.setDuration(mDuration);
+        slider.setInterpolator(new OvershootInterpolator());
+
+        ObjectAnimator alpha = ObjectAnimator.ofInt(this, "alphaSlider", showSlider ? 0 : 190, showSlider ? 190 : 0);
+        alpha.setDuration(mDuration);
+        
+        ObjectAnimator stroke = ObjectAnimator.ofInt(this, "alphaSliderStroke", showSlider ? 0 : 255, showSlider ? 255 : 0);
+        stroke.setDuration(mDuration);
+        
+        AnimatorSet set = new AnimatorSet();
+        set.play(slider).with(alpha).with(stroke);
+        set.start();
 	}
 
 	public void setColor(int color) {
-		this.color = color;
+		this.mColor = color;
 		
 		configurePaint();
 	}
 
 	public void setSecondaryColor(int secondaryColor) {
-		this.secondaryColor = secondaryColor;
+		this.mSecondaryColor = secondaryColor;
 		
 		configureSliderPaint();
 	}
 
 	public void setButtonWidth(float width) {
-		this.width = width;
+		mWidth = width;
+		mRadius = mWidth;
+		mSliderMaxRadius = mWidth * 3.0f;
 	}
 	
 	public float getButtonWidth() {
-		return width;
+		return mWidth;
 	}
 
 	public void setButtonHeight(float height) {
-		this.height = height;
+		this.mHeight = height;
 	}
 	
 	public float getButtonHeight() {
-		return height;
+		return mHeight;
 	}
 
-	/*******************************************************************************
+	public float getSliderRadius() {
+        return mSliderRadius;
+    }
+
+    public void setSliderRadius(float sliderRadius) {
+        this.mSliderRadius = sliderRadius;
+        invalidate();
+    }
+
+    public int getAlphaSlider() {
+        return mPaintSlider.getAlpha();
+    }
+
+    public void setAlphaSlider(int alphaSlider) {
+        mPaintSlider.setAlpha(alphaSlider);
+    }
+
+    public int getAlphaSliderStroke() {
+        return mStrokeSlider.getAlpha();
+    }
+
+    public void setAlphaSliderStroke(int alphaSliderStroke) {
+        mStrokeSlider.setAlpha(alphaSliderStroke);
+    }
+    
+    public float getPosY() {
+        return mPosY;
+    }
+    
+    public void setPosY(float posY) {
+        mPosY = posY;
+        invalidate();
+    }
+
+    /*******************************************************************************
 	 * Constructors
 	 *******************************************************************************/
 	
@@ -197,7 +257,7 @@ public class HomeButton extends View {
 		
 		EventBus.getDefault().register(this);
 		
-		home = BitmapFactory.decodeResource(getResources(), R.drawable.ipad_button_home);
+		mHome = BitmapFactory.decodeResource(getResources(), R.drawable.ipad_button_home);
 		
 		if (attrs != null) {
 			
@@ -221,13 +281,15 @@ public class HomeButton extends View {
 	 */
 	private void configureButton() {
 		
-		if (!touching && Math.abs(mPosY) <= radius) {
+		if (!mTouching && Math.abs(mPosY) <= mRadius) {
 			
-			animatingPosition = true;
-			positionStart = System.currentTimeMillis();
-			moveDistance = Math.abs(mPosY);
-			startPos = mPosY;
-			invalidate();
+			mMoveDistance = Math.abs(mPosY);
+			mStartPos = mPosY;
+			
+	        ObjectAnimator button = ObjectAnimator.ofFloat(this, "posY", mStartPos, mStartPos + mMoveDistance);
+	        button.setDuration(mDuration);
+	        button.setInterpolator(new AccelerateDecelerateInterpolator());
+	        button.start();
 		}
 	}
 	
@@ -238,21 +300,21 @@ public class HomeButton extends View {
 
 		// If the button is detached from the bottom, or selected,
 		// it will be slightly transparent
-		int alpha = (touching || Math.abs(mPosY) > radius) ? 190 : 255;
+		int alpha = (mTouching || Math.abs(mPosY) > mRadius) ? 190 : 255;
 		
-		paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-	    paint.setColor(color);
-	    paint.setAlpha(alpha);
-	    paint.setStyle(Paint.Style.FILL);
-	    paint.setAntiAlias(true);
+	    mPaint.setColor(mColor);
+	    mPaint.setAlpha(alpha);
+	    mPaint.setStyle(Paint.Style.FILL);
+	    mPaint.setAntiAlias(true);
 		
-		stroke = new Paint(Paint.ANTI_ALIAS_FLAG);
-		stroke.setStrokeWidth(4);
-		stroke.setColor(Color.WHITE);
-	    paint.setAlpha(alpha);   
-		stroke.setStyle(Paint.Style.STROKE);
-		stroke.setAntiAlias(true);
+		mStroke = new Paint(Paint.ANTI_ALIAS_FLAG);
+		mStroke.setStrokeWidth(4);
+		mStroke.setColor(Color.WHITE);
+	    mPaint.setAlpha(alpha);   
+		mStroke.setStyle(Paint.Style.STROKE);
+		mStroke.setAntiAlias(true);
 	}
 	
 	/**
@@ -260,18 +322,18 @@ public class HomeButton extends View {
 	 */
 	private void configureSliderPaint() {
 
-		paintSlider = new Paint(Paint.ANTI_ALIAS_FLAG);
+		mPaintSlider = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-		paintSlider.setColor(secondaryColor);
-		paintSlider.setAlpha(190);
-		paintSlider.setStyle(Paint.Style.FILL);
-		paintSlider.setAntiAlias(true);
+		mPaintSlider.setColor(mSecondaryColor);
+		mPaintSlider.setAlpha(190);
+		mPaintSlider.setStyle(Paint.Style.FILL);
+		mPaintSlider.setAntiAlias(true);
 		
-		strokeSlider = new Paint(Paint.ANTI_ALIAS_FLAG);
-		strokeSlider.setStrokeWidth(6);
-		strokeSlider.setColor(Color.WHITE);
-		strokeSlider.setStyle(Paint.Style.STROKE);
-		strokeSlider.setAntiAlias(true);
+		mStrokeSlider = new Paint(Paint.ANTI_ALIAS_FLAG);
+		mStrokeSlider.setStrokeWidth(6);
+		mStrokeSlider.setColor(Color.WHITE);
+		mStrokeSlider.setStyle(Paint.Style.STROKE);
+		mStrokeSlider.setAntiAlias(true);
 	}
 	
 	/**
@@ -283,9 +345,9 @@ public class HomeButton extends View {
 	private boolean touchingButton() {
     	
     	int center = (int) (getHeight() + mPosY);
-    	int buttonTop = (int) (center - radius);
-    	int buttonBottom = (int) (center + radius);
-    	int buttonRight = (int) radius;
+    	int buttonTop = (int) (center - mRadius);
+    	int buttonBottom = (int) (center + mRadius);
+    	int buttonRight = (int) mRadius;
     	
     	return mLastTouchY <= buttonBottom && mLastTouchY >= buttonTop && mLastTouchX <= buttonRight;
 	}
@@ -297,11 +359,11 @@ public class HomeButton extends View {
 	 */
 	private boolean touchingSlider() {
     	
-		float sliderRadius = radius * 3.0f;
+		float sliderRadius = mRadius * 3.0f;
 		
-    	center = (int) (getHeight() + mPosY);
-    	int buttonTop = (int) (center - sliderRadius);
-    	int buttonBottom = (int) (center + sliderRadius);
+    	mCenter = (int) (getHeight() + mPosY);
+    	int buttonTop = (int) (mCenter - sliderRadius);
+    	int buttonBottom = (int) (mCenter + sliderRadius);
     	int buttonRight = (int) sliderRadius;
     	
     	
@@ -314,7 +376,7 @@ public class HomeButton extends View {
 	 */
     public void clickCheck() {
     	
-    	if (mDistance < 5.0f && touchingButton()) {
+    	if (mDistance < 5.0f && (touchingButton() || touchingSlider())) {
         	
         	mDistance = 0.0f;
         	EventBus.getDefault().post(new EventMessage().new NavigationEvent());
@@ -330,7 +392,7 @@ public class HomeButton extends View {
     private void updateButtonPosition(float dy) {
     	
     	// Move the object if we are touching the button
-        if (touching) {
+        if (mTouching) {
         
             mPosY += dy;
             
@@ -338,8 +400,8 @@ public class HomeButton extends View {
             if (mPosY > 0)
             	mPosY = 0;
             
-            if (Math.abs(mPosY) > (getHeight() - radius)) {
-            	mPosY = -1 * (getHeight() - radius);
+            if (Math.abs(mPosY) > (getHeight() - mRadius)) {
+            	mPosY = -1 * (getHeight() - mRadius);
             }
         	
             invalidate();
@@ -355,39 +417,39 @@ public class HomeButton extends View {
      */
     private void sliderNavigation(float dy, float dx) {
 
-        if (touchingSlider) {
+        if (mTouchingSlider) {
 
         	// Determine what part of the slider is being touched (top or bottom half)
-        	above = mLastTouchY < center;
+        	mAbove = mLastTouchY < mCenter;
         	
         	// If we have changed directions reset the movement sum
         	if (Math.signum(mLastDy) != Math.signum(dy))
-        		scrollY = 0.0f;
+        		mScrollY = 0.0f;
         	
         	if (Math.signum(mLastDx) != Math.signum(dx))
-        		scrollX = 0.0f;
+        		mScrollX = 0.0f;
         	
         	// Sum movement in each direction
-        	scrollX += dx;
-        	scrollY += dy;
+        	mScrollX += dx;
+        	mScrollY += dy;
         	
         	// If movement was great enough fire off an event to move the navigation wheel
-        	if (Math.abs(scrollX) >= SCROLL_DISTANCE) {
+        	if (Math.abs(mScrollX) >= SCROLL_DISTANCE) {
 
         		// X-axis scrolling changes depends on which half the user is touching
-        		scrollX = above ? -scrollX : scrollX;
+        		mScrollX = mAbove ? -mScrollX : mScrollX;
         		
-            	NavDirection dir = (scrollX < 0) ? NavDirection.NEXT : NavDirection.PREVIOUS;
+            	NavDirection dir = (mScrollX < 0) ? NavDirection.NEXT : NavDirection.PREVIOUS;
             	
             	navigate(dir);
-        		scrollX = 0.0f;
+        		mScrollX = 0.0f;
         		
-        	} else if (Math.abs(scrollY) >= SCROLL_DISTANCE) {
+        	} else if (Math.abs(mScrollY) >= SCROLL_DISTANCE) {
 
-            	NavDirection dir = (scrollY >= 0) ? NavDirection.NEXT : NavDirection.PREVIOUS;
+            	NavDirection dir = (mScrollY >= 0) ? NavDirection.NEXT : NavDirection.PREVIOUS;
             	
             	navigate(dir);
-        		scrollY = 0.0f;
+        		mScrollY = 0.0f;
         	}
         }
     }
@@ -425,9 +487,9 @@ public class HomeButton extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         setMeasuredDimension((int) (getButtonWidth() * 3.5), MeasureSpec.getSize(heightMeasureSpec));
 		
-		mLeft = home.getWidth();
-		mTop = (int) (getHeight() - (mLeft * .2) - home.getHeight());
-		mMid = (int) (getHeight() - (home.getHeight() / 2));
+		mLeft = mHome.getWidth();
+		mTop = (int) (getHeight() - (mLeft * .2) - mHome.getHeight());
+		mMid = (int) (getHeight() - (mHome.getHeight() / 2));
     }
     
     @Override
@@ -501,47 +563,25 @@ public class HomeButton extends View {
 	        }
         }
         
-        return touching || touchingSlider;
+        return mTouching || mTouchingSlider;
     }
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
-
-		// Animate the vertical position of the button
-        if (animatingPosition) {
-
-        	float percent = (float) (System.currentTimeMillis() - positionStart) / (float) duration;
-        	mPosY = startPos + (int) (moveDistance * accelDecel.getInterpolation(percent));
-        	
-        	if (percent >= 1.0f)
-        		animatingPosition = false;
-        }
         
         // Draw the vertical change in position of the button
         canvas.save();
         canvas.translate(0, mPosY);
         
         // Animate the slider being displayed
-        if (showSlider || animatingSlider) {
+	    canvas.drawCircle(0, getHeight(), mSliderRadius, mPaintSlider);
+	    canvas.drawCircle(0, getHeight(), mSliderRadius, mStrokeSlider);
 
-            float sliderRadius = getSliderSize();
-
-    	    canvas.drawCircle(0, getHeight(), sliderRadius, paintSlider);
-    	    canvas.drawCircle(0, getHeight(), sliderRadius, strokeSlider);
-        }
-        
-        // Get the button's radius to draw it
-        radius = getButtonSize();
-
-	    canvas.drawCircle(0, getHeight(), radius, paint);
-	    canvas.drawCircle(0, getHeight(), radius, stroke);
-	    canvas.drawBitmap(home, (int) (mLeft * .2), getHousePosition(), null);
+	    canvas.drawCircle(0, getHeight(), mRadius, mPaint);
+	    canvas.drawCircle(0, getHeight(), mRadius, mStroke);
+	    canvas.drawBitmap(mHome, (int) (mLeft * .2), getHousePosition(), null);
 	    
         canvas.restore();
-        
-        // Continue to call the onDraw method while we are animating anything
-        if (animatingButton || animatingSlider || animatingPosition)
-        	invalidate();
 	}
 	
 	/*******************************************************************************
@@ -568,52 +608,5 @@ public class HomeButton extends View {
 	    }
 	    
 	    return top;
-	}
-	
-	/**
-	 * Used to animate the button
-	 * 
-	 * @return
-	 */
-	private float getButtonSize() {
-		
-		int selected = (touching || animatingButton) ? 15 : 0;
-
-        if (animatingButton) {
-        	
-        	float percent = (float) (System.currentTimeMillis() - start) / (float) duration;
-        	selected = (int) (selected * bounce.getInterpolation(percent));
-        	
-        	if (!touching)
-        		selected = 15 - selected;
-        	
-        	if (percent >= 1.0f)
-        		animatingButton = false;
-        }
-        
-        return width + selected;
-	}
-	
-	/**
-	 * Used to animate the slider
-	 * @return
-	 */
-	private float getSliderSize() {
-    	
-    	float size = width * 3f;
-
-        if (animatingSlider) {
-        	
-        	float percent = (float) (System.currentTimeMillis() - sliderStart) / (float) duration;
-        	size = (int) (size * accelDecel.getInterpolation(percent));
-        	
-        	if (!showSlider)
-        		size = (width * 3f) - size;
-        	
-        	if (percent >= 1.0f)
-        		animatingSlider = false;
-        }
-        
-        return size;
 	}
 }

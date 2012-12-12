@@ -16,14 +16,11 @@ package com.moneydesktop.finance.views;
 * limitations under the License.
 */
 
-import com.moneydesktop.finance.R;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -35,6 +32,8 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
+
+import com.moneydesktop.finance.R;
 
 /** Sliding door impl where the handle is inside the drawer . */
 public class SlidingDrawerRightSide extends ViewGroup {
@@ -53,8 +52,7 @@ public class SlidingDrawerRightSide extends ViewGroup {
      private static final int EXPANDED_FULL_OPEN = -10001;
      private static final int COLLAPSED_FULL_CLOSED = -10002;
 
-     private static final int LEFT_HANDLE_OFFSET_PX = 10;
-     private final int mLeftHandleOffset;
+//     private static final int LEFT_HANDLE_OFFSET_PX = 10;
 
      private final int mHandleId;
      private final int mContentId;
@@ -199,7 +197,7 @@ public class SlidingDrawerRightSide extends ViewGroup {
 
          a.recycle();
 
-         mLeftHandleOffset = (int) (LEFT_HANDLE_OFFSET_PX * density);
+//         mLeftHandleOffset = (int) (LEFT_HANDLE_OFFSET_PX * density);
 
          setAlwaysDrawnWithCacheEnabled(false);
      }

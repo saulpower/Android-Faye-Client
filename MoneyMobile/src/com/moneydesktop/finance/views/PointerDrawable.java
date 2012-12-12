@@ -51,10 +51,10 @@ public class PointerDrawable extends NavItemDrawable {
 	
 	private void initOval() {
 		
-		float sizeDp = UiUtils.getDynamicPixels(context, SIZE);
+		float sizeDp = UiUtils.getDynamicPixels(mContext, SIZE);
 		
-		float left = center.x - (sizeDp/2.0f);
-		float top = center.y - (sizeDp/2.0f);
+		float left = mCenter.x - (sizeDp/2.0f);
+		float top = mCenter.y - (sizeDp/2.0f);
 		float right = left + sizeDp;
 		float bottom = top + sizeDp;
 		
@@ -65,7 +65,7 @@ public class PointerDrawable extends NavItemDrawable {
 	private void initPaints() {
 		
 		indicator = new Paint(Paint.ANTI_ALIAS_FLAG);
-		indicator.setColor(context.getResources().getColor(R.color.light_blue));
+		indicator.setColor(mContext.getResources().getColor(R.color.primaryColor));
 		indicator.setStyle(Paint.Style.STROKE);
 		indicator.setAntiAlias(true);
 		indicator.setStrokeWidth(8);
@@ -84,17 +84,23 @@ public class PointerDrawable extends NavItemDrawable {
 	public void draw(Canvas canvas) {
 		
 		canvas.save();
-		canvas.rotate(rotation, position.x, position.y);
-		canvas.scale(scale.x, scale.y, position.x, position.y);
+		canvas.rotate(mRotation, mPosition.x, mPosition.y);
+		canvas.scale(mScale.x, mScale.y, mPosition.x, mPosition.y);
 		
 		canvas.drawArc(oval, startAngle, sweepAngle, false, indicator);
-		canvas.drawCircle(center.x, center.y, radiusDp/2.0f, circle);
+		canvas.drawCircle(mCenter.x, mCenter.y, radiusDp/2.0f, circle);
 		
 		canvas.restore();
 	}
 
 	@Override
 	public void playIntro() {
+
+        if (mOutroSet != null) {
+            mOutroSet.cancel();
+        }
+        
+        reset();
 
 		ObjectAnimator fade = ObjectAnimator.ofInt(this, "alpha", 0, 255);
 		fade.setDuration(150);
@@ -105,15 +111,19 @@ public class PointerDrawable extends NavItemDrawable {
 		ObjectAnimator pop = ObjectAnimator.ofObject(this, "scale", new PointEvaluator(), orig, bigger);
 		pop.setInterpolator(new OvershootInterpolator(2.0f));
 		pop.setDuration(500);
-		
-		AnimatorSet set = new AnimatorSet();
-		set.play(pop).with(fade);
-		set.setStartDelay(100);
-		set.start();
+
+        mIntroSet = new AnimatorSet();
+        mIntroSet.play(pop).with(fade);
+        mIntroSet.setStartDelay(100);
+        mIntroSet.start();
 	}
 	
 	@Override
 	public void playOutro(int selectedIndex) {
+        
+        if (mIntroSet != null) {
+            mIntroSet.cancel();
+        }
 
 		ObjectAnimator fade = ObjectAnimator.ofInt(this, "alpha", 255, 0);
 		fade.setDuration(400);
@@ -124,14 +134,14 @@ public class PointerDrawable extends NavItemDrawable {
 		ObjectAnimator pop = ObjectAnimator.ofObject(this, "scale", new PointEvaluator(), orig, smaller);
 		pop.setInterpolator(new OvershootInterpolator(2.0f));
 		pop.setDuration(500);
-		
-		AnimatorSet set = new AnimatorSet();
-		set.play(fade).with(pop);
-		set.start();
+
+        mOutroSet = new AnimatorSet();
+        mOutroSet.play(fade).with(pop);
+		mOutroSet.start();
 	}
 	
 	@Override
 	public void reset() {
-		scale = new PointF(1.0f, 1.0f);
+		setScale(new PointF(0.0f, 0.0f));
 	}
 }

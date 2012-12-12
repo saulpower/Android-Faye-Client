@@ -7,84 +7,101 @@ import com.moneydesktop.finance.util.Enums.NavDirection;
 
 public class EventMessage {
 
+    public class ParentAnimationEvent extends EventMessage {
+        protected Boolean mOutAnimation;
+        protected Boolean mFinished;
+
+        public ParentAnimationEvent(boolean outAnimation, boolean finished) {
+            mOutAnimation = outAnimation;
+            mFinished = finished;
+        }
+        
+        public boolean isOutAnimation() {
+            return mOutAnimation;
+        }
+        
+        public boolean isFinished() {
+            return mFinished;
+        }
+    }
 	public class AuthEvent extends EventMessage {}
 	public class DefaultsEvent extends EventMessage {}
 	public class LoginEvent extends EventMessage {}
 	public class LogoutEvent extends EventMessage {}
 	public class LockEvent extends EventMessage {
 		
-		protected LockType type;
+		protected LockType mType;
 
 		public LockEvent(LockType type) {
-			this.type = type;
+			this.mType = type;
 		}
 		
 		public LockType getType() {
-			return type;
+			return mType;
 		}
 	}
 	public class NavigationEvent extends EventMessage {
 		
-		protected Boolean showing;
-		protected NavDirection direction;
+		protected Boolean mShowing;
+		protected NavDirection mDirection;
 		
 		public NavigationEvent() {
-			this.showing = null;
-			this.direction = null;
+			this.mShowing = null;
+			this.mDirection = null;
 		}
 		
 		public NavigationEvent(boolean showing) {
-			this.showing = showing;
-			this.direction = null;
+			this.mShowing = showing;
+			this.mDirection = null;
 		}
 		
 		public NavigationEvent(NavDirection direction) {
-			this.showing = null;
-			this.direction = direction;
+			this.mShowing = null;
+			this.mDirection = direction;
 		}
 		
 		public Boolean isShowing() {
-			return showing;
+			return mShowing;
 		}
 		
 		public NavDirection getDirection() {
-			return direction;
+			return mDirection;
 		}
 	}
 	
 	public class SyncEvent extends EventMessage {
 		
-		protected boolean finished;
+		protected boolean mFinished;
 
 		public SyncEvent(boolean finished) {
-			this.finished = finished;
+			this.mFinished = finished;
 		}
 		
 		public boolean isFinished() {
-			return finished;
+			return mFinished;
 		}
 
 		public void setFinished(boolean finished) {
-			this.finished = finished;
+			this.mFinished = finished;
 		}
 	}
 	
-	protected HashMap<String, Object> info;
-	protected String message;
+	protected HashMap<String, Object> mInfo;
+	protected String mMessage;
 	
 	public HashMap<String, Object> getInfo() {
-		return info;
+		return mInfo;
 	}
 	
 	public void setInfo(HashMap<String, Object> info) {
-		this.info = info;
+		this.mInfo = info;
 	}
 	
 	public String getMessage() {
-		return message;
+		return mMessage;
 	}
 	
 	public void setMessage(String message) {
-		this.message = message;
+		this.mMessage = message;
 	}
 }

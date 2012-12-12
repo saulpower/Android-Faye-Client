@@ -1,10 +1,9 @@
 package com.moneydesktop.finance.handset.activity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.animation.Animation;
@@ -13,22 +12,18 @@ import android.widget.ViewFlipper;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.adapters.FragmentAdapter;
 import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
-import com.moneydesktop.finance.handset.fragment.AccountSummaryFragment;
-import com.moneydesktop.finance.handset.fragment.BudgetSummaryFragment;
+import com.moneydesktop.finance.handset.fragment.DashboardFragmentFactory;
 import com.moneydesktop.finance.handset.fragment.LockFragment;
 import com.moneydesktop.finance.handset.fragment.SettingsFragment;
-import com.moneydesktop.finance.handset.fragment.SpendingSummaryFragment;
-import com.moneydesktop.finance.handset.fragment.TransactionSummaryFragment;
 import com.moneydesktop.finance.handset.fragment.TransactionsFragment;
-import com.moneydesktop.finance.shared.Dashboard;
+import com.moneydesktop.finance.shared.DashboardBaseActivity;
 
-public class DashboardActivity extends Dashboard {
+public class DashboardHandsetActivity extends DashboardBaseActivity {
 	
 	public static final String TAG = "DashboardActivity";
-	private ViewFlipper flipper;
+	private ViewFlipper mFlipper;
 
 	private FragmentAdapter mAdapter;
 	private ViewPager mPager;
@@ -42,7 +37,7 @@ public class DashboardActivity extends Dashboard {
         
         setupView();
         mPager.setPageMargin(20);
-        mAdapter = new FragmentAdapter(fm, getFragments());
+        mAdapter = new FragmentAdapter(mFm);
         mPager.setAdapter(mAdapter);
 
         if (savedInstanceState != null) {
@@ -53,9 +48,9 @@ public class DashboardActivity extends Dashboard {
 	@Override
 	public void onBackPressed() {
 		
-		if (flipper.indexOfChild(flipper.getCurrentView()) == 1) {
+		if (mFlipper.indexOfChild(mFlipper.getCurrentView()) == 1) {
 			
-			if (fragmentCount == 1) {
+			if (mFragmentCount == 1) {
 				configureView(true);
 			} else {
 				navigateBack();
@@ -74,33 +69,21 @@ public class DashboardActivity extends Dashboard {
     }
 	
 	@Override
-	public void onFragmentAttached(AppearanceListener fragment) {
+	public void onFragmentAttached(BaseFragment fragment) {
 		super.onFragmentAttached(fragment);
 		
-		if (fragmentCount == 1)
+		if (mFragmentCount == 1)
 			configureView(false);
 	}
-	
-	private List<Fragment> getFragments() {
-
-    	List<Fragment> fragments = new ArrayList<Fragment>();
-    	
-    	fragments.add(AccountSummaryFragment.newInstance(0));
-    	fragments.add(SpendingSummaryFragment.newInstance(1));
-    	fragments.add(BudgetSummaryFragment.newInstance(2));
-    	fragments.add(TransactionSummaryFragment.newInstance(3));
-    	fragments.add(SettingsFragment.newInstance(4));
-    	
-    	return fragments;
-	}
   	
+	@Override
     public void showFragment(int position) {
     	
-    	onFragment = true;
+    	mOnFragment = true;
     	
     	BaseFragment fragment = getFragment(position);
     	
-        FragmentTransaction ft = fm.beginTransaction();
+        FragmentTransaction ft = mFm.beginTransaction();
         ft.replace(R.id.fragment, fragment);
 		ft.addToBackStack(null);
         ft.commit();
@@ -123,7 +106,7 @@ public class DashboardActivity extends Dashboard {
 				}
 			};
     		
-			AnimationFactory.flipTransition(flipper, finish, null, home ? FlipDirection.RIGHT_LEFT : FlipDirection.LEFT_RIGHT, TRANSITION_DURATION);
+			AnimationFactory.flipTransition(mFlipper, finish, null, home ? FlipDirection.RIGHT_LEFT : FlipDirection.LEFT_RIGHT, TRANSITION_DURATION);
 			
     	} else {
 
@@ -138,13 +121,13 @@ public class DashboardActivity extends Dashboard {
 				}
 			};
 	    	
-	        AnimationFactory.flipTransition(flipper, null, finish, home ? FlipDirection.RIGHT_LEFT : FlipDirection.LEFT_RIGHT, TRANSITION_DURATION);
+	        AnimationFactory.flipTransition(mFlipper, null, finish, home ? FlipDirection.RIGHT_LEFT : FlipDirection.LEFT_RIGHT, TRANSITION_DURATION);
     	}
     }
 	
 	private void setupView() {
 		
-		flipper = (ViewFlipper) findViewById(R.id.flipper);
+		mFlipper = (ViewFlipper) findViewById(R.id.flipper);
         mPager = (ViewPager) findViewById(R.id.pager);
 	}
     
@@ -154,22 +137,42 @@ public class DashboardActivity extends Dashboard {
     	
         switch (position) {
         case 0:
-        	frag = SettingsFragment.newInstance(position);
+        	frag = SettingsFragment.getInstance(position);
         	break;
         case 1:
-        	frag = SettingsFragment.newInstance(position);
+        	frag = SettingsFragment.getInstance(position);
         	break;
         case 2:
-        	frag = SettingsFragment.newInstance(position);
+        	frag = SettingsFragment.getInstance(position);
         	break;
         case 3:
         	frag = TransactionsFragment.newInstance();
         	break;
         case 4:
-        	frag = LockFragment.newInstance();
+        	frag = LockFragment.newInstance(false);
         	break;
         }
         
         return frag;
+    }
+	
+	public class FragmentAdapter extends FragmentStatePagerAdapter {
+        
+        private final int COUNT = 5;
+        
+        public FragmentAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public int getCount() {
+            return COUNT;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            
+            return DashboardFragmentFactory.getInstance(position);
+        }
     }
 }

@@ -1,55 +1,79 @@
 package com.moneydesktop.finance.tablet.activity;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextSwitcher;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
+import android.widget.ViewSwitcher.ViewFactory;
 
-import com.moneydesktop.finance.BaseTabletFragment;
+import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.adapters.FragmentAdapter;
-import com.moneydesktop.finance.animation.AnimationFactory;
-import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
+import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
-import com.moneydesktop.finance.shared.Dashboard;
-import com.moneydesktop.finance.tablet.fragment.AccountSummaryTabletFragment;
+import com.moneydesktop.finance.shared.DashboardBaseActivity;
+import com.moneydesktop.finance.tablet.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.SettingsTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.SummaryTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.TransactionsTabletFragment;
+import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.FixedSpeedScroller;
 import com.moneydesktop.finance.views.GrowViewPager;
 import com.moneydesktop.finance.views.NavWheelView;
 import com.moneydesktop.finance.views.NavWheelView.onNavigationChangeListener;
 
-public class DashboardTabletActivity extends Dashboard implements onNavigationChangeListener {
-	
-	public static final String TAG = "DashboardTabletActivity";
+import de.greenrobot.event.EventBus;
 
-	private ViewFlipper flipper;
-	private FragmentAdapter mAdapter;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
+public class DashboardTabletActivity extends DashboardBaseActivity implements onNavigationChangeListener, ViewFactory {
+    
+    public final String TAG = this.getClass().getSimpleName();
+
+	private ViewFlipper mFlipper;
 	private GrowViewPager mPager;
-	private NavWheelView navigation;
+	private GrowPagerAdapter mAdapter;
+	private NavWheelView mNavigation;
+	private ImageView mHomeButton;
+	private TextSwitcher mNavTitle;
 	
-	private int currentIndex = 0;
+	private Animation mIn, mOut;
+	
+	private int mCurrentIndex = 0;
 
+	public GrowPagerAdapter getPagerAdapter() {
+	    return mAdapter;
+	}
+	
 	@Override
 	public void onBackPressed() {
 		
-		if (navigation.getVisibility() == View.VISIBLE) {
+		if (mNavigation.isShowing()) {
 			
 			toggleNavigation();
 			
-		} else if (flipper.indexOfChild(flipper.getCurrentView()) == 1) {
+		} else if (mFlipper.indexOfChild(mFlipper.getCurrentView()) == 1) {
 			
-			if (fragmentCount == 1) {
+			if (mFragmentCount == 1 && !mOnHome) {
 				configureView(true);
 			} else {
 				navigateBack();
@@ -62,66 +86,96 @@ public class DashboardTabletActivity extends Dashboard implements onNavigationCh
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
-		
+        
+        super.onCreate(savedInstanceState);
+        
         setContentView(R.layout.tablet_dashboard_view);
         
-        super.onCreate(savedInstanceState);    
-        
         setupView();
+        loadAnimations();
         
-        mAdapter = new FragmentAdapter(fm, getFragments());
+        mAdapter = new GrowPagerAdapter(mFm);
+        
+        mPager.setOnPageChangeListener(mAdapter);
+        mPager.setOnScrollChangedListener(mAdapter);
         mPager.setAdapter(mAdapter);
         
-        if (savedInstanceState != null) {
+        if (mPager != null && savedInstanceState != null) {
             mPager.setCurrentItem(savedInstanceState.getInt("pager"));
         }
     }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        
+        updateNavBar(getActivityTitle());
+    }
 	
 	@Override
-	public void onFragmentAttached(AppearanceListener fragment) {
-		super.onFragmentAttached(fragment);
+	protected void onSaveInstanceState (Bundle outState) {
+		super.onSaveInstanceState(outState);
 		
-		if (fragmentCount >= 1)
+		outState.putInt("pager", mPager.getCurrentItem());
+	}
+	
+	@Override
+	public void onFragmentAttached(BaseFragment fragment) {
+
+	    if (mOnFragment) {
+            mFragmentCount = 1;
+        }
+		
+		if (mFragmentCount == 1 && mOnHome) {
 			configureView(false);
+		}
 	}
     
     @Override
     public void configureView(final boolean home) {
 		super.configureView(home);
-		
+
+        mOnHome = home;
+        
     	if (home) {
     		
-    		currentIndex = 0;
-    		navigation.setCurrentIndex(0);
-    		
-    		AnimationListener finish = new AnimationListener() {
-				
-				public void onAnimationStart(Animation animation) {}
-				
-				public void onAnimationRepeat(Animation animation) {}
-				
-				public void onAnimationEnd(Animation animation) {
-					navigateBack();
-				}
-			};
-    		
-			AnimationFactory.flipTransition(flipper, finish, null, home ? FlipDirection.RIGHT_LEFT : FlipDirection.LEFT_RIGHT, TRANSITION_DURATION);
+    		mCurrentIndex = 0;
+    		mNavigation.setCurrentIndex(0);
+	        
+			mFlipper.setInAnimation(this, R.anim.none);
+			mFlipper.setOutAnimation(mOut);
+			mFlipper.setDisplayedChild(getNextIndex());
+
+            mNavTitle.setInAnimation(this, R.anim.in_down);
+            mNavTitle.setOutAnimation(this, R.anim.out_down);
 			
     	} else {
-
-    		AnimationListener finish = new AnimationListener() {
-				
-				public void onAnimationStart(Animation animation) {}
-				
-				public void onAnimationRepeat(Animation animation) {}
-				
-				public void onAnimationEnd(Animation animation) {
-					viewDidAppear();
-				}
-			};
 	    	
-	        AnimationFactory.flipTransition(flipper, null, finish, home ? FlipDirection.RIGHT_LEFT : FlipDirection.LEFT_RIGHT, TRANSITION_DURATION);
+			EventBus.getDefault().post(new EventMessage().new ParentAnimationEvent(false, false));
+            
+            mFlipper.setInAnimation(mIn);
+            mFlipper.setOutAnimation(this, R.anim.none);
+            mFlipper.setDisplayedChild(getNextIndex());
+
+            mNavTitle.setInAnimation(this, R.anim.in_up);
+            mNavTitle.setOutAnimation(this, R.anim.out_up);
     	}
+    }
+    
+    private int getNextIndex() {
+        
+        return (mFlipper.getDisplayedChild() + 1) % mFlipper.getChildCount();
+    }
+    
+    @Override
+    public void updateNavBar(String titleString) {
+        
+        TextView tv = (TextView) mNavTitle.getCurrentView();
+        
+        if (mNavBar != null && titleString != null && !tv.getText().toString().equalsIgnoreCase(titleString)) {
+            
+            mNavTitle.setText(titleString.toUpperCase());
+        }
     }
 	
 	public void onEvent(NavigationEvent event) {
@@ -129,12 +183,46 @@ public class DashboardTabletActivity extends Dashboard implements onNavigationCh
 		if (event.isShowing() == null && event.getDirection() == null)
 			toggleNavigation();
 	}
+	
+	private void loadAnimations() {
+
+        AnimationListener finish = new AnimationListener() {
+            
+            public void onAnimationStart(Animation animation) {}
+            
+            public void onAnimationRepeat(Animation animation) {}
+            
+            public void onAnimationEnd(Animation animation) {
+                viewDidAppear();
+            }
+        };
+        
+        mIn = AnimationUtils.loadAnimation(this, R.anim.in_up);
+        mIn.setAnimationListener(finish);
+        
+        finish = new AnimationListener() {
+            
+            public void onAnimationStart(Animation animation) {
+                navigateBack();
+            }
+            
+            public void onAnimationRepeat(Animation animation) {}
+            
+            public void onAnimationEnd(Animation animation) {}
+        };
+        
+        mOut = AnimationUtils.loadAnimation(this, R.anim.out_down);
+        mOut.setAnimationListener(finish);
+	}
 
 	private void setupView() {
 		
-        navigation = (NavWheelView) findViewById(R.id.nav_wheel);
-		flipper = (ViewFlipper) findViewById(R.id.flipper);
+        mNavigation = (NavWheelView) findViewById(R.id.nav_wheel);
+		mFlipper = (ViewFlipper) findViewById(R.id.flipper);
         mPager = (GrowViewPager) findViewById(R.id.tablet_pager);
+        mNavBar = (RelativeLayout) findViewById(R.id.navigation);
+        mNavTitle = (TextSwitcher) findViewById(R.id.title_bar_name);
+        mHomeButton = (ImageView) findViewById(R.id.home);
         
         // Hack fix to adjust scroller velocity on view pager
         try {
@@ -155,45 +243,71 @@ public class DashboardTabletActivity extends Dashboard implements onNavigationCh
         items.add(R.drawable.tablet_newnav_reports_white);
         items.add(R.drawable.tablet_newnav_settings_white);
         
-        navigation.setItems(items);
-        navigation.setOnNavigationChangeListener(this);
+        mNavigation.setItems(items);
+        mNavigation.setOnNavigationChangeListener(this);
+        
+        mNavTitle.setFactory(this);
+        mNavTitle.setInAnimation(this, R.anim.in_up);
+        mNavTitle.setOutAnimation(this, R.anim.out_up);
+        
+        mHomeButton.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                
+                if (mFragmentCount == 1) {
+                    configureView(true);
+                }
+            }
+        });
 	}
 	
 	public void toggleNavigation() {
 		
-		if (navigation.getVisibility() == View.GONE) {
-			navigation.showNav();
+		if (!mNavigation.isShowing()) {
+			mNavigation.showNav();
 		} else {
-			navigation.hideNav();
+			mNavigation.hideNav();
 		}
 	}
+	
+	public void showPopupFragment(Fragment fragment) {
 
+	    Intent i = new Intent(this, PopupTabletActivity.class);
+	    i.putExtra("fragment", 0);
+	    startActivity(i);
+	    overridePendingTransition(R.anim.in_down, R.anim.none);
+	}
+
+	@Override
     public void showFragment(int index) {
     	
-    	onFragment = true;
+    	mOnFragment = true;
     	
-    	BaseTabletFragment fragment = getFragment(index);
+    	BaseFragment fragment = getFragment(index);
     	
     	if (fragment != null) {
     		
-    		currentIndex = index;
+    		mCurrentIndex = index;
     		
-	        FragmentTransaction ft = fm.beginTransaction();
+	        FragmentTransaction ft = mFm.beginTransaction();
 	        ft.replace(R.id.fragment, fragment);
-	        ft.addToBackStack(null);
 	        ft.commit();
     	}
     }
 
-    private BaseTabletFragment getFragment(int index) {
+    private BaseFragment getFragment(int index) {
 
         switch (index) {
         case 0:
 			configureView(true);
-			
         	return null;
         case 1:
         	return AccountTypesTabletFragment.newInstance(index);
+        case 2:
+            return TransactionsTabletFragment.newInstance();
+        case 5:
+            return SettingsTabletFragment.newInstance(index);
         }
         
         return null;
@@ -208,27 +322,48 @@ public class DashboardTabletActivity extends Dashboard implements onNavigationCh
     	int item = mPager.getCurrentItem() - 1;
     	mPager.setCurrentItem(item, true);
     }
-	
-	private List<Fragment> getFragments() {
-
-    	List<Fragment> fragments = new ArrayList<Fragment>();
-    	
-    	// Dummy fragments currently for testing
-    	fragments.add(SummaryTabletFragment.newInstance(0));
-    	fragments.add(SummaryTabletFragment.newInstance(1));
-    	fragments.add(SummaryTabletFragment.newInstance(2));
-    	fragments.add(SummaryTabletFragment.newInstance(3));
-    	
-    	return fragments;
-	}
 
 	@Override
 	public void onNavigationChanged(int index) {
 		
-		if (currentIndex == index)
+		if (mCurrentIndex == index)
 			return;
 		
 		showFragment(index);
 	}
+	
+	public class FragmentAdapter extends FragmentPagerAdapter {
 
+	    public final String TAG = this.getClass().getSimpleName();
+	    
+	    private final int COUNT = 4;
+	    
+	    public FragmentAdapter(FragmentManager fm) {
+	        super(fm);
+	    }
+
+	    @Override
+	    public int getCount() {
+	        return COUNT;
+	    }
+
+	    @Override
+	    public Fragment getItem(int position) {
+	        return SummaryTabletFragment.newInstance(position);
+	    }
+	}
+
+    @Override
+    public View makeView() {
+        
+        TextView t = new TextView(this);
+        FrameLayout.LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+        t.setLayoutParams(params);
+        t.setGravity(Gravity.CENTER);
+        t.setTextColor(Color.WHITE);
+
+        Fonts.applyPrimaryBoldFont(t, 18);
+        
+        return t;
+    }
 }

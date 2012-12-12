@@ -18,7 +18,7 @@ public class Fonts {
 	public static final String PRIMARY = "fonts/ProximaNova-Reg.otf";
 	public static final String PRIMARY_SEMI_BOLD = "fonts/ProximaNova-Sbold.otf";
 	public static final String PRIMARY_BOLD = "fonts/ProximaNova-Bold.otf";
-	public static final String PRIMARY_ITALIC = "fonts/ProximaNova-Semibold.otf";
+//	public static final String PRIMARY_ITALIC = "fonts/ProximaNova-Semibold.otf";
 	public static final String SECONDARY = "fonts/UtopiaStd-Regular.ttf";
 	public static final String SECONDARY_SEMI_BOLD = "fonts/UtopiaStd-Semibold.otf";
 	public static final String SECONDARY_SEMI_BOLD_ITALIC = "fonts/UtopiaStd-SemiboldIt.otf";
@@ -40,9 +40,9 @@ public class Fonts {
 	}
 	
 	// Does not work
-	public static void applyPrimaryItalicFont(TextView view, float size) {
-		applyFont(PRIMARY_ITALIC, view, size);
-	}
+//	public static void applyPrimaryItalicFont(TextView view, float size) {
+//		applyFont(PRIMARY_ITALIC, view, size);
+//	}
 	
 	public static void applySecondaryFont(TextView view, float size) {
 		applyFont(SECONDARY, view, size);

@@ -33,7 +33,7 @@
         <item name="android:gravity">center</item>
     </style>
     <style name="text">
-        <item name="android:textColor">@color/light_blue</item>
+        <item name="android:textColor">@color/primaryColor</item>
         <item name="android:textSize">14sp</item>
         <item name="android:gravity">center</item>
     </style>
@@ -46,12 +46,12 @@
         <item name="android:gravity">center_vertical|left</item>
     </style>
     <style name="text_blue">
-        <item name="android:textColor">@color/light_blue</item>
+        <item name="android:textColor">@color/primaryColor</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">14sp</item>
     </style>
     <style name="text_button">
-        <item name="android:textColor">@drawable/primary_to_white</item>
+        <item name="android:textColor">@drawable/primary_to_white_text</item>
         <item name="android:gravity">center</item>
 	    <item name="android:duplicateParentState">true</item>
     </style>
@@ -66,6 +66,15 @@
         <item name="android:gravity">center</item>
 	    <item name="android:clickable">true</item>
 	    <item name="android:orientation">vertical</item>
+    </style>
+    <style name="tablet_txn_text">
+        <item name="android:textColor">@drawable/gray7_to_white</item>
+        <item name="android:textSize">16sp</item>
+	    <item name="android:singleLine">true</item>
+	    <item name="android:ellipsize">end</item>
+	    <item name="android:paddingLeft">10dp</item>
+	    <item name="android:paddingRight">10dp</item>
+	    <item name="android:text">@string/default_title</item>
     </style>
 	<style name="transaction_cell">
 	    <item name="android:paddingTop">@dimen/transaction_padding</item>

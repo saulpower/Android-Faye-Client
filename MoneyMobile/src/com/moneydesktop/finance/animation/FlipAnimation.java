@@ -46,10 +46,10 @@ public class FlipAnimation extends Animation {
 	private final float mToDegrees;
 	private final float mCenterY;
 	private float mRotateX;
-	private int width;
+	private int mWidth;
 	private Camera mCamera;
-	private boolean out;
-	private FlipDirection direction;
+	private boolean mOut;
+	private FlipDirection mDirection;
 
 	/**
 	 * Constructs a new {@code FlipAnimation} object.Two {@code FlipAnimation} objects are needed for a complete transition b/n two views. 
@@ -66,9 +66,9 @@ public class FlipAnimation extends Animation {
 		mToDegrees = toDegrees;
 		mRotateX = ((direction == FlipDirection.LEFT_RIGHT && !out) || (direction == FlipDirection.RIGHT_LEFT && out)) ? width : 0;
 		mCenterY = centerY;
-		this.width = width;
-		this.direction = direction;
-		this.out = out;
+		mWidth = width;
+		mDirection = direction;
+		mOut = out;
 	}
 
 	@Override
@@ -89,10 +89,10 @@ public class FlipAnimation extends Animation {
 		final Matrix matrix = t.getMatrix();
 
 		// This is where we determine the amount to translate by
-		int dirAmt = (direction == FlipDirection.LEFT_RIGHT) ? 1 : -1;
-		int amt = (direction == FlipDirection.RIGHT_LEFT) ? width : 0;
-		int start = (int) (out ? amt : (width / 2));
-		float centerX = (width / 2 * interpolatedTime * dirAmt) + start;
+		int dirAmt = (mDirection == FlipDirection.LEFT_RIGHT) ? 1 : -1;
+		int amt = (mDirection == FlipDirection.RIGHT_LEFT) ? mWidth : 0;
+		int start = (int) (mOut ? amt : (mWidth / 2));
+		float centerX = (mWidth / 2 * interpolatedTime * dirAmt) + start;
 
 		camera.save();
 		
