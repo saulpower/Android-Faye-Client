@@ -80,6 +80,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="icon_lock">E</string>
     <string name="icon_feedback">6</string>
+    <string name="icon_left_arrow">3</string>
     <string name="icon_logout">7</string>
     <string name="icon_password">§</string>
     <string name="label_amount">Amount</string>
@@ -143,5 +144,7 @@
     <string name="title_activity_spending">Spending</string>
     <string name="title_activity_transaction">Transaction</string>
     <string name="title_activity_transactions">Transactions</string>
+     <string name="unlink_title">Unlink?</string>
+    <string name="unlink_message">Unlinking will remove this device from your list of approved devices. you can re-link it at any time. Would you like to continue?</string>
 
 </resources>

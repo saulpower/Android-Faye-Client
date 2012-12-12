@@ -27,6 +27,7 @@ import com.moneydesktop.finance.DebugActivity;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.DataBridge;
 import com.moneydesktop.finance.data.DemoData;
+import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.model.EventMessage.LoginEvent;
@@ -49,7 +50,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
     private final String TAG = "LoginActivity";
     
     private ViewFlipper mViewFlipper;
-    private LinearLayout buttonView, credentialView;
+    private LinearLayout mButtonView, credentialView;
     private Button loginViewButton, demoButton, loginButton, cancelButton, submitButton, demoButton2, returnHomeButton;
     private LabelEditText username, password, signupName, signupEmail, signupBank;
     private ImageView logo;
@@ -83,8 +84,13 @@ public abstract class LoginBaseActivity extends BaseActivity {
         DialogUtils.hideProgress();
         
         if (User.getCurrentUser() != null) {
-            
-            Intent i = new Intent(this, DashboardTabletActivity.class);
+            Intent i;
+            if(BaseActivity.isTablet(this)){
+                i = new Intent(this, DashboardTabletActivity.class);
+            }
+            else{
+                i = new Intent(this, DashboardHandsetActivity.class);
+            }
             startActivity(i);
             overridePendingTransition(R.anim.fade_in_fast, R.anim.none);
         }
@@ -100,7 +106,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
     protected void setupView() {
         
         mViewFlipper = (ViewFlipper) findViewById(R.id.flipper);
-        buttonView = (LinearLayout) findViewById(R.id.button_view);
+        mButtonView = (LinearLayout) findViewById(R.id.button_view);
         credentialView = (LinearLayout) findViewById(R.id.credentials);
         configureFlipper();
         
@@ -496,7 +502,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         long duration = 750;
         long delay = reset ? 250 : 0;
         
-        Animator.translateView(buttonView, new float[] {0, offset}, duration);
+        Animator.translateView(mButtonView, new float[] {0, offset}, duration);
         Animator.fadeView(loginText, !reset, duration, delay);
         Animator.fadeView(credentialView, !reset, duration, delay);
         Animator.fadeView(username, !reset, duration, delay);
