@@ -54,6 +54,8 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_marginTop="60dp"
+		        android:paddingTop="20dp"
+		        android:paddingBottom="20dp"
 		        android:text="@string/text_signup"
 		        style="@style/text_blue" />
 		    
@@ -170,6 +172,7 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 		    android:paddingTop="20dp"
+		    android:paddingBottom="20dp"
 	        android:text="@string/text_login"
 	        style="@style/text" />
 	    </LinearLayout>
@@ -290,6 +293,7 @@
 	        android:layout_height="wrap_content"
 		    android:layout_alignParentBottom="true"
 		    android:paddingTop="20dp"
+		    android:paddingBottom="20dp"
 	        android:text="@string/button_cancel"
 	        style="@style/text" />
 	    </LinearLayout>
@@ -297,5 +301,71 @@
 	   
 	    
 	</RelativeLayout>
-
+	<!-- Screen that thanks the user for their submission, and invites them to use the demo. ID 3 -->
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:orientation="vertical"
+	    android:background="@color/white" >
+	    
+	    <RelativeLayout 
+	        android:layout_width="match_parent"
+	        android:layout_height="0dp"
+	        android:layout_weight="55"
+	        android:gravity="center">
+	    
+			<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="30dp"
+		    android:layout_marginBottom="30dp"
+		    android:layout_centerHorizontal="true"
+		    android:src="@drawable/tablet_logo_medium"
+		    android:contentDescription="@string/description" />
+	        
+	    </RelativeLayout>
+	    
+		<LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="0dp"
+		    android:layout_weight="250"
+		    android:orientation="vertical"
+		    android:gravity="center_horizontal" >
+			<TextView
+		    android:id="@+id/thank_you"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="20dp"
+		    android:text="@string/thank_you"	
+		    android:gravity="center"
+		    android:textColor="@color/gray7"/>
+			<TextView
+		    android:id="@+id/try_demo"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="5dp"
+		    android:layout_marginBottom="40dp"
+		    android:text="@string/try_demo"
+		    android:gravity="center"
+		    android:textColor="@color/gray7"
+		    android:lineSpacingExtra="2dp"/>
+			
+			<Button 
+		        android:id="@+id/demo_button2"
+		        android:layout_width="450dp"
+		        android:layout_height="50dp"
+		        android:text="@string/button_demo"
+		        style="@style/button" />
+			    		    
+		    <Button
+		        android:id="@+id/home_view_button"
+		        style="@style/button"
+		        android:layout_width="450dp"
+		        android:layout_height="50dp"
+		        android:layout_marginTop="2dp"
+		        android:text="@string/button_return_home" />
+			
+	    </LinearLayout>
+	    
+	</LinearLayout>
 </ViewFlipper>

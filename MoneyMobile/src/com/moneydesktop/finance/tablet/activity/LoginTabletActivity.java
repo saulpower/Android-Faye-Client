@@ -35,27 +35,33 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.LabelEditText;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import de.greenrobot.event.EventBus;
 
 public class LoginTabletActivity extends BaseActivity {
-	
+    private final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-\\+]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	private final String TAG = "LoginActivity";
 	
 	private ViewFlipper viewFlipper;
 	private LinearLayout buttonView, credentialView;
-	private Button loginViewButton, demoButton, loginButton, cancelButton, submitButton;
+	private Button loginViewButton, demoButton, loginButton, cancelButton, submitButton, demoButton2, returnHomeButton;
 	private LabelEditText username, password, signupName, signupEmail, signupBank;
 	private ImageView logo;
-	private TextView signupText, loginText, messageTitle, messageBody, cancelText, needAccount, nagBank;
+	private TextView signupText, loginText, messageTitle, messageBody, cancelText, needAccount, nagBank, thankYou, tryDemo;
 	private Animation inLeft, inRight, outLeft, outRight;
-	
 	private boolean failed = false;
 	
 	@Override
 	public void onBackPressed() {
-		if (viewFlipper.indexOfChild(viewFlipper.getCurrentView()) == 1) {
+		if (viewFlipper.indexOfChild(viewFlipper.getCurrentView()) == 1 ) {
 			cancel();
-		} else {
+		} 
+		else if(viewFlipper.indexOfChild(viewFlipper.getCurrentView()) == 2){
+		    cancelBackwards();
+		}
+		else {
 			super.onBackPressed();
 		}
 	}
@@ -87,6 +93,7 @@ public class LoginTabletActivity extends BaseActivity {
 			
 	    	Intent i = new Intent(this, DashboardTabletActivity.class);
 	    	startActivity(i);
+	    	overridePendingTransition(R.anim.fade_in_fast, R.anim.none);
 		}
 	}
 	
@@ -109,7 +116,8 @@ public class LoginTabletActivity extends BaseActivity {
 		
 		loginViewButton = (Button) findViewById(R.id.login_view_button);
 		demoButton = (Button) findViewById(R.id.demo_button);
-		
+		demoButton2 = (Button) findViewById(R.id.demo_button2);
+		returnHomeButton = (Button) findViewById(R.id.home_view_button);
 		loginButton = (Button) findViewById(R.id.login_button);
 		cancelButton = (Button) findViewById(R.id.cancel_button);
 		
@@ -117,6 +125,8 @@ public class LoginTabletActivity extends BaseActivity {
 		
 		signupText = (TextView) findViewById(R.id.signup);
 		loginText = (TextView) findViewById(R.id.login_text);
+		thankYou = (TextView) findViewById(R.id.thank_you);
+		tryDemo = (TextView) findViewById(R.id.try_demo);
 	    signupName = (LabelEditText) findViewById(R.id.signup_name);
 		signupEmail = (LabelEditText) findViewById(R.id.signup_email);
 	    signupBank = (LabelEditText) findViewById(R.id.signup_bank);
@@ -128,15 +138,19 @@ public class LoginTabletActivity extends BaseActivity {
 		nagBank = (TextView) findViewById(R.id.nag_bank);
 		Fonts.applyPrimaryFont(loginViewButton, 20);
 		Fonts.applyPrimaryFont(demoButton, 20);
+		Fonts.applyPrimaryFont(demoButton2, 20);
+		Fonts.applyPrimaryFont(returnHomeButton, 20);
 		Fonts.applyPrimaryFont(loginButton, 20);
 		Fonts.applyPrimaryFont(cancelButton, 20);
 		Fonts.applyPrimaryFont(submitButton, 20);
 		Fonts.applyPrimaryFont(signupText, 15);
 		Fonts.applyPrimaryFont(loginText, 15);
 		Fonts.applyPrimaryFont(cancelText, 15);
+		Fonts.applyPrimaryBoldFont(thankYou, 20);
+		Fonts.applyPrimaryFont(tryDemo, 20);
 		Fonts.applyPrimarySemiBoldFont(username, 25);
 		Fonts.applyPrimarySemiBoldFont(password, 25);
-		Fonts.applyPrimaryBoldFont(needAccount, 25);
+		Fonts.applyPrimaryBoldFont(needAccount, 20);
 		Fonts.applySecondaryItalicFont(nagBank, 15);
 		addListeners();
 	}
@@ -146,7 +160,7 @@ public class LoginTabletActivity extends BaseActivity {
             
             public void onClick(View v) {
                 
-                cancel();
+                cancelBackwards();
             }
         });
 		loginViewButton.setOnClickListener(new OnClickListener() {
@@ -156,7 +170,12 @@ public class LoginTabletActivity extends BaseActivity {
 				toLoginView();
 			}
 		});
-		
+		returnHomeButton.setOnClickListener(new OnClickListener() {
+            
+            public void onClick(View v) {               
+                cancelBackwards();
+            }
+        });
 		demoButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
@@ -164,7 +183,13 @@ public class LoginTabletActivity extends BaseActivity {
 				demoMode();
 			}
 		});
-		
+	    demoButton2.setOnClickListener(new OnClickListener() {
+	            
+	            public void onClick(View v) {
+	                
+	                demoMode();
+	            }
+	        });
 		loginButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
@@ -172,7 +197,11 @@ public class LoginTabletActivity extends BaseActivity {
 				login();
 			}
 		});
-		
+		submitButton.setOnClickListener(new OnClickListener(){
+		    public void onClick(View v){
+		          signup();
+		    }
+		});
 		cancelButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
@@ -264,7 +293,6 @@ public class LoginTabletActivity extends BaseActivity {
 		outRight = AnimationUtils.loadAnimation(this, R.anim.out_right);
 		outLeft = AnimationUtils.loadAnimation(this, R.anim.out_left);
 		inRight = AnimationUtils.loadAnimation(this, R.anim.in_right);
-		
 		inLeft.setAnimationListener(new AnimationListener() {
 			
 			public void onAnimationStart(Animation animation) {
@@ -311,15 +339,14 @@ public class LoginTabletActivity extends BaseActivity {
 	}
 	
 	private void toLoginView() {
-		
+        viewFlipper.setOutAnimation(outLeft);
+        viewFlipper.setInAnimation(inRight);
 		viewFlipper.setDisplayedChild(1);
-		viewFlipper.setInAnimation(outRight);
-		viewFlipper.setOutAnimation(inLeft);
 	}
 	private void toSignupView() {
+        viewFlipper.setOutAnimation(inLeft);
+        viewFlipper.setInAnimation(outRight);
 	    viewFlipper.setDisplayedChild(2);
-	    viewFlipper.setInAnimation(outRight);
-	    viewFlipper.setInAnimation(inLeft);
 	}
 	private void demoMode() {
 		
@@ -345,7 +372,27 @@ public class LoginTabletActivity extends BaseActivity {
 			
 		}.execute();
 	}
-	
+	private void signup(){
+	    if(signupCheck() && emailCheck()){
+	        submit();
+	    }
+	    else if(!signupCheck()){
+	             DialogUtils.alertDialog(getString(R.string.error_title), getString(R.string.error_login_incomplete), this, null);
+	        }
+	    else if(!emailCheck()){
+            DialogUtils.alertDialog(getString(R.string.error_title), getString(R.string.error_email_invalid), this, null);
+        }
+	}
+	private void submit(){
+	    // add data submission code here
+	    toThankYou();
+	}
+	private void toThankYou(){
+        viewFlipper.setOutAnimation(inLeft);
+        viewFlipper.setInAnimation(outRight);
+        viewFlipper.setDisplayedChild(3);
+        hideKeyboard();
+	}
 	private void login() {
 		
 		if (failed) {
@@ -354,7 +401,11 @@ public class LoginTabletActivity extends BaseActivity {
 			
 			return;
 		}
-		
+		if(!validateEmail(username.toString()))
+		{
+		    DialogUtils.alertDialog(getString(R.string.error_title), getString(R.string.error_email_invalid), this, null);
+		    return;
+		}
 		if (loginCheck()) {
 	        
 			authenticate();
@@ -374,12 +425,23 @@ public class LoginTabletActivity extends BaseActivity {
 		
 		failed = false;
 	}
-	
+	private boolean signupCheck(){
+	    return !signupName.getText().toString().equals("") && !signupEmail.getText().toString().equals("") && !signupBank.getText().toString().equals("");
+	}
 	private boolean loginCheck() {
 		
 		return !username.getText().toString().equals("") && !password.getText().toString().equals("");
 	}
-	
+	private boolean emailCheck(){
+	    return validateEmail(signupEmail.getText().toString());
+	}
+    private boolean validateEmail(String email) {
+        
+        Pattern pattern = Pattern.compile(EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        
+        return matcher.matches();
+    }
 	private void authenticate() {
 
 		DialogUtils.showProgress(this, getString(R.string.loading));
@@ -452,14 +514,30 @@ private void toggleAnimations(boolean reset) {
 		
 		Animator.startAnimations();
 	}
-
+private void cancelBackwards() {
+    
+    if (failed) {
+        
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.setup_url)));
+        startActivity(browserIntent);
+        resetLogin();
+        
+        return;
+    }
+    
+    username.clearFocus();
+    password.clearFocus();
+    hideKeyboard();
+    viewFlipper.setOutAnimation(outLeft);
+    viewFlipper.setInAnimation(inRight);
+    viewFlipper.setDisplayedChild(0);
+}
 	private void cancel() {
 		
 		if (failed) {
 			
 			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.setup_url)));
 			startActivity(browserIntent);
-			
 			resetLogin();
 			
 			return;
@@ -468,10 +546,9 @@ private void toggleAnimations(boolean reset) {
 		username.clearFocus();
 		password.clearFocus();
 		hideKeyboard();
-		
+        viewFlipper.setOutAnimation(inLeft);
+        viewFlipper.setInAnimation(outRight);
 		viewFlipper.setDisplayedChild(0);
-		viewFlipper.setInAnimation(inRight);
-		viewFlipper.setOutAnimation(outLeft);
 	}
 	
 	private void hideKeyboard() {

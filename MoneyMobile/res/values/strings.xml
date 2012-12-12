@@ -57,6 +57,7 @@
     <string name="button_login">LOGIN</string>
     <string name="button_ok">OK</string>
     <string name="button_return_login">RETURN TO LOGIN</string>
+    <string name="button_return_home">RETURN TO HOME</string>
     <string name="button_setup">I NEED TO SET UP MY MOBILE ACCOUNT</string>
     <string name="button_submit">SUBMIT</string>
     <string name="default_account">MONEY MARKET</string>
@@ -70,6 +71,7 @@
     <string name="dollar_sign">$</string>
     <string name="error_login_failed">YOUR LOGIN\nWAS UNSUCCESSFUL.</string>
     <string name="error_login_incomplete">Please complete the login fields</string>
+    <string name="error_email_invalid">Please ensure your email address is valid.</string>
     <string name="error_login_invalid">Did you know you need to setup\nyour mobile account before you\ncan use this app?</string>
     <string name="error_title">Error</string>
     <string name="feedback_email">mobile.support@moneydesktop.com</string>
@@ -127,6 +129,8 @@
     <string name="text_login">Learn More.</string>
     <string name="text_new">NEW</string>
     <string name="text_signup">Need an account?</string>
+    <string name="thank_you">Thank you for your interest in MoneyDesktop.</string>
+    <string name="try_demo">Your request has been submitted.\nTry out demo mode to see what MoneyDesktop has to offer.</string>
     <string name="panel_title">MY INSTITUTIONS</string>
     <string name="text_syncing">Syncing Data&#8230;</string>
     <string name="title_activity_accounts">Accounts</string>
