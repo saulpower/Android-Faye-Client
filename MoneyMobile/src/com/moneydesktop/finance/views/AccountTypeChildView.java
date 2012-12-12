@@ -100,9 +100,8 @@ public class AccountTypeChildView extends FrameLayout {
 					
 					RelativeLayout parentView = (RelativeLayout)((Activity)mContext).findViewById(R.id.account_types_container);
 					
-					new PopupWindowAtLocation(mContext, parentView, (int)view.getLeft() + view.getWidth(), (int)mChildView.getTop() + 10, 
-							mContext.getResources().getStringArray(R.array.account_selection_popup), onClickListeners);
-					
+				    new PopupWindowAtLocation(mContext, parentView, (int)view.getLeft() + view.getWidth(), (int)mChildView.getTop() + 10, 
+							mContext.getResources().getStringArray(R.array.account_selection_popup), onClickListeners, view);
 					
 				}
 			});

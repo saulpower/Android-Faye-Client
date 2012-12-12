@@ -39,6 +39,7 @@
             android:name=".DebugActivity"
             android:screenOrientation="portrait" />
         
+        
         <activity
             android:name=".handset.activity.LockCodeActivity"
             android:screenOrientation="portrait" />

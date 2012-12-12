@@ -151,7 +151,8 @@ public class AccountTypesTabletFragment extends BaseTabletFragment implements Ap
 	private View populateDrawerView (final Bank bank, final LinearLayout panelLayoutHolder) {
         LayoutInflater layoutInflater = activity.getLayoutInflater();
         final View bankTypeAccountView = layoutInflater.inflate(R.layout.bank_account, null);
-        ImageView bankImage = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_image);
+        ImageView bankImage = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_image);  
+        final ImageView booklet = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_bankbook);
         
         BankLogoManager.getBankImage(bankImage, bank.getBankId());
         
@@ -189,7 +190,7 @@ public class AccountTypesTabletFragment extends BaseTabletFragment implements Ap
 					}
 				});
 				
-				new PopupWindowAtLocation(getActivity(), parentView, mRightDrawer.getLeft(), (int)bankTypeAccountView.getTop() + 10, getActivity().getResources().getStringArray(R.array.bank_selection_popup), onClickListeners);
+				new PopupWindowAtLocation(getActivity(), parentView, mRightDrawer.getLeft(), (int)bankTypeAccountView.getTop(), getActivity().getResources().getStringArray(R.array.bank_selection_popup), onClickListeners, booklet);
 			}
 		});
 
