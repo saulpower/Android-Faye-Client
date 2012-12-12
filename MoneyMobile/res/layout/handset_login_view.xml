@@ -188,10 +188,20 @@
 		    android:layout_width="match_parent"
 		    android:layout_height="match_parent"
 		 >
+	 
 		<RelativeLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    android:background="@color/white" >
+		<ImageView 
+		    android:id="@+id/logo2"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="10dp"
+		    android:layout_marginBottom="10dp"
+		    android:layout_centerHorizontal="true"
+		    android:src="@drawable/phone_logo_small"
+		    android:contentDescription="@string/description" />
 		
 		<TextView
 		    android:id="@+id/need_account"
@@ -200,7 +210,8 @@
 		    android:layout_marginTop="20dp"
 		    android:text="@string/need_account"	
 		    android:gravity="center"
-		    android:textColor="@color/gray7"/>
+		    android:textColor="@color/gray7"
+		    android:layout_below="@id/logo2"/>
 		<TextView
 		    android:id="@+id/nag_bank"
 		    android:layout_width="match_parent"

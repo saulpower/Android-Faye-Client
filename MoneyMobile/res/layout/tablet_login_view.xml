@@ -205,14 +205,15 @@
 		    android:textColor="@color/gray7"/>
 		<TextView
 		    android:id="@+id/nag_bank"
-		    android:layout_width="match_parent"
+		    android:layout_width="550dp"
 		    android:layout_height="wrap_content"
 		    android:layout_marginTop="5dp"
 		    android:text="@string/nag_bank"
 		    android:gravity="center"
 		    android:textColor="@color/gray7"
 		    android:layout_below="@id/need_account"
-		    android:lineSpacingExtra="2dp"/>
+		    android:lineSpacingExtra="2dp"
+		    android:layout_centerHorizontal="true"/>
 	        
 	    
 	    <LinearLayout

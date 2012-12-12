@@ -51,7 +51,7 @@ public class LoginHandsetActivity extends BaseActivity {
     private LabelEditText username, password, signupName, signupEmail, signupBank;
     private ImageView logo;
     private TextView signupText, loginText, messageTitle, messageBody, cancelText, needAccount, nagBank, thankYou, tryDemo;
-    private Animation inLeft, inRight, outLeft, outRight;
+    private Animation inLeft, inRight, outLeft, outRight, inUp, outDown, noMovement;
     private boolean failed = false;
 	
 	@Override
@@ -61,7 +61,7 @@ public class LoginHandsetActivity extends BaseActivity {
         } 
         else if(viewFlipper.indexOfChild(viewFlipper.getCurrentView()) == 2 || 
                 viewFlipper.indexOfChild(viewFlipper.getCurrentView()) == 3){
-            cancelBackwards();
+            cancelDown();
         }
         else {
             super.onBackPressed();
@@ -139,12 +139,12 @@ public class LoginHandsetActivity extends BaseActivity {
         needAccount = (TextView) findViewById(R.id.need_account);
         nagBank = (TextView) findViewById(R.id.nag_bank);
         
-		Fonts.applyPrimaryBoldFont(loginViewButton, 15);
-		Fonts.applyPrimaryBoldFont(demoButton, 15);
+		Fonts.applyPrimaryFont(loginViewButton, 15);
+		Fonts.applyPrimaryFont(demoButton, 15);
 		Fonts.applyPrimaryFont(demoButton2, 20);
         Fonts.applyPrimaryFont(returnHomeButton, 20);
-		Fonts.applyPrimaryBoldFont(loginButton, 15);
-		Fonts.applyPrimaryBoldFont(cancelButton, 15);
+		Fonts.applyPrimaryFont(loginButton, 15);
+		Fonts.applyPrimaryFont(cancelButton, 15);
 		Fonts.applyPrimaryBoldFont(signupText, 12);
 		Fonts.applySecondaryItalicFont(loginText, 12);
 		Fonts.applyPrimaryFont(cancelText, 15);
@@ -152,8 +152,9 @@ public class LoginHandsetActivity extends BaseActivity {
         Fonts.applyPrimaryFont(tryDemo, 20);
 		Fonts.applyPrimarySemiBoldFont(username, 25);
 		Fonts.applyPrimarySemiBoldFont(password, 25);
-	    Fonts.applyPrimaryBoldFont(needAccount, 20);
-	    Fonts.applySecondaryItalicFont(nagBank, 15);
+	    Fonts.applyPrimaryBoldFont(needAccount, 15);
+	    Fonts.applyPrimaryFont(nagBank, 13);
+	    Fonts.applyPrimaryFont(submitButton,15);
 		addListeners();
 	}
 	
@@ -162,7 +163,7 @@ public class LoginHandsetActivity extends BaseActivity {
             
             public void onClick(View v) {
                 
-                cancelBackwards();
+                cancelDown();
             }
         });
 	    
@@ -177,7 +178,7 @@ public class LoginHandsetActivity extends BaseActivity {
 		returnHomeButton.setOnClickListener(new OnClickListener() {
             
             public void onClick(View v) {               
-                cancelBackwards();
+                cancelDown();
             }
         });
 		
@@ -300,6 +301,9 @@ public class LoginHandsetActivity extends BaseActivity {
 		outRight = AnimationUtils.loadAnimation(this, R.anim.out_right);
 		outLeft = AnimationUtils.loadAnimation(this, R.anim.out_left);
 		inRight = AnimationUtils.loadAnimation(this, R.anim.in_right);
+		inUp = AnimationUtils.loadAnimation(this, R.anim.in_up);
+		outDown = AnimationUtils.loadAnimation(this, R.anim.out_down);
+		noMovement = AnimationUtils.loadAnimation(this, R.anim.none);
 		
 		inLeft.setAnimationListener(new AnimationListener() {
 			
@@ -353,8 +357,8 @@ public class LoginHandsetActivity extends BaseActivity {
 		viewFlipper.setOutAnimation(inLeft);
 	}
 	private void toSignupView() {
-	   viewFlipper.setOutAnimation(inLeft);
-	   viewFlipper.setInAnimation(outRight);
+	   viewFlipper.setOutAnimation(noMovement);
+	   viewFlipper.setInAnimation(inUp);
        viewFlipper.setDisplayedChild(2);
 	}
 	private void demoMode() {
@@ -397,8 +401,8 @@ public class LoginHandsetActivity extends BaseActivity {
         toThankYou();
     }
     private void toThankYou(){
-        viewFlipper.setOutAnimation(inLeft);
-        viewFlipper.setInAnimation(outRight);
+        viewFlipper.setOutAnimation(outLeft);
+        viewFlipper.setInAnimation(inRight);
         viewFlipper.setDisplayedChild(3);
         hideKeyboard();
     }
@@ -519,24 +523,25 @@ public class LoginHandsetActivity extends BaseActivity {
 		
 		Animator.startAnimations();
 	}
-	private void cancelBackwards() {
-	    
-	    if (failed) {
-	        
-	        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.setup_url)));
-	        startActivity(browserIntent);
-	        resetLogin();
-	        
-	        return;
-	    }
-	    
-	    username.clearFocus();
-	    password.clearFocus();
-	    hideKeyboard();
-	    viewFlipper.setOutAnimation(outLeft);
-	    viewFlipper.setInAnimation(inRight);
-	    viewFlipper.setDisplayedChild(0);
-	}
+
+private void cancelDown() {
+        
+        if (failed) {
+            
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.setup_url)));
+            startActivity(browserIntent);
+            resetLogin();
+            
+            return;
+        }
+        
+        username.clearFocus();
+        password.clearFocus();
+        hideKeyboard();
+        viewFlipper.setOutAnimation(outDown);
+        viewFlipper.setInAnimation(noMovement);
+        viewFlipper.setDisplayedChild(0);
+    }
 	private void cancel() {
 		
 		if (failed) {

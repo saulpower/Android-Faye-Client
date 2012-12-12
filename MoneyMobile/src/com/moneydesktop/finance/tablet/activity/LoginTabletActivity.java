@@ -154,6 +154,7 @@ public class LoginTabletActivity extends BaseActivity {
 		Fonts.applyPrimarySemiBoldFont(password, 25);
 		Fonts.applyPrimaryBoldFont(needAccount, 20);
 		Fonts.applySecondaryItalicFont(nagBank, 15);
+		Fonts.applyPrimaryBoldFont(submitButton,15);
 		addListeners();
 	}
 	
