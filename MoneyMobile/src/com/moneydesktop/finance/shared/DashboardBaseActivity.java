@@ -5,7 +5,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseActivity;
@@ -58,7 +57,7 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 	
 	public void onEvent(LogoutEvent event) {
 		
-	    DialogUtils.alertDialog("Unlink?", "Unlinking will remove this device from your list of approved devices. you can re-link it at any time. Would you like to continue?", "YES", "NO", this, new OnClickListener() {
+	    DialogUtils.alertDialog(getString(R.string.unlink_title).toUpperCase(), getString(R.string.unlink_message), getString(R.string.label_yes).toUpperCase(), getString(R.string.label_no).toUpperCase(), this, new OnClickListener() {
             
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -133,4 +132,6 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 	public String getActivityTitle() {
 		return getString(R.string.title_activity_dashboard);
 	}
+	
+	public abstract void showFragment(int index);
 }

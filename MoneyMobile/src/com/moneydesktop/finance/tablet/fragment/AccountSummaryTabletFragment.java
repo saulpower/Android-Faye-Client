@@ -7,10 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.moneydesktop.finance.BaseTabletFragment;
+import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 
-public class AccountSummaryTabletFragment extends BaseTabletFragment {
+public class AccountSummaryTabletFragment extends BaseFragment {
 
 	Button mLaunchNav;
 	
@@ -29,7 +29,7 @@ public class AccountSummaryTabletFragment extends BaseTabletFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         
-        this.mActivity.onFragmentAttached();
+        this.mActivity.onFragmentAttached(this);
 	}
 	
 	@Override
@@ -46,5 +46,10 @@ public class AccountSummaryTabletFragment extends BaseTabletFragment {
 	public String getFragmentTitle() {
 		return getString(R.string.title_activity_accounts);
 	}
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
 
 }

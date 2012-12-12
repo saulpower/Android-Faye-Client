@@ -5,6 +5,8 @@ import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,16 +29,17 @@ public class LockFragment extends BaseFragment {
 	
 	public final String TAG = this.getClass().getSimpleName();
 	
-	private static LockFragment sFragment;
+	private static final String ARG_FRAG = "fragment";
 	
-	public static LockFragment newInstance() {
+	public static LockFragment newInstance(boolean inFragment) {
 			
-		sFragment = new LockFragment();
+	    LockFragment fragment = new LockFragment();
 	
         Bundle args = new Bundle();
-        sFragment.setArguments(args);
+        args.putBoolean(ARG_FRAG, inFragment);
+        fragment.setArguments(args);
         
-        return sFragment;
+        return fragment;
 	}
 	
 	private WheelToggle mToggle;
@@ -46,7 +49,7 @@ public class LockFragment extends BaseFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         
-        this.mActivity.onFragmentAttached();
+        mActivity.onFragmentAttached(this);
 	}
 	
 	@Override
@@ -87,8 +90,15 @@ public class LockFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 				
-				if (mToggle.isOn())
-					EventBus.getDefault().post(new EventMessage().new LockEvent(LockType.CHANGE));
+				if (mToggle.isOn()) {
+				    
+				    if (!getArguments().getBoolean(ARG_FRAG)) {
+				        EventBus.getDefault().post(new EventMessage().new LockEvent(LockType.CHANGE));
+				        return;
+				    }
+
+		            showFragment(LockType.CHANGE);
+				}
 			}
 		});
 		
@@ -102,14 +112,38 @@ public class LockFragment extends BaseFragment {
 		animate(mChange).setDuration(500).alpha(on ? 1.0f : 0.0f).start();
 		
 		if (on) {
-			EventBus.getDefault().post(new EventMessage().new LockEvent(LockType.NEW));
+		    
+		    if (!getArguments().getBoolean(ARG_FRAG)) {
+		        
+		        EventBus.getDefault().post(new EventMessage().new LockEvent(LockType.NEW));
+		        return;
+		    }
+		    
+		    showFragment(LockType.NEW);
+		    
 		} else {
 			Preferences.saveString(Preferences.KEY_LOCK_CODE, "");
 		}
+	}
+	
+	private void showFragment(LockType lockType) {
+
+        Fragment fragment = LockCodeFragment.newInstance(lockType);
+        
+	    FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.out_right, R.anim.in_left);
+        ft.replace(R.id.fragment, fragment);
+        ft.addToBackStack(null);
+        ft.commit();
 	}
 
 	@Override
 	public String getFragmentTitle() {
 		return getString(R.string.title_activity_lock);
 	}
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
 }

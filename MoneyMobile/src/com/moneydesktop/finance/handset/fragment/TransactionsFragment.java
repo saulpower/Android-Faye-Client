@@ -51,7 +51,7 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         
-        this.mActivity.onFragmentAttached();
+        this.mActivity.onFragmentAttached(this);
 	}
 	
 	@Override
@@ -170,4 +170,10 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 			mLoaded = true;
 		}
 	}
+
+    @Override
+    public boolean onBackPressed() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

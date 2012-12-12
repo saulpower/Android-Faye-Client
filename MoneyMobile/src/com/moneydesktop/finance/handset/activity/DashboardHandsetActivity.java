@@ -69,13 +69,14 @@ public class DashboardHandsetActivity extends DashboardBaseActivity {
     }
 	
 	@Override
-	public void onFragmentAttached() {
-		super.onFragmentAttached();
+	public void onFragmentAttached(BaseFragment fragment) {
+		super.onFragmentAttached(fragment);
 		
 		if (mFragmentCount == 1)
 			configureView(false);
 	}
   	
+	@Override
     public void showFragment(int position) {
     	
     	mOnFragment = true;
@@ -148,7 +149,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity {
         	frag = TransactionsFragment.newInstance();
         	break;
         case 4:
-        	frag = LockFragment.newInstance();
+        	frag = LockFragment.newInstance(false);
         	break;
         }
         

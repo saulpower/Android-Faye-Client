@@ -47,6 +47,7 @@ public class ApplicationContext extends Application {
 	
 	private static boolean sScreenOn = true;
 	private static boolean sIsTablet = false;
+    private static boolean sLockShowing = false;
 
     private BroadcastReceiver sScreenLock = new BroadcastReceiver() {
 
@@ -177,6 +178,14 @@ public class ApplicationContext extends Application {
 
     public static void setIsTablet(boolean sIsTablet) {
         ApplicationContext.sIsTablet = sIsTablet;
+    }
+
+    public static boolean isLockShowing() {
+        return sLockShowing;
+    }
+
+    public static void setLockShowing(boolean sLockShowing) {
+        ApplicationContext.sLockShowing = sLockShowing;
     }
 	
 	/*********************************************************************************

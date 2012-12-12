@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" 
-    android:background="@color/transparent50percent"
+    android:orientation="vertical"
     android:id="@+id/popup_overlay">
     
-	<LinearLayout
+       <com.moneydesktop.finance.views.TransparentView 
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:id="@+id/transparent_account_view"
+ 		/> 
+      
+	<RelativeLayout
 	    android:layout_width="225dip"
 	    android:layout_height="wrap_content"
 	    android:orientation="vertical" 
@@ -29,5 +34,5 @@
 	      android:layout_margin="10dp"/>
 	     
 	 </LinearLayout>
- 	</LinearLayout>
-</LinearLayout>
+ 	</RelativeLayout>
+</RelativeLayout>

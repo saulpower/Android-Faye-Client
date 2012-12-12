@@ -126,4 +126,9 @@ public class SettingsFragment extends BaseFragment {
 		return null;
 	}
 
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
 }

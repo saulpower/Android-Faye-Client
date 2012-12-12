@@ -11,6 +11,7 @@ import android.graphics.Paint.Align;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
@@ -153,6 +154,14 @@ public class SettingButton extends BaseView {
             mSubTextView.setGravity(Gravity.CENTER);
             mSubTextView.setTextSize(14);
             mSubTextView.setTypeface(Fonts.getFont(Fonts.SECONDARY_ITALIC));
+            
+            mSubTextView.setOnClickListener(new OnClickListener() {
+                
+                @Override
+                public void onClick(View v) {
+                    Log.i(TAG, "HERE");
+                }
+            });
         }
     }
     

@@ -58,7 +58,7 @@ public class TransactionDetailFragment extends BaseFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         
-        this.mActivity.onFragmentAttached();
+        this.mActivity.onFragmentAttached(this);
 	}
 	
 	@Override
@@ -217,4 +217,9 @@ public class TransactionDetailFragment extends BaseFragment {
 	public String getFragmentTitle() {
 		return getString(R.string.title_activity_transaction);
 	}
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
 }

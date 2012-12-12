@@ -17,6 +17,7 @@
         <attr name="secondaryColor" format="color" />
         <attr name="width" format="dimension" />
         <attr name="height" format="dimension" />
+        <attr name="rotation" format="float" />
     </declare-styleable>
     
     <declare-styleable name="Settings">

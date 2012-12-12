@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -18,7 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.BaseTabletFragment;
+import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.AccountType;
@@ -31,7 +32,7 @@ import com.moneydesktop.finance.views.SlidingDrawerRightSide;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountTypesTabletFragment extends BaseTabletFragment {
+public class AccountTypesTabletFragment extends BaseFragment {
     private ExpandableListView mExpandableListView;
     private static SlidingDrawerRightSide sRightDrawer;
     private View mFooter;
@@ -50,7 +51,7 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         
-        this.mActivity.onFragmentAttached();
+        this.mActivity.onFragmentAttached(this);
 	}
 	
 	@Override
@@ -89,9 +90,11 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
         mExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 			public boolean onGroupClick(ExpandableListView expandableListView, View view, int groupPosition, long id) {
 	            ((AccountTypesAdapter)mExpandableListView.getExpandableListAdapter()).notifyDataSetChanged();
+	            mExpandableListView.smoothScrollToPosition(groupPosition);
 	            return false;
 			}
 		});
+        
         
         panelLayoutHolder.setOnTouchListener(new View.OnTouchListener() {			
 			public boolean onTouch(View view, MotionEvent event) {
@@ -144,7 +147,8 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
 	private View populateDrawerView (final Bank bank, final LinearLayout panelLayoutHolder) {
         LayoutInflater layoutInflater = mActivity.getLayoutInflater();
         final View bankTypeAccountView = layoutInflater.inflate(R.layout.bank_account, null);
-        ImageView bankImage = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_image);
+        ImageView bankImage = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_image);  
+        final ImageView booklet = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_bankbook);
         
         BankLogoManager.getBankImage(bankImage, bank.getBankId());
         
@@ -182,7 +186,7 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
 					}
 				});
 				
-				new PopupWindowAtLocation(getActivity(), (ViewGroup) bankTypeAccountView, parentView, sRightDrawer.getLeft() - bankTypeAccountView.getWidth(), (int)bankTypeAccountView.getTop() + 10, getActivity().getResources().getStringArray(R.array.bank_selection_popup), onClickListeners);
+				new PopupWindowAtLocation(getActivity(), parentView, sRightDrawer.getLeft(), (int)bankTypeAccountView.getTop(), getActivity().getResources().getStringArray(R.array.bank_selection_popup), onClickListeners, booklet);
 			}
 		});
 
@@ -214,5 +218,10 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
 	public String getFragmentTitle() {
 		return null;
 	}
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
 
 }

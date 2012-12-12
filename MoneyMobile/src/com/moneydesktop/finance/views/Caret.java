@@ -25,6 +25,8 @@ public class Caret extends ImageView {
 
 	private Paint mPaint;
 	
+	private float mDegrees = 0.0f;
+	
 	public int getColor() {
 		return mColor;
 	}
@@ -56,6 +58,11 @@ public class Caret extends ImageView {
 	public void setCaretHeight(float height) {
 		this.mHeight = height;
 		createPath();
+	}
+	
+	public void setCaretRotation(float degrees) {
+	    mDegrees = degrees;
+	    invalidate();
 	}
 
 	public Caret(Context context) {
@@ -109,6 +116,7 @@ public class Caret extends ImageView {
 	    setColor(a.getColor(R.styleable.Caret_color, Color.WHITE));
 	    setCaretWidth(a.getDimension(R.styleable.Caret_width, 10.0f));
 	    setCaretHeight(a.getDimension(R.styleable.Caret_height, 10.0f));
+	    setCaretRotation(a.getFloat(R.styleable.Caret_rotation, 0.0f));
 		    
 		a.recycle();
 	}
@@ -117,7 +125,12 @@ public class Caret extends ImageView {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
+		canvas.save();
+		
+		canvas.rotate(mDegrees, getWidth()/2, getHeight()/2);
 	    canvas.drawPath(mPath, mPaint);
+	    
+	    canvas.restore();
 	}
 
 }

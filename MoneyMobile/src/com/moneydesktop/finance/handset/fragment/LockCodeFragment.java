@@ -1,30 +1,47 @@
-package com.moneydesktop.finance.handset.activity;
+package com.moneydesktop.finance.handset.fragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.inputmethod.InputMethodManager;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
-import com.moneydesktop.finance.BaseActivity;
+import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Preferences;
+import com.moneydesktop.finance.handset.activity.LockCodeHandsetActivity;
 import com.moneydesktop.finance.util.Enums.LockType;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.LockCodeView;
 import com.moneydesktop.finance.views.LockCodeView.ProcessCodeListener;
 
-public class LockCodeActivity extends BaseActivity implements ProcessCodeListener {
+public class LockCodeFragment extends BaseFragment implements ProcessCodeListener {
 	
 	public final String TAG = this.getClass().getSimpleName();
+	
+	public static LockCodeFragment newInstance(LockType lockType) {
+        
+	    LockCodeFragment fragment = new LockCodeFragment();
+    
+        Bundle args = new Bundle();
+        args.putSerializable(EXTRA_LOCK, lockType);
+        fragment.setArguments(args);
+        
+        return fragment;
+    }
 	
 	public final String EXTRA_CONFIRMATION = "extra_confirmation";
 	public static final String EXTRA_LOCK = "extra_lock";
 	
-	public static boolean sShowing = false;
+	private LockCodeHandsetActivity mLockActivity;
 	
 	private LinearLayout mContainer;
 	private TextView mCancel;
@@ -35,59 +52,84 @@ public class LockCodeActivity extends BaseActivity implements ProcessCodeListene
 	private LockType mType;
 	
 	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	public void onAttach(Activity activity) {
+	    super.onAttach(activity);
+
+        mActivity.onFragmentAttached(this);
         
-        setContentView(R.layout.handset_lock_code_view);
+	    if (activity instanceof LockCodeHandsetActivity) {
+	        mLockActivity = (LockCodeHandsetActivity) activity;
+	    }
+	}
+	
+	@Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         
-        mType = (LockType) getIntent().getSerializableExtra(EXTRA_LOCK);
+        mRoot = inflater.inflate(R.layout.handset_lock_code_view, null);
+
+        mType = (LockType) getArguments().getSerializable(EXTRA_LOCK);
+        
+        if (mType == null) {
+            mType = LockType.NEW;
+        }
         
         setupViews();
+        
+        return mRoot;
 	}
 	
 	@Override
-	protected void onPause() {
+	public void onResume() {
+	    super.onResume();
+
+//        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+	}
+	
+	@Override
+	public void onPause() {
 		super.onPause();
 		
-		finish();
+		if (mLockActivity != null) {
+		    getActivity().finish();
+		}
 	}
 	
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
+	public boolean onBackPressed() {
 		
-		sShowing = false;
-	}
-	
-	@Override
-	public void onBackPressed() {
-		
-		if (mType == LockType.LOCK) {
+		if (mType == LockType.LOCK && mLockActivity != null) {
 			
-			moveTaskToBack(true);
-			return;
+			getActivity().moveTaskToBack(true);
+			return true;
+			
+		} else if (mType == LockType.LOCK) {
+		    
+		    getFragmentManager().popBackStack();
+		    return true;
 		}
 		
-		super.onBackPressed();
+		return false;
 	}
 	
 	public void setupViews() {
 
-		mFlipper = (ViewFlipper) findViewById(R.id.flipper);
-		mFlipper.setInAnimation(this, R.anim.in_right);
-		mFlipper.setOutAnimation(this, R.anim.out_left);
+		mFlipper = (ViewFlipper) mRoot.findViewById(R.id.flipper);
+		mFlipper.setInAnimation(mActivity, R.anim.in_right);
+		mFlipper.setOutAnimation(mActivity, R.anim.out_left);
 		
-		mLockCode1 = (LockCodeView) findViewById(R.id.lock_code1);
+		mLockCode1 = (LockCodeView) mRoot.findViewById(R.id.lock_code1);
 		mLockCode1.setListener(this);
 
-		mLockCode2 = (LockCodeView) findViewById(R.id.lock_code2);
+		mLockCode2 = (LockCodeView) mRoot.findViewById(R.id.lock_code2);
 		mLockCode2.setListener(this);
 		
 		mCurrentLockCode = mLockCode1;
 		
 		setMessage();
 
-		mCancel = (TextView) findViewById(R.id.cancel);
+		mCancel = (TextView) mRoot.findViewById(R.id.cancel);
 		mCancel.setVisibility(mType == LockType.LOCK ? View.GONE : View.VISIBLE);
 		mCancel.setOnClickListener(new OnClickListener() {
 			
@@ -102,7 +144,7 @@ public class LockCodeActivity extends BaseActivity implements ProcessCodeListene
 		
 		// The container prevents the user from selecting
 		// the text fields manually
-		mContainer = (LinearLayout) findViewById(R.id.block_container);
+		mContainer = (LinearLayout) mRoot.findViewById(R.id.block_container);
 		mContainer.setOnTouchListener(new OnTouchListener() {
 			
 			@Override
@@ -224,13 +266,19 @@ public class LockCodeActivity extends BaseActivity implements ProcessCodeListene
 	}
 	
 	private void dismissModal() {
-		
-		finish();
-		overridePendingTransition(R.anim.none, R.anim.out_down);
+
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mContainer.getWindowToken(), 0);
+        
+	    if (mLockActivity != null) {
+	        mLockActivity.dismissModal();
+	    } else {
+	        getFragmentManager().popBackStack();
+	    }
 	}
 
-	@Override
-	public String getActivityTitle() {
-		return null;
-	}
+    @Override
+    public String getFragmentTitle() {
+        return getString(R.string.title_activity_lock).toUpperCase();
+    }
 }

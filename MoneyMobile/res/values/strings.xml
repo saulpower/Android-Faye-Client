@@ -109,7 +109,7 @@
     <string name="need_account">You need a MoneyDesktop account to use MoneyMobile.</string>
     <string name="setup_url">http://embed.moneydesktop.com/setup-instructions.html</string>
     <string name="setting_feedback_title">Feedback</string>
-    <string name="setting_feedback_text">Tell us what we\'re doing wrong, or right. Don\'t hold back, we can take it.</string>
+    <string name="setting_feedback_text">Tell us what we\'re doing wrong, or right. Don\'t hold back we can take it.</string>
     <string name="setting_lock_title">Lock Device</string>
     <string name="setting_lock_text">Enter a four-digit code to password protect your data.</string>
     <string name="setting_unlink_title">Unlink</string>

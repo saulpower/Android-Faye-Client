@@ -28,9 +28,11 @@ import android.widget.ViewFlipper;
 import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
 import com.moneydesktop.finance.data.Preferences;
-import com.moneydesktop.finance.handset.activity.LockCodeActivity;
+import com.moneydesktop.finance.handset.activity.LockCodeHandsetActivity;
+import com.moneydesktop.finance.handset.fragment.LockCodeFragment;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.LockEvent;
+import com.moneydesktop.finance.tablet.activity.LockCodeTabletActivity;
 import com.moneydesktop.finance.util.Enums.LockType;
 import com.moneydesktop.finance.util.Fonts;
 
@@ -270,7 +272,7 @@ abstract public class BaseActivity extends FragmentActivity {
 	 * 
 	 * @param fragment
 	 */
-	public void onFragmentAttached() {
+	public void onFragmentAttached(BaseFragment fragment) {
 		
 		if (mOnFragment) {
 			mFragmentCount++;
@@ -302,13 +304,13 @@ abstract public class BaseActivity extends FragmentActivity {
 	
 	private void showLockScreen(LockType type) {
 		
-		if (!LockCodeActivity.sShowing) {
+		if (!ApplicationContext.isLockShowing()) {
 			
-			LockCodeActivity.sShowing = true;
+		    ApplicationContext.setLockShowing(true);
 			
-			Intent intent = new Intent(this, LockCodeActivity.class);
+			Intent intent = new Intent(this, ApplicationContext.isTablet() ? LockCodeTabletActivity.class : LockCodeHandsetActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			intent.putExtra(LockCodeActivity.EXTRA_LOCK, type);
+			intent.putExtra(LockCodeFragment.EXTRA_LOCK, type);
 			startActivity(intent);
 			overridePendingTransition(R.anim.in_up, R.anim.none);
 		}

@@ -1,105 +1,150 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <style name="button">
-        <item name="android:textColor">@drawable/button_text</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:background">@drawable/white_button</item>
-    </style>
-    <style name="field">
-        <item name="android:textColor">@drawable/text_field_text</item>
-        <item name="android:textSize">15sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:background">@drawable/text_field_bg</item>
-        <item name="android:paddingLeft">12dp</item>
-        <item name="android:paddingBottom">4dp</item>
-        <item name="android:gravity">bottom|left</item>
-    </style>
-    <style name="label">
-        <item name="android:textColor">@color/light_gray1</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:textStyle">italic</item>
-        <item name="android:gravity">center_vertical|left</item>
-        <item name="android:paddingLeft">12dp</item>
-    </style>
-    <style name="message_title">
-        <item name="android:textColor">@color/budgetColorRedRingColor</item>
-        <item name="android:textSize">20sp</item>
-        <item name="android:gravity">center</item>
-    </style>
-    <style name="message_body">
-        <item name="android:textColor">@color/gray7</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:gravity">center</item>
-    </style>
-    <style name="text">
-        <item name="android:textColor">@color/primaryColor</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:gravity">center</item>
-    </style>
-    <style name="text_accounts">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">20dp</item>
-        <item name="android:paddingTop">12dip</item>
-        <item name="android:paddingBottom">12dip</item>
-        <item name="android:paddingLeft">8dip</item>
-        <item name="android:gravity">center_vertical|left</item>
-    </style>
-    <style name="text_blue">
-        <item name="android:textColor">@color/primaryColor</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">14sp</item>
-    </style>
-    <style name="text_button">
-        <item name="android:textColor">@drawable/primary_to_white_text</item>
-        <item name="android:gravity">center</item>
-	    <item name="android:duplicateParentState">true</item>
-    </style>
-    <style name="text_label">
-        <item name="android:textColor">@drawable/gray7_to_white</item>
-        <item name="android:gravity">center</item>
-	    <item name="android:duplicateParentState">true</item>
-	    <item name="android:textSize">12sp</item>
-    </style>
-    <style name="setting_button">
-        <item name="android:background">@drawable/white_to_gray</item>
-        <item name="android:gravity">center</item>
-	    <item name="android:clickable">true</item>
-	    <item name="android:orientation">vertical</item>
-    </style>
-    <style name="tablet_txn_text">
-        <item name="android:textColor">@drawable/gray7_to_white</item>
-        <item name="android:textSize">16sp</item>
-	    <item name="android:singleLine">true</item>
-	    <item name="android:ellipsize">end</item>
-	    <item name="android:paddingLeft">10dp</item>
-	    <item name="android:paddingRight">10dp</item>
-	    <item name="android:text">@string/default_title</item>
-    </style>
-	<style name="transaction_cell">
-	    <item name="android:paddingTop">@dimen/transaction_padding</item>
-	    <item name="android:paddingRight">@dimen/transaction_padding</item>
-	    <item name="android:paddingBottom">@dimen/transaction_padding</item>
-	    <item name="android:paddingLeft">@dimen/transaction_padding_left</item>
-	    <item name="android:gravity">center_vertical</item>
-	</style>
-	<style name="transaction_label">
-	    <item name="android:textColor">@color/gray3</item>
-	    <item name="android:textSize">12sp</item>
-	</style>
-	<style name="transaction_field">
-	    <item name="android:textColor">@color/gray7</item>
-	    <item name="android:ellipsize">end</item>
-	    <item name="android:singleLine">true</item>
-	    <item name="android:background">@null</item>
-	    <item name="android:gravity">left|center_vertical</item>
-	</style>
-    <style name="MyDialog" parent="android:Theme.Dialog">
-        <item name="android:windowBackground">@color/transparent</item>
-        <item name="android:windowAnimationStyle">@style/MyAnimationWindow</item>
-    </style>
-	<style name="MyAnimationWindow" parent="@android:style/Animation.Dialog"> 
-	    <item name="android:windowEnterAnimation">@anim/fade_in_fast</item>
-	    <item name="android:windowExitAnimation">@anim/fade_out_fast</item>
-	</style>
+<resources>
+    <string-array name="account_selection_popup">
+        <item>VIEW ALL TXNS</item>
+        <item>VIEW UNCLEARED TXNS</item>
+        <item>EDIT SETTINGS</item>
+        <item>SHOW/HIDE DATA</item>
+        <item>DELETE THIS ACCOUNT</item>
+    </string-array>    
+    
+    <string-array name="bank_selection_popup">
+        <item>REFRESH DATA</item>
+        <item>REMOVE</item>
+        <item>UPDATE USERNAME AND PASSWORD</item>
+    </string-array> 
+    
+    <string name="account_types_title">Accounts</string>
+    <string name="account_types_indicator_show">Show</string>
+    <string name="account_types_indicator_hide">Hide</string>
+    <string name="dashboard_title">Financial Dashboard:</string>
+    <string name="app_name">MoneyMobile</string>
+    <string name="at_unknown">Unknown</string>
+    <string name="at_checking">Checking</string>
+    <string name="at_saving">Savings</string>
+    <string name="at_loans">Loans</string>
+    <string name="at_cc">Credit Card</string>
+    <string name="at_inv">Investments</string>
+    <string name="at_loc">Line of Credit</string>
+    <string name="at_mort">Mortgage</string>
+    <string name="at_prop">Property</string>
+    <string name="at_art">Art</string>
+    <string name="at_re">Real Estate</string>
+    <string name="at_veh">Vehicle</string>
+    <string name="at_jew">Jewelry</string>
+    <string name="at_fur">Furniture</string>
+    <string name="at_app">Appliances</string>
+    <string name="at_comp">Computer</string>
+    <string name="at_elec">Electronics</string>
+    <string name="at_se">Sports Equipment</string>
+    <string name="at_misc">Miscellaneous</string>
+    <string name="atg_inv">Investments</string>
+    <string name="atg_prop">Property</string>
+    <string name="atg_cash">Cash</string>
+    <string name="atg_ccd">Credit Card Debt</string>
+    <string name="atg_od">Other Debt</string>
+    <string name="at_cash">Cash</string>
+    <string name="connecting">Connecting to bank</string>
+    <string name="ct_exp">Expense</string>
+    <string name="ct_inc">Income</string>
+    <string name="ct_asst">Asset</string>
+    <string name="ct_liab">Liability</string>
+    <string name="ct_equity">Equity</string>
+    <string name="ct_flow">Flow</string>
+    <string name="ct_bal">Balance</string>
+    <string name="ct_stat">Statistic</string>
+    <string name="button_cancel">CANCEL</string>
+    <string name="button_demo">DEMO MODE</string>
+    <string name="button_login">LOGIN</string>
+    <string name="button_ok">OK</string>
+    <string name="button_return_login">RETURN TO LOGIN</string>
+    <string name="button_return_home">RETURN TO HOME</string>
+    <string name="button_setup">I NEED TO SET UP MY MOBILE ACCOUNT</string>
+    <string name="button_submit">SUBMIT</string>
+    <string name="default_account">MONEY MARKET</string>
+    <string name="default_bank">ABC BANK</string>
+    <string name="default_category">Category</string>
+    <string name="default_header">Header</string>
+    <string name="default_price">5.99</string>
+    <string name="default_title">Title</string>
+    <string name="description">description</string>
+    <string name="demo_message">Creating Demo Data&#8230;</string>
+    <string name="dollar_sign">$</string>
+    <string name="error_login_failed">YOUR LOGIN\nWAS UNSUCCESSFUL.</string>
+    <string name="error_login_incomplete">Please complete the login fields</string>
+    <string name="error_email_invalid">Please ensure your email address is valid.</string>
+    <string name="error_login_invalid">Did you know you need to setup\nyour mobile account before you\ncan use this app?</string>
+    <string name="error_title">Error</string>
+    <string name="feedback_email">mobile.support@moneydesktop.com</string>
+    <string name="feedback_subject">MoneyMobile Feedback</string>
+    <string name="feedback_title">Send Email</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="icon_feedback">6</string>
+    <string name="icon_left_arrow">3</string>
+    <string name="icon_lock">E</string>
+    <string name="icon_logout">7</string>
+    <string name="icon_password">§</string>
+    <string name="label_amount">Amount</string>
+    <string name="label_app_lock">APP LOCK</string>
+    <string name="label_category">Category</string>
+    <string name="label_change_lock">CHANGE LOCK CODE</string>
+    <string name="label_date">Date</string>
+    <string name="label_email">Email</string>
+    <string name="label_exit">exit demo</string>
+    <string name="label_feedback">FEEDBACK</string>
+    <string name="label_memo">Memo</string>
+    <string name="label_no">no</string>
+    <string name="label_other">Other Markers</string>
+    <string name="label_password">Password</string>
+    <string name="label_payee">Payee</string>
+    <string name="label_stmt">Statement Description</string>
+    <string name="label_tags">Tags</string>
+    <string name="label_unlink">UNLINK</string>
+    <string name="label_yes">yes</string>
+    <string name="loading">Loading</string>
+    <string name="logging_out">Logging Out&#8230;</string>
+    <string name="logout_cancel">Cancel Logout</string>
+    <string name="logout_message">Waiting for sync to complete.</string>
+    <string name="logout_title">Processing Logout</string>
+    <string name="menu_settings">Settings</string>
+    <string name="nag_bank">MoneyDesktop is a free service offered through hundreds of leading financial institutions\' Online Banking. If your institution doesn\'t currently offer MoneyDesktop, please let us know by submitting a request below.</string>
+    <string name="need_account">You need a MoneyDesktop account to use MoneyMobile.</string>
+    <string name="setup_url">http://embed.moneydesktop.com/setup-instructions.html</string>
+    <string name="setting_feedback_title">Feedback</string>
+    <string name="setting_feedback_text">Tell us what we\'re doing wrong, or right. Don\'t hold back we can take it.</string>
+    <string name="setting_lock_title">Lock Device</string>
+    <string name="setting_lock_text">Enter a four-digit code to password protect your data.</string>
+    <string name="setting_unlink_title">Unlink</string>
+    <string name="setting_unlink_text">Unlink this device from your account and delete all the data from this device. (Your data is still stored on our servers.)</string>
+    <string name="signup_name">Your Name</string>
+    <string name="signup_email">Your Email</string>
+    <string name="signup_bank">Your Financial Institution</string>
+    <string name="status_description_4">An unknown error occured. Just refresh this bank to try again.</string>
+    <string name="status_description_5">Invalid username and password. Click on the button below to try again.</string>
+    <string name="status_description_6">Multifactor Authentication Required. Click on the button below to give us these additional pieces of information.</string>
+    <string name="status_description_7">This bank needs to be refreshed to get the most up to date data. Please refresh this bank.</string>
+    <string name="text_cancel">Cancel</string>
+    <string name="text_lock_app">App is locked. Enter your code to unlock.</string>
+    <string name="text_lock">Enter your current code</string>
+    <string name="text_lock_confirm">Confirm secret code</string>
+    <string name="text_lock_create">Create your secret code</string>
+    <string name="text_login">Learn More.</string>
+    <string name="text_new">NEW</string>
+    <string name="text_signup">Need an account?</string>
+    <string name="thank_you">Thank you for your interest in MoneyDesktop.</string>
+    <string name="try_demo">Your request has been submitted. Try out demo mode to see what MoneyDesktop has to offer.</string>
+    <string name="panel_title">MY INSTITUTIONS</string>
+    <string name="text_syncing">Syncing Data&#8230;</string>
+    <string name="title_activity_accounts">Accounts</string>
+    <string name="title_activity_budget">Budgets</string>
+    <string name="title_activity_dashboard">Financial Dashboard</string>
+    <string name="title_activity_debug">DebugActivity</string>
+    <string name="title_activity_lock">LOCK APP</string>
+    <string name="title_activity_money_mobile">MoneyMobileActivity</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_spending">Spending</string>
+    <string name="title_activity_transaction">Transaction</string>
+    <string name="title_activity_transactions">Transactions</string>
+    <string name="unlink_title">Unlink?</string>
+    <string name="unlink_message">Unlinking will remove this device from your list of approved devices. you can re-link it at any time. Would you like to continue?</string>
+
 </resources>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,8 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.Fonts;
 
 public class LockCodeView extends RelativeLayout {
+    
+    public final String TAG = this.getClass().getSimpleName();
 
     private Context mContext;
     private LinearLayout mContainer;
@@ -165,14 +168,15 @@ public class LockCodeView extends RelativeLayout {
 	}
 	
 	public void showKeyboard() {
-		
-		mField1.postDelayed(new Runnable() {
+	    
+	    mCurrentField.requestFocus();
+	    mCurrentField.postDelayed(new Runnable() {
 			
 			@Override
 			public void run() {
 
 				InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-				imm.showSoftInput(mField1, InputMethodManager.SHOW_IMPLICIT);
+				imm.showSoftInput(mField1, InputMethodManager.SHOW_FORCED);
 			}
 		}, 100);
 
