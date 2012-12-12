@@ -36,30 +36,36 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.LabelEditText;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import de.greenrobot.event.EventBus;
 
 public class LoginHandsetActivity extends BaseActivity {
-	
+    private final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-\\+]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	private final String TAG = "LoginActivity";
 	
 	private ViewFlipper viewFlipper;
-	private LinearLayout buttonView, credentialView;
-	private Button loginViewButton, demoButton, loginButton, cancelButton;
-	private LabelEditText username, password;
-	private ImageView logo;
-	private TextView signupText, loginText, messageTitle, messageBody;
-	
-	private Animation inLeft, inRight, outLeft, outRight;
-	
-	private boolean failed = false;
+    private LinearLayout buttonView, credentialView;
+    private Button loginViewButton, demoButton, loginButton, cancelButton, submitButton, demoButton2, returnHomeButton;
+    private LabelEditText username, password, signupName, signupEmail, signupBank;
+    private ImageView logo;
+    private TextView signupText, loginText, messageTitle, messageBody, cancelText, needAccount, nagBank, thankYou, tryDemo;
+    private Animation inLeft, inRight, outLeft, outRight;
+    private boolean failed = false;
 	
 	@Override
 	public void onBackPressed() {
-		if (viewFlipper.indexOfChild(viewFlipper.getCurrentView()) == 1) {
-			cancel();
-		} else {
-			super.onBackPressed();
-		}
+	    if (viewFlipper.indexOfChild(viewFlipper.getCurrentView()) == 1 ) {
+            cancel();
+        } 
+        else if(viewFlipper.indexOfChild(viewFlipper.getCurrentView()) == 2 || 
+                viewFlipper.indexOfChild(viewFlipper.getCurrentView()) == 3){
+            cancelBackwards();
+        }
+        else {
+            super.onBackPressed();
+        }
 	}
 	
 	@Override
@@ -89,6 +95,7 @@ public class LoginHandsetActivity extends BaseActivity {
 			
 	    	Intent i = new Intent(this, DashboardHandsetActivity.class);
 	    	startActivity(i);
+	    	overridePendingTransition(R.anim.fade_in_fast, R.anim.none);
 		}
 	}
 	
@@ -111,7 +118,8 @@ public class LoginHandsetActivity extends BaseActivity {
 		
 		loginViewButton = (Button) findViewById(R.id.login_view_button);
 		demoButton = (Button) findViewById(R.id.demo_button);
-		
+		demoButton2 = (Button) findViewById(R.id.demo_button2);
+        returnHomeButton = (Button) findViewById(R.id.home_view_button);
 		loginButton = (Button) findViewById(R.id.login_button);
 		cancelButton = (Button) findViewById(R.id.cancel_button);
 		
@@ -119,28 +127,45 @@ public class LoginHandsetActivity extends BaseActivity {
 		
 		signupText = (TextView) findViewById(R.id.signup);
 		loginText = (TextView) findViewById(R.id.login_text);
+		thankYou = (TextView) findViewById(R.id.thank_you);
+        tryDemo = (TextView) findViewById(R.id.try_demo);
+        signupName = (LabelEditText) findViewById(R.id.signup_name);
+        signupEmail = (LabelEditText) findViewById(R.id.signup_email);
+        signupBank = (LabelEditText) findViewById(R.id.signup_bank);
 		messageTitle = (TextView) findViewById(R.id.message_title);
 		messageBody = (TextView) findViewById(R.id.message_body);
-		
+		cancelText = (TextView) findViewById(R.id.cancel_text);
+        submitButton = (Button) findViewById(R.id.submit_button);
+        needAccount = (TextView) findViewById(R.id.need_account);
+        nagBank = (TextView) findViewById(R.id.nag_bank);
+        
 		Fonts.applyPrimaryBoldFont(loginViewButton, 15);
 		Fonts.applyPrimaryBoldFont(demoButton, 15);
+		Fonts.applyPrimaryFont(demoButton2, 20);
+        Fonts.applyPrimaryFont(returnHomeButton, 20);
 		Fonts.applyPrimaryBoldFont(loginButton, 15);
 		Fonts.applyPrimaryBoldFont(cancelButton, 15);
 		Fonts.applyPrimaryBoldFont(signupText, 12);
 		Fonts.applySecondaryItalicFont(loginText, 12);
+		Fonts.applyPrimaryFont(cancelText, 15);
+        Fonts.applyPrimaryBoldFont(thankYou, 20);
+        Fonts.applyPrimaryFont(tryDemo, 20);
 		Fonts.applyPrimarySemiBoldFont(username, 25);
 		Fonts.applyPrimarySemiBoldFont(password, 25);
-		if (android.os.Build.VERSION.SDK_INT >= 11) {
-			findViewById(R.id.logindotted1).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-			findViewById(R.id.logindotted2).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-			findViewById(R.id.logindotted3).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-		}
-		
+	    Fonts.applyPrimaryBoldFont(needAccount, 20);
+	    Fonts.applySecondaryItalicFont(nagBank, 15);
 		addListeners();
 	}
 	
 	private void addListeners() {
-		
+	    cancelText.setOnClickListener(new OnClickListener() {
+            
+            public void onClick(View v) {
+                
+                cancelBackwards();
+            }
+        });
+	    
 		loginViewButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
@@ -148,6 +173,13 @@ public class LoginHandsetActivity extends BaseActivity {
 				toLoginView();
 			}
 		});
+		
+		returnHomeButton.setOnClickListener(new OnClickListener() {
+            
+            public void onClick(View v) {               
+                cancelBackwards();
+            }
+        });
 		
 		demoButton.setOnClickListener(new OnClickListener() {
 			
@@ -157,6 +189,13 @@ public class LoginHandsetActivity extends BaseActivity {
 			}
 		});
 		
+		demoButton2.setOnClickListener(new OnClickListener() {
+            
+            public void onClick(View v) {
+                
+                demoMode();
+            }
+        });
 		loginButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
@@ -164,7 +203,11 @@ public class LoginHandsetActivity extends BaseActivity {
 				login();
 			}
 		});
-		
+	    submitButton.setOnClickListener(new OnClickListener(){
+	            public void onClick(View v){
+	                  signup();
+	            }
+	        });
 		cancelButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
@@ -205,7 +248,27 @@ public class LoginHandsetActivity extends BaseActivity {
 				return true;
 			}
 		});
-		
+		signupName.setOnFocusChangeListener(new OnFocusChangeListener() {
+	            
+	            public void onFocusChange(View v, boolean hasFocus) {
+	                
+	                signupName.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
+	            }
+	        });
+		signupEmail.setOnFocusChangeListener(new OnFocusChangeListener() {
+            
+            public void onFocusChange(View v, boolean hasFocus) {
+                
+                signupEmail.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
+            }
+        });
+		signupBank.setOnFocusChangeListener(new OnFocusChangeListener() {
+            
+            public void onFocusChange(View v, boolean hasFocus) {
+                
+                signupBank.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
+            }
+        });
 		messageTitle.setOnTouchListener(new OnTouchListener() {
 			
 			public boolean onTouch(View v, MotionEvent event) {
@@ -222,6 +285,13 @@ public class LoginHandsetActivity extends BaseActivity {
 				startActivity(browserIntent);
 			}
 		});
+		signupText.setOnClickListener(new OnClickListener() {
+            
+            public void onClick(View v) {
+
+                toSignupView();
+            }
+    });
 	}
 	
 	private void setupAnimations() {
@@ -282,7 +352,11 @@ public class LoginHandsetActivity extends BaseActivity {
 		viewFlipper.setInAnimation(outRight);
 		viewFlipper.setOutAnimation(inLeft);
 	}
-	
+	private void toSignupView() {
+	   viewFlipper.setOutAnimation(inLeft);
+	   viewFlipper.setInAnimation(outRight);
+       viewFlipper.setDisplayedChild(2);
+	}
 	private void demoMode() {
 		
 		User.registerDemoUser();
@@ -307,7 +381,27 @@ public class LoginHandsetActivity extends BaseActivity {
 			
 		}.execute();
 	}
-	
+	private void signup(){
+        if(signupCheck() && emailCheck()){
+            submit();
+        }
+        else if(!signupCheck()){
+                 DialogUtils.alertDialog(getString(R.string.error_title), getString(R.string.error_login_incomplete), this, null);
+            }
+        else if(!emailCheck()){
+            DialogUtils.alertDialog(getString(R.string.error_title), getString(R.string.error_email_invalid), this, null);
+        }
+    }
+    private void submit(){
+        // add data submission code here
+        toThankYou();
+    }
+    private void toThankYou(){
+        viewFlipper.setOutAnimation(inLeft);
+        viewFlipper.setInAnimation(outRight);
+        viewFlipper.setDisplayedChild(3);
+        hideKeyboard();
+    }
 	private void login() {
 		
 		if (failed) {
@@ -336,12 +430,23 @@ public class LoginHandsetActivity extends BaseActivity {
 		
 		failed = false;
 	}
-	
+	private boolean signupCheck(){
+        return !signupName.getText().toString().equals("") && !signupEmail.getText().toString().equals("") && !signupBank.getText().toString().equals("");
+    }
 	private boolean loginCheck() {
 		
 		return !username.getText().toString().equals("") && !password.getText().toString().equals("");
 	}
-	
+	private boolean emailCheck(){
+        return validateEmail(signupEmail.getText().toString());
+    }
+	 private boolean validateEmail(String email) {
+	        
+	        Pattern pattern = Pattern.compile(EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
+	        Matcher matcher = pattern.matcher(email);
+	        
+	        return matcher.matches();
+	    }
 	private void authenticate() {
 
 		DialogUtils.showProgress(this, getString(R.string.loading));
@@ -414,7 +519,24 @@ public class LoginHandsetActivity extends BaseActivity {
 		
 		Animator.startAnimations();
 	}
-	
+	private void cancelBackwards() {
+	    
+	    if (failed) {
+	        
+	        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.setup_url)));
+	        startActivity(browserIntent);
+	        resetLogin();
+	        
+	        return;
+	    }
+	    
+	    username.clearFocus();
+	    password.clearFocus();
+	    hideKeyboard();
+	    viewFlipper.setOutAnimation(outLeft);
+	    viewFlipper.setInAnimation(inRight);
+	    viewFlipper.setDisplayedChild(0);
+	}
 	private void cancel() {
 		
 		if (failed) {

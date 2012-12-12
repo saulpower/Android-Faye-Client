@@ -58,7 +58,8 @@ public class LoginTabletActivity extends BaseActivity {
 		if (viewFlipper.indexOfChild(viewFlipper.getCurrentView()) == 1 ) {
 			cancel();
 		} 
-		else if(viewFlipper.indexOfChild(viewFlipper.getCurrentView()) == 2){
+		else if(viewFlipper.indexOfChild(viewFlipper.getCurrentView()) == 2 || 
+		        viewFlipper.indexOfChild(viewFlipper.getCurrentView()) == 3){
 		    cancelBackwards();
 		}
 		else {
@@ -136,6 +137,7 @@ public class LoginTabletActivity extends BaseActivity {
 		submitButton = (Button) findViewById(R.id.submit_button);
 		needAccount = (TextView) findViewById(R.id.need_account);
 		nagBank = (TextView) findViewById(R.id.nag_bank);
+		
 		Fonts.applyPrimaryFont(loginViewButton, 20);
 		Fonts.applyPrimaryFont(demoButton, 20);
 		Fonts.applyPrimaryFont(demoButton2, 20);
@@ -495,7 +497,7 @@ public class LoginTabletActivity extends BaseActivity {
 		}.execute();
 	}
 	
-private void toggleAnimations(boolean reset) {
+	private void toggleAnimations(boolean reset) {
 		
 		int offset = (int) (.20 * UiUtils.getScreenMeasurements(this)[1]) * (reset ? -1 : 1);
 		long duration = 750;
@@ -514,24 +516,24 @@ private void toggleAnimations(boolean reset) {
 		
 		Animator.startAnimations();
 	}
-private void cancelBackwards() {
-    
-    if (failed) {
+    private void cancelBackwards() {
         
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.setup_url)));
-        startActivity(browserIntent);
-        resetLogin();
+        if (failed) {
+            
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.setup_url)));
+            startActivity(browserIntent);
+            resetLogin();
+            
+            return;
+        }
         
-        return;
+        username.clearFocus();
+        password.clearFocus();
+        hideKeyboard();
+        viewFlipper.setOutAnimation(outLeft);
+        viewFlipper.setInAnimation(inRight);
+        viewFlipper.setDisplayedChild(0);
     }
-    
-    username.clearFocus();
-    password.clearFocus();
-    hideKeyboard();
-    viewFlipper.setOutAnimation(outLeft);
-    viewFlipper.setInAnimation(inRight);
-    viewFlipper.setDisplayedChild(0);
-}
 	private void cancel() {
 		
 		if (failed) {

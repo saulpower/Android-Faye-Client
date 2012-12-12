@@ -63,6 +63,10 @@
 	    
 	</LinearLayout>
     <!-- Login Screen that prompts for username and password, ID 1 -->
+	<ScrollView
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		 >
 	<RelativeLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
@@ -180,7 +184,12 @@
 	   
 	    
 	</RelativeLayout>
+	</ScrollView>
 	<!-- Screen that allows users to submit their banks' info to us, ID 2 -->
+		<ScrollView
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		 >
 		<RelativeLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
@@ -301,6 +310,7 @@
 	   
 	    
 	</RelativeLayout>
+	</ScrollView>
 	<!-- Screen that thanks the user for their submission, and invites them to use the demo. ID 3 -->
 	<LinearLayout
 	    android:layout_width="match_parent"
