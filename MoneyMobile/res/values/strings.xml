@@ -75,8 +75,9 @@
     <string name="feedback_subject">MoneyMobile Feedback</string>
     <string name="feedback_title">Send Email</string>
     <string name="hello_world">Hello world!</string>
-    <string name="icon_lock">E</string>
     <string name="icon_feedback">6</string>
+    <string name="icon_left_arrow">3</string>
+    <string name="icon_lock">E</string>
     <string name="icon_logout">7</string>
     <string name="icon_password">§</string>
     <string name="label_amount">Amount</string>

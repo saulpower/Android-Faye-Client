@@ -18,7 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.BaseTabletFragment;
+import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.AccountType;
@@ -31,7 +31,7 @@ import com.moneydesktop.finance.views.SlidingDrawerRightSide;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountTypesTabletFragment extends BaseTabletFragment {
+public class AccountTypesTabletFragment extends BaseFragment {
     private ExpandableListView mExpandableListView;
     private static SlidingDrawerRightSide sRightDrawer;
     private View mFooter;
@@ -50,7 +50,7 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         
-        this.mActivity.onFragmentAttached();
+        this.mActivity.onFragmentAttached(this);
 	}
 	
 	@Override
@@ -214,5 +214,10 @@ public class AccountTypesTabletFragment extends BaseTabletFragment {
 	public String getFragmentTitle() {
 		return null;
 	}
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
 
 }

@@ -52,4 +52,9 @@ public class BudgetSummaryFragment extends BaseFragment {
 		return null;
 	}
 
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
 }

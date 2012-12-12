@@ -12,7 +12,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RelativeLayout;
 
-import com.moneydesktop.finance.BaseTabletFragment;
+import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.EventMessage.ParentAnimationEvent;
@@ -25,7 +25,7 @@ import de.greenrobot.event.EventBus;
 
 import java.util.List;
 
-public class TransactionsTabletFragment extends BaseTabletFragment implements OnItemClickListener {
+public class TransactionsTabletFragment extends BaseFragment implements OnItemClickListener {
 	
 	public final String TAG = this.getClass().getSimpleName();
 	
@@ -53,7 +53,7 @@ public class TransactionsTabletFragment extends BaseTabletFragment implements On
         super.onAttach(activity);
 
         EventBus.getDefault().register(this);
-        this.mActivity.onFragmentAttached();
+        this.mActivity.onFragmentAttached(this);
 	}
     
     @Override
@@ -183,4 +183,9 @@ public class TransactionsTabletFragment extends BaseTabletFragment implements On
 			configureView();
 		}
 	}
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
 }

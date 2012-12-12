@@ -11,8 +11,9 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.moneydesktop.finance.BaseTabletFragment;
+import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
@@ -21,7 +22,7 @@ import com.moneydesktop.finance.views.VerticalTextView;
 import java.util.Random;
 
 @TargetApi(11)
-public class SummaryTabletFragment extends BaseTabletFragment {
+public class SummaryTabletFragment extends BaseFragment {
 
     public final String TAG = this.getClass().getSimpleName();
 
@@ -104,7 +105,7 @@ public class SummaryTabletFragment extends BaseTabletFragment {
     public void onResume() {
         super.onResume();
 
-        mAdapter = mActivity.getPagerAdapter();
+        mAdapter = ((DashboardTabletActivity) mActivity).getPagerAdapter();
         mAdapter.addFragment(this);
         mCurrentPosition = mAdapter.getCurrentPage();
         
@@ -157,7 +158,7 @@ public class SummaryTabletFragment extends BaseTabletFragment {
             @Override
             public void onClick(View v) {
 
-                mActivity.showNextPage();
+                ((DashboardTabletActivity) mActivity).showNextPage();
             }
         });
 
@@ -166,7 +167,7 @@ public class SummaryTabletFragment extends BaseTabletFragment {
             @Override
             public void onClick(View v) {
 
-                mActivity.showPrevPage();
+                ((DashboardTabletActivity) mActivity).showPrevPage();
             }
         });
     }
@@ -199,5 +200,10 @@ public class SummaryTabletFragment extends BaseTabletFragment {
     @Override
     public String getFragmentTitle() {
         return null;
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
     }
 }

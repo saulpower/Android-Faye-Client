@@ -1,5 +1,6 @@
 package com.moneydesktop.finance.tablet.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,7 +23,7 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 import android.widget.ViewSwitcher.ViewFactory;
 
-import com.moneydesktop.finance.BaseTabletFragment;
+import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
@@ -119,7 +120,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	}
 	
 	@Override
-	public void onFragmentAttached() {
+	public void onFragmentAttached(BaseFragment fragment) {
 
 	    if (mOnFragment) {
             mFragmentCount = 1;
@@ -272,19 +273,18 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	
 	public void showPopupFragment(Fragment fragment) {
 
-	    if (fragment != null) {
-            
-            FragmentTransaction ft = mFm.beginTransaction();
-            ft.replace(R.id.popup_fragment, fragment);
-            ft.commit();
-        }
+	    Intent i = new Intent(this, PopupTabletActivity.class);
+	    i.putExtra("fragment", 0);
+	    startActivity(i);
+	    overridePendingTransition(R.anim.in_down, R.anim.none);
 	}
 
+	@Override
     public void showFragment(int index) {
     	
     	mOnFragment = true;
     	
-    	BaseTabletFragment fragment = getFragment(index);
+    	BaseFragment fragment = getFragment(index);
     	
     	if (fragment != null) {
     		
@@ -296,7 +296,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
     	}
     }
 
-    private BaseTabletFragment getFragment(int index) {
+    private BaseFragment getFragment(int index) {
 
         switch (index) {
         case 0:

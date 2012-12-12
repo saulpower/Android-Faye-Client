@@ -132,4 +132,6 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 	public String getActivityTitle() {
 		return getString(R.string.title_activity_dashboard);
 	}
+	
+	public abstract void showFragment(int index);
 }

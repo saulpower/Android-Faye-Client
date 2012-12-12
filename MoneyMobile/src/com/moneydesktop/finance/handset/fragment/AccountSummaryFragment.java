@@ -57,4 +57,9 @@ public class AccountSummaryFragment extends BaseFragment {
 		return null;
 	}
 
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
 }

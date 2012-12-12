@@ -15,8 +15,8 @@ import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.tablet.activity.LoginTabletActivity;
 
 public class SplashActivity extends BaseActivity {
-
-    public final String TAG = "SplashActivity";
+    
+    public final String TAG = this.getClass().getSimpleName();
 
     protected int mSplashTime = 5000; // time to display the splash screen in ms
     private Handler mHandler;
@@ -82,6 +82,7 @@ public class SplashActivity extends BaseActivity {
         i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         i.putExtras(getIntent());
         startActivity(i);
+        overridePendingTransition(R.anim.fade_in_fast, R.anim.none);
         finish();
     }
 

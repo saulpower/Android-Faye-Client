@@ -69,4 +69,9 @@ public class TransactionSummaryFragment extends BaseFragment {
 		return null;
 	}
 
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
 }

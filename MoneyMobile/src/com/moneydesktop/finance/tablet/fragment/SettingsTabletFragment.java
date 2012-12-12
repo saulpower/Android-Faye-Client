@@ -10,16 +10,17 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-import com.moneydesktop.finance.BaseTabletFragment;
+import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.handset.fragment.LockFragment;
 import com.moneydesktop.finance.model.EventMessage;
+import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.views.SettingButton;
 
 import de.greenrobot.event.EventBus;
 
 @TargetApi(11)
-public class SettingsTabletFragment extends BaseTabletFragment {
+public class SettingsTabletFragment extends BaseFragment {
     
     public final String TAG = this.getClass().getSimpleName();
     
@@ -40,7 +41,7 @@ public class SettingsTabletFragment extends BaseTabletFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        this.mActivity.onFragmentAttached();
+        this.mActivity.onFragmentAttached(this);
     }
 	
 	@Override
@@ -91,8 +92,8 @@ public class SettingsTabletFragment extends BaseTabletFragment {
 			@Override
 			public void onClick(View v) {
 
-	            Fragment frag = LockFragment.newInstance();
-				mActivity.showPopupFragment(frag);
+	            Fragment frag = LockFragment.newInstance(true);
+	            ((DashboardTabletActivity) mActivity).showPopupFragment(frag);
 			}
 		});
 		
@@ -124,5 +125,10 @@ public class SettingsTabletFragment extends BaseTabletFragment {
 	public String getFragmentTitle() {
 		return getString(R.string.title_activity_settings);
 	}
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
 
 }

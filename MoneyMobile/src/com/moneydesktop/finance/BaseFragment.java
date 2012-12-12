@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
-import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
 import com.moneydesktop.finance.shared.DashboardBaseActivity;
 
 public abstract class BaseFragment extends Fragment {
@@ -40,4 +39,5 @@ public abstract class BaseFragment extends Fragment {
     }
 	
 	public abstract String getFragmentTitle();
+	public abstract boolean onBackPressed();
 }
