@@ -186,7 +186,7 @@ public class AccountTypesTabletFragment extends BaseFragment {
 					}
 				});
 				
-				new PopupWindowAtLocation(getActivity(), parentView, mRightDrawer.getLeft(), (int)bankTypeAccountView.getTop(), getActivity().getResources().getStringArray(R.array.bank_selection_popup), onClickListeners, booklet);
+				new PopupWindowAtLocation(getActivity(), parentView, sRightDrawer.getLeft(), (int)bankTypeAccountView.getTop(), getActivity().getResources().getStringArray(R.array.bank_selection_popup), onClickListeners, booklet);
 			}
 		});
 
