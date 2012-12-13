@@ -2,6 +2,7 @@ package com.moneydesktop.finance.views;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,9 @@ import android.widget.Toast;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
+import com.moneydesktop.finance.util.Enums.TxFilter;
+import com.moneydesktop.finance.util.Enums.TxType;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -31,6 +35,7 @@ public class AccountTypeChildView extends FrameLayout {
     private LinearLayout mBankAccountContainer;
     private ExpandableListView mExpandableListView;
     private int mGroupPosition;
+    private Activity mActivity;
     
     public AccountTypeChildView (Context context, List<BankAccount> bankAccounts, ExpandableListView expandableListView, int groupPosition) {
         super(context);
@@ -38,6 +43,8 @@ public class AccountTypeChildView extends FrameLayout {
         mBankAccounts = bankAccounts;
         mExpandableListView = expandableListView;
         mGroupPosition = groupPosition;
+        
+        mActivity = (Activity)mContext;
 
         final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mChildView = inflater.inflate(R.layout.account_type_child, this, true);
@@ -66,6 +73,12 @@ public class AccountTypeChildView extends FrameLayout {
 						@Override
 						public void onClick(View v) {
 							Toast.makeText(mContext, "VIEW ALL TXNS", Toast.LENGTH_SHORT).show();
+						    Intent i = new Intent(mActivity, PopupTabletActivity.class);
+					        i.putExtra("fragment", 1);
+					        i.putExtra("accountNumber", account.getAccountId());
+					        i.putExtra("txnType", TxFilter.ALL);
+					        mContext.startActivity(i);
+					        mActivity.overridePendingTransition(R.anim.in_down, R.anim.none);
 						}
 					});
 					
@@ -73,6 +86,12 @@ public class AccountTypeChildView extends FrameLayout {
 						@Override
 						public void onClick(View v) {
 							Toast.makeText(mContext, "VIEW UNCLEARED TXNS", Toast.LENGTH_SHORT).show();
+	                        Intent i = new Intent(mActivity, PopupTabletActivity.class);
+	                        i.putExtra("fragment", 1);
+	                        i.putExtra("accountNumber", account.getAccountId());
+	                        i.putExtra("txnType", TxFilter.UNCLEARED);
+	                        mContext.startActivity(i);
+	                        mActivity.overridePendingTransition(R.anim.in_down, R.anim.none);
 						}
 					});
 					
