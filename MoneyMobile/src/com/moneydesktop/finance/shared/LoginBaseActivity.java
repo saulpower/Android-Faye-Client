@@ -366,13 +366,13 @@ public abstract class LoginBaseActivity extends BaseActivity {
         }.execute();
     }
     private void signup(){
-        if(signupCheck() && validateEmail(mUsername.getText().toString())){
+        if(signupCheck() && validateEmail(mSignupEmail.getText().toString())){
             submit();
         }
         else if(!signupCheck()){
                  DialogUtils.alertDialog(getString(R.string.error_title), getString(R.string.error_login_incomplete), this, null);
             }
-        else if(!validateEmail(mUsername.getText().toString())){
+        else if(!validateEmail(mSignupEmail.getText().toString())){
             DialogUtils.alertDialog(getString(R.string.error_title), getString(R.string.error_email_invalid), this, null);
         }
     }
@@ -394,7 +394,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
             
             return;
         }
-        if(!validateEmail(mUsername.toString()))
+        if(!validateEmail(mUsername.getText().toString()))
         {
             DialogUtils.alertDialog(getString(R.string.error_title), getString(R.string.error_email_invalid), this, null);
             return;
