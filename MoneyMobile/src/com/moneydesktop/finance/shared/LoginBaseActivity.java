@@ -50,22 +50,22 @@ public abstract class LoginBaseActivity extends BaseActivity {
     private final String TAG = "LoginActivity";
     
     private ViewFlipper mViewFlipper;
-    private LinearLayout mButtonView, credentialView;
-    private Button loginViewButton, demoButton, loginButton, cancelButton, submitButton, demoButton2, returnHomeButton;
-    private LabelEditText username, password, signupName, signupEmail, signupBank;
-    private ImageView logo;
-    private TextView signupText, loginText, messageTitle, messageBody, cancelText, needAccount, nagBank, thankYou, tryDemo;
-    private Animation inLeft, inRight, outLeft, outRight, inUp, outDown, noMovement;
-    private boolean failed = false;
+    private LinearLayout mButtonView, mCredentialView;
+    private Button mLoginViewButton, mDemoButton, mLoginButton, mCancelButton, mSubmitButton, mDemoButton2, mReturnHomeButton;
+    private LabelEditText mUsername, mPassword, mSignupName, mSignupEmail, mSignupBank;
+    private ImageView mLogo;
+    private TextView mSignupText, mLoginText, mMessageTitle, mMessageBody, mCancelText, mNeedAccount, mNagBank, mThankYou, mTryDemo;
+    private Animation mInLeft, mInRight, mOutLeft, mOutRight, mInUp, mOutDown, mNoMovement;
+    private boolean mFailed = false;
     
     @Override
     public void onBackPressed() {
         if (mViewFlipper.indexOfChild(mViewFlipper.getCurrentView()) == 1 ) {
-            cancel(inLeft,outRight);
+            cancel(mInLeft,mOutRight);
         } 
         else if(mViewFlipper.indexOfChild(mViewFlipper.getCurrentView()) == 2 || 
                 mViewFlipper.indexOfChild(mViewFlipper.getCurrentView()) == 3){
-            cancel(outDown, noMovement);
+            cancel(mOutDown, mNoMovement);
         }
         else {
             super.onBackPressed();
@@ -98,8 +98,8 @@ public abstract class LoginBaseActivity extends BaseActivity {
     
     protected void addDemoCredentials() {
         
-        username.setText("saul.howard@moneydesktop.com");
-        password.setText("password123");
+        mUsername.setText("saul.howard@moneydesktop.com");
+        mPassword.setText("password123");
     }
     
     @SuppressLint("NewApi")
@@ -107,111 +107,111 @@ public abstract class LoginBaseActivity extends BaseActivity {
         
         mViewFlipper = (ViewFlipper) findViewById(R.id.flipper);
         mButtonView = (LinearLayout) findViewById(R.id.button_view);
-        credentialView = (LinearLayout) findViewById(R.id.credentials);
+        mCredentialView = (LinearLayout) findViewById(R.id.credentials);
         configureFlipper();
         
-        username = (LabelEditText) findViewById(R.id.username_field);
-        password = (LabelEditText) findViewById(R.id.password_field);
+        mUsername = (LabelEditText) findViewById(R.id.username_field);
+        mPassword = (LabelEditText) findViewById(R.id.password_field);
         
-        loginViewButton = (Button) findViewById(R.id.login_view_button);
-        demoButton = (Button) findViewById(R.id.demo_button);
-        demoButton2 = (Button) findViewById(R.id.demo_button2);
-        returnHomeButton = (Button) findViewById(R.id.home_view_button);
-        loginButton = (Button) findViewById(R.id.login_button);
-        cancelButton = (Button) findViewById(R.id.cancel_button);
+        mLoginViewButton = (Button) findViewById(R.id.login_view_button);
+        mDemoButton = (Button) findViewById(R.id.demo_button);
+        mDemoButton2 = (Button) findViewById(R.id.demo_button2);
+        mReturnHomeButton = (Button) findViewById(R.id.home_view_button);
+        mLoginButton = (Button) findViewById(R.id.login_button);
+        mCancelButton = (Button) findViewById(R.id.cancel_button);
         
-        logo = (ImageView) findViewById(R.id.logo);
+        mLogo = (ImageView) findViewById(R.id.logo);
         
-        signupText = (TextView) findViewById(R.id.signup);
-        loginText = (TextView) findViewById(R.id.login_text);
-        thankYou = (TextView) findViewById(R.id.thank_you);
-        tryDemo = (TextView) findViewById(R.id.try_demo);
-        signupName = (LabelEditText) findViewById(R.id.signup_name);
-        signupEmail = (LabelEditText) findViewById(R.id.signup_email);
-        signupBank = (LabelEditText) findViewById(R.id.signup_bank);
-        messageTitle = (TextView) findViewById(R.id.message_title);
-        messageBody = (TextView) findViewById(R.id.message_body);
-        cancelText = (TextView) findViewById(R.id.cancel_text);
-        submitButton = (Button) findViewById(R.id.submit_button);
-        needAccount = (TextView) findViewById(R.id.need_account);
-        nagBank = (TextView) findViewById(R.id.nag_bank);
+        mSignupText = (TextView) findViewById(R.id.signup);
+        mLoginText = (TextView) findViewById(R.id.login_text);
+        mThankYou = (TextView) findViewById(R.id.thank_you);
+        mTryDemo = (TextView) findViewById(R.id.try_demo);
+        mSignupName = (LabelEditText) findViewById(R.id.signup_name);
+        mSignupEmail = (LabelEditText) findViewById(R.id.signup_email);
+        mSignupBank = (LabelEditText) findViewById(R.id.signup_bank);
+        mMessageTitle = (TextView) findViewById(R.id.message_title);
+        mMessageBody = (TextView) findViewById(R.id.message_body);
+        mCancelText = (TextView) findViewById(R.id.cancel_text);
+        mSubmitButton = (Button) findViewById(R.id.submit_button);
+        mNeedAccount = (TextView) findViewById(R.id.need_account);
+        mNagBank = (TextView) findViewById(R.id.nag_bank);
         
-        Fonts.applyPrimaryFont(loginViewButton, 20);
-        Fonts.applyPrimaryFont(demoButton, 20);
-        Fonts.applyPrimaryFont(demoButton2, 20);
-        Fonts.applyPrimaryFont(returnHomeButton, 20);
-        Fonts.applyPrimaryFont(loginButton, 20);
-        Fonts.applyPrimaryFont(cancelButton, 20);
-        Fonts.applyPrimaryFont(submitButton, 20);
-        Fonts.applyPrimaryFont(signupText, 15);
-        Fonts.applyPrimaryFont(loginText, 15);
-        Fonts.applyPrimaryFont(cancelText, 15);
-        Fonts.applyPrimaryBoldFont(thankYou, 20);
-        Fonts.applyPrimaryFont(tryDemo, 20);
-        Fonts.applyPrimarySemiBoldFont(username, 25);
-        Fonts.applyPrimarySemiBoldFont(password, 25);
-        Fonts.applyPrimaryBoldFont(needAccount, 20);
-        Fonts.applySecondaryItalicFont(nagBank, 15);
-        Fonts.applyPrimaryBoldFont(submitButton,15);
+        Fonts.applyPrimaryFont(mLoginViewButton, 20);
+        Fonts.applyPrimaryFont(mDemoButton, 20);
+        Fonts.applyPrimaryFont(mDemoButton2, 20);
+        Fonts.applyPrimaryFont(mReturnHomeButton, 20);
+        Fonts.applyPrimaryFont(mLoginButton, 20);
+        Fonts.applyPrimaryFont(mCancelButton, 20);
+        Fonts.applyPrimaryFont(mSubmitButton, 20);
+        Fonts.applyPrimaryFont(mSignupText, 15);
+        Fonts.applyPrimaryFont(mLoginText, 15);
+        Fonts.applyPrimaryFont(mCancelText, 15);
+        Fonts.applyPrimaryBoldFont(mThankYou, 20);
+        Fonts.applyPrimaryFont(mTryDemo, 20);
+        Fonts.applyPrimarySemiBoldFont(mUsername, 25);
+        Fonts.applyPrimarySemiBoldFont(mPassword, 25);
+        Fonts.applyPrimaryBoldFont(mNeedAccount, 20);
+        Fonts.applySecondaryItalicFont(mNagBank, 15);
+        Fonts.applyPrimaryBoldFont(mSubmitButton,15);
         addListeners();
     }
     
     private void addListeners() {
-        cancelText.setOnClickListener(new OnClickListener() {
+        mCancelText.setOnClickListener(new OnClickListener() {
             
             public void onClick(View v) {
                 
-                cancel(outDown, noMovement);
+                cancel(mOutDown, mNoMovement);
             }
         });
-        loginViewButton.setOnClickListener(new OnClickListener() {
+        mLoginViewButton.setOnClickListener(new OnClickListener() {
             
             public void onClick(View v) {
                 
                 toLoginView();
             }
         });
-        returnHomeButton.setOnClickListener(new OnClickListener() {
+        mReturnHomeButton.setOnClickListener(new OnClickListener() {
             
             public void onClick(View v) {               
-                cancel(outDown, noMovement);
+                cancel(mOutDown, mNoMovement);
             }
         });
-        demoButton.setOnClickListener(new OnClickListener() {
+        mDemoButton.setOnClickListener(new OnClickListener() {
             
             public void onClick(View v) {
                 
                 demoMode();
             }
         });
-        demoButton2.setOnClickListener(new OnClickListener() {
+        mDemoButton2.setOnClickListener(new OnClickListener() {
                 
                 public void onClick(View v) {
                     
                     demoMode();
                 }
             });
-        loginButton.setOnClickListener(new OnClickListener() {
+        mLoginButton.setOnClickListener(new OnClickListener() {
             
             public void onClick(View v) {
                 
                 login();
             }
         });
-        submitButton.setOnClickListener(new OnClickListener(){
+        mSubmitButton.setOnClickListener(new OnClickListener(){
             public void onClick(View v){
                   signup();
             }
         });
-        cancelButton.setOnClickListener(new OnClickListener() {
+        mCancelButton.setOnClickListener(new OnClickListener() {
             
             public void onClick(View v) {
                 
-                cancel(inLeft,outRight);
+                cancel(mInLeft,mOutRight);
             }
         });
         
-        logo.setOnClickListener(new OnClickListener() {
+        mLogo.setOnClickListener(new OnClickListener() {
             
             public void onClick(View v) {
                 
@@ -219,51 +219,51 @@ public abstract class LoginBaseActivity extends BaseActivity {
                 startActivity(i);
             }
         });
-        username.setOnFocusChangeListener(new OnFocusChangeListener() {
+        mUsername.setOnFocusChangeListener(new OnFocusChangeListener() {
             
             public void onFocusChange(View v, boolean hasFocus) {
                 
-                username.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
+                mUsername.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
             }
         });
         
-        password.setOnFocusChangeListener(new OnFocusChangeListener() {
+        mPassword.setOnFocusChangeListener(new OnFocusChangeListener() {
             
             public void onFocusChange(View v, boolean hasFocus) {
                 
-                password.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
+                mPassword.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
             }
         });
         
-        messageBody.setOnTouchListener(new OnTouchListener() {
+        mMessageBody.setOnTouchListener(new OnTouchListener() {
             
             public boolean onTouch(View v, MotionEvent event) {
                 
                 return true;
             }
         });
-        signupName.setOnFocusChangeListener(new OnFocusChangeListener() {
+        mSignupName.setOnFocusChangeListener(new OnFocusChangeListener() {
             
             public void onFocusChange(View v, boolean hasFocus) {
                 
-                signupName.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
+                mSignupName.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
             }
         });
-        signupEmail.setOnFocusChangeListener(new OnFocusChangeListener() {
+        mSignupEmail.setOnFocusChangeListener(new OnFocusChangeListener() {
             
             public void onFocusChange(View v, boolean hasFocus) {
                 
-                signupEmail.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
+                mSignupEmail.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
             }
         });
-        signupBank.setOnFocusChangeListener(new OnFocusChangeListener() {
+        mSignupBank.setOnFocusChangeListener(new OnFocusChangeListener() {
             
             public void onFocusChange(View v, boolean hasFocus) {
                 
-                signupBank.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
+                mSignupBank.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
             }
         });
-        messageTitle.setOnTouchListener(new OnTouchListener() {
+        mMessageTitle.setOnTouchListener(new OnTouchListener() {
             
             public boolean onTouch(View v, MotionEvent event) {
                 
@@ -271,7 +271,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
             }
         });
         
-        loginText.setOnClickListener(new OnClickListener() {
+        mLoginText.setOnClickListener(new OnClickListener() {
             
             public void onClick(View v) {
 
@@ -279,7 +279,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
                 startActivity(browserIntent);
             }   
         });
-        signupText.setOnClickListener(new OnClickListener() {
+        mSignupText.setOnClickListener(new OnClickListener() {
                 
                 public void onClick(View v) {
 
@@ -290,14 +290,14 @@ public abstract class LoginBaseActivity extends BaseActivity {
     
     protected void setupAnimations() {
         
-        inLeft = AnimationUtils.loadAnimation(this, R.anim.in_left);
-        outRight = AnimationUtils.loadAnimation(this, R.anim.out_right);
-        outLeft = AnimationUtils.loadAnimation(this, R.anim.out_left);
-        inRight = AnimationUtils.loadAnimation(this, R.anim.in_right);
-        inUp = AnimationUtils.loadAnimation(this, R.anim.in_up);
-        outDown = AnimationUtils.loadAnimation(this, R.anim.out_down);
-        noMovement = AnimationUtils.loadAnimation(this, R.anim.none);
-        inLeft.setAnimationListener(new AnimationListener() {
+        mInLeft = AnimationUtils.loadAnimation(this, R.anim.in_left);
+        mOutRight = AnimationUtils.loadAnimation(this, R.anim.out_right);
+        mOutLeft = AnimationUtils.loadAnimation(this, R.anim.out_left);
+        mInRight = AnimationUtils.loadAnimation(this, R.anim.in_right);
+        mInUp = AnimationUtils.loadAnimation(this, R.anim.in_up);
+        mOutDown = AnimationUtils.loadAnimation(this, R.anim.out_down);
+        mNoMovement = AnimationUtils.loadAnimation(this, R.anim.none);
+        mInLeft.setAnimationListener(new AnimationListener() {
             
             public void onAnimationStart(Animation animation) {
 
@@ -312,7 +312,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
             }
         });
         
-        inRight.setAnimationListener(new AnimationListener() {
+        mInRight.setAnimationListener(new AnimationListener() {
             
             public void onAnimationStart(Animation animation) {
 
@@ -330,26 +330,26 @@ public abstract class LoginBaseActivity extends BaseActivity {
     
     private void configureFlipper() {
 
-        mViewFlipper.setInAnimation(inRight);
-        mViewFlipper.setOutAnimation(outLeft);
+        mViewFlipper.setInAnimation(mInRight);
+        mViewFlipper.setOutAnimation(mOutLeft);
     }
     
     private void configureButtons(boolean enabled) {
         
-        loginViewButton.setEnabled(enabled);
-        demoButton.setEnabled(enabled);
-        loginButton.setEnabled(enabled);
-        cancelButton.setEnabled(enabled);
+        mLoginViewButton.setEnabled(enabled);
+        mDemoButton.setEnabled(enabled);
+        mLoginButton.setEnabled(enabled);
+        mCancelButton.setEnabled(enabled);
     }
     
     private void toLoginView() {
-        mViewFlipper.setOutAnimation(outLeft);
-        mViewFlipper.setInAnimation(inRight);
+        mViewFlipper.setOutAnimation(mOutLeft);
+        mViewFlipper.setInAnimation(mInRight);
         mViewFlipper.setDisplayedChild(1);
     }
     private void toSignupView() {
-        mViewFlipper.setOutAnimation(noMovement);
-        mViewFlipper.setInAnimation(inUp);
+        mViewFlipper.setOutAnimation(mNoMovement);
+        mViewFlipper.setInAnimation(mInUp);
         mViewFlipper.setDisplayedChild(2);
     }
     private void demoMode() {
@@ -377,13 +377,13 @@ public abstract class LoginBaseActivity extends BaseActivity {
         }.execute();
     }
     private void signup(){
-        if(signupCheck() && validateEmail(username.getText().toString())){
+        if(signupCheck() && validateEmail(mUsername.getText().toString())){
             submit();
         }
         else if(!signupCheck()){
                  DialogUtils.alertDialog(getString(R.string.error_title), getString(R.string.error_login_incomplete), this, null);
             }
-        else if(!validateEmail(username.getText().toString())){
+        else if(!validateEmail(mUsername.getText().toString())){
             DialogUtils.alertDialog(getString(R.string.error_title), getString(R.string.error_email_invalid), this, null);
         }
     }
@@ -392,20 +392,20 @@ public abstract class LoginBaseActivity extends BaseActivity {
         toThankYou();
     }
     private void toThankYou(){
-        mViewFlipper.setOutAnimation(inLeft);
-        mViewFlipper.setInAnimation(outRight);
+        mViewFlipper.setOutAnimation(mInLeft);
+        mViewFlipper.setInAnimation(mOutRight);
         mViewFlipper.setDisplayedChild(3);
         hideKeyboard();
     }
     private void login() {
         
-        if (failed) {
+        if (mFailed) {
             
             resetLogin();
             
             return;
         }
-        if(!validateEmail(username.toString()))
+        if(!validateEmail(mUsername.toString()))
         {
             DialogUtils.alertDialog(getString(R.string.error_title), getString(R.string.error_email_invalid), this, null);
             return;
@@ -424,17 +424,17 @@ public abstract class LoginBaseActivity extends BaseActivity {
         
         toggleAnimations(true);
         
-        loginButton.setText(getString(R.string.button_login));
-        cancelButton.setText(getString(R.string.button_cancel));
+        mLoginButton.setText(getString(R.string.button_login));
+        mCancelButton.setText(getString(R.string.button_cancel));
         
-        failed = false;
+        mFailed = false;
     }
     private boolean signupCheck(){
-        return !signupName.getText().toString().equals("") && !signupEmail.getText().toString().equals("") && !signupBank.getText().toString().equals("");
+        return !mSignupName.getText().toString().equals("") && !mSignupEmail.getText().toString().equals("") && !mSignupBank.getText().toString().equals("");
     }
     private boolean loginCheck() {
         
-        return !username.getText().toString().equals("") && !password.getText().toString().equals("");
+        return !mUsername.getText().toString().equals("") && !mPassword.getText().toString().equals("");
     }
     private boolean validateEmail(String email) {
         
@@ -456,7 +456,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
                 
                 try {
                     
-                    dataBridge.authenticateUser(username.getText().toString(), password.getText().toString());
+                    dataBridge.authenticateUser(mUsername.getText().toString(), mPassword.getText().toString());
                     
                 } catch (Exception e) {
                     
@@ -472,17 +472,17 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
                 DialogUtils.hideProgress();
                 
-                failed = !result;
+                mFailed = !result;
                 
                 if (!result) {
                     
-                    messageTitle.setText(getString(R.string.error_login_failed));
-                    messageBody.setText(getString(R.string.error_login_invalid));
+                    mMessageTitle.setText(getString(R.string.error_login_failed));
+                    mMessageBody.setText(getString(R.string.error_login_invalid));
                             
                     toggleAnimations(false);
                     
-                    loginButton.setText(getString(R.string.button_return_login));
-                    cancelButton.setText(getString(R.string.button_setup));
+                    mLoginButton.setText(getString(R.string.button_return_login));
+                    mCancelButton.setText(getString(R.string.button_setup));
                 
                 } else {
                     
@@ -503,22 +503,22 @@ public abstract class LoginBaseActivity extends BaseActivity {
         long delay = reset ? 250 : 0;
         
         Animator.translateView(mButtonView, new float[] {0, offset}, duration);
-        Animator.fadeView(loginText, !reset, duration, delay);
-        Animator.fadeView(credentialView, !reset, duration, delay);
-        Animator.fadeView(username, !reset, duration, delay);
-        Animator.fadeView(password, !reset, duration, delay);
+        Animator.fadeView(mLoginText, !reset, duration, delay);
+        Animator.fadeView(mCredentialView, !reset, duration, delay);
+        Animator.fadeView(mUsername, !reset, duration, delay);
+        Animator.fadeView(mPassword, !reset, duration, delay);
         
         delay = reset ? 0 : 250;
         
-        Animator.fadeView(messageTitle, reset, duration, delay);
-        Animator.fadeView(messageBody, reset, duration, delay);
+        Animator.fadeView(mMessageTitle, reset, duration, delay);
+        Animator.fadeView(mMessageBody, reset, duration, delay);
         
         Animator.startAnimations();
     }
    
     private void cancel(Animation out, Animation in) {
         
-        if (failed) {
+        if (mFailed) {
             
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.setup_url)));
             startActivity(browserIntent);
@@ -527,8 +527,8 @@ public abstract class LoginBaseActivity extends BaseActivity {
             return;
         }
         
-        username.clearFocus();
-        password.clearFocus();
+        mUsername.clearFocus();
+        mPassword.clearFocus();
         hideKeyboard();
         mViewFlipper.setOutAnimation(out);
         mViewFlipper.setInAnimation(in);
