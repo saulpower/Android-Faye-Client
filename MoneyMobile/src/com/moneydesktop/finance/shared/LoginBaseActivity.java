@@ -1,11 +1,9 @@
 package com.moneydesktop.finance.shared;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,8 +11,8 @@ import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -30,9 +28,7 @@ import com.moneydesktop.finance.data.DemoData;
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
-import com.moneydesktop.finance.model.EventMessage.LoginEvent;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
-import com.moneydesktop.finance.tablet.activity.LoginTabletActivity;
 import com.moneydesktop.finance.util.Animator;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.Fonts;
@@ -96,13 +92,6 @@ public abstract class LoginBaseActivity extends BaseActivity {
         }
     }
     
-    protected void addDemoCredentials() {
-        
-        mUsername.setText("saul.howard@moneydesktop.com");
-        mPassword.setText("password123");
-    }
-    
-    @SuppressLint("NewApi")
     protected void setupView() {
         
         mViewFlipper = (ViewFlipper) findViewById(R.id.flipper);

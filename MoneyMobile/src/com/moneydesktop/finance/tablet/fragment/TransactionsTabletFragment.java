@@ -8,9 +8,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -68,26 +68,45 @@ public class TransactionsTabletFragment extends BaseFragment {
 	
 	public void showTransactionDetails(View view, int offset) {
 	    
-	    int[] location = new int[2];
-	    
-        view.getLocationOnScreen(location);
-        
-	    Bitmap b = loadBitmapFromView(view);
-	    ImageView image = new ImageView(getActivity());
-	    image.setImageBitmap(b);
-	    image.setX(location[0] + 50);
-	    image.setY((location[1] + offset));
+	    ImageView image = createImageView(view, offset);
 	    view.setVisibility(View.GONE);
 	    
 	    mGroup.addView(image);
 	    
-//	    ObjectAnimator animY = ObjectAnimator.ofFloat(image, "y", image.getY(), image.getY() + 100);
-//        ObjectAnimator animX = ObjectAnimator.ofFloat(image, "x", image.getX(), image.getX() + 100);
-//	    
-//        AnimatorSet set = new AnimatorSet();
-//        set.play(animX).with(animY);
-//        set.setDuration(5000);
-//        set.start();
+	    ObjectAnimator animY = ObjectAnimator.ofFloat(image, "y", image.getY(), image.getY() + 100);
+        ObjectAnimator animX = ObjectAnimator.ofFloat(image, "x", image.getX(), image.getX() + 100);
+	    
+        AnimatorSet set = new AnimatorSet();
+        set.play(animX).with(animY);
+        set.setDuration(5000);
+        set.start();
+	}
+	
+	private ImageView createImageView(final View view, int offset) {
+
+	    int[] location = new int[2];
+        
+        view.getLocationOnScreen(location);
+        
+        int yOffset = (location[1] - offset);
+        
+        Bitmap b = loadBitmapFromView(view);
+        final ImageView image = new ImageView(getActivity());
+        image.setImageBitmap(b);
+        image.setX(location[0]);
+        image.setY(yOffset);
+        
+        image.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                
+                image.setVisibility(View.GONE);
+                view.setVisibility(View.VISIBLE);
+            }
+        });
+        
+        return image;
 	}
 	
 	public Bitmap loadBitmapFromView(View v) {

@@ -94,9 +94,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         if (transaction != null) {
             
             int[] location = new int[2];
-            parent.getLocationOnScreen(location);
-            
-            Log.i(TAG, "Y: " + location[1]);
+            mRoot.getLocationOnScreen(location);
             
             TransactionsTabletFragment frag = ((TransactionsTabletFragment) getParentFragment());
             frag.showTransactionDetails(view, location[1]);
