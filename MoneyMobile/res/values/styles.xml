@@ -53,53 +53,53 @@
     <style name="text_button">
         <item name="android:textColor">@drawable/primary_to_white_text</item>
         <item name="android:gravity">center</item>
-	    <item name="android:duplicateParentState">true</item>
+<item name="android:duplicateParentState">true</item>
     </style>
     <style name="text_label">
         <item name="android:textColor">@drawable/gray7_to_white</item>
         <item name="android:gravity">center</item>
-	    <item name="android:duplicateParentState">true</item>
-	    <item name="android:textSize">12sp</item>
+<item name="android:duplicateParentState">true</item>
+<item name="android:textSize">12sp</item>
     </style>
     <style name="setting_button">
         <item name="android:background">@drawable/white_to_gray</item>
         <item name="android:gravity">center</item>
-	    <item name="android:clickable">true</item>
-	    <item name="android:orientation">vertical</item>
+<item name="android:clickable">true</item>
+<item name="android:orientation">vertical</item>
     </style>
     <style name="tablet_txn_text">
         <item name="android:textColor">@drawable/gray7_to_white</item>
         <item name="android:textSize">16sp</item>
-	    <item name="android:singleLine">true</item>
-	    <item name="android:ellipsize">end</item>
-	    <item name="android:paddingLeft">10dp</item>
-	    <item name="android:paddingRight">10dp</item>
-	    <item name="android:text">@string/default_title</item>
+<item name="android:singleLine">true</item>
+<item name="android:ellipsize">end</item>
+<item name="android:paddingLeft">10dp</item>
+<item name="android:paddingRight">10dp</item>
+<item name="android:text">@string/default_title</item>
     </style>
-	<style name="transaction_cell">
-	    <item name="android:paddingTop">@dimen/transaction_padding</item>
-	    <item name="android:paddingRight">@dimen/transaction_padding</item>
-	    <item name="android:paddingBottom">@dimen/transaction_padding</item>
-	    <item name="android:paddingLeft">@dimen/transaction_padding_left</item>
-	    <item name="android:gravity">center_vertical</item>
-	</style>
-	<style name="transaction_label">
-	    <item name="android:textColor">@color/gray3</item>
-	    <item name="android:textSize">12sp</item>
-	</style>
-	<style name="transaction_field">
-	    <item name="android:textColor">@color/gray7</item>
-	    <item name="android:ellipsize">end</item>
-	    <item name="android:singleLine">true</item>
-	    <item name="android:background">@null</item>
-	    <item name="android:gravity">left|center_vertical</item>
-	</style>
+<style name="transaction_cell">
+<item name="android:paddingTop">@dimen/transaction_padding</item>
+<item name="android:paddingRight">@dimen/transaction_padding</item>
+<item name="android:paddingBottom">@dimen/transaction_padding</item>
+<item name="android:paddingLeft">@dimen/transaction_padding_left</item>
+<item name="android:gravity">center_vertical</item>
+</style>
+<style name="transaction_label">
+<item name="android:textColor">@color/gray3</item>
+<item name="android:textSize">12sp</item>
+</style>
+<style name="transaction_field">
+<item name="android:textColor">@color/gray7</item>
+<item name="android:ellipsize">end</item>
+<item name="android:singleLine">true</item>
+<item name="android:background">@null</item>
+<item name="android:gravity">left|center_vertical</item>
+</style>
     <style name="MyDialog" parent="android:Theme.Dialog">
         <item name="android:windowBackground">@color/transparent</item>
         <item name="android:windowAnimationStyle">@style/MyAnimationWindow</item>
     </style>
-	<style name="MyAnimationWindow" parent="@android:style/Animation.Dialog"> 
-	    <item name="android:windowEnterAnimation">@anim/fade_in_fast</item>
-	    <item name="android:windowExitAnimation">@anim/fade_out_fast</item>
-	</style>
+<style name="MyAnimationWindow" parent="@android:style/Animation.Dialog">
+<item name="android:windowEnterAnimation">@anim/fade_in_fast</item>
+<item name="android:windowExitAnimation">@anim/fade_out_fast</item>
+</style>
 </resources>

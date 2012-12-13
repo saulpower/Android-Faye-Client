@@ -8,7 +8,15 @@ import com.moneydesktop.finance.util.UiUtils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.PorterDuff.Mode;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +25,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class PopupWindowAtLocation extends FrameLayout {
@@ -25,25 +34,34 @@ public class PopupWindowAtLocation extends FrameLayout {
 	final int mY;
 	final Context mContext;
 	String[] mButtonTitles;
+
 	List<OnClickListener> mButtonClickListeners;
 	ViewGroup mParentView;
-	LinearLayout mRoot;
+	RelativeLayout mRoot;
 	LayoutInflater mInflater;
 	int mScreenHeight;
 	int mScreenWidth;
-	ViewGroup mRelativeView;
+	View mTouchedView; 
+	//TransparentView mTransparentView;
+	
+	private Paint bg;
+	private int mLeftMargin;
+	private int mTopMargin;
+	private int mWidth;
+	private int mHeight;
+	private Rect mRect;
 	
     /**
      * 
      * @param context -- the context
-     * @param parentView -- the layout view that the popup will be displayed in
-     * @param positionX -- the X position for the popup to be aligned with
-     * @param positionY -- the Y position for the popup to be aligned with
+     * @param parentView -- the layout view that the popUp will be displayed in
+     * @param positionX -- the X position for the popUp to be aligned with
+     * @param positionY -- the Y position for the popUp to be aligned with
      * @param buttonTitles -- the text that will be displayed for each of the buttons. Note** MUST be put in the list in the same order as the onClickListeners
-     * @param onClickListeners -- onclick listeners for the buttons supplied. Note** MUST be put in the list in the same order as the Button Titles
+     * @param onClickListeners -- onClick listeners for the buttons supplied. Note** MUST be put in the list in the same order as the Button Titles
+     * @param view 
      */
-	public PopupWindowAtLocation(Context context, ViewGroup parentView, ViewGroup relativeView, int positionX, int positionY, 
-			String[] buttonTitles, List<OnClickListener> onClickListeners) {
+	public PopupWindowAtLocation(Context context, ViewGroup parentView, int positionX, int positionY, String[] buttonTitles, List<OnClickListener> onClickListeners, View view) {
 		super(context);
 		
 		mContext = context;
@@ -52,10 +70,10 @@ public class PopupWindowAtLocation extends FrameLayout {
 		mButtonClickListeners = onClickListeners;
 		mButtonTitles = buttonTitles;
 		mParentView = parentView;
-		mRelativeView = relativeView;
+		mTouchedView = view;
 		
 		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	    mRoot = (LinearLayout) mInflater.inflate(R.layout.popup_with_buttons, null);
+	    mRoot = (RelativeLayout) mInflater.inflate(R.layout.popup_with_buttons, null);
 	    
 	    LinearLayout.LayoutParams overlayParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT);
 	    mRoot.setLayoutParams(overlayParams);
@@ -67,10 +85,11 @@ public class PopupWindowAtLocation extends FrameLayout {
 	    populateView();
 	
 	}
+	
 
 	private void populateView() {
-	    LinearLayout overlay = (LinearLayout)mRoot.findViewById(R.id.popup_overlay);
-	    LinearLayout subOverlay = (LinearLayout)mRoot.findViewById(R.id.popup_sub_overlay);
+		RelativeLayout overlay = (RelativeLayout)mRoot.findViewById(R.id.popup_overlay);
+		RelativeLayout subOverlay = (RelativeLayout)mRoot.findViewById(R.id.popup_sub_overlay);
 	    LinearLayout buttonContainer = (LinearLayout)mRoot.findViewById(R.id.popup_container);
 	    
 	    for (int i = 0; i < mButtonTitles.length; i++) {
@@ -84,32 +103,37 @@ public class PopupWindowAtLocation extends FrameLayout {
 	    	buttonContainer.addView(popupButton);
 	    }
 	    
-	    LinearLayout.LayoutParams subOverlayParams = (LinearLayout.LayoutParams) subOverlay.getLayoutParams();
+	    RelativeLayout.LayoutParams subOverlayParams = (RelativeLayout.LayoutParams) subOverlay.getLayoutParams();
 	    subOverlayParams.leftMargin = mX;
 	    subOverlayParams.topMargin = mY;
+	  
+	  //  mTransparentView = (TransparentView)mRoot.findViewById(R.id.transparent_account_view);
+	   // mTransparentView.setViewVisibility(View.VISIBLE);
+	   // mTransparentView.setTransparentArea(mX - (int)UiUtils.convertDpToPixel(5, mContext), mY, mTouchedView.getWidth() - (int)UiUtils.convertDpToPixel(12, mContext), mTouchedView.getHeight());
 	    
 	    
 	    /*
 	     * Should the popup get drawn off the screen, compensate for that based upon the number of buttons being drawn. 
 	     */
-	    boolean popupWillDisplayOffScreenBottom = ((mY + (mButtonTitles.length * UiUtils.convertDpToPixel(75, mContext))) > mScreenHeight) ? true : false;
+	    boolean popupWillDisplayOffScreenBottom = ((mY + (mButtonTitles.length * UiUtils.convertDpToPixel(78, mContext))) > mScreenHeight) ? true : false;
 	    boolean popupWillDisplayOffScreenTop = (mY < 0) ? true : false;
-	    boolean popupWillDisplayOffScreenRight = ((mX + mRoot.getWidth()) > mScreenWidth) ? true : false;
+	    boolean popupWillDisplayOffScreenRight = ((mX + UiUtils.getMinimumPanalWidth((Activity)mContext) + 100) > mScreenWidth) ? true : false;
 	    
 	    if (popupWillDisplayOffScreenBottom) {
-		    subOverlayParams.topMargin = (int) (mY - ((mY + mButtonTitles.length * UiUtils.convertDpToPixel(75, mContext)) - mScreenHeight));
+		    subOverlayParams.topMargin = (int) (mScreenHeight - mButtonTitles.length * UiUtils.convertDpToPixel(76, mContext));
 	    }
 	    if (popupWillDisplayOffScreenTop) {
 	    	subOverlayParams.topMargin = 0;
 	    }
 	    if (popupWillDisplayOffScreenRight) {
-	    	subOverlayParams.leftMargin = ((mScreenWidth - mRoot.getWidth()) - mRelativeView.getWidth());
+	    	subOverlayParams.leftMargin = (int) (mScreenWidth - (UiUtils.getMinimumPanalWidth((Activity)mContext)*2.2));
+	    	//mTransparentView.setTransparentArea(subOverlayParams.leftMargin + subOverlayParams.width + mTouchedView.getWidth() + (int)UiUtils.convertDpToPixel(8, mContext), mY, mTouchedView.getWidth() + 10, mTouchedView.getHeight());
 	    }
 	    
 	    subOverlay.setLayoutParams(subOverlayParams);
 	    
 	    Animation loadPopupAnimation = AnimationUtils.loadAnimation(mContext, R.anim.scale_fade_in);
-	    mRoot.startAnimation(loadPopupAnimation);
+	    subOverlay.startAnimation(loadPopupAnimation);
 
 	    overlay.setOnClickListener(new OnClickListener() {
 			@Override
@@ -135,5 +159,27 @@ public class PopupWindowAtLocation extends FrameLayout {
 			}
 		});
 	}
+	
+	
+//	public void setTransparentArea(int x, int y, int width, int height) {
+//		mLeftMargin = x;
+//		mTopMargin = y;
+//		mWidth = width;
+//		mHeight = height;
+//		
+//		mRect = new Rect(mLeftMargin - mWidth, mTopMargin, mWidth, mHeight);
+//		
+//		invalidate();
+//	}
+//	
+//    private void drawRects(Canvas canvas, PorterDuff.Mode mode) {
+//        canvas.drawRect(mRect, bg);
+//    }
+//    
+//	@Override
+//	protected void onDraw(Canvas canvas) {
+//		super.onDraw(canvas);		
+//		 drawRects(canvas, Mode.CLEAR);
+//	}
 	
 }

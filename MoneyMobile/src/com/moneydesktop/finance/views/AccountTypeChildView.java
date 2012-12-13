@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,11 +29,15 @@ public class AccountTypeChildView extends FrameLayout {
     private Context mContext;
     private List<BankAccount> mBankAccounts;
     private LinearLayout mBankAccountContainer;
+    private ExpandableListView mExpandableListView;
+    private int mGroupPosition;
     
-    public AccountTypeChildView (Context context, List<BankAccount> bankAccounts) {
+    public AccountTypeChildView (Context context, List<BankAccount> bankAccounts, ExpandableListView expandableListView, int groupPosition) {
         super(context);
         mContext = context;
         mBankAccounts = bankAccounts;
+        mExpandableListView = expandableListView;
+        mGroupPosition = groupPosition;
 
         final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mChildView = inflater.inflate(R.layout.account_type_child, this, true);
@@ -94,9 +99,8 @@ public class AccountTypeChildView extends FrameLayout {
 					
 					RelativeLayout parentView = (RelativeLayout)((Activity)mContext).findViewById(R.id.account_types_container);
 					
-					new PopupWindowAtLocation(mContext, parentView, (ViewGroup) view, (int)view.getLeft() + view.getWidth(), (int)mChildView.getTop() + 10, 
-							mContext.getResources().getStringArray(R.array.account_selection_popup), onClickListeners);
-					
+				    new PopupWindowAtLocation(mContext, parentView, (int)view.getLeft() + view.getWidth(), (int)mChildView.getTop() + 10, 
+							mContext.getResources().getStringArray(R.array.account_selection_popup), onClickListeners, view);
 					
 				}
 			});

@@ -27,6 +27,7 @@
             android:name=".DebugActivity"
             android:screenOrientation="portrait" />
         
+        
         <activity
             android:name=".handset.activity.DashboardHandsetActivity"
             android:screenOrientation="portrait" />

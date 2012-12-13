@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -89,9 +90,11 @@ public class AccountTypesTabletFragment extends BaseFragment {
         mExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 			public boolean onGroupClick(ExpandableListView expandableListView, View view, int groupPosition, long id) {
 	            ((AccountTypesAdapter)mExpandableListView.getExpandableListAdapter()).notifyDataSetChanged();
+	            mExpandableListView.smoothScrollToPosition(groupPosition);
 	            return false;
 			}
 		});
+        
         
         panelLayoutHolder.setOnTouchListener(new View.OnTouchListener() {			
 			public boolean onTouch(View view, MotionEvent event) {
@@ -144,7 +147,8 @@ public class AccountTypesTabletFragment extends BaseFragment {
 	private View populateDrawerView (final Bank bank, final LinearLayout panelLayoutHolder) {
         LayoutInflater layoutInflater = mActivity.getLayoutInflater();
         final View bankTypeAccountView = layoutInflater.inflate(R.layout.bank_account, null);
-        ImageView bankImage = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_image);
+        ImageView bankImage = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_image);  
+        final ImageView booklet = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_bankbook);
         
         BankLogoManager.getBankImage(bankImage, bank.getBankId());
         
@@ -182,7 +186,7 @@ public class AccountTypesTabletFragment extends BaseFragment {
 					}
 				});
 				
-				new PopupWindowAtLocation(getActivity(), (ViewGroup) bankTypeAccountView, parentView, sRightDrawer.getLeft() - bankTypeAccountView.getWidth(), (int)bankTypeAccountView.getTop() + 10, getActivity().getResources().getStringArray(R.array.bank_selection_popup), onClickListeners);
+				new PopupWindowAtLocation(getActivity(), parentView, sRightDrawer.getLeft(), (int)bankTypeAccountView.getTop(), getActivity().getResources().getStringArray(R.array.bank_selection_popup), onClickListeners, booklet);
 			}
 		});
 
