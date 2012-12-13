@@ -4,8 +4,10 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Pair;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
@@ -14,11 +16,12 @@ import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.AmazingListView;
+import com.moneydesktop.finance.views.Caret;
 import com.moneydesktop.finance.views.VerticalTextView;
 
 import org.apache.commons.lang.WordUtils;
 
-import java.text.NumberFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +32,7 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 
 	private List<Transactions> mAllTransactions = new ArrayList<Transactions>();
 	private AsyncTask<Integer, Void, Pair<Boolean, List<Transactions>>> mBackgroundTask;
-    private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();
+    private DecimalFormat mFormatter = new DecimalFormat("$#,##0.00;-$#,##0.00");
     private SimpleDateFormat mDateFormatter = new SimpleDateFormat("M/d/yy");
 	private AmazingListView mListView;
 
@@ -109,7 +112,10 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 		
 		View res = convertView;
 
+		boolean init = false;
+		
 		if (res == null) {
+		    init = true;
 			res = mActivity.getLayoutInflater().inflate(R.layout.tablet_transaction_item, null);
 			fixDottedLine(res);
 		}
@@ -119,12 +125,16 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
         TextView payee = (TextView) res.findViewById(R.id.payee);
         TextView category = (TextView) res.findViewById(R.id.category);
 		TextView amount = (TextView) res.findViewById(R.id.amount);
+		ImageView type = (ImageView) res.findViewById(R.id.type);
+		Caret caret = (Caret) res.findViewById(R.id.caret);
 		
-		Fonts.applyPrimaryBoldFont(newText, 10);
-		Fonts.applyPrimarySemiBoldFont(date, 12);
-        Fonts.applyPrimarySemiBoldFont(payee, 12);
-		Fonts.applyPrimarySemiBoldFont(category, 12);
-        Fonts.applyPrimaryBoldFont(amount, 12);
+		if (init) {
+    		Fonts.applyPrimaryBoldFont(newText, 10);
+    		Fonts.applyPrimarySemiBoldFont(date, 12);
+            Fonts.applyPrimarySemiBoldFont(payee, 12);
+    		Fonts.applyPrimarySemiBoldFont(category, 12);
+            Fonts.applyPrimaryBoldFont(amount, 12);
+		}
 
 		Transactions transactions = getItem(position);
 		
@@ -132,10 +142,26 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 		
 			date.setText(mDateFormatter.format(transactions.getDate()));
 			payee.setText(WordUtils.capitalize(transactions.getTitle()));
-			amount.setText(mFormatter.format(transactions.getAmount()));
-	
-			if (transactions.getCategory() != null)
+			caret.setVisibility(transactions.isIncome() ? View.VISIBLE : View.GONE);
+			
+			int gravity = Gravity.CENTER_VERTICAL|Gravity.RIGHT;
+			double value = transactions.getAmount();
+			
+			if (transactions.isIncome()) {
+			    value = Math.abs(value);
+			    gravity = Gravity.CENTER_VERTICAL|Gravity.LEFT;
+			}
+			
+            amount.setText(mFormatter.format(value));
+			amount.setGravity(gravity);
+			
+			if (transactions.getIsBusiness()) {
+			    type.setImageResource(R.drawable.ipad_txndetail_icon_business_grey);
+			}
+			
+			if (transactions.getCategory() != null) {
 				category.setText(transactions.getCategory().getCategoryName());
+			}
 		}
 
 		return res;
