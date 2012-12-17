@@ -64,12 +64,12 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" 
-        android:background="@color/white">
+        android:layout_height="match_parent"
+        android:background="@color/black" >
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="800dp"
             android:background="@color/white" >
 
             <ImageView
@@ -103,7 +103,7 @@
             <LinearLayout
                 android:id="@+id/credentials"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_below="@id/logo"
                 android:background="@color/white"
                 android:gravity="center"
@@ -149,7 +149,7 @@
             <LinearLayout
                 android:id="@+id/button_view"
                 android:layout_width="450dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_below="@id/credentials"
                 android:layout_centerHorizontal="true"
                 android:orientation="vertical" >

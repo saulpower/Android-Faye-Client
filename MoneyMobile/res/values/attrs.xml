@@ -28,6 +28,14 @@
         <attr name="icon" format="string" />
         <attr name="iconSize" format="dimension" />
     </declare-styleable>
+    
+    <declare-styleable name="Line">
+        <attr name="lineColor" format="color" />
+        <attr name="isDashed" format="boolean" />
+        <attr name="isVertical" format="boolean" />
+        <attr name="dashLength" format="float" />
+        <attr name="lineWidth" format="float" />
+    </declare-styleable>
 
     <!-- Identifier for the child that represents the drawer's handle. -->
        <attr name="handle" format="reference"/>

@@ -18,7 +18,11 @@ import com.moneydesktop.finance.handset.fragment.DashboardFragmentFactory;
 import com.moneydesktop.finance.handset.fragment.LockFragment;
 import com.moneydesktop.finance.handset.fragment.SettingsFragment;
 import com.moneydesktop.finance.handset.fragment.TransactionsFragment;
+import com.moneydesktop.finance.model.EventMessage;
+import com.moneydesktop.finance.model.EventMessage.ParentAnimationEvent;
 import com.moneydesktop.finance.shared.DashboardBaseActivity;
+
+import de.greenrobot.event.EventBus;
 
 public class DashboardHandsetActivity extends DashboardBaseActivity {
 	
@@ -120,7 +124,8 @@ public class DashboardHandsetActivity extends DashboardBaseActivity {
 					viewDidAppear();
 				}
 			};
-	    	
+
+	        EventBus.getDefault().post(new EventMessage().new ParentAnimationEvent(false, false));
 	        AnimationFactory.flipTransition(mFlipper, null, finish, home ? FlipDirection.RIGHT_LEFT : FlipDirection.LEFT_RIGHT, TRANSITION_DURATION);
     	}
     }

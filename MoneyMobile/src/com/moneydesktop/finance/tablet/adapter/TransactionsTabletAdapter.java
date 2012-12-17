@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.AmazingAdapter;
 import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.shared.TransactionViewHolder;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.AmazingListView;
@@ -110,39 +111,40 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	@Override
 	public View getAmazingView(int position, View convertView, ViewGroup parent) {
 		
+	    TransactionViewHolder viewHolder;
 		View res = convertView;
-
-		boolean init = false;
 		
 		if (res == null) {
-		    init = true;
+		    
 			res = mActivity.getLayoutInflater().inflate(R.layout.tablet_transaction_item, null);
 			fixDottedLine(res);
-		}
 
-		VerticalTextView newText = (VerticalTextView) res.findViewById(R.id.text_new);
-		TextView date = (TextView) res.findViewById(R.id.date);
-        TextView payee = (TextView) res.findViewById(R.id.payee);
-        TextView category = (TextView) res.findViewById(R.id.category);
-		TextView amount = (TextView) res.findViewById(R.id.amount);
-		ImageView type = (ImageView) res.findViewById(R.id.type);
-		Caret caret = (Caret) res.findViewById(R.id.caret);
-		
-		if (init) {
-    		Fonts.applyPrimaryBoldFont(newText, 10);
-    		Fonts.applyPrimarySemiBoldFont(date, 12);
-            Fonts.applyPrimarySemiBoldFont(payee, 12);
-    		Fonts.applyPrimarySemiBoldFont(category, 12);
-            Fonts.applyPrimaryBoldFont(amount, 12);
+			viewHolder = new TransactionViewHolder();
+			
+	        viewHolder.newText = (VerticalTextView) res.findViewById(R.id.text_new);
+	        viewHolder.date = (TextView) res.findViewById(R.id.date);
+	        viewHolder.payee = (TextView) res.findViewById(R.id.payee);
+	        viewHolder.category = (TextView) res.findViewById(R.id.category);
+	        viewHolder.amount = (TextView) res.findViewById(R.id.amount);
+	        viewHolder.type = (ImageView) res.findViewById(R.id.type);
+	        viewHolder.caret = (Caret) res.findViewById(R.id.caret);
+	        
+	        res.setTag(viewHolder);
+	        
+	        applyFonts(viewHolder);
+	        
+		} else {
+		    
+		    viewHolder = (TransactionViewHolder) res.getTag();
 		}
 
 		Transactions transactions = getItem(position);
 		
 		if (transactions != null) {
 		
-			date.setText(mDateFormatter.format(transactions.getDate()));
-			payee.setText(WordUtils.capitalize(transactions.getTitle()));
-			caret.setVisibility(transactions.isIncome() ? View.VISIBLE : View.GONE);
+			viewHolder.date.setText(mDateFormatter.format(transactions.getDate()));
+			viewHolder.payee.setText(WordUtils.capitalize(transactions.getTitle()));
+			viewHolder.caret.setVisibility(transactions.isIncome() ? View.VISIBLE : View.GONE);
 			
 			int gravity = Gravity.CENTER_VERTICAL|Gravity.RIGHT;
 			double value = transactions.getAmount();
@@ -152,15 +154,15 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 			    gravity = Gravity.CENTER_VERTICAL|Gravity.LEFT;
 			}
 			
-            amount.setText(mFormatter.format(value));
-			amount.setGravity(gravity);
+			viewHolder.amount.setText(mFormatter.format(value));
+			viewHolder.amount.setGravity(gravity);
 			
 			if (transactions.getIsBusiness()) {
-			    type.setImageResource(R.drawable.ipad_txndetail_icon_business_grey);
+			    viewHolder.type.setImageResource(R.drawable.ipad_txndetail_icon_business_grey);
 			}
 			
 			if (transactions.getCategory() != null) {
-				category.setText(transactions.getCategory().getCategoryName());
+			    viewHolder.category.setText(transactions.getCategory().getCategoryName());
 			}
 		}
 
@@ -177,6 +179,15 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 			res.findViewById(R.id.dotted3).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
             res.findViewById(R.id.dotted4).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 		}
+	}
+	
+	private void applyFonts(TransactionViewHolder viewHolder) {
+
+        Fonts.applyPrimaryBoldFont(viewHolder.newText, 10);
+        Fonts.applyPrimarySemiBoldFont(viewHolder.date, 12);
+        Fonts.applyPrimarySemiBoldFont(viewHolder.payee, 12);
+        Fonts.applyPrimarySemiBoldFont(viewHolder.category, 12);
+        Fonts.applyPrimaryBoldFont(viewHolder.amount, 12);
 	}
 
 	@Override

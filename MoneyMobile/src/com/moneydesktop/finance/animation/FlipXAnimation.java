@@ -23,6 +23,8 @@ package com.moneydesktop.finance.animation;
 
 import android.graphics.Camera;
 import android.graphics.Matrix;
+import android.util.Log;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
@@ -44,31 +46,21 @@ public class FlipXAnimation extends Animation {
 	
 	private final float mFromDegrees;
 	private final float mToDegrees;
-	private final float mCenterY;
-	private float mRotateX;
-	private int mWidth;
+	private final float mAxisX, mAxisY;
 	private Camera mCamera;
-	private boolean mOut;
-	private FlipDirection mDirection;
 
 	/**
 	 * Constructs a new {@code FlipAnimation} object.Two {@code FlipAnimation} objects are needed for a complete transition b/n two views. 
 	 * 
-	 * @param fromDegrees the start angle in degrees for a rotation along the y-axis, i.e. in-and-out of the screen, i.e. 3D flip. This should really be multiple of 90 degrees.
-	 * @param toDegrees the end angle in degrees for a rotation along the y-axis, i.e. in-and-out of the screen, i.e. 3D flip. This should really be multiple of 90 degrees.
-	 * @param out whether the animation is moving the view out or in.
-	 * @param centerY the y-axis value of the center of rotation.
-	 * @param direction the direction the animation is moving, i.e. left-to-right or right-to-left.
-	 * @param width the width of the view being rotated.
+	 * @param direction the direction the animation is moving, i.e. top-to-bottom or bottom-to-top.
+	 * @param xCenter the x-axis of the view being rotated.
+     * @param yCenter the y-axis of the view being rotated.
 	 */
-	public FlipXAnimation(float fromDegrees, float toDegrees, boolean out,float centerY, FlipDirection direction, int width) {
-		mFromDegrees = fromDegrees;
-		mToDegrees = toDegrees;
-		mRotateX = ((direction == FlipDirection.LEFT_RIGHT && !out) || (direction == FlipDirection.RIGHT_LEFT && out)) ? width : 0;
-		mCenterY = centerY;
-		mWidth = width;
-		mDirection = direction;
-		mOut = out;
+	public FlipXAnimation(FlipDirection direction, int xCenter, int yCenter) {
+		mFromDegrees = direction.getStartDegreeForFirstView();
+		mToDegrees = direction.getEndDegreeForFirstView();
+		mAxisX = xCenter;
+		mAxisY = yCenter;
 	}
 
 	@Override
@@ -81,18 +73,12 @@ public class FlipXAnimation extends Animation {
 	protected void applyTransformation(float interpolatedTime, Transformation t) {
 		
 		final float fromDegrees = mFromDegrees;
-		float degrees = fromDegrees + ((mToDegrees - fromDegrees) * interpolatedTime);
-
-		final float centerY = mCenterY;
+		float change = (mToDegrees - fromDegrees);
+		float degrees = fromDegrees + (change * interpolatedTime);
+		
 		final Camera camera = mCamera;
 
 		final Matrix matrix = t.getMatrix();
-
-		// This is where we determine the amount to translate by
-		int dirAmt = (mDirection == FlipDirection.LEFT_RIGHT) ? 1 : -1;
-		int amt = (mDirection == FlipDirection.RIGHT_LEFT) ? mWidth : 0;
-		int start = (int) (mOut ? amt : (mWidth / 2));
-		float centerX = (mWidth / 2 * interpolatedTime * dirAmt) + start;
 
 		camera.save();
 		
@@ -102,7 +88,7 @@ public class FlipXAnimation extends Animation {
 		camera.restore();
 		
 		// Adjusted the matrix translation to rotate off-center of the x-axis
-		matrix.preTranslate(-mRotateX, -centerY);
-		matrix.postTranslate(centerX, centerY);
+		matrix.preTranslate(-mAxisX, -mAxisY);
+		matrix.postTranslate(mAxisX, mAxisY);
 	}
 }

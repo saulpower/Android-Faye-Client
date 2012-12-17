@@ -1,11 +1,5 @@
 package com.moneydesktop.finance.handset.adapter;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang.WordUtils;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.res.ColorStateList;
@@ -19,9 +13,16 @@ import android.widget.TextView;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.AmazingAdapter;
 import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.shared.TransactionViewHolder;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.AmazingListView;
+
+import org.apache.commons.lang.WordUtils;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TransactionsHandsetAdapter extends AmazingAdapter {
 
@@ -137,33 +138,41 @@ public class TransactionsHandsetAdapter extends AmazingAdapter {
 	@Override
 	public View getAmazingView(int position, View convertView, ViewGroup parent) {
 		
+	    TransactionViewHolder viewHolder;
 		View res = convertView;
 
 		if (res == null) {
+		    
 			res = mActivity.getLayoutInflater().inflate(R.layout.handset_item_transaction, null);
 			fixDottedLine(res);
+			
+			viewHolder = new TransactionViewHolder();
+
+			viewHolder.title = (TextView) res.findViewById(R.id.title);
+			viewHolder.amount = (TextView) res.findViewById(R.id.amount);
+			viewHolder.category = (TextView) res.findViewById(R.id.category);
+			viewHolder.dollar = (TextView) res.findViewById(R.id.dollar_sign);
+			
+			applyFonts(viewHolder);
+			
+			res.setTag(viewHolder);
+			
+		} else {
+		    
+		    viewHolder = (TransactionViewHolder) res.getTag();
 		}
-
-		TextView title = (TextView) res.findViewById(R.id.title);
-		TextView amount = (TextView) res.findViewById(R.id.amount);
-		TextView category = (TextView) res.findViewById(R.id.category);
-		TextView dollar = (TextView) res.findViewById(R.id.dollar_sign);
-
-		Fonts.applyPrimaryBoldFont(amount, 18);
-		Fonts.applyPrimaryFont(title, 18);
-		Fonts.applyPrimaryFont(category, 12);
-		Fonts.applySecondaryItalicFont(dollar, 10);
 
 		Transactions transactions = getItem(position);
 		
 		if (transactions != null) {
 		
-			title.setText(WordUtils.capitalize(transactions.getTitle().toLowerCase()));
-			amount.setText(mFormatter.format(transactions.getAmount()));
-			amount.setTextColor(transactions.getRawAmount() < 0 ? mGreenColor : mGrayColor);
+		    viewHolder.title.setText(WordUtils.capitalize(transactions.getTitle().toLowerCase()));
+		    viewHolder.amount.setText(mFormatter.format(transactions.getAmount()));
+		    viewHolder.amount.setTextColor(transactions.getRawAmount() < 0 ? mGreenColor : mGrayColor);
 	
-			if (transactions.getCategory() != null)
-				category.setText(transactions.getCategory().getCategoryName());
+			if (transactions.getCategory() != null) {
+			    viewHolder.category.setText(transactions.getCategory().getCategoryName());
+			}
 		}
 
 		return res;
@@ -178,6 +187,14 @@ public class TransactionsHandsetAdapter extends AmazingAdapter {
 			res.findViewById(R.id.dotted2).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 			res.findViewById(R.id.dotted3).setLayerType(View.LAYER_TYPE_SOFTWARE, null);	
 		}
+	}
+	
+	private void applyFonts(TransactionViewHolder viewHolder) {
+
+        Fonts.applyPrimaryBoldFont(viewHolder.amount, 18);
+        Fonts.applyPrimaryFont(viewHolder.title, 18);
+        Fonts.applyPrimaryFont(viewHolder.category, 12);
+        Fonts.applySecondaryItalicFont(viewHolder.dollar, 10);
 	}
 
 	@Override

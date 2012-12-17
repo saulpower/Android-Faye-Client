@@ -1,14 +1,15 @@
 package com.moneydesktop.finance.tablet.fragment;
 
-import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -23,6 +24,7 @@ import de.greenrobot.event.EventBus;
 
 import java.util.List;
 
+@TargetApi(11)
 public class TransactionsPageTabletFragment extends BaseFragment implements OnItemClickListener {
     
     public final String TAG = this.getClass().getSimpleName();
@@ -32,7 +34,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     private TransactionsTabletAdapter mAdapter;
     
     private boolean mLoaded = false;
-    private boolean mWaiting = false;
+    private boolean mWaiting = true;
     
     public static TransactionsPageTabletFragment newInstance() {
             
@@ -97,16 +99,24 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
             mRoot.getLocationOnScreen(location);
             
             TransactionsTabletFragment frag = ((TransactionsTabletFragment) getParentFragment());
-            frag.showTransactionDetails(view, location[1]);
+            frag.showTransactionDetails(view, location[1], transaction);
         }
     }
 
     private void configureView() {
         
-        if (mLoaded && !mWaiting) {
-            
-            mTransactionsList.setVisibility(View.VISIBLE);
-            animate(mTransactionsList).alpha(1.0f).setDuration(400);
+        if (mLoaded && !mWaiting && mTransactionsList.getVisibility() != View.VISIBLE) {
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                
+                @Override
+                public void run() {
+
+                    mTransactionsList.setVisibility(View.VISIBLE);
+                    mTransactionsList.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in_fast));
+                }
+            }, 100);
         }
     }
     

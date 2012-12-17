@@ -51,32 +51,77 @@ public class AnimationFactory {
 	 */
 	public static enum FlipDirection {
 		LEFT_RIGHT, 
-		RIGHT_LEFT;
+		RIGHT_LEFT, 
+        TOP_BOTTOM, 
+        BOTTOM_TOP,
+        IN_TOP_BOTTOM,
+        OUT_BOTTOM_TOP;
 		
 		public float getStartDegreeForFirstView() {
-			return 0;
+			
+		    int degrees = 0;
+            
+            switch(this) {
+                case BOTTOM_TOP:
+                    degrees = 90;
+                    break;
+                case IN_TOP_BOTTOM:
+                    degrees = -90;
+                    break;
+                case OUT_BOTTOM_TOP:
+                    degrees = 0;
+                    break;
+                default:
+                    break;
+            }
+		    return degrees;
 		}
 		
 		public float getStartDegreeForSecondView() {
+		    
+            int degrees = 90;
+            
 			switch(this) {
-			case LEFT_RIGHT:
-				return -90;
-			case RIGHT_LEFT:
-				return 90;
-			default:
-				return 0;
+                case TOP_BOTTOM:
+    			case LEFT_RIGHT:
+                    degrees = -90;
+                    break;
+    			case RIGHT_LEFT:
+                    degrees = 90;
+                    break;
+                case IN_TOP_BOTTOM:
+                case BOTTOM_TOP:
+    			default:
+                    degrees = 0;
+                    break;
 			}
+			
+			return degrees;
 		}
 		
 		public float getEndDegreeForFirstView() {
+		    
+		    int degrees = 90;
+		    
 			switch(this) {
-			case LEFT_RIGHT:
-				return 90;
-			case RIGHT_LEFT:
-				return -90;
-			default:
-				return 0;
+    		    case IN_TOP_BOTTOM:
+    		        degrees = 0;
+    		        break;
+                case TOP_BOTTOM:
+    			case LEFT_RIGHT:
+    				degrees = 90;
+    				break;
+                case OUT_BOTTOM_TOP:
+    			case RIGHT_LEFT:
+    			    degrees = -90;
+    			    break;
+                case BOTTOM_TOP:
+    			default:
+    			    degrees = 0;
+    			    break;
 			}
+			
+			return degrees;
 		}
 		
 		public float getEndDegreeForSecondView() {

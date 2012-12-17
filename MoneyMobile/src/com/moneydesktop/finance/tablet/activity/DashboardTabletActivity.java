@@ -32,6 +32,7 @@ import com.moneydesktop.finance.tablet.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.SettingsTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.SummaryTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.FixedSpeedScroller;
@@ -59,6 +60,8 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	private Animation mIn, mOut;
 	
 	private int mCurrentIndex = 0;
+	
+	private BaseFragment mFragment;
 
 	public GrowPagerAdapter getPagerAdapter() {
 	    return mAdapter;
@@ -71,7 +74,11 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 			
 			toggleNavigation();
 			
-		} else if (mFlipper.indexOfChild(mFlipper.getCurrentView()) == 1) {
+		} else if (mFragment != null && mFragment.onBackPressed()) {
+		    
+            return;
+            
+        } else if (mFlipper.indexOfChild(mFlipper.getCurrentView()) == 1) {
 			
 			if (mFragmentCount == 1 && !mOnHome) {
 				configureView(true);
@@ -122,6 +129,8 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	@Override
 	public void onFragmentAttached(BaseFragment fragment) {
 
+	    mFragment = fragment;
+	    
 	    if (mOnFragment) {
             mFragmentCount = 1;
         }
@@ -142,23 +151,23 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
     		mCurrentIndex = 0;
     		mNavigation.setCurrentIndex(0);
 	        
-			mFlipper.setInAnimation(this, R.anim.none);
+			mFlipper.setInAnimation(this, R.anim.in_down);
 			mFlipper.setOutAnimation(mOut);
 			mFlipper.setDisplayedChild(getNextIndex());
 
-            mNavTitle.setInAnimation(this, R.anim.in_down);
-            mNavTitle.setOutAnimation(this, R.anim.out_down);
+            mNavTitle.setInAnimation(this, R.anim.in_down_fade);
+            mNavTitle.setOutAnimation(this, R.anim.out_down_fade);
 			
     	} else {
 	    	
 			EventBus.getDefault().post(new EventMessage().new ParentAnimationEvent(false, false));
             
             mFlipper.setInAnimation(mIn);
-            mFlipper.setOutAnimation(this, R.anim.none);
+            mFlipper.setOutAnimation(this, R.anim.out_up);
             mFlipper.setDisplayedChild(getNextIndex());
 
-            mNavTitle.setInAnimation(this, R.anim.in_up);
-            mNavTitle.setOutAnimation(this, R.anim.out_up);
+            mNavTitle.setInAnimation(this, R.anim.in_up_fade);
+            mNavTitle.setOutAnimation(this, R.anim.out_up_fade);
     	}
     }
     
@@ -247,8 +256,8 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         mNavigation.setOnNavigationChangeListener(this);
         
         mNavTitle.setFactory(this);
-        mNavTitle.setInAnimation(this, R.anim.in_up);
-        mNavTitle.setOutAnimation(this, R.anim.out_up);
+        mNavTitle.setInAnimation(this, R.anim.in_up_fade);
+        mNavTitle.setOutAnimation(this, R.anim.out_up_fade);
         
         mHomeButton.setOnClickListener(new OnClickListener() {
             
@@ -365,5 +374,12 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         Fonts.applyPrimaryBoldFont(t, 18);
         
         return t;
+    }
+    
+    public void setDetailFragment(TransactionsDetailTabletFragment fragment) {
+        
+        if (mFragment instanceof TransactionsTabletFragment) {
+            ((TransactionsTabletFragment) mFragment).setDetailFragment(fragment);
+        }
     }
 }
