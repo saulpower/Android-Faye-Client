@@ -128,7 +128,7 @@
     <string name="signup_name">Your Name</string>
     <string name="signup_email">Your Email</string>
     <string name="signup_bank">Your Financial Institution</string>
-    <string name="status_description_4">An unknown error occured. Just refresh this bank to try again.</string>
+    <string name="status_description_4">An unknown error occurred. Just refresh this bank to try again.</string>
     <string name="status_description_5">Invalid username and password. Click on the button below to try again.</string>
     <string name="status_description_6">Multifactor Authentication Required. Click on the button below to give us these additional pieces of information.</string>
     <string name="status_description_7">This bank needs to be refreshed to get the most up to date data. Please refresh this bank.</string>
