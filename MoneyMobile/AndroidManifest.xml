@@ -71,6 +71,9 @@
         <activity
             android:name=".tablet.activity.LoginTabletActivity"
             android:screenOrientation="landscape" />
+        <activity
+            android:name=".tablet.activity.LoadingTabletActivity"
+            android:screenOrientation="landscape"/>
         
     </application>
 

@@ -91,7 +91,7 @@ public class LineView extends View {
             
             setColor(a.getColor(R.styleable.Line_lineColor, Color.BLACK));
             setIsDashed(a.getBoolean(R.styleable.Line_isDashed, false));
-            setLineWidth(a.getFloat(R.styleable.Line_lineWidth, 1.0f));
+            setLineWidth(a.getFloat(R.styleable.Line_lineStrokeWidth, 1.0f));
             setDashLength(a.getFloat(R.styleable.Line_dashLength, mIsDashed ? 1.0f : 0.0f));
             setIsVertical(a.getBoolean(R.styleable.Line_isVertical, false));
             

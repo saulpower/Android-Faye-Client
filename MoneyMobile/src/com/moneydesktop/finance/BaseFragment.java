@@ -24,8 +24,9 @@ public abstract class BaseFragment extends Fragment {
 	@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        
+        if(activity instanceof DashboardBaseActivity){
         this.mActivity = (DashboardBaseActivity) activity;
+        }
 	}
     
     @Override

@@ -33,7 +33,7 @@
 	            android:layout_width="wrap_content"
 	            android:layout_height="match_parent"
 	            app:lineColor="@color/primaryColor"
-	            app:lineWidth="1"
+	            app:lineStrokeWidth="1"
 	            app:isVertical="true" />
         
 	        <LinearLayout
@@ -66,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:lineColor="@color/gray2"
-            app:lineWidth="1" />
+            app:lineStrokeWidth="1" />
         
         <LinearLayout
             android:layout_width="match_parent"
@@ -105,7 +105,7 @@
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            app:lineColor="@color/gray2"
-	            app:lineWidth="1"
+	            app:lineStrokeWidth="1"
 	            app:isVertical="true" />
             
             <RelativeLayout
@@ -177,7 +177,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:lineColor="@color/gray2"
-            app:lineWidth="1"
+            app:lineStrokeWidth="1"
             app:isDashed="true"
             app:dashLength="2"  />
         
@@ -218,7 +218,7 @@
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            app:lineColor="@color/gray2"
-	            app:lineWidth="1"
+	            app:lineStrokeWidth="1"
 	            app:isVertical="true" />
             
             <RelativeLayout
@@ -254,7 +254,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:lineColor="@color/gray2"
-            app:lineWidth="1"
+            app:lineStrokeWidth="1"
             app:isDashed="true"
             app:dashLength="2"  />
         
@@ -295,7 +295,7 @@
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            app:lineColor="@color/gray2"
-	            app:lineWidth="1"
+	            app:lineStrokeWidth="1"
 	            app:isVertical="true" />
             
             <RelativeLayout
@@ -329,7 +329,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:lineColor="@color/gray2"
-            app:lineWidth="1"
+            app:lineStrokeWidth="1"
             app:isDashed="true"
             app:dashLength="2" />
         
@@ -369,7 +369,7 @@
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            app:lineColor="@color/gray2"
-	            app:lineWidth="1"
+	            app:lineStrokeWidth="1"
 	            app:isVertical="true" />
             
             <RelativeLayout
@@ -405,14 +405,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:lineColor="@color/gray2"
-            app:lineWidth="1" />
+            app:lineStrokeWidth="1" />
         
         <com.moneydesktop.finance.views.LineView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             app:lineColor="@color/gray2"
-            app:lineWidth="1" />
+            app:lineStrokeWidth="1" />
         
         <LinearLayout
             android:layout_width="match_parent"
