@@ -63,7 +63,7 @@ import com.viewpagerindicator.CirclePageIndicator;
      
             @Override
             public int getCount() {
-                return 5;
+                return 4;
             }
      
             @Override
@@ -77,8 +77,6 @@ import com.viewpagerindicator.CirclePageIndicator;
                     return new IntroFragment(R.drawable.intro3,R.string.intro_title_3,R.string.intro_desc_3);
                 case 3:
                     return new IntroFragment(R.drawable.intro4,R.string.intro_title_4,R.string.intro_desc_4); 
-                case 4:
-                    return new IntroFragment(R.drawable.intro5,R.string.intro_title_5,R.string.intro_desc_5);
                 default:
                     return null;
                 }

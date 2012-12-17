@@ -64,12 +64,10 @@
     <string name="intro_title_2">PRINT OR EMAIL</string>
     <string name="intro_title_3">BIZ/PERSONAL</string>
     <string name="intro_title_4">DID YOU KNOW?</string>
-    <string name="intro_title_5">DID YOU KNOW?</string>
     <string name="intro_desc_1">You can print a report of your financial data straight from the app. Just look for this printer icon.\nIt really is that easy.</string>
     <string name="intro_desc_2">You can print or email any transaction you want. \"Honey, why did you spend $112 at the golf course? Did you lose a bet?\" Sorry boys, now your wife knows everything.</string>
     <string name="intro_desc_3">Keep your side biz separate from your personal stuff by tagging transaction as business expenses (\"B\") or personal expenses (\"P\"). Some call it OCD. We call it organization. You\'re welcome.</string>
     <string name="intro_desc_4">You can email any report to whomeever you like. Want to show your husband how much money he spent at Home Depot this month? Just email him a copy of the Spending by Payee report. Now he\'s got nowhere to hide.</string>
-    <string name="intro_desc_5">Android developers love pizza. Donate via PayPal to MoneyDesktop\'s Android Pizza Fund by sending payments to telepheedian@gmail.com. We love you too.  </string>
     <string name="loading_app">Preparing the app...</string>
     <string name="default_account">MONEY MARKET</string>
     <string name="default_bank">ABC BANK</string>
