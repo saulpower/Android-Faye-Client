@@ -72,7 +72,7 @@
             android:name=".tablet.activity.LoginTabletActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".tablet.activity.LoadingTabletActivity"
+            android:name="com.moneydesktop.finance.tablet.activity.IntroTabletActivity"
             android:screenOrientation="landscape"/>
         
     </application>
