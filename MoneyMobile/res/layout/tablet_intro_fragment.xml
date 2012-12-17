@@ -26,7 +26,8 @@
             android:layout_weight="2"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="20dp"
-            android:layout_marginTop="40dp">
+            android:layout_marginTop="130dp"
+            android:layout_marginLeft="-100dp">
 
             <TextView
                 android:id="@+id/intro_text_title"

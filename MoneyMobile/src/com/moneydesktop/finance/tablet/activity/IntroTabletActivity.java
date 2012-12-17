@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.moneydesktop.finance.BaseActivity;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.R.color;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.tablet.fragment.IntroTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
@@ -52,6 +53,7 @@ public class IntroTabletActivity extends BaseActivity {
 
                 @Override
                 public void onClick(View v) {
+                    v.setBackgroundColor(color.gray7);
                     Intent i = new Intent(IntroTabletActivity.this, DashboardTabletActivity.class);
                     startActivity(i);
                 }
@@ -89,6 +91,19 @@ public class IntroTabletActivity extends BaseActivity {
                     return null;
             }
         }
+    }
+
+    @Override
+    protected void onPause() {
+        this.finish();
+        overridePendingTransition(R.anim.none, R.anim.out_down);
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        overridePendingTransition(R.anim.none, R.anim.out_down);
+        super.onPause();
     }
 
     @Override
