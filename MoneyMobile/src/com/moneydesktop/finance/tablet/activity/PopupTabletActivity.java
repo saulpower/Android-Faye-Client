@@ -90,7 +90,7 @@ public class PopupTabletActivity extends DashboardBaseActivity {
         case 0:
             return LockFragment.newInstance(true);
         case 1:
-            return TransactionsFragment.newInstance(getIntent().getExtras().get);
+          // return TransactionsFragment.newInstance(getIntent().getExtras().get);
         }
         
         return null;

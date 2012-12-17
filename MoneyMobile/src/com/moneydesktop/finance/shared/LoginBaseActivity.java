@@ -32,6 +32,7 @@ import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.model.EventMessage.LoginEvent;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
+import com.moneydesktop.finance.tablet.activity.LoadingTabletActivity;
 import com.moneydesktop.finance.tablet.activity.LoginTabletActivity;
 import com.moneydesktop.finance.util.Animator;
 import com.moneydesktop.finance.util.DialogUtils;
@@ -213,9 +214,8 @@ public abstract class LoginBaseActivity extends BaseActivity {
         
         mLogo.setOnClickListener(new OnClickListener() {
             
-            public void onClick(View v) {
-                
-                Intent i = new Intent(LoginBaseActivity.this, DebugActivity.class);
+            public void onClick(View v) {                
+                Intent i = new Intent(LoginBaseActivity.this, LoadingTabletActivity.class);
                 startActivity(i);
             }
         });
@@ -489,7 +489,8 @@ public abstract class LoginBaseActivity extends BaseActivity {
                     EventBus eventBus = EventBus.getDefault();
                     eventBus.post(new EventMessage().new LoginEvent());
                     
-                    toDashboard();
+                    Intent i = new Intent(LoginBaseActivity.this, LoadingTabletActivity.class);
+                    startActivity(i);
                 }
             }
             

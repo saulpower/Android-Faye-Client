@@ -146,7 +146,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity {
         	frag = SettingsFragment.getInstance(position);
         	break;
         case 3:
-        	frag = TransactionsFragment.newInstance();
+        	//frag = TransactionsFragment.newInstance();
         	break;
         case 4:
         	frag = LockFragment.newInstance(false);
