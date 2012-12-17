@@ -22,6 +22,8 @@ import com.moneydesktop.finance.views.AmazingListView;
 
 import de.greenrobot.event.EventBus;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @TargetApi(11)
@@ -30,7 +32,8 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     public final String TAG = this.getClass().getSimpleName();
 
     private AmazingListView mTransactionsList;
-
+    private TransactionsTabletFragment mParent;
+    private int[] mLocation = new int[2];
     private TransactionsTabletAdapter mAdapter;
     
     private boolean mLoaded = false;
@@ -58,6 +61,8 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         super.onCreateView(inflater, container, savedInstanceState);
         
         mRoot = inflater.inflate(R.layout.tablet_transaction_page_view, null);
+
+        mParent = ((TransactionsTabletFragment) getParentFragment());
         
         mTransactionsList = (AmazingListView) mRoot.findViewById(R.id.transactions);
         mTransactionsList.setOnItemClickListener(this);
@@ -94,12 +99,9 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         Transactions transaction = (Transactions) parent.getItemAtPosition(position);
         
         if (transaction != null) {
-            
-            int[] location = new int[2];
-            mRoot.getLocationOnScreen(location);
-            
-            TransactionsTabletFragment frag = ((TransactionsTabletFragment) getParentFragment());
-            frag.showTransactionDetails(view, location[1], transaction);
+
+            mRoot.getLocationOnScreen(mLocation);
+            mParent.showTransactionDetails(view, mLocation[1], transaction);
         }
     }
 
@@ -117,6 +119,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
                     mTransactionsList.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in_fast));
                 }
             }, 100);
+        
         }
     }
     
@@ -128,10 +131,25 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
             protected Void doInBackground(Integer... params) {
                 
                 int page = params[0];
-
-                List<Transactions> row1 = Transactions.getRows(page).second;
+                
+                Date today = new Date();
+                
+                Calendar c = Calendar.getInstance();    
+                c.setTime(today);
+                c.add(Calendar.MONTH, -1);
+                c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+                
+                Date start = c.getTime();
+                
+                c.set(Calendar.DAY_OF_MONTH, 1);
+                c.add(Calendar.MONTH, 2);
+                
+                Date end = c.getTime();
+                
+                List<Transactions> row1 = Transactions.getRows(page, start, end).second;
 
                 mAdapter = new TransactionsTabletAdapter(mActivity, mTransactionsList, row1);
+                mAdapter.setDateRange(start, end);
                 
                 return null;
             }

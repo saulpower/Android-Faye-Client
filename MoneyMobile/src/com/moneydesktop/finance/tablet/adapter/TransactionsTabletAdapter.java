@@ -25,6 +25,7 @@ import org.apache.commons.lang.WordUtils;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class TransactionsTabletAdapter extends AmazingAdapter {
@@ -36,6 +37,8 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
     private DecimalFormat mFormatter = new DecimalFormat("$#,##0.00;-$#,##0.00");
     private SimpleDateFormat mDateFormatter = new SimpleDateFormat("M/d/yy");
 	private AmazingListView mListView;
+	
+	private Date mStart, mEnd;
 
 	private Activity mActivity;
 
@@ -54,6 +57,11 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	public Transactions getItem(int position) {
 		
 		return mAllTransactions.get(position);
+	}
+	
+	public void setDateRange(Date start, Date end) {
+	    mStart = start;
+	    mEnd = end;
 	}
 
 	public long getItemId(int position) {
@@ -76,8 +84,14 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 				
 				int page = params[0];
 
-				Pair<Boolean, List<Transactions>> rows = Transactions.getRows(page);
-
+				Pair<Boolean, List<Transactions>> rows;
+				
+				if (mStart == null || mEnd == null) {
+				    rows = Transactions.getRows(page);
+				} else {
+				    rows = Transactions.getRows(page, mStart, mEnd);
+				}
+				
 				return rows;
 			}
 

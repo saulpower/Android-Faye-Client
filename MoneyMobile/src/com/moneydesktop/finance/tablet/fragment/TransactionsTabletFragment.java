@@ -8,8 +8,8 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -45,6 +45,8 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
 	private View mCellView;
 	private int mCenterX, mCellX, mCellY, mHeight;
 	private TransactionsDetailTabletFragment mDetailFragment;
+	
+	private boolean mStartFix = true;
 	
 	private AnimatorListener mListenerShow = new AnimatorListener() {
         
@@ -235,7 +237,25 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
 	    
 	    createViewImage();
 	    
-	    configureDetailView();
+	    // Fix for some sort of initialization delay
+	    if (mStartFix) {
+            
+            mStartFix = false;
+            
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                
+                @Override
+                public void run() {
+
+                    configureDetailView();
+                }
+            }, 100);
+            
+        } else {
+	    
+            configureDetailView();
+        }
 	}
 	
 	private void createViewImage() {
@@ -257,12 +277,13 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
 
             mAnimating = true;
             
-            AnimatorSet set = moveCell(true);
+            final AnimatorSet set = moveCell(true);
             set.addListener(mListenerShow);
             
             mCellView.setVisibility(View.GONE);
             mFakeCell.setVisibility(View.VISIBLE);
             mContainer.setVisibility(View.VISIBLE);
+
             set.start();
             
         } else {
