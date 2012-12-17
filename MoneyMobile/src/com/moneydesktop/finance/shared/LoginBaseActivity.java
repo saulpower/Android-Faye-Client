@@ -208,7 +208,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mLogo.setOnClickListener(new OnClickListener() {
             
             public void onClick(View v) {                
-                Intent i = new Intent(LoginBaseActivity.this, LoadingTabletActivity.class);
+                Intent i = new Intent(LoginBaseActivity.this, DebugActivity.class );
                 startActivity(i);
             }
         });

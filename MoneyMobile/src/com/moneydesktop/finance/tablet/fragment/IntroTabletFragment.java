@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.tablet.activity;
+package com.moneydesktop.finance.tablet.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,11 +13,11 @@ import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.Fonts;
  
-public class IntroFragment extends BaseFragment {
+public class IntroTabletFragment extends BaseFragment {
     private final int introImageResourceId;
     private final int mIntroTitle;
     private final int mIntroDescription;
-    public IntroFragment(int introImageResourceId, int mIntroTitle, int mIntroDescription) {
+    public IntroTabletFragment(int introImageResourceId, int mIntroTitle, int mIntroDescription) {
         this.introImageResourceId = introImageResourceId;
         this.mIntroTitle = mIntroTitle;
         this.mIntroDescription = mIntroDescription;
@@ -37,7 +37,7 @@ public class IntroFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.tablet_loading_images, container, false);
+        View view = inflater.inflate(R.layout.tablet_loading_fragment, container, false);
         ImageView introImage = (ImageView) view.findViewById(R.id.introImage);
         introImage.setImageDrawable(getResources().getDrawable(introImageResourceId));
         TextView introTextTitle = (TextView) view.findViewById(R.id.intro_text_title);

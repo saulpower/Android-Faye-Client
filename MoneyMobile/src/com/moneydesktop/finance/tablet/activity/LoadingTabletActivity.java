@@ -13,6 +13,7 @@ import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseActivity;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
+import com.moneydesktop.finance.tablet.fragment.IntroTabletFragment;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.SmallSpinnerView;
@@ -63,22 +64,20 @@ import com.viewpagerindicator.CirclePageIndicator;
      
             @Override
             public int getCount() {
-                return 5;
+                return 4;
             }
      
             @Override
             public Fragment getItem(int position) {
                 switch (position) {
                 case 0:
-                    return new IntroFragment(R.drawable.intro1,R.string.intro_title_1,R.string.intro_desc_1);
+                    return new IntroTabletFragment(R.drawable.intro1,R.string.intro_title_1,R.string.intro_desc_1);
                 case 1:
-                    return new IntroFragment(R.drawable.intro2,R.string.intro_title_2,R.string.intro_desc_2);
+                    return new IntroTabletFragment(R.drawable.intro2,R.string.intro_title_2,R.string.intro_desc_2);
                 case 2:
-                    return new IntroFragment(R.drawable.intro3,R.string.intro_title_3,R.string.intro_desc_3);
+                    return new IntroTabletFragment(R.drawable.intro3,R.string.intro_title_3,R.string.intro_desc_3);
                 case 3:
-                    return new IntroFragment(R.drawable.intro4,R.string.intro_title_4,R.string.intro_desc_4); 
-                case 4:
-                    return new IntroFragment(R.drawable.intro5,R.string.intro_title_5,R.string.intro_desc_5);
+                    return new IntroTabletFragment(R.drawable.intro4,R.string.intro_title_4,R.string.intro_desc_4); 
                 default:
                     return null;
                 }
