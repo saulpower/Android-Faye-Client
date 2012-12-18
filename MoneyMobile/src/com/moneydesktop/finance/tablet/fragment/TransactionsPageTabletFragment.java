@@ -19,6 +19,8 @@ import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.EventMessage.ParentAnimationEvent;
 import com.moneydesktop.finance.tablet.adapter.TransactionsTabletAdapter;
 import com.moneydesktop.finance.views.AmazingListView;
+import com.moneydesktop.finance.views.DateRangeView;
+import com.moneydesktop.finance.views.HorizontalScroller;
 
 import de.greenrobot.event.EventBus;
 
@@ -32,6 +34,8 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     public final String TAG = this.getClass().getSimpleName();
 
     private AmazingListView mTransactionsList;
+    private DateRangeView mDateRange;
+    private HorizontalScroller mScroller;
     private TransactionsTabletFragment mParent;
     private int[] mLocation = new int[2];
     private TransactionsTabletAdapter mAdapter;
@@ -64,8 +68,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
 
         mParent = ((TransactionsTabletFragment) getParentFragment());
         
-        mTransactionsList = (AmazingListView) mRoot.findViewById(R.id.transactions);
-        mTransactionsList.setOnItemClickListener(this);
+        setupView();
         
         if (!mLoaded)
             getInitialTransactions();
@@ -80,6 +83,17 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         super.onPause();
         
         EventBus.getDefault().unregister(this);
+    }
+    
+    private void setupView() {
+
+        mTransactionsList = (AmazingListView) mRoot.findViewById(R.id.transactions);
+        mTransactionsList.setOnItemClickListener(this);
+        
+        mScroller = (HorizontalScroller) mRoot.findViewById(R.id.date_scroller);
+        
+        mDateRange = (DateRangeView) mRoot.findViewById(R.id.date_range);
+        mDateRange.setScroller(mScroller);
     }
     
     private void setupList() {

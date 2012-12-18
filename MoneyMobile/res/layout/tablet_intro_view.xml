@@ -4,18 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/tablet_wood"
-    android:orientation="vertical">
+    android:orientation="vertical" xmlns:app1="http://schemas.android.com/apk/res/com.moneydesktop.finance">
     
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="600dp" />
+        android:layout_width="fill_parent"
+        android:layout_height="0dp" 
+        android:layout_weight="10"/>
 
 	<com.viewpagerindicator.CirclePageIndicator
 	    android:id="@+id/titles"
 	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content" 
-	    android:padding="30dip"
+	    android:layout_height="0dp"
+	    android:layout_weight=".5"
         app:radius="5dp"
         app:pageColor="#FFAAAAAA"
         app:fillColor="#FF00ACED"
@@ -24,7 +25,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="@color/white">
 		<TextView
 		    android:id="@+id/get_started"

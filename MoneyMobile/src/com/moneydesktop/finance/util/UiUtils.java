@@ -140,5 +140,9 @@ public class UiUtils {
     public static float getDynamicPixels(Context context, float pixels) {
     	return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixels, context.getResources().getDisplayMetrics());
     }
+    
+    public static float getScaledPixels(Context context, float size) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, size, context.getResources().getDisplayMetrics());
+    }
 
 }

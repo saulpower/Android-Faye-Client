@@ -177,11 +177,19 @@
         android:dividerHeight="1dp"
         android:visibility="gone" />
 
-    <FrameLayout
-        android:id="@+id/time_fragment"
+    <com.moneydesktop.finance.views.HorizontalScroller
+        android:id="@+id/date_scroller"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/white" />
+        android:background="@color/white" >
+        
+        <com.moneydesktop.finance.views.DateRangeView
+            android:id="@+id/date_range"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+        	android:paddingLeft="80dp" />
+        
+    </com.moneydesktop.finance.views.HorizontalScroller>
 
 </RelativeLayout>

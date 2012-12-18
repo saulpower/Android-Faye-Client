@@ -75,7 +75,6 @@ public class PointerDrawable extends NavItemDrawable {
 		circle = new Paint(Paint.ANTI_ALIAS_FLAG);
 		circle.setColor(Color.WHITE);
 		circle.setStyle(Paint.Style.STROKE);
-		circle.setAntiAlias(true);
 		circle.setStrokeWidth(3);
 		circle.setPathEffect(dashPath);
 	}
