@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.util.UiUtils;
 
 public class IntroTabletFragment extends BaseFragment {
     private final int mIntroImageResourceId;
@@ -42,11 +43,13 @@ public class IntroTabletFragment extends BaseFragment {
         TextView introTextTitle = (TextView) view.findViewById(R.id.intro_text_title);
         String Title = getResources().getString(mIntroTitle);
         introTextTitle.setText(Title);
-        Fonts.applyPrimaryBoldFont(introTextTitle, 32);
+        Fonts.applyPrimaryBoldFont(introTextTitle,
+                UiUtils.convertPixelsToDp(32, this.getActivity()));
         String Description = getResources().getString(mIntroDescription);
         TextView introTextDescription = (TextView) view.findViewById(R.id.intro_text_description);
         introTextDescription.setText(Description);
-        Fonts.applyPrimaryFont(introTextDescription, 24);
+        Fonts.applyPrimaryFont(introTextDescription,
+                UiUtils.convertPixelsToDp(24, this.getActivity()));
         return view;
     }
 
