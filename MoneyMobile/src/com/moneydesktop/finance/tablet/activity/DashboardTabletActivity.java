@@ -109,7 +109,6 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements
 
     @Override
     protected void onResume() {
-        overridePendingTransition(R.anim.none, R.anim.out_down);
         super.onResume();
         updateNavBar(getActivityTitle());
     }

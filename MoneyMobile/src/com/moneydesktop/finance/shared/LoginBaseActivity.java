@@ -550,6 +550,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
                     Intent i = new Intent(LoginBaseActivity.this, IntroTabletActivity.class);
                     startActivity(i);
+                    finish();
                 }
             }
 

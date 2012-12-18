@@ -32,7 +32,7 @@
 		    android:id="@+id/get_started"
 		    android:layout_width="300dp"
 		    android:layout_height="60dp"
-		    android:background="@color/primaryColor"
+		    android:background="@drawable/primary_to_gray"
 		    android:text="@+string/get_started"
 		    android:textColor="@color/white"
 		    android:gravity="center"

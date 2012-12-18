@@ -11,16 +11,21 @@ import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.BaseActivity;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.R.color;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.tablet.fragment.IntroTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.views.FixedSpeedScroller;
 import com.moneydesktop.finance.views.SmallSpinnerView;
 import com.viewpagerindicator.CirclePageIndicator;
+
+import java.lang.reflect.Field;
 
 public class IntroTabletActivity extends BaseActivity {
     private MyAdapter mAdapter;
@@ -43,10 +48,20 @@ public class IntroTabletActivity extends BaseActivity {
         mLoadingMessage = (TextView) findViewById(R.id.loading_text);
         mLoadingMessage.setText(getResources().getText(R.string.loading_app));
         Fonts.applyPrimaryFont(mLoadingMessage, 24);
+        // Hack fix to adjust scroller velocity on view pager
+        try {
+
+            Field mScroller;
+            mScroller = ViewPager.class.getDeclaredField("mScroller");
+            mScroller.setAccessible(true);
+            FixedSpeedScroller scroller = new FixedSpeedScroller(mPager.getContext(), null);
+            mScroller.set(mPager, scroller);
+
+        } catch (Exception e) {
+        }
         mPager.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent e) {
-                // TODO Auto-generated method stub
                 stopFlipping();
                 return false;
             }
@@ -82,15 +97,37 @@ public class IntroTabletActivity extends BaseActivity {
             mSpinner = (SmallSpinnerView) findViewById(R.id.loading_spinner);
             mLoadingMessage.setVisibility(View.GONE);
             mSpinner.setVisibility(View.GONE);
+            Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out_fast);
+            fadeOut.setAnimationListener(new AnimationListener() {
+
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    mLoadingMessage.setVisibility(View.GONE);
+                    mSpinner.setVisibility(View.GONE);
+                }
+            });
+            mLoadingMessage.startAnimation(fadeOut);
+            mSpinner.startAnimation(fadeOut);
             Fonts.applyPrimarySemiBoldFont(mStartButton, 18);
             mStartButton.setVisibility(View.VISIBLE);
+            Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in_fast);
+            mStartButton.startAnimation(fadeIn);
             mStartButton.setOnClickListener(new OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    v.setBackgroundColor(color.gray7);
                     Intent i = new Intent(IntroTabletActivity.this, DashboardTabletActivity.class);
                     startActivity(i);
+                    overridePendingTransition(R.anim.none, R.anim.out_down);
+                    finish();
                 }
             });
 
