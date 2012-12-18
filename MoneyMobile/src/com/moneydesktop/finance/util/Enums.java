@@ -2,6 +2,10 @@ package com.moneydesktop.finance.util;
 
 public class Enums {
 
+    public enum TxFilter {
+        ALL, UNCLEARED
+    }
+    
 	public enum TxType {
 		INSERT, UPDATE, DELETE
 	}
