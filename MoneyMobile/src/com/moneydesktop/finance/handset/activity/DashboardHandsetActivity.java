@@ -14,11 +14,15 @@ import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
-import com.moneydesktop.finance.handset.fragment.DashboardFragmentFactory;
-import com.moneydesktop.finance.handset.fragment.LockFragment;
-import com.moneydesktop.finance.handset.fragment.SettingsFragment;
-import com.moneydesktop.finance.handset.fragment.TransactionsFragment;
+import com.moneydesktop.finance.handset.fragment.DashboardHandsetFragmentFactory;
+import com.moneydesktop.finance.handset.fragment.SettingsHandsetFragment;
+import com.moneydesktop.finance.handset.fragment.TransactionsHandsetFragment;
+import com.moneydesktop.finance.model.EventMessage;
+import com.moneydesktop.finance.model.EventMessage.ParentAnimationEvent;
 import com.moneydesktop.finance.shared.DashboardBaseActivity;
+import com.moneydesktop.finance.shared.LockFragment;
+
+import de.greenrobot.event.EventBus;
 
 public class DashboardHandsetActivity extends DashboardBaseActivity {
 	
@@ -120,7 +124,8 @@ public class DashboardHandsetActivity extends DashboardBaseActivity {
 					viewDidAppear();
 				}
 			};
-	    	
+
+	        EventBus.getDefault().post(new EventMessage().new ParentAnimationEvent(false, false));
 	        AnimationFactory.flipTransition(mFlipper, null, finish, home ? FlipDirection.RIGHT_LEFT : FlipDirection.LEFT_RIGHT, TRANSITION_DURATION);
     	}
     }
@@ -137,13 +142,13 @@ public class DashboardHandsetActivity extends DashboardBaseActivity {
     	
         switch (position) {
         case 0:
-        	frag = SettingsFragment.getInstance(position);
+        	frag = SettingsHandsetFragment.getInstance(position);
         	break;
         case 1:
-        	frag = SettingsFragment.getInstance(position);
+        	frag = SettingsHandsetFragment.getInstance(position);
         	break;
         case 2:
-        	frag = SettingsFragment.getInstance(position);
+        	frag = SettingsHandsetFragment.getInstance(position);
         	break;
         case 3:
         	//frag = TransactionsFragment.newInstance();
@@ -172,7 +177,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity {
         @Override
         public Fragment getItem(int position) {
             
-            return DashboardFragmentFactory.getInstance(position);
+            return DashboardHandsetFragmentFactory.getInstance(position);
         }
     }
 }

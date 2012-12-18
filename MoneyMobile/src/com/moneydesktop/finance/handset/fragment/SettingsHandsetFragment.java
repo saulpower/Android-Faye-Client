@@ -17,20 +17,20 @@ import com.moneydesktop.finance.util.Fonts;
 
 import de.greenrobot.event.EventBus;
 
-public class SettingsFragment extends BaseFragment {
+public class SettingsHandsetFragment extends BaseFragment {
 
-    private static SettingsFragment sFragment;
+    private static SettingsHandsetFragment sFragment;
     
 	private TextView mLockIcon, mFeedbackIcon, mLogoutIcon, mLogoutLabel;
 	private LinearLayout mLock, mFeedback, mLogout;
 	
-	public static SettingsFragment getInstance(int position) {
+	public static SettingsHandsetFragment getInstance(int position) {
 		
 	    if (sFragment != null) {
 	        return sFragment;
 	    }
 	    
-	    sFragment = new SettingsFragment();
+	    sFragment = new SettingsHandsetFragment();
 	    sFragment.setPosition(position);
         sFragment.setRetainInstance(true);
 		

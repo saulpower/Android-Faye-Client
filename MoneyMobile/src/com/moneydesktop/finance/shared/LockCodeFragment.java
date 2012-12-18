@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.handset.fragment;
+package com.moneydesktop.finance.shared;
 
 import android.app.Activity;
 import android.content.Context;

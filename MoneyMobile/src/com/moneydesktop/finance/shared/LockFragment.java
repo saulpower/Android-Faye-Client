@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.handset.fragment;
+package com.moneydesktop.finance.shared;
 
 import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 

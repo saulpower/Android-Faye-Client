@@ -157,7 +157,7 @@ public class NavItemDrawable extends Drawable {
 		
 		mIntroSet = new AnimatorSet();
 		mIntroSet.play(translate).with(fade);
-		mIntroSet.setStartDelay(100);
+		mIntroSet.setStartDelay(100 + 40 * mIndex);
 		mIntroSet.start();
 	}
 	
@@ -200,6 +200,7 @@ public class NavItemDrawable extends Drawable {
 			
 			fade.setDuration(600);
 			mOutroSet.play(fade).with(translate).with(rotate);
+	        mOutroSet.setStartDelay(mIndex * 50);
 		}
 
 		mOutroSet.start();

@@ -96,6 +96,16 @@ public abstract class LoginBaseActivity extends BaseActivity {
         }
     }
 
+<<<<<<< HEAD
+=======
+    protected void addDemoCredentials() {
+
+        mUsername.setText("saul.howard@moneydesktop.com");
+        mPassword.setText("password123");
+    }
+
+    @SuppressLint("NewApi")
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
     protected void setupView() {
 
         mViewFlipper = (ViewFlipper) findViewById(R.id.flipper);
@@ -152,7 +162,10 @@ public abstract class LoginBaseActivity extends BaseActivity {
     private void addListeners() {
         mCancelText.setOnClickListener(new OnClickListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
 
                 cancel(mOutDown, mNoMovement);
@@ -160,7 +173,10 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mLoginViewButton.setOnClickListener(new OnClickListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
 
                 toLoginView();
@@ -168,14 +184,20 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mReturnHomeButton.setOnClickListener(new OnClickListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
                 cancel(mOutDown, mNoMovement);
             }
         });
         mDemoButton.setOnClickListener(new OnClickListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
 
                 demoMode();
@@ -183,7 +205,10 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mDemoButton2.setOnClickListener(new OnClickListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
 
                 demoMode();
@@ -191,21 +216,30 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mLoginButton.setOnClickListener(new OnClickListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
 
                 login();
             }
         });
         mSubmitButton.setOnClickListener(new OnClickListener() {
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
                 signup();
             }
         });
         mCancelButton.setOnClickListener(new OnClickListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
 
                 cancel(mInLeft, mOutRight);
@@ -222,7 +256,10 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mUsername.setOnFocusChangeListener(new OnFocusChangeListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onFocusChange(View v, boolean hasFocus) {
 
                 mUsername.setTextColor(getResources().getColor(
@@ -232,7 +269,10 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
         mPassword.setOnFocusChangeListener(new OnFocusChangeListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onFocusChange(View v, boolean hasFocus) {
 
                 mPassword.setTextColor(getResources().getColor(
@@ -242,7 +282,10 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
         mMessageBody.setOnTouchListener(new OnTouchListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public boolean onTouch(View v, MotionEvent event) {
 
                 return true;
@@ -250,7 +293,10 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mSignupName.setOnFocusChangeListener(new OnFocusChangeListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onFocusChange(View v, boolean hasFocus) {
 
                 mSignupName.setTextColor(getResources().getColor(
@@ -259,7 +305,10 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mSignupEmail.setOnFocusChangeListener(new OnFocusChangeListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onFocusChange(View v, boolean hasFocus) {
 
                 mSignupEmail.setTextColor(getResources().getColor(
@@ -268,7 +317,10 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mSignupBank.setOnFocusChangeListener(new OnFocusChangeListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onFocusChange(View v, boolean hasFocus) {
 
                 mSignupBank.setTextColor(getResources().getColor(
@@ -277,7 +329,10 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mMessageTitle.setOnTouchListener(new OnTouchListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public boolean onTouch(View v, MotionEvent event) {
 
                 return true;
@@ -286,7 +341,10 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
         mLoginText.setOnClickListener(new OnClickListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
 
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri
@@ -296,7 +354,10 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mSignupText.setOnClickListener(new OnClickListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
 
                 toSignupView();
@@ -315,17 +376,26 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mNoMovement = AnimationUtils.loadAnimation(this, R.anim.none);
         mInLeft.setAnimationListener(new AnimationListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onAnimationStart(Animation animation) {
 
                 configureButtons(false);
             }
 
+<<<<<<< HEAD
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+=======
             @Override
             public void onAnimationRepeat(Animation animation) {
             }
 
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onAnimationEnd(Animation animation) {
 
                 configureButtons(true);
@@ -334,17 +404,26 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
         mInRight.setAnimationListener(new AnimationListener() {
 
+<<<<<<< HEAD
+=======
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onAnimationStart(Animation animation) {
 
                 configureButtons(false);
             }
 
+<<<<<<< HEAD
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+=======
             @Override
             public void onAnimationRepeat(Animation animation) {
             }
 
             @Override
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onAnimationEnd(Animation animation) {
 
                 configureButtons(true);
@@ -383,9 +462,13 @@ public abstract class LoginBaseActivity extends BaseActivity {
     }
 
     private void demoMode() {
+<<<<<<< HEAD
         
         fadeCurrentView();
         
+=======
+
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
         User.registerDemoUser();
 
         DialogUtils.showProgress(this, getString(R.string.demo_message));
@@ -408,6 +491,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
         }.execute();
     }
+<<<<<<< HEAD
     
     private void fadeCurrentView() {
 
@@ -432,12 +516,23 @@ public abstract class LoginBaseActivity extends BaseActivity {
         if (signupCheck() && validateEmail(mSignupEmail.getText().toString())) {
             submit();
         }
+=======
 
+    private void signup() {
+
+        if (signupCheck() && validateEmail(mSignupEmail.getText().toString())) {
+            submit();
+        }
+
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
         else if (!signupCheck()) {
             DialogUtils.alertDialog(getString(R.string.error_title),
                     getString(R.string.error_login_incomplete), this, null);
         }
+<<<<<<< HEAD
+=======
 
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
         else if (!validateEmail(mSignupEmail.getText().toString())) {
             DialogUtils.alertDialog(getString(R.string.error_title),
                     getString(R.string.error_email_invalid), this, null);
@@ -445,13 +540,19 @@ public abstract class LoginBaseActivity extends BaseActivity {
     }
 
     private void submit() {
+<<<<<<< HEAD
+=======
 
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
         // TODO add data submission code here
         toThankYou();
     }
 
     private void toThankYou() {
+<<<<<<< HEAD
+=======
 
+>>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
         mViewFlipper.setOutAnimation(mInLeft);
         mViewFlipper.setInAnimation(mOutRight);
         mViewFlipper.setDisplayedChild(3);
@@ -562,7 +663,6 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
                     Intent i = new Intent(LoginBaseActivity.this, IntroTabletActivity.class);
                     startActivity(i);
-                    finish();
                 }
             }
 

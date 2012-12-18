@@ -3,22 +3,24 @@ package com.moneydesktop.finance.handset.fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 
-public class BudgetSummaryFragment extends BaseFragment {
+public class TransactionSummaryHandsetFragment extends BaseFragment {
 
-    private static BudgetSummaryFragment sFragment;
+    private static TransactionSummaryHandsetFragment sFragment;
     
-	public static BudgetSummaryFragment getInstance(int position) {
+	public static TransactionSummaryHandsetFragment getInstance(int position) {
 		
 	    if (sFragment != null) {
 	        return sFragment;
 	    }
 	    
-	    sFragment = new BudgetSummaryFragment();
+	    sFragment = new TransactionSummaryHandsetFragment();
 	    sFragment.setPosition(position);
         sFragment.setRetainInstance(true);
 		
@@ -28,13 +30,28 @@ public class BudgetSummaryFragment extends BaseFragment {
         return sFragment;
 	}
 	
+	private Button mButton;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
-		mRoot = inflater.inflate(R.layout.handset_budget_summary_view, null);
+		mRoot = inflater.inflate(R.layout.handset_transaction_summary_view, null);
+		setupView();
 		
 		return mRoot;
+	}
+	
+	private void setupView() {
+
+		mButton = (Button) mRoot.findViewById(R.id.button);		
+		mButton.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+
+				mActivity.showFragment(getPosition());
+			}
+		});
 	}
     
     @Override

@@ -14,14 +14,15 @@
 	    <RelativeLayout
 	        android:layout_width="0dp"
 	        android:layout_weight="3"
-	        android:layout_height="match_parent" >
+	        android:layout_height="match_parent"
+	        android:background="@drawable/primary_to_white" >
 	
 		    <com.moneydesktop.finance.views.VerticalTextView
 		        android:id="@+id/text_new"
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:background="@drawable/primary_to_white"
-		        android:gravity="center"
+		        android:paddingTop="3dp"
+		        android:paddingLeft="8dp"
 		        android:text="@string/text_new"
 		        android:textColor="@drawable/white_to_primary_text"
 		        app:isLeft="false" />
@@ -82,14 +83,29 @@
 	        android:layout_marginRight="@dimen/tablet_transaction_vert"
 	        android:background="@drawable/dotted_line_spaced_vertical_blue" />
 	
-	    <TextView
-	        android:id="@+id/amount"
-	        style="@style/tablet_txn_text"
+	    <RelativeLayout
 	        android:layout_width="0dp"
 	        android:layout_height="match_parent"
-	        android:layout_weight="15"
-	        android:gravity="center_vertical|right"
-	        android:textColor="@drawable/primary_to_white_text" />
+	        android:layout_weight="15">
+		    
+	        <com.moneydesktop.finance.views.Caret
+	            android:id="@+id/caret"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            app:color="@color/primaryColor"
+	            app:width="10dp"
+	            app:height="10dp"
+	            app:rotation="135" />
+	        
+	        <TextView
+		        android:id="@+id/amount"
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        style="@style/tablet_txn_text"
+		        android:gravity="center_vertical|right"
+		        android:textColor="@drawable/primary_to_white_text" />
+	        
+        </RelativeLayout>
 	
 	    <View
 	        android:id="@+id/dotted4"
@@ -101,10 +117,23 @@
 	        android:layout_marginRight="@dimen/tablet_transaction_vert"
 	        android:background="@drawable/dotted_line_spaced_vertical_blue" />
 	
-	    <View
+	    <RelativeLayout
 	        android:layout_width="0dp"
 	        android:layout_height="match_parent"
-	        android:layout_weight="10" />
+	        android:layout_weight="10" >
+		    
+	        <ImageView
+	            android:id="@+id/type"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerVertical="true"
+	            android:layout_alignParentLeft="true"
+	            android:layout_margin="8dp"
+	            android:contentDescription="@string/description"
+	            android:scaleType="fitCenter"
+	            android:src="@drawable/ipad_txndetail_icon_personal_grey" />
+	        
+        </RelativeLayout>
 	
 	</LinearLayout>
 

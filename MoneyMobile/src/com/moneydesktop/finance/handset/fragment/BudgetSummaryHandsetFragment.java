@@ -8,19 +8,19 @@ import android.view.ViewGroup;
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 
-public class AccountSummaryFragment extends BaseFragment {
+public class BudgetSummaryHandsetFragment extends BaseFragment {
 
-    private static AccountSummaryFragment sFragment;
+    private static BudgetSummaryHandsetFragment sFragment;
     
-	public static AccountSummaryFragment getInstance(int position) {
+	public static BudgetSummaryHandsetFragment getInstance(int position) {
 		
 	    if (sFragment != null) {
 	        return sFragment;
 	    }
 	    
-	    sFragment = new AccountSummaryFragment();
+	    sFragment = new BudgetSummaryHandsetFragment();
 	    sFragment.setPosition(position);
-	    sFragment.setRetainInstance(true);
+        sFragment.setRetainInstance(true);
 		
         Bundle args = new Bundle();
         sFragment.setArguments(args);
@@ -32,8 +32,7 @@ public class AccountSummaryFragment extends BaseFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
-		mRoot = inflater.inflate(R.layout.handset_account_summary_view, null);
-		setupView();
+		mRoot = inflater.inflate(R.layout.handset_budget_summary_view, null);
 		
 		return mRoot;
 	}
@@ -47,10 +46,6 @@ public class AccountSummaryFragment extends BaseFragment {
     public void onSaveInstanceState(Bundle outState)  {
         super.onSaveInstanceState(outState);
     }
-	
-	private void setupView() {
-
-	}
 	
 	@Override
 	public String getFragmentTitle() {

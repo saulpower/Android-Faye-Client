@@ -10,6 +10,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RelativeLayout;
@@ -23,13 +24,15 @@ import com.moneydesktop.finance.views.AmazingListView;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
 
+import de.greenrobot.event.EventBus;
+
 import java.util.List;
 
-public class TransactionsFragment extends BaseFragment implements OnItemClickListener {
+public class TransactionsHandsetFragment extends BaseFragment implements OnItemClickListener {
 	
 	public final String TAG = this.getClass().getSimpleName();
 	
-	private static TransactionsFragment sFragment;
+	private static TransactionsHandsetFragment sFragment;
 	private static String sAccountNumber;
 
 	private AmazingListView mTransactionsList;
@@ -37,10 +40,11 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 	private RelativeLayout mLoading;
 	
 	private boolean mLoaded = false;
+    private boolean mWaiting = true;
 	
-	public static TransactionsFragment newInstance(String accountNumber) {
+	public static TransactionsHandsetFragment newInstance(String accountNumber) {
 			
-		sFragment = new TransactionsFragment();
+		sFragment = new TransactionsHandsetFragment();
 		sAccountNumber = accountNumber;
 	
         Bundle args = new Bundle();
@@ -52,7 +56,8 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 	@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        
+
+        EventBus.getDefault().register(this);
         this.mActivity.onFragmentAttached(this);
 	}
 	
@@ -62,6 +67,13 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 		
         this.mActivity.updateNavBar(getFragmentTitle());
 	}
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        
+        EventBus.getDefault().unregister(this);
+    }
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -105,6 +117,7 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 			@Override
 			protected void onPostExecute(Void result) {
 
+			    mLoaded = true;
 				setupList();
 			};
 			
@@ -118,6 +131,10 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 		mTransactionsList.setLoadingView(mActivity.getLayoutInflater().inflate(R.layout.loading_view, null));
 		
 		mAdapter.notifyMayHaveMorePages();
+		
+		if (!mWaiting) {
+		    configureView();
+		}
 	}
 
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -126,7 +143,7 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 		
 		if (transaction != null) {
 			
-			TransactionDetailFragment detail = TransactionDetailFragment.newInstance(transaction.getId());
+			TransactionDetailHandsetFragment detail = TransactionDetailHandsetFragment.newInstance(transaction.getId());
 			
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
 			ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.out_right, R.anim.in_left);
@@ -143,40 +160,42 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 
 	private void configureView() {
 		
-		if (mLoaded) {
+		if (mLoaded && !mWaiting && mTransactionsList.getVisibility() != View.VISIBLE) {
 			
 			mTransactionsList.setVisibility(View.VISIBLE);
-			mLoading.setVisibility(View.GONE);
+            mTransactionsList.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in_fast));
+            animate(mLoading).alpha(0.0f).setDuration(400).setListener(new AnimatorListener() {
+                
+                public void onAnimationStart(Animator animation) {}
+                
+                public void onAnimationRepeat(Animator animation) {}
+                
+                public void onAnimationEnd(Animator animation) {
+                    mLoading.setVisibility(View.GONE);
+                }
+                
+                public void onAnimationCancel(Animator animation) {}
+            });
 		}
 	}
 	
 	public void onEvent(ParentAnimationEvent event) {
 		
-		if (event.isOutAnimation() && event.isFinished() && !mLoaded) {
+	    if (!event.isOutAnimation() && !event.isFinished()) {
+	        
+            mWaiting = true;
+        }
+	    
+		if (event.isOutAnimation() && event.isFinished()) {
+		    
+			mWaiting = false;
 			
-			animate(mLoading).alpha(0.0f).setDuration(400).setListener(new AnimatorListener() {
-				
-				public void onAnimationStart(Animator animation) {}
-				
-				public void onAnimationRepeat(Animator animation) {}
-				
-				public void onAnimationEnd(Animator animation) {
-					mLoading.setVisibility(View.GONE);
-				}
-				
-				public void onAnimationCancel(Animator animation) {}
-			});
-			
-			mTransactionsList.setVisibility(View.VISIBLE);
-			animate(mTransactionsList).alpha(1.0f).setDuration(400);
-			
-			mLoaded = true;
+			configureView();
 		}
 	}
 
     @Override
     public boolean onBackPressed() {
-        // TODO Auto-generated method stub
         return false;
     }
 }

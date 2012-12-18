@@ -10,10 +10,21 @@ public class EventMessage {
     public class ParentAnimationEvent extends EventMessage {
         protected Boolean mOutAnimation;
         protected Boolean mFinished;
+        protected boolean mIsNav = false;
 
         public ParentAnimationEvent(boolean outAnimation, boolean finished) {
             mOutAnimation = outAnimation;
             mFinished = finished;
+        }
+        
+        public ParentAnimationEvent(boolean outAnimation, boolean finished, boolean isNav) {
+            mOutAnimation = outAnimation;
+            mFinished = finished;
+            mIsNav = isNav;
+        }
+        
+        public boolean isNavigation() {
+            return mIsNav;
         }
         
         public boolean isOutAnimation() {
