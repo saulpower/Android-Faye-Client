@@ -28,6 +28,7 @@ public class IntroTabletActivity extends BaseActivity {
     private SmallSpinnerView mSpinner;
     private int mCurrentFragment = 0;
     private final Handler mHandler = new Handler();
+    private Runnable mTask;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,7 @@ public class IntroTabletActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-        Runnable task = new Runnable() {
+        mTask = new Runnable() {
             @Override
             public void run() {
                 if (mCurrentFragment <= mPager.getChildCount()) {
@@ -58,7 +59,11 @@ public class IntroTabletActivity extends BaseActivity {
                 mHandler.postDelayed(this, 5000);
             }
         };
-        mHandler.postDelayed(task, 5000);
+        mHandler.postDelayed(mTask, 5000);
+    }
+
+    public void stopFlipping() {
+        mHandler.removeCallbacks(mTask);
     }
 
     public void onEvent(SyncEvent event) {
