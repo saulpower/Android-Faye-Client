@@ -3,6 +3,7 @@ package com.moneydesktop.finance.tablet.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -25,6 +26,8 @@ public class IntroTabletActivity extends BaseActivity {
     private ViewPager mPager;
     private TextView mLoadingMessage;
     private SmallSpinnerView mSpinner;
+    private int mCurrentFragment = 0;
+    private final Handler mHandler = new Handler();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,24 @@ public class IntroTabletActivity extends BaseActivity {
         mLoadingMessage = (TextView) findViewById(R.id.loading_text);
         mLoadingMessage.setText(getResources().getText(R.string.loading_app));
         Fonts.applyPrimaryFont(mLoadingMessage, 24);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                if (mCurrentFragment <= mPager.getChildCount()) {
+                    mPager.setCurrentItem(mCurrentFragment++);
+                } else {
+                    mCurrentFragment = 0;
+                    mPager.setCurrentItem(mCurrentFragment++);
+                }
+                mHandler.postDelayed(this, 5000);
+            }
+        };
+        mHandler.postDelayed(task, 5000);
     }
 
     public void onEvent(SyncEvent event) {
