@@ -93,6 +93,15 @@
     <string name="icon_left_arrow">3</string>
     <string name="icon_logout">7</string>
     <string name="icon_password">§</string>
+    <string name="icon_cash">C</string>
+    <string name="icon_checking">D</string>
+    <string name="icon_investments">I</string>
+    <string name="icon_property">M</string>
+    <string name="icon_savings">O</string>
+    <string name="icon_credit_card">F</string>
+    <string name="icon_line_of_credit">J</string>
+    <string name="icon_loans">H</string>
+    <string name="icon_morgage">L</string>
     <string name="label_amount">Amount</string>
     <string name="label_app_lock">APP LOCK</string>
     <string name="label_category">Category</string>
