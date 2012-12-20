@@ -3,6 +3,7 @@ package com.moneydesktop.finance.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
@@ -81,9 +82,9 @@ public class AccountBalanceItemView extends LinearLayout {
             displayDebt();
         }
         else {
-            mLayout.setBackgroundColor(color.white);
-            mTextIcon.setTextColor(color.gray4);
-            mAccountAmount.setTextColor(color.gray9);
+            mLayout.setBackgroundColor(Color.WHITE);
+            mTextIcon.setTextColor(getContext().getResources().getColor(R.color.gray4));
+            mAccountAmount.setTextColor(getContext().getResources().getColor(R.color.gray9));
         }
         mAccountType.setTextColor(color.gray9);
         mAccountStatus.setTextColor(color.gray4);
@@ -95,9 +96,9 @@ public class AccountBalanceItemView extends LinearLayout {
 
     private void displayDebt() {
         mIsDebt = new Boolean(true);
-        mLayout.setBackgroundColor(color.gray3);
-        mTextIcon.setTextColor(color.gray9);
-        mAccountAmount.setTextColor(color.budgetColorRedRingColor);
+        mLayout.setBackgroundColor(getContext().getResources().getColor(R.color.gray3));
+        mTextIcon.setTextColor(getContext().getResources().getColor(R.color.gray9));
+        mAccountAmount.setTextColor(getContext().getResources().getColor(R.color.debts));
         invalidate();
     }
 }
