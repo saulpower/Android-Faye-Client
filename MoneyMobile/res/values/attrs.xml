@@ -34,8 +34,6 @@
         <attr name="textIcon" format="string"/>
         <attr name="isDebt" format="boolean"/>
         <attr name="accountType" format="string"/>
-        <attr name="accountStatus" format="string"/>
-        <attr name="accountAmount" format="string"/>
     </declare-styleable>
 
     <!-- Identifier for the child that represents the drawer's handle. -->
