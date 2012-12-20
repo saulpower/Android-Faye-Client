@@ -97,7 +97,7 @@ public class AccountBalanceItemView extends LinearLayout {
         mIsDebt = new Boolean(true);
         mLayout.setBackgroundColor(color.gray3);
         mTextIcon.setTextColor(color.gray9);
-        mAccountAmount.setTextColor(color.debts);
+        mAccountAmount.setTextColor(color.budgetColorRedRingColor);
         invalidate();
     }
 }

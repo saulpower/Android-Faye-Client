@@ -4,13 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" 
-    android:weightSum="100">
+    android:background="@color/white"    >
 
     <TextView
         android:id="@+id/label_balance_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@string/label_balances"/>
+        android:layout_height="0dp"
+        android:layout_weight=".5"
+        android:src="@string/label_balances"
+        android:textColor="@color/gray7"/>
      <com.moneydesktop.finance.views.LineView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,8 +22,8 @@
     <com.moneydesktop.finance.views.AccountBalanceItemView
         android:id="@+id/account_balance_cash"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="10"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         app:textIcon="@string/icon_cash"
         app:isDebt="false"
         app:accountType="@string/at_cash"
@@ -35,8 +37,8 @@
      <com.moneydesktop.finance.views.AccountBalanceItemView
         android:id="@+id/account_balance_checking"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="10"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         app:textIcon="@string/icon_checking"
         app:isDebt="false"
         app:accountType="@string/at_checking"
@@ -50,8 +52,8 @@
      <com.moneydesktop.finance.views.AccountBalanceItemView
         android:id="@+id/account_balance_inv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="10"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         app:textIcon="@string/icon_inv"
         app:isDebt="false"
         app:accountType="@string/at_inv"
@@ -65,8 +67,8 @@
      <com.moneydesktop.finance.views.AccountBalanceItemView
         android:id="@+id/account_balance_prop"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="10"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         app:textIcon="@string/icon_prop"
         app:isDebt="false"
         app:accountType="@string/at_prop"
@@ -80,8 +82,8 @@
     <com.moneydesktop.finance.views.AccountBalanceItemView
         android:id="@+id/account_balance_saving"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="10"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         app:textIcon="@string/icon_saving"
         app:isDebt="false"
         app:accountType="@string/at_saving"
@@ -95,8 +97,8 @@
     <com.moneydesktop.finance.views.AccountBalanceItemView
         android:id="@+id/account_balance_cc"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="10"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         app:textIcon="@string/icon_cc"
         app:isDebt="true"
         app:accountType="@string/at_cc"
@@ -110,8 +112,8 @@
      <com.moneydesktop.finance.views.AccountBalanceItemView
         android:id="@+id/account_balance_loc"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="10"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         app:textIcon="@string/icon_loc"
         app:isDebt="true"
         app:accountType="@string/at_loc"
@@ -125,8 +127,8 @@
      <com.moneydesktop.finance.views.AccountBalanceItemView
         android:id="@+id/account_balance_loans"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="10"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         app:textIcon="@string/icon_loans"
         app:isDebt="true"
         app:accountType="@string/at_loans"
@@ -140,8 +142,8 @@
       <com.moneydesktop.finance.views.AccountBalanceItemView
         android:id="@+id/account_balance_mort"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="10"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         app:textIcon="@string/icon_mort"
         app:isDebt="true"
         app:accountType="@string/at_mort"
