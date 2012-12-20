@@ -67,62 +67,62 @@ public class AccountSummaryHandsetFragment extends BaseFragment {
                 .findViewById(R.id.account_balance_cash);
         cashAccounts.setAccountStatus(makeAccountsString((Integer) mAccountInfo
                 .get("cash_accounts")));
-        cashAccounts.setAccountAmount(makeTotalsString((Float) mAccountInfo.get("cash_amount")));
+        cashAccounts.setAccountAmount(makeTotalsString((Double) mAccountInfo.get("cash_amount")));
 
         AccountBalanceItemView checkingAccounts = (AccountBalanceItemView) v
                 .findViewById(R.id.account_balance_checking);
         checkingAccounts.setAccountStatus(makeAccountsString((Integer) mAccountInfo
                 .get("checking_accounts")));
-        checkingAccounts.setAccountAmount(makeTotalsString((Float) mAccountInfo
+        checkingAccounts.setAccountAmount(makeTotalsString((Double) mAccountInfo
                 .get("checking_amount")));
 
         AccountBalanceItemView invAccounts = (AccountBalanceItemView) v
                 .findViewById(R.id.account_balance_inv);
         invAccounts
                 .setAccountStatus(makeAccountsString((Integer) mAccountInfo.get("inv_accounts")));
-        invAccounts.setAccountAmount(makeTotalsString((Float) mAccountInfo.get("inv_amount")));
+        invAccounts.setAccountAmount(makeTotalsString((Double) mAccountInfo.get("inv_amount")));
 
         AccountBalanceItemView propAccounts = (AccountBalanceItemView) v
                 .findViewById(R.id.account_balance_prop);
         propAccounts.setAccountStatus(makeAccountsString((Integer) mAccountInfo
                 .get("prop_accounts")));
-        propAccounts.setAccountAmount(makeTotalsString((Float) mAccountInfo.get("prop_amount")));
+        propAccounts.setAccountAmount(makeTotalsString((Double) mAccountInfo.get("prop_amount")));
 
         AccountBalanceItemView savingAccounts = (AccountBalanceItemView) v
                 .findViewById(R.id.account_balance_saving);
         savingAccounts.setAccountStatus(makeAccountsString((Integer) mAccountInfo
                 .get("saving_accounts")));
-        savingAccounts.setAccountAmount(makeTotalsString((Float) mAccountInfo
+        savingAccounts.setAccountAmount(makeTotalsString((Double) mAccountInfo
                 .get("saving_amount")));
 
         AccountBalanceItemView ccAccounts = (AccountBalanceItemView) v
                 .findViewById(R.id.account_balance_cc);
         ccAccounts.setAccountStatus(makeAccountsString((Integer) mAccountInfo.get("cc_accounts")));
-        ccAccounts.setAccountAmount(makeTotalsString((Float) mAccountInfo.get("cc_amount")));
+        ccAccounts.setAccountAmount(makeTotalsString((Double) mAccountInfo.get("cc_amount")));
 
         AccountBalanceItemView locAccounts = (AccountBalanceItemView) v
                 .findViewById(R.id.account_balance_loc);
         locAccounts
                 .setAccountStatus(makeAccountsString((Integer) mAccountInfo.get("loc_accounts")));
-        locAccounts.setAccountAmount(makeTotalsString((Float) mAccountInfo.get("loc_amount")));
+        locAccounts.setAccountAmount(makeTotalsString((Double) mAccountInfo.get("loc_amount")));
 
         AccountBalanceItemView loansAccounts = (AccountBalanceItemView) v
                 .findViewById(R.id.account_balance_loans);
         loansAccounts.setAccountStatus(makeAccountsString((Integer) mAccountInfo
                 .get("loans_accounts")));
         loansAccounts
-                .setAccountAmount(makeTotalsString((Float) mAccountInfo.get("loans_amount")));
+                .setAccountAmount(makeTotalsString((Double) mAccountInfo.get("loans_amount")));
 
         AccountBalanceItemView mortAccounts = (AccountBalanceItemView) v
                 .findViewById(R.id.account_balance_mort);
         mortAccounts.setAccountStatus(makeAccountsString((Integer) mAccountInfo
                 .get("mort_accounts")));
-        mortAccounts.setAccountAmount(makeTotalsString((Float) mAccountInfo.get("mort_amount")));
+        mortAccounts.setAccountAmount(makeTotalsString((Double) mAccountInfo.get("mort_amount")));
 
     }
 
     private String makeAccountsString(Integer a) {
-        if (a == 0) {
+        if (a == 0 || a == null) {
             return "No accounts";
         }
         else if (a == 1) {
@@ -133,7 +133,7 @@ public class AccountSummaryHandsetFragment extends BaseFragment {
         }
     }
 
-    private String makeTotalsString(float m) {
+    private String makeTotalsString(Double m) {
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
         return formatter.format(m);
     }
@@ -142,70 +142,76 @@ public class AccountSummaryHandsetFragment extends BaseFragment {
         HashMap accountTypes = new HashMap();
         // initializing fields so we don't run into NPEs later
         accountTypes.put("cash_accounts", new Integer(0));
-        accountTypes.put("cash_amounts", new Float(0));
+        accountTypes.put("cash_amount", new Double(0));
         accountTypes.put("checking_accounts", new Integer(0));
-        accountTypes.put("checking_amounts", new Float(0));
+        accountTypes.put("checking_amount", new Double(0));
         accountTypes.put("inv_accounts", new Integer(0));
-        accountTypes.put("inv_amounts", new Float(0));
+        accountTypes.put("inv_amount", new Double(0));
         accountTypes.put("prop_accounts", new Integer(0));
-        accountTypes.put("prop_amounts", new Float(0));
+        accountTypes.put("prop_amount", new Double(0));
         accountTypes.put("saving_accounts", new Integer(0));
-        accountTypes.put("saving_amounts", new Float(0));
+        accountTypes.put("saving_amount", new Double(0));
         accountTypes.put("cc_accounts", new Integer(0));
-        accountTypes.put("cc_amounts", new Float(0));
+        accountTypes.put("cc_amount", new Double(0));
         accountTypes.put("loc_accounts", new Integer(0));
-        accountTypes.put("loc_amounts", new Float(0));
+        accountTypes.put("loc_amount", new Double(0));
         accountTypes.put("loans_accounts", new Integer(0));
-        accountTypes.put("loans_amounts", new Float(0));
+        accountTypes.put("loans_amount", new Double(0));
         accountTypes.put("mort_accounts", new Integer(0));
-        accountTypes.put("mort_amounts", new Float(0));
+        accountTypes.put("mort_amount", new Double(0));
         for (int i = 0; i < bankList.size(); i++) {
-            if (bankList.get(i).getAccountTypeId() == 1) {
+            if (bankList.get(i).getAccountTypeId() == 1 || bankList.get(i).getAccountTypeId() == 49) {
                 accountTypes.put("checking_accounts",
                         (Integer) accountTypes.get("checking_accounts") + 1);
-                accountTypes.put("checking_amounts", (Float) accountTypes.get("checking_amounts")
+                accountTypes.put("checking_amount", (Double) accountTypes.get("checking_amount")
                         + bankList.get(i).getBalance());
             }
-            else if (bankList.get(i).getAccountTypeId() == 2) {
+            else if (bankList.get(i).getAccountTypeId() == 2
+                    || bankList.get(i).getAccountTypeId() == 50) {
                 accountTypes.put("saving_accounts",
                         (Integer) accountTypes.get("saving_accounts") + 1);
-                accountTypes.put("saving_amounts", (Float) accountTypes.get("saving_amounts")
+                accountTypes.put("saving_amount", (Double) accountTypes.get("saving_amount")
                         + bankList.get(i).getBalance());
             }
             else if (bankList.get(i).getAccountTypeId() == 3) {
                 accountTypes
                         .put("loans_accounts", (Integer) accountTypes.get("loans_accounts") + 1);
-                accountTypes.put("loans_amounts", (Float) accountTypes.get("loans_amounts")
+                accountTypes.put("loans_amount", (Double) accountTypes.get("loans_amount")
                         + bankList.get(i).getBalance());
             }
-            else if (bankList.get(i).getAccountTypeId() == 4) {
+            else if (bankList.get(i).getAccountTypeId() == 4
+                    || bankList.get(i).getAccountTypeId() == 52) {
                 accountTypes.put("cc_accounts", (Integer) accountTypes.get("cc_accounts") + 1);
-                accountTypes.put("cc_amounts", (Float) accountTypes.get("cc_amounts")
+                accountTypes.put("cc_amount", (Double) accountTypes.get("cc_amount")
                         + bankList.get(i).getBalance());
             }
             else if (bankList.get(i).getAccountTypeId() == 5) {
                 accountTypes.put("inv_accounts", (Integer) accountTypes.get("inv_accounts") + 1);
-                accountTypes.put("inv_amounts", (Float) accountTypes.get("inv_amounts")
+                accountTypes.put("inv_amount", (Double) accountTypes.get("inv_amount")
                         + bankList.get(i).getBalance());
             }
-            else if (bankList.get(i).getAccountTypeId() == 6) {
+            else if (bankList.get(i).getAccountTypeId() == 6
+                    || bankList.get(i).getAccountTypeId() == 54) {
                 accountTypes.put("loc_accounts", (Integer) accountTypes.get("loc_accounts") + 1);
-                accountTypes.put("loc_amounts", (Float) accountTypes.get("loc_amounts")
+                accountTypes.put("loc_amount", (Double) accountTypes.get("loc_amount")
                         + bankList.get(i).getBalance());
             }
-            else if (bankList.get(i).getAccountTypeId() == 7) {
+            else if (bankList.get(i).getAccountTypeId() == 7
+                    || bankList.get(i).getAccountTypeId() == 55) {
                 accountTypes.put("mort_accounts", (Integer) accountTypes.get("mort_accounts") + 1);
-                accountTypes.put("mort_amounts", (Float) accountTypes.get("mort_amounts")
+                accountTypes.put("mort_amount", (Double) accountTypes.get("mort_amount")
                         + bankList.get(i).getBalance());
             }
-            else if (bankList.get(i).getAccountTypeId() == 8) {
+            else if (bankList.get(i).getAccountTypeId() == 8
+                    || bankList.get(i).getAccountTypeId() == 56) {
                 accountTypes.put("prop_accounts", (Integer) accountTypes.get("prop_accounts") + 1);
-                accountTypes.put("prop_amounts", (Float) accountTypes.get("prop_amounts")
+                accountTypes.put("prop_amount", (Double) accountTypes.get("prop_amount")
                         + bankList.get(i).getBalance());
             }
-            else if (bankList.get(i).getAccountTypeId() == 9) {
+            else if (bankList.get(i).getAccountTypeId() == 9
+                    || bankList.get(i).getAccountTypeId() == 48) {
                 accountTypes.put("cash_accounts", (Integer) accountTypes.get("cash_accounts") + 1);
-                accountTypes.put("cash_amounts", (Float) accountTypes.get("cash_amounts")
+                accountTypes.put("cash_amount", (Double) accountTypes.get("cash_amount")
                         + bankList.get(i).getBalance());
             }
         }
