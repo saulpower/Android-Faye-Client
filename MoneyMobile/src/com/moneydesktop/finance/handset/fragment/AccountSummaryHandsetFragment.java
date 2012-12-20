@@ -43,7 +43,6 @@ public class AccountSummaryHandsetFragment extends BaseFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         BankAccountDao banks = ApplicationContext.getDaoSession().getBankAccountDao();
         List<BankAccount> mBankList = banks.loadAll();
-
         mRoot = inflater.inflate(R.layout.account_summary_fragment_view, (ViewGroup) mRoot);
         setupView(mBankList, mRoot);
 
