@@ -561,6 +561,12 @@ public abstract class LoginBaseActivity extends BaseActivity {
                     eventBus.post(new EventMessage().new LoginEvent());
 
                     Intent i = new Intent(LoginBaseActivity.this, IntroTabletActivity.class);
+                    
+                    // TODO: We need to create a handset version of the intro activity
+//                    if (!BaseActivity.isTablet(LoginBaseActivity.this)) {
+//                        i = new Intent(LoginBaseActivity.this, IntroHandsetActivity.class);
+//                    }
+                    
                     startActivity(i);
                     finish();
                 }
