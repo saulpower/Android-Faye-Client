@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,11 +15,13 @@ import android.view.View.OnTouchListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.ViewFlipper;
 
 import com.moneydesktop.finance.BaseActivity;
@@ -27,6 +30,7 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.DataBridge;
 import com.moneydesktop.finance.data.DemoData;
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
+import com.moneydesktop.finance.handset.activity.IntroHandsetActivity;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
@@ -46,9 +50,9 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
     private final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-\\+]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private final String TAG = "LoginActivity";
-
+    private boolean mIsTablet = false;
     private ViewFlipper mViewFlipper;
-    private LinearLayout mButtonView, mCredentialView;
+    private LinearLayout mButtonView, mCredentialView, mSignupView;
     private Button mLoginViewButton, mDemoButton, mLoginButton, mCancelButton, mSubmitButton,
             mDemoButton2, mReturnHomeButton;
     private LabelEditText mUsername, mPassword, mSignupName, mSignupEmail, mSignupBank;
@@ -96,21 +100,15 @@ public abstract class LoginBaseActivity extends BaseActivity {
         }
     }
 
-<<<<<<< HEAD
-=======
-    protected void addDemoCredentials() {
-
-        mUsername.setText("saul.howard@moneydesktop.com");
-        mPassword.setText("password123");
-    }
-
-    @SuppressLint("NewApi")
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
     protected void setupView() {
+        if (BaseActivity.isTablet(this)) {
+            mIsTablet = true;
+        }
 
         mViewFlipper = (ViewFlipper) findViewById(R.id.flipper);
         mButtonView = (LinearLayout) findViewById(R.id.button_view);
         mCredentialView = (LinearLayout) findViewById(R.id.credentials);
+        mSignupView = (LinearLayout) findViewById(R.id.signup_info);
         configureFlipper();
 
         mUsername = (LabelEditText) findViewById(R.id.username_field);
@@ -162,10 +160,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
     private void addListeners() {
         mCancelText.setOnClickListener(new OnClickListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
 
                 cancel(mOutDown, mNoMovement);
@@ -173,10 +168,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mLoginViewButton.setOnClickListener(new OnClickListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
 
                 toLoginView();
@@ -184,20 +176,14 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mReturnHomeButton.setOnClickListener(new OnClickListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
                 cancel(mOutDown, mNoMovement);
             }
         });
         mDemoButton.setOnClickListener(new OnClickListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
 
                 demoMode();
@@ -205,10 +191,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mDemoButton2.setOnClickListener(new OnClickListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
 
                 demoMode();
@@ -216,30 +199,21 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mLoginButton.setOnClickListener(new OnClickListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
 
                 login();
             }
         });
         mSubmitButton.setOnClickListener(new OnClickListener() {
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
                 signup();
             }
         });
         mCancelButton.setOnClickListener(new OnClickListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
 
                 cancel(mInLeft, mOutRight);
@@ -256,10 +230,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mUsername.setOnFocusChangeListener(new OnFocusChangeListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onFocusChange(View v, boolean hasFocus) {
 
                 mUsername.setTextColor(getResources().getColor(
@@ -269,23 +240,31 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
         mPassword.setOnFocusChangeListener(new OnFocusChangeListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onFocusChange(View v, boolean hasFocus) {
 
                 mPassword.setTextColor(getResources().getColor(
                         hasFocus ? R.color.white : R.color.light_gray1));
             }
         });
+        mPassword.setOnEditorActionListener(new OnEditorActionListener() {
+            
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                     mCredentialView.requestFocus();
+                     hideKeyboard();
+                     login();
+                }
+                
+                return false;
+            }
+        });
 
         mMessageBody.setOnTouchListener(new OnTouchListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public boolean onTouch(View v, MotionEvent event) {
 
                 return true;
@@ -293,10 +272,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mSignupName.setOnFocusChangeListener(new OnFocusChangeListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onFocusChange(View v, boolean hasFocus) {
 
                 mSignupName.setTextColor(getResources().getColor(
@@ -305,10 +281,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mSignupEmail.setOnFocusChangeListener(new OnFocusChangeListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onFocusChange(View v, boolean hasFocus) {
 
                 mSignupEmail.setTextColor(getResources().getColor(
@@ -317,22 +290,30 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mSignupBank.setOnFocusChangeListener(new OnFocusChangeListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onFocusChange(View v, boolean hasFocus) {
 
                 mSignupBank.setTextColor(getResources().getColor(
                         hasFocus ? R.color.white : R.color.light_gray1));
             }
         });
+        mSignupBank.setOnEditorActionListener(new OnEditorActionListener() {
+            
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    mSignupView.requestFocus();
+                    hideKeyboard();
+                    signup();
+                }
+                
+                return false;
+            }
+        });
         mMessageTitle.setOnTouchListener(new OnTouchListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public boolean onTouch(View v, MotionEvent event) {
 
                 return true;
@@ -341,10 +322,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
         mLoginText.setOnClickListener(new OnClickListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
 
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri
@@ -354,10 +332,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         });
         mSignupText.setOnClickListener(new OnClickListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onClick(View v) {
 
                 toSignupView();
@@ -376,26 +351,17 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mNoMovement = AnimationUtils.loadAnimation(this, R.anim.none);
         mInLeft.setAnimationListener(new AnimationListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onAnimationStart(Animation animation) {
 
                 configureButtons(false);
             }
 
-<<<<<<< HEAD
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-=======
             @Override
             public void onAnimationRepeat(Animation animation) {
             }
 
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onAnimationEnd(Animation animation) {
 
                 configureButtons(true);
@@ -404,26 +370,17 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
         mInRight.setAnimationListener(new AnimationListener() {
 
-<<<<<<< HEAD
-=======
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onAnimationStart(Animation animation) {
 
                 configureButtons(false);
             }
 
-<<<<<<< HEAD
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-=======
             @Override
             public void onAnimationRepeat(Animation animation) {
             }
 
             @Override
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
             public void onAnimationEnd(Animation animation) {
 
                 configureButtons(true);
@@ -462,13 +419,9 @@ public abstract class LoginBaseActivity extends BaseActivity {
     }
 
     private void demoMode() {
-<<<<<<< HEAD
-        
-        fadeCurrentView();
-        
-=======
 
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
+        fadeCurrentView();
+
         User.registerDemoUser();
 
         DialogUtils.showProgress(this, getString(R.string.demo_message));
@@ -491,19 +444,20 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
         }.execute();
     }
-<<<<<<< HEAD
-    
+
     private void fadeCurrentView() {
 
         Animation fade = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         fade.setAnimationListener(new AnimationListener() {
-            
+
             @Override
-            public void onAnimationStart(Animation animation) {}
-            
+            public void onAnimationStart(Animation animation) {
+            }
+
             @Override
-            public void onAnimationRepeat(Animation animation) {}
-            
+            public void onAnimationRepeat(Animation animation) {
+            }
+
             @Override
             public void onAnimationEnd(Animation animation) {
                 mViewFlipper.getCurrentView().setVisibility(View.GONE);
@@ -516,23 +470,12 @@ public abstract class LoginBaseActivity extends BaseActivity {
         if (signupCheck() && validateEmail(mSignupEmail.getText().toString())) {
             submit();
         }
-=======
 
-    private void signup() {
-
-        if (signupCheck() && validateEmail(mSignupEmail.getText().toString())) {
-            submit();
-        }
-
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
         else if (!signupCheck()) {
             DialogUtils.alertDialog(getString(R.string.error_title),
                     getString(R.string.error_login_incomplete), this, null);
         }
-<<<<<<< HEAD
-=======
 
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
         else if (!validateEmail(mSignupEmail.getText().toString())) {
             DialogUtils.alertDialog(getString(R.string.error_title),
                     getString(R.string.error_email_invalid), this, null);
@@ -540,19 +483,17 @@ public abstract class LoginBaseActivity extends BaseActivity {
     }
 
     private void submit() {
-<<<<<<< HEAD
-=======
 
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
         // TODO add data submission code here
+        mSignupName.setText("");
+        mSignupEmail.setText("");
+        mSignupBank.setText("");
+        
         toThankYou();
     }
 
     private void toThankYou() {
-<<<<<<< HEAD
-=======
 
->>>>>>> 98d07d7e3684894f29f55df5f1caec60d211bc8c
         mViewFlipper.setOutAnimation(mInLeft);
         mViewFlipper.setInAnimation(mOutRight);
         mViewFlipper.setDisplayedChild(3);
@@ -563,12 +504,14 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
         if (mFailed) {
 
+            mPassword.setText("");
             resetLogin();
 
             return;
         }
         if (!validateEmail(mUsername.getText().toString()))
         {
+            mPassword.setText("");
             DialogUtils.alertDialog(getString(R.string.error_title),
                     getString(R.string.error_email_invalid), this, null);
             return;
@@ -579,6 +522,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
         } else {
 
+            mPassword.setText("");
             DialogUtils.alertDialog(getString(R.string.error_title),
                     getString(R.string.error_login_incomplete), this, null);
         }
@@ -660,9 +604,29 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
                     EventBus eventBus = EventBus.getDefault();
                     eventBus.post(new EventMessage().new LoginEvent());
+<<<<<<< HEAD
+                    if (mIsTablet == true) {
+                        Intent i = new Intent(LoginBaseActivity.this, IntroTabletActivity.class);
+                        startActivity(i);
+                        finish();
+                    }
+                    else {
+                        Intent i = new Intent(LoginBaseActivity.this, IntroHandsetActivity.class);
+                        startActivity(i);
+                        finish();
+                    }
+=======
 
                     Intent i = new Intent(LoginBaseActivity.this, IntroTabletActivity.class);
+                    
+                    // TODO: We need to create a handset version of the intro activity
+//                    if (!BaseActivity.isTablet(LoginBaseActivity.this)) {
+//                        i = new Intent(LoginBaseActivity.this, IntroHandsetActivity.class);
+//                    }
+                    
                     startActivity(i);
+                    finish();
+>>>>>>> 3c36c06ad3d30a3ff11d843f52f68151024f3055
                 }
             }
 
@@ -704,7 +668,12 @@ public abstract class LoginBaseActivity extends BaseActivity {
         }
 
         mUsername.clearFocus();
+        mUsername.setText("");
         mPassword.clearFocus();
+        mPassword.setText("");
+        mSignupName.setText("");
+        mSignupEmail.setText("");
+        mSignupBank.setText("");
         hideKeyboard();
         mViewFlipper.setOutAnimation(out);
         mViewFlipper.setInAnimation(in);

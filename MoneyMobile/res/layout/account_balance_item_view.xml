@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    android:id="@+id/account_balance_item_base_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" 
+    android:weightSum="100"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/text_icon"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:layout_weight="17" />
+
+    <com.moneydesktop.finance.views.LineView
+        android:id="@+id/lineView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:lineColor="@color/gray5"
+	    app:lineStrokeWidth="3"
+	    app:isVertical="true" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical" 
+        android:id="@+id/account_type_status"
+        android:gravity="center_vertical"
+        android:layout_weight="41.5">
+
+        <TextView
+            android:id="@+id/account_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" 
+            android:layout_marginLeft="5dp"
+            android:gravity="left"/>
+
+        <TextView
+            android:id="@+id/account_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:gravity="left" />
+
+    </LinearLayout>
+
+    <com.moneydesktop.finance.views.LineView
+        android:id="@+id/lineView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        app:lineColor="@color/gray5"
+	    app:lineStrokeWidth="3"
+	    app:isVertical="true" />
+
+    <TextView
+        android:id="@+id/account_amount"
+        android:layout_width="0dp"
+        android:layout_weight="41.5"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="5dp"
+        android:gravity="right"/>
+
+</LinearLayout>

@@ -35,6 +35,7 @@ public class TransactionsHandsetAdapter extends AmazingAdapter {
 	private ColorStateList mGreenColor;
 	private ColorStateList mGrayColor;
 	private AmazingListView mListView;
+    private String mOrderBy = "DATE", mDirection = "DESC";
 
 	private Activity mActivity;
 
@@ -72,10 +73,6 @@ public class TransactionsHandsetAdapter extends AmazingAdapter {
 	@Override
 	protected void onNextPageRequested(int page) {
 
-		Log.i(TAG, "Got onNextPageRequested page = " + page);
-
-		DialogUtils.showProgress(mActivity, mActivity.getString(R.string.loading));
-
 		if (mBackgroundTask != null) {
 			mBackgroundTask.cancel(false);
 		}
@@ -87,7 +84,7 @@ public class TransactionsHandsetAdapter extends AmazingAdapter {
 				
 				int page = params[0];
 
-				Pair<Boolean, List<Transactions>> rows = Transactions.getRows(page);
+				Pair<Boolean, List<Transactions>> rows = Transactions.getRows(page, mOrderBy, mDirection);
 
 				return rows;
 			}
@@ -113,7 +110,6 @@ public class TransactionsHandsetAdapter extends AmazingAdapter {
 				}
 				
 				mListView.requestLayout();
-				DialogUtils.hideProgress();
 			}
 
 		}.execute(page);

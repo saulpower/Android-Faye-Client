@@ -41,7 +41,7 @@
 	        android:textSize="14sp"
 	        android:text="@string/default_header" />
 	    
-	    <com.moneydesktop.finance.views.Caret
+	    <com.moneydesktop.finance.views.CaretView
 	        android:id="@+id/caret"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"

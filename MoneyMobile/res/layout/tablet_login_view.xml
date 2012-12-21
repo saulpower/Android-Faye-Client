@@ -107,7 +107,9 @@
                 android:layout_below="@id/logo"
                 android:background="@color/white"
                 android:gravity="center"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+			    android:focusable="true" 
+			    android:focusableInTouchMode="true" >
 
                 <com.moneydesktop.finance.views.DottedLineView
                     android:layout_width="450dp"
@@ -120,6 +122,7 @@
                     android:layout_height="50dp"
                     android:inputType="textEmailAddress"
                     android:textSize="25sp"
+                    android:imeOptions="actionNext"
                     app:labelColor="@color/light_gray1"
                     app:labelSize="12sp"
                     app:labelText="@string/label_email" />
@@ -135,6 +138,7 @@
                     android:layout_height="50dp"
                     android:inputType="textPassword"
                     android:textSize="25sp"
+                    android:imeOptions="actionDone"
                     app:labelColor="@color/light_gray1"
                     app:labelSize="12sp"
                     app:labelText="@string/label_password" />
@@ -221,7 +225,9 @@
                 android:layout_marginTop="20dp"
                 android:background="@color/white"
                 android:gravity="center"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+			    android:focusable="true" 
+			    android:focusableInTouchMode="true" >
 
                 <com.moneydesktop.finance.views.DottedLineView
                     android:id="@+id/logindotted4"
@@ -235,6 +241,7 @@
                     android:layout_height="50dp"
                     android:inputType="text"
                     android:textSize="25sp"
+                    android:imeOptions="actionNext"
                     app:labelColor="@color/light_gray1"
                     app:labelSize="12sp"
                     app:labelText="@string/signup_name" />
@@ -251,6 +258,7 @@
                     android:layout_height="50dp"
                     android:inputType="textEmailAddress"
                     android:textSize="25sp"
+                    android:imeOptions="actionNext"
                     app:labelColor="@color/light_gray1"
                     app:labelSize="12sp"
                     app:labelText="@string/signup_email" />
@@ -266,6 +274,7 @@
                     android:layout_height="50dp"
                     android:inputType="text"
                     android:textSize="25sp"
+                    android:imeOptions="actionDone"
                     app:labelColor="@color/light_gray1"
                     app:labelSize="12sp"
                     app:labelText="@string/signup_bank" />

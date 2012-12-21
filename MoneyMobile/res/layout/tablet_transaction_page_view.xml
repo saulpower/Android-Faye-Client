@@ -48,7 +48,6 @@
                 android:layout_weight="46"
                 android:background="@color/white"
                 android:paddingLeft="10dp"
-                android:text=""
                 android:textColor="@color/gray2" />
 
             <View
@@ -90,14 +89,17 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3" />
 
-            <TextView
+            <com.moneydesktop.finance.views.HeaderView
+                android:id="@+id/date_header"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="11"
                 android:gravity="center_vertical|left"
                 android:paddingLeft="10dp"
                 android:text="@string/label_date"
-                android:textColor="@color/gray2" />
+                android:textColor="@drawable/gray2_to_white_text"
+                android:background="@drawable/transparent_to_primary"
+                android:clickable="true" />
 
             <View
                 android:layout_width="@dimen/tablet_header_2"
@@ -106,14 +108,17 @@
                 android:layout_marginRight="@dimen/tablet_header_2r_half"
                 android:background="@drawable/line_vertical" />
 
-            <TextView
+            <com.moneydesktop.finance.views.HeaderView
+                android:id="@+id/payee_header"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="35"
                 android:gravity="center_vertical|left"
                 android:paddingLeft="10dp"
                 android:text="@string/label_payee"
-                android:textColor="@color/gray2" />
+                android:textColor="@drawable/gray2_to_white_text"
+                android:background="@drawable/transparent_to_primary"
+                android:clickable="true" />
 
             <View
                 android:layout_width="@dimen/tablet_header_2"
@@ -122,14 +127,17 @@
                 android:layout_marginRight="@dimen/tablet_header_2r_half"
                 android:background="@drawable/line_vertical" />
 
-            <TextView
+            <com.moneydesktop.finance.views.HeaderView
+                android:id="@+id/category_header"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="26"
                 android:gravity="center_vertical|left"
                 android:paddingLeft="10dp"
                 android:text="@string/label_category"
-                android:textColor="@color/gray2" />
+                android:textColor="@drawable/gray2_to_white_text"
+                android:background="@drawable/transparent_to_primary"
+                android:clickable="true" />
 
             <View
                 android:layout_width="@dimen/tablet_header_2"
@@ -138,14 +146,17 @@
                 android:layout_marginRight="@dimen/tablet_header_2l_half"
                 android:background="@drawable/line_vertical" />
 
-            <TextView
+            <com.moneydesktop.finance.views.HeaderView
+                android:id="@+id/amount_header"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="15"
                 android:gravity="center_vertical|left"
                 android:paddingLeft="10dp"
                 android:text="@string/label_amount"
-                android:textColor="@color/gray2" />
+                android:textColor="@drawable/gray2_to_white_text"
+                android:background="@drawable/transparent_to_primary"
+                android:clickable="true" />
 
             <View
                 android:layout_width="@dimen/tablet_header_2"
@@ -175,6 +186,7 @@
         android:layout_toRightOf="@id/white_right"
         android:divider="@color/gray2"
         android:dividerHeight="1dp"
+        android:background="@color/white"
         android:visibility="gone" />
 
     <com.moneydesktop.finance.views.HorizontalScroller

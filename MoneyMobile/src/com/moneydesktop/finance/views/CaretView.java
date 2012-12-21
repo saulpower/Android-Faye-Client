@@ -12,34 +12,21 @@ import android.widget.ImageView;
 
 import com.moneydesktop.finance.R;
 
-public class Caret extends ImageView {
-	
-	private int mColor = Color.BLUE;
+public class CaretView extends ImageView {
+    
 	private float mWidth = 10;
 	private float mHeight = 10;
 	
-	private PointF mPoint1;        
-	private PointF mPoint2;    
-	private PointF mPoint3;
-	private Path mPath;
-
-	private Paint mPaint;
-	
 	private float mDegrees = 0.0f;
 	
+	private CaretDrawable mCaret;
+	
 	public int getColor() {
-		return mColor;
+		return mCaret.getColor();
 	}
 
 	public void setColor(int color) {
-		this.mColor = color;
-		
-		mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-
-	    mPaint.setStrokeWidth(1);
-	    mPaint.setColor(color);     
-	    mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-	    mPaint.setAntiAlias(true);
+		mCaret.setColor(color);
 	}
 
 	public float getCaretWidth() {
@@ -48,7 +35,7 @@ public class Caret extends ImageView {
 
 	public void setCaretWidth(float width) {
 		this.mWidth = width;
-		createPath();
+		createCaret();
 	}
 
 	public float getCaretHeight() {
@@ -57,7 +44,7 @@ public class Caret extends ImageView {
 
 	public void setCaretHeight(float height) {
 		this.mHeight = height;
-		createPath();
+		createCaret();
 	}
 	
 	public void setCaretRotation(float degrees) {
@@ -65,40 +52,22 @@ public class Caret extends ImageView {
 	    invalidate();
 	}
 
-	public Caret(Context context) {
+	public CaretView(Context context) {
 		super(context);
 		
-		createPath();
+		createCaret();
 	}
 	
-	public Caret(Context context, AttributeSet attrs) {
+	public CaretView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
 		init(attrs);
 	}
 	
-	public Caret(Context context, AttributeSet attrs, int defStyle) {
+	public CaretView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		
 		init(attrs);
-	}
-	
-	private void createPath() {
-		
-		float center = mHeight/5;
-		
-		mPoint1 = new PointF(0, (mHeight/2 - center));  
-		mPoint2 = new PointF(mWidth, (mHeight/2 - center));    
-		mPoint3 = new PointF((mWidth/2), (mHeight - center));
-
-	    mPath = new Path();
-	    mPath.setFillType(Path.FillType.EVEN_ODD);
-	    
-	    mPath.moveTo(mPoint1.x,mPoint1.y);
-	    mPath.lineTo(mPoint2.x,mPoint2.y);
-	    mPath.lineTo(mPoint3.x,mPoint3.y);
-	    mPath.lineTo(mPoint1.x,mPoint1.y);
-	    mPath.close();
 	}
 
     /**
@@ -113,12 +82,21 @@ public class Caret extends ImageView {
 		
 		TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.Caret);
 		
-	    setColor(a.getColor(R.styleable.Caret_color, Color.WHITE));
 	    setCaretWidth(a.getDimension(R.styleable.Caret_width, 10.0f));
 	    setCaretHeight(a.getDimension(R.styleable.Caret_height, 10.0f));
 	    setCaretRotation(a.getFloat(R.styleable.Caret_rotation, 0.0f));
-		    
-		a.recycle();
+
+        createCaret();
+        
+        setColor(a.getColor(R.styleable.Caret_color, Color.WHITE));
+		
+        a.recycle();
+	}
+	
+	private void createCaret() {
+
+        mCaret = new CaretDrawable(new PointF(0, 0), getCaretWidth(), getCaretHeight());
+        mCaret.setColor(getColor());
 	}
 	
 	@Override
@@ -128,7 +106,7 @@ public class Caret extends ImageView {
 		canvas.save();
 		
 		canvas.rotate(mDegrees, getWidth()/2, getHeight()/2);
-	    canvas.drawPath(mPath, mPaint);
+		mCaret.draw(canvas);
 	    
 	    canvas.restore();
 	}
