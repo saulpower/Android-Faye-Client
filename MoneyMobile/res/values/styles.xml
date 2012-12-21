@@ -123,6 +123,7 @@
     <style name="MoneyDesktopTheme" parent="android:Theme.NoTitleBar.Fullscreen">
         <item name="android:windowBackground">@color/white</item>
         <item name="android:colorBackground">@color/white</item>
+        <item name="android:textColor">@color/gray7</item>
     </style>
 
 </resources>

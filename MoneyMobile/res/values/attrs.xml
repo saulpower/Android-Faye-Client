@@ -29,6 +29,12 @@
         <attr name="dashLength" format="float" />
         <attr name="lineStrokeWidth" format="float" />
     </declare-styleable>
+    
+    <declare-styleable name="AccountBalanceItemView">
+        <attr name="textIcon" format="string"/>
+        <attr name="isDebt" format="boolean"/>
+        <attr name="accountType" format="string"/>
+    </declare-styleable>
 
     <!-- Identifier for the child that represents the drawer's handle. -->
        <attr name="handle" format="reference"/>
