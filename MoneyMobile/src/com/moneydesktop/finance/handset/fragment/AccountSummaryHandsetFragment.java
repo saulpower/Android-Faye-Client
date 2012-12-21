@@ -39,7 +39,7 @@ public class AccountSummaryHandsetFragment extends BaseFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         BankAccountDao banks = ApplicationContext.getDaoSession().getBankAccountDao();
         List<BankAccount> mBankList = banks.loadAll();
-        mRoot = inflater.inflate(R.layout.account_summary_fragment_view, (ViewGroup) mRoot);
+        mRoot = inflater.inflate(R.layout.handset_account_summary_fragment_view, (ViewGroup) mRoot);
         setupView(mBankList, mRoot);
 
         return mRoot;
@@ -135,9 +135,9 @@ public class AccountSummaryHandsetFragment extends BaseFragment {
         return formatter.format(m);
     }
 
-    private HashMap<String, Object> getAccountValues(List<BankAccount> bankList) {
-        HashMap<String, Object> accountTypes = new HashMap<String, Object>();
+    private HashMap<String, Object> initHashMap() {
         // initializing fields so we don't run into NPEs later
+        HashMap<String, Object> accountTypes = new HashMap<String, Object>();
         accountTypes.put("cash_accounts", Integer.valueOf(0));
         accountTypes.put("cash_amount", Double.valueOf(0));
         accountTypes.put("checking_accounts", Integer.valueOf(0));
@@ -156,6 +156,11 @@ public class AccountSummaryHandsetFragment extends BaseFragment {
         accountTypes.put("loans_amount", Double.valueOf(0));
         accountTypes.put("mort_accounts", Integer.valueOf(0));
         accountTypes.put("mort_amount", Double.valueOf(0));
+        return accountTypes;
+    }
+
+    private HashMap<String, Object> getAccountValues(List<BankAccount> bankList) {
+        HashMap<String, Object> accountTypes = initHashMap();
         for (int i = 0; i < bankList.size(); i++) {
             if (bankList.get(i).getAccountTypeId() == 1 || bankList.get(i).getAccountTypeId() == 49) {
                 accountTypes.put("checking_accounts",
