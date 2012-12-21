@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.R.color;
 import com.moneydesktop.finance.util.Fonts;
 
 public class AccountBalanceItemView extends LinearLayout {
@@ -83,21 +82,21 @@ public class AccountBalanceItemView extends LinearLayout {
         }
         else {
             mLayout.setBackgroundColor(Color.WHITE);
-            mTextIcon.setTextColor(getContext().getResources().getColor(R.color.gray4));
-            mAccountAmount.setTextColor(getContext().getResources().getColor(R.color.gray9));
+            mTextIcon.setTextColor(getContext().getResources().getColor(R.color.gray3));
+            mAccountAmount.setTextColor(getContext().getResources().getColor(R.color.gray7));
         }
-        mAccountType.setTextColor(color.gray9);
-        mAccountStatus.setTextColor(color.gray4);
+        mAccountType.setTextColor(getContext().getResources().getColor(R.color.gray7));
+        mAccountStatus.setTextColor(getContext().getResources().getColor(R.color.gray3));
         Fonts.applyGlyphFont(mTextIcon, 24);
-        Fonts.applyPrimarySemiBoldFont(mAccountType, 18);
-        Fonts.applyPrimaryBoldFont(mAccountAmount, 18);
-        Fonts.applySecondaryItalicFont(mAccountStatus, 16);
+        Fonts.applyPrimarySemiBoldFont(mAccountType, 16);
+        Fonts.applyPrimaryBoldFont(mAccountAmount, 16);
+        Fonts.applySecondaryItalicFont(mAccountStatus, 14);
     }
 
     private void displayDebt() {
         mIsDebt = new Boolean(true);
-        mLayout.setBackgroundColor(getContext().getResources().getColor(R.color.gray3));
-        mTextIcon.setTextColor(getContext().getResources().getColor(R.color.gray9));
+        mLayout.setBackgroundColor(getContext().getResources().getColor(R.color.gray1));
+        mTextIcon.setTextColor(getContext().getResources().getColor(R.color.gray7));
         mAccountAmount.setTextColor(getContext().getResources().getColor(R.color.debts));
         invalidate();
     }

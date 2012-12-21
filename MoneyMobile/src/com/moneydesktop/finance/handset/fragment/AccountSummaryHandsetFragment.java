@@ -5,12 +5,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BankAccountDao;
+import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.AccountBalanceItemView;
 
 import java.text.NumberFormat;
@@ -61,7 +63,9 @@ public class AccountSummaryHandsetFragment extends BaseFragment {
 
     private void setupView(List<BankAccount> bankList, View v) {
         mAccountInfo = getAccountValues(bankList);
-
+        TextView label = (TextView) v.findViewById(R.id.label_balance_view);
+        label.setText(getResources().getString(R.string.label_balances));
+        Fonts.applySecondaryItalicFont(label, 16);
         AccountBalanceItemView cashAccounts = (AccountBalanceItemView) v
                 .findViewById(R.id.account_balance_cash);
         cashAccounts.setAccountStatus(makeAccountsString((Integer) mAccountInfo

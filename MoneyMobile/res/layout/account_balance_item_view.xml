@@ -12,15 +12,16 @@
         android:id="@+id/text_icon"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
         android:layout_weight="17" />
 
     <com.moneydesktop.finance.views.LineView
         android:id="@+id/lineView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:lineColor="@color/gray2"
-	    app:lineStrokeWidth="1"
+        app:lineColor="@color/gray5"
+	    app:lineStrokeWidth="3"
 	    app:isVertical="true" />
 
     <LinearLayout
@@ -28,6 +29,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical" 
         android:id="@+id/account_type_status"
+        android:gravity="center_vertical"
         android:layout_weight="41.5">
 
         <TextView
@@ -35,7 +37,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" 
             android:layout_marginLeft="5dp"
-            android:layout_gravity="center_vertical"
             android:gravity="left"/>
 
         <TextView
@@ -43,7 +44,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:layout_gravity="center_vertical"
             android:gravity="left" />
 
     </LinearLayout>
@@ -52,8 +52,8 @@
         android:id="@+id/lineView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" 
-        app:lineColor="@color/gray2"
-	    app:lineStrokeWidth="1"
+        app:lineColor="@color/gray5"
+	    app:lineStrokeWidth="3"
 	    app:isVertical="true" />
 
     <TextView
@@ -62,7 +62,7 @@
         android:layout_weight="41.5"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:gravity="right"
-        android:layout_marginLeft="10dp"/>
+        android:layout_marginRight="5dp"
+        android:gravity="right"/>
 
 </LinearLayout>
