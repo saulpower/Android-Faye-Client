@@ -20,24 +20,18 @@ import java.util.HashMap;
 import java.util.List;
 
 public class AccountSummaryHandsetFragment extends BaseFragment {
-
-    private static AccountSummaryHandsetFragment sFragment;
-    private HashMap mAccountInfo;
+    private HashMap<String, Object> mAccountInfo;
 
     public static AccountSummaryHandsetFragment getInstance(int position) {
 
-        if (sFragment != null) {
-            return sFragment;
-        }
-
-        sFragment = new AccountSummaryHandsetFragment();
-        sFragment.setPosition(position);
-        sFragment.setRetainInstance(true);
+        AccountSummaryHandsetFragment fragment = new AccountSummaryHandsetFragment();
+        fragment.setPosition(position);
+        fragment.setRetainInstance(true);
 
         Bundle args = new Bundle();
-        sFragment.setArguments(args);
+        fragment.setArguments(args);
 
-        return sFragment;
+        return fragment;
     }
 
     @Override
@@ -141,27 +135,27 @@ public class AccountSummaryHandsetFragment extends BaseFragment {
         return formatter.format(m);
     }
 
-    private HashMap getAccountValues(List<BankAccount> bankList) {
-        HashMap accountTypes = new HashMap();
+    private HashMap<String, Object> getAccountValues(List<BankAccount> bankList) {
+        HashMap<String, Object> accountTypes = new HashMap<String, Object>();
         // initializing fields so we don't run into NPEs later
-        accountTypes.put("cash_accounts", new Integer(0));
-        accountTypes.put("cash_amount", new Double(0));
-        accountTypes.put("checking_accounts", new Integer(0));
-        accountTypes.put("checking_amount", new Double(0));
-        accountTypes.put("inv_accounts", new Integer(0));
-        accountTypes.put("inv_amount", new Double(0));
-        accountTypes.put("prop_accounts", new Integer(0));
-        accountTypes.put("prop_amount", new Double(0));
-        accountTypes.put("saving_accounts", new Integer(0));
-        accountTypes.put("saving_amount", new Double(0));
-        accountTypes.put("cc_accounts", new Integer(0));
-        accountTypes.put("cc_amount", new Double(0));
-        accountTypes.put("loc_accounts", new Integer(0));
-        accountTypes.put("loc_amount", new Double(0));
-        accountTypes.put("loans_accounts", new Integer(0));
-        accountTypes.put("loans_amount", new Double(0));
-        accountTypes.put("mort_accounts", new Integer(0));
-        accountTypes.put("mort_amount", new Double(0));
+        accountTypes.put("cash_accounts", Integer.valueOf(0));
+        accountTypes.put("cash_amount", Double.valueOf(0));
+        accountTypes.put("checking_accounts", Integer.valueOf(0));
+        accountTypes.put("checking_amount", Double.valueOf(0));
+        accountTypes.put("inv_accounts", Integer.valueOf(0));
+        accountTypes.put("inv_amount", Double.valueOf(0));
+        accountTypes.put("prop_accounts", Integer.valueOf(0));
+        accountTypes.put("prop_amount", Double.valueOf(0));
+        accountTypes.put("saving_accounts", Integer.valueOf(0));
+        accountTypes.put("saving_amount", Double.valueOf(0));
+        accountTypes.put("cc_accounts", Integer.valueOf(0));
+        accountTypes.put("cc_amount", Double.valueOf(0));
+        accountTypes.put("loc_accounts", Integer.valueOf(0));
+        accountTypes.put("loc_amount", Double.valueOf(0));
+        accountTypes.put("loans_accounts", Integer.valueOf(0));
+        accountTypes.put("loans_amount", Double.valueOf(0));
+        accountTypes.put("mort_accounts", Integer.valueOf(0));
+        accountTypes.put("mort_amount", Double.valueOf(0));
         for (int i = 0; i < bankList.size(); i++) {
             if (bankList.get(i).getAccountTypeId() == 1 || bankList.get(i).getAccountTypeId() == 49) {
                 accountTypes.put("checking_accounts",
