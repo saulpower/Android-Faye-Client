@@ -2,7 +2,6 @@ package com.moneydesktop.finance.database;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 import android.util.Pair;
 
 import com.moneydesktop.finance.ApplicationContext;
@@ -779,20 +778,18 @@ public class Transactions extends BusinessObject  {
     	return list;
     }
     
-    public static Pair<Boolean, List<Transactions>> getRows(int page, Date start, Date end) {
+    public static Pair<Boolean, List<Transactions>> getRows(int page, Date start, Date end, String orderBy, String direction) {
         
         int offset = (page - 1) * Constant.QUERY_LIMIT;
         
-        Log.i(TAG, "Start: " + Long.toString(start.getTime()) + " End: " + Long.toString(end.getTime()));
-        
-        return getRows(page, Constant.QUERY_DATE_TRANSACTIONS, Long.toString(start.getTime()), Long.toString(end.getTime()), Integer.toString(Constant.QUERY_LIMIT), Integer.toString(offset));
+        return getRows(page, String.format(Constant.QUERY_DATE_TRANSACTIONS, orderBy, direction), Long.toString(start.getTime()), Long.toString(end.getTime()), Integer.toString(Constant.QUERY_LIMIT), Integer.toString(offset));
     }
     
-    public static Pair<Boolean, List<Transactions>> getRows(int page) {
+    public static Pair<Boolean, List<Transactions>> getRows(int page, String orderBy, String direction) {
 
         int offset = (page - 1) * Constant.QUERY_LIMIT;
         
-        return getRows(page, Constant.QUERY_TRANSACTIONS, Integer.toString(Constant.QUERY_LIMIT), Integer.toString(offset));
+        return getRows(page, String.format(Constant.QUERY_TRANSACTIONS, orderBy, direction), Integer.toString(Constant.QUERY_LIMIT), Integer.toString(offset));
     }
     
     private static Pair<Boolean, List<Transactions>> getRows(int page, String query, String... selectionArgs) {

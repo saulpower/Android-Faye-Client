@@ -370,6 +370,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         t.setLayoutParams(params);
         t.setGravity(Gravity.CENTER);
         t.setTextColor(Color.WHITE);
+        t.setBackgroundColor(Color.TRANSPARENT);
 
         Fonts.applyPrimaryBoldFont(t, 18);
         

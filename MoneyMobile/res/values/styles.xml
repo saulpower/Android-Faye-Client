@@ -4,7 +4,7 @@
     <style name="button">
         <item name="android:textColor">@drawable/button_text</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:background">@drawable/white_button</item>
+        <item name="android:background">@drawable/gray1_to_primary</item>
     </style>
 
     <style name="field">

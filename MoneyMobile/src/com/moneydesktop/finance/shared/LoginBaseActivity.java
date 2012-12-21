@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,11 +15,13 @@ import android.view.View.OnTouchListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.ViewFlipper;
 
 import com.moneydesktop.finance.BaseActivity;
@@ -48,7 +51,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
     private final String TAG = "LoginActivity";
 
     private ViewFlipper mViewFlipper;
-    private LinearLayout mButtonView, mCredentialView;
+    private LinearLayout mButtonView, mCredentialView, mSignupView;
     private Button mLoginViewButton, mDemoButton, mLoginButton, mCancelButton, mSubmitButton,
             mDemoButton2, mReturnHomeButton;
     private LabelEditText mUsername, mPassword, mSignupName, mSignupEmail, mSignupBank;
@@ -101,6 +104,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mViewFlipper = (ViewFlipper) findViewById(R.id.flipper);
         mButtonView = (LinearLayout) findViewById(R.id.button_view);
         mCredentialView = (LinearLayout) findViewById(R.id.credentials);
+        mSignupView = (LinearLayout) findViewById(R.id.signup_info);
         configureFlipper();
 
         mUsername = (LabelEditText) findViewById(R.id.username_field);
@@ -239,6 +243,20 @@ public abstract class LoginBaseActivity extends BaseActivity {
                         hasFocus ? R.color.white : R.color.light_gray1));
             }
         });
+        mPassword.setOnEditorActionListener(new OnEditorActionListener() {
+            
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                     mCredentialView.requestFocus();
+                     hideKeyboard();
+                     login();
+                }
+                
+                return false;
+            }
+        });
 
         mMessageBody.setOnTouchListener(new OnTouchListener() {
 
@@ -273,6 +291,20 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
                 mSignupBank.setTextColor(getResources().getColor(
                         hasFocus ? R.color.white : R.color.light_gray1));
+            }
+        });
+        mSignupBank.setOnEditorActionListener(new OnEditorActionListener() {
+            
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    mSignupView.requestFocus();
+                    hideKeyboard();
+                    signup();
+                }
+                
+                return false;
             }
         });
         mMessageTitle.setOnTouchListener(new OnTouchListener() {
@@ -447,6 +479,10 @@ public abstract class LoginBaseActivity extends BaseActivity {
     private void submit() {
 
         // TODO add data submission code here
+        mSignupName.setText("");
+        mSignupEmail.setText("");
+        mSignupBank.setText("");
+        
         toThankYou();
     }
 
@@ -462,12 +498,14 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
         if (mFailed) {
 
+            mPassword.setText("");
             resetLogin();
 
             return;
         }
         if (!validateEmail(mUsername.getText().toString()))
         {
+            mPassword.setText("");
             DialogUtils.alertDialog(getString(R.string.error_title),
                     getString(R.string.error_email_invalid), this, null);
             return;
@@ -478,6 +516,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
         } else {
 
+            mPassword.setText("");
             DialogUtils.alertDialog(getString(R.string.error_title),
                     getString(R.string.error_login_incomplete), this, null);
         }
@@ -604,7 +643,12 @@ public abstract class LoginBaseActivity extends BaseActivity {
         }
 
         mUsername.clearFocus();
+        mUsername.setText("");
         mPassword.clearFocus();
+        mPassword.setText("");
+        mSignupName.setText("");
+        mSignupEmail.setText("");
+        mSignupBank.setText("");
         hideKeyboard();
         mViewFlipper.setOutAnimation(out);
         mViewFlipper.setInAnimation(in);

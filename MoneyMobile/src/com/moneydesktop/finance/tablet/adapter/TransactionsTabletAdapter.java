@@ -12,12 +12,12 @@ import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.AmazingAdapter;
+import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.shared.TransactionViewHolder;
-import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.AmazingListView;
-import com.moneydesktop.finance.views.Caret;
+import com.moneydesktop.finance.views.CaretView;
 import com.moneydesktop.finance.views.VerticalTextView;
 
 import org.apache.commons.lang.WordUtils;
@@ -39,6 +39,8 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	private AmazingListView mListView;
 	
 	private Date mStart, mEnd;
+	
+	private String mOrderBy = Constant.FIELD_DATE, mDirection = Constant.ORDER_DESC;
 
 	private Activity mActivity;
 
@@ -63,6 +65,11 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	    mStart = start;
 	    mEnd = end;
 	}
+	
+	public void setOrder(String orderBy, String direction) {
+	    mOrderBy = orderBy;
+	    mDirection = direction;
+	}
 
 	public long getItemId(int position) {
 		return position;
@@ -70,8 +77,6 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 
 	@Override
 	protected void onNextPageRequested(int page) {
-
-		DialogUtils.showProgress(mActivity, mActivity.getString(R.string.loading));
 
 		if (mBackgroundTask != null) {
 			mBackgroundTask.cancel(false);
@@ -87,9 +92,9 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 				Pair<Boolean, List<Transactions>> rows;
 				
 				if (mStart == null || mEnd == null) {
-				    rows = Transactions.getRows(page);
+				    rows = Transactions.getRows(page, mOrderBy, mDirection);
 				} else {
-				    rows = Transactions.getRows(page, mStart, mEnd);
+				    rows = Transactions.getRows(page, mStart, mEnd, mOrderBy, mDirection);
 				}
 				
 				return rows;
@@ -98,8 +103,9 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 			@Override
 			protected void onPostExecute(Pair<Boolean, List<Transactions>> rows) {
 
-				if (isCancelled())
+				if (isCancelled()) {
 					return;
+				}
 
 				mAllTransactions.addAll(rows.second);
 
@@ -112,7 +118,6 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 				}
 				
 				mListView.requestLayout();
-				DialogUtils.hideProgress();
 			}
 
 		}.execute(page);
@@ -141,7 +146,7 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	        viewHolder.category = (TextView) res.findViewById(R.id.category);
 	        viewHolder.amount = (TextView) res.findViewById(R.id.amount);
 	        viewHolder.type = (ImageView) res.findViewById(R.id.type);
-	        viewHolder.caret = (Caret) res.findViewById(R.id.caret);
+	        viewHolder.caret = (CaretView) res.findViewById(R.id.caret);
 	        
 	        res.setTag(viewHolder);
 	        

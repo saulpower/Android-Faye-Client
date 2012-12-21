@@ -29,6 +29,8 @@ public class AnchorView extends Drawable {
     private float mWidth;
     private float mHeight;
     
+    private boolean mIsLeft;
+    
     private AnchorMoveListener mListener;
     
     private Context getContext() {
@@ -63,12 +65,13 @@ public class AnchorView extends Drawable {
         mListener = listener;
     }
     
-    public AnchorView(Context context, PointF position, float height) {
+    public AnchorView(Context context, PointF position, float height, boolean isLeft) {
         
         mContext = context;
         mPadding = UiUtils.getDynamicPixels(context, PADDING);
         mWidth = UiUtils.getDynamicPixels(context, WIDTH);
         mHeight = height;
+        mIsLeft = isLeft;
         
         initPaint();
         setPosition(position);
@@ -107,10 +110,15 @@ public class AnchorView extends Drawable {
     
     private void updateBounds() {
 
-        int left = (int) (mPosition.x - mPadding);
+        int left = (int) (mPosition.x - mWidth / 2);
         int top = (int) mPosition.y;
-        int right = (int) (left + mWidth + mPadding);
+        int right = (int) (left + mWidth + mPadding * 2);
         int bottom = (int) (top + mHeight);
+        
+        if (mIsLeft) {
+            right = (int) (mPosition.x + mWidth / 2);
+            left = (int) (right - mWidth - mPadding * 2);
+        }
         
         setBounds(left, top, right, bottom);
     }

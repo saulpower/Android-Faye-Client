@@ -3,7 +3,7 @@ package com.moneydesktop.finance.shared;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.moneydesktop.finance.views.Caret;
+import com.moneydesktop.finance.views.CaretView;
 import com.moneydesktop.finance.views.VerticalTextView;
 
 public class TransactionViewHolder {
@@ -14,7 +14,7 @@ public class TransactionViewHolder {
     public TextView category;
     public TextView amount;
     public ImageView type;
-    public Caret caret;
+    public CaretView caret;
     public TextView title;
     public TextView dollar;
 }

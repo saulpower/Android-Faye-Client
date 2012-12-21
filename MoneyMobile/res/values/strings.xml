@@ -78,6 +78,7 @@
     <string name="description">description</string>
     <string name="demo_message">Creating Demo Data&#8230;</string>
     <string name="dollar_sign">$</string>
+    <string name="empty_transactions">No Transactions</string>
     <string name="error_login_failed">YOUR LOGIN\nWAS UNSUCCESSFUL.</string>
     <string name="error_login_incomplete">Please complete the login fields</string>
     <string name="error_email_invalid">Please ensure your email address is valid.</string>

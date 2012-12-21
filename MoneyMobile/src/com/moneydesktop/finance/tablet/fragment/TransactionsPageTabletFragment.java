@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -15,21 +16,22 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.EventMessage.ParentAnimationEvent;
 import com.moneydesktop.finance.tablet.adapter.TransactionsTabletAdapter;
 import com.moneydesktop.finance.views.AmazingListView;
 import com.moneydesktop.finance.views.DateRangeView;
+import com.moneydesktop.finance.views.DateRangeView.FilterChangeListener;
+import com.moneydesktop.finance.views.HeaderView;
 import com.moneydesktop.finance.views.HorizontalScroller;
 
 import de.greenrobot.event.EventBus;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 @TargetApi(11)
-public class TransactionsPageTabletFragment extends BaseFragment implements OnItemClickListener {
+public class TransactionsPageTabletFragment extends BaseFragment implements OnItemClickListener, FilterChangeListener {
     
     public final String TAG = this.getClass().getSimpleName();
 
@@ -38,7 +40,9 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     private HorizontalScroller mScroller;
     private TransactionsTabletFragment mParent;
     private int[] mLocation = new int[2];
-    private TransactionsTabletAdapter mAdapter;
+    private String mOrderBy = Constant.FIELD_DATE, mDirection = Constant.ORDER_DESC;
+    
+    private HeaderView mDate, mPayee, mCategory, mAmount;
     
     private boolean mLoaded = false;
     private boolean mWaiting = true;
@@ -70,10 +74,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         
         setupView();
         
-        if (!mLoaded)
-            getInitialTransactions();
-        else
-            setupList();
+        getInitialTransactions();
         
         return mRoot;
     }
@@ -88,24 +89,84 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     private void setupView() {
 
         mTransactionsList = (AmazingListView) mRoot.findViewById(R.id.transactions);
+        mTransactionsList.setLoadingView(mActivity.getLayoutInflater().inflate(R.layout.loading_view, null));
+        mTransactionsList.setEmptyView(mActivity.getLayoutInflater().inflate(R.layout.empty_view, null));
         mTransactionsList.setOnItemClickListener(this);
         
         mScroller = (HorizontalScroller) mRoot.findViewById(R.id.date_scroller);
         
         mDateRange = (DateRangeView) mRoot.findViewById(R.id.date_range);
         mDateRange.setScroller(mScroller);
+        mDateRange.setDateRangeChangeListener(this);
+        
+        mDate = (HeaderView) mRoot.findViewById(R.id.date_header);
+        mDate.setOnFilterChangeListener(this);
+        mPayee = (HeaderView) mRoot.findViewById(R.id.payee_header);
+        mPayee.setOnFilterChangeListener(this);
+        mCategory = (HeaderView) mRoot.findViewById(R.id.category_header);
+        mCategory.setOnFilterChangeListener(this);
+        mAmount = (HeaderView) mRoot.findViewById(R.id.amount_header);
+        mAmount.setOnFilterChangeListener(this);
+        
+        setupListeners();
     }
     
-    private void setupList() {
-
-        mTransactionsList.setAdapter(mAdapter);
-        mTransactionsList.setLoadingView(mActivity.getLayoutInflater().inflate(R.layout.loading_view, null));
+    private void setupListeners() {
         
-        mAdapter.notifyMayHaveMorePages();
+        mDate.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                applySort(mDate, Constant.FIELD_DATE);
+            }
+        });
         
-        if (!mWaiting) {
-            configureView();
+        mPayee.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                applySort(mPayee, Constant.FIELD_TITLE);
+            }
+        });
+        
+        mCategory.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                applySort(mCategory, Constant.FIELD_CATEGORY);
+            }
+        });
+        
+        mAmount.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                applySort(mAmount, Constant.FIELD_AMOUNT);
+            }
+        });
+        
+        mDate.performClick();
+    }
+    
+    private void applySort(HeaderView clicked, String field) {
+        
+        final boolean wasShowing = clicked.isShowing();
+        
+        mDate.setIsShowing(false);
+        mPayee.setIsShowing(false);
+        mCategory.setIsShowing(false);
+        mAmount.setIsShowing(false);
+        
+        clicked.setIsShowing(true);
+        
+        if (wasShowing) {
+            clicked.setIsAscending(!clicked.isAscending(), true);
+        } else {
+            clicked.setIsAscending(false, false);
         }
+        
+        mOrderBy = field;
+        mDirection = clicked.isAscending() ? Constant.ORDER_ASC : Constant.ORDER_DESC;
     }
 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -138,44 +199,47 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     }
     
     private void getInitialTransactions() {
-
-        new AsyncTask<Integer, Void, Void>() {
+        
+        new AsyncTask<Integer, Void, TransactionsTabletAdapter>() {
             
             @Override
-            protected Void doInBackground(Integer... params) {
+            protected TransactionsTabletAdapter doInBackground(Integer... params) {
                 
                 int page = params[0];
                 
-                Date today = new Date();
-                
-                Calendar c = Calendar.getInstance();    
-                c.setTime(today);
-                c.add(Calendar.MONTH, -1);
-                c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
-                
-                Date start = c.getTime();
-                
-                c.set(Calendar.DAY_OF_MONTH, 1);
-                c.add(Calendar.MONTH, 2);
-                
-                Date end = c.getTime();
-                
-                List<Transactions> row1 = Transactions.getRows(page, start, end).second;
+                List<Transactions> row1 = Transactions.getRows(page, mDateRange.getStartDate(), mDateRange.getEndDate(), mOrderBy, mDirection).second;
 
-                mAdapter = new TransactionsTabletAdapter(mActivity, mTransactionsList, row1);
-                mAdapter.setDateRange(start, end);
+                TransactionsTabletAdapter adapter = new TransactionsTabletAdapter(mActivity, mTransactionsList, row1);
+                adapter.setDateRange(mDateRange.getStartDate(), mDateRange.getEndDate());
                 
-                return null;
+                return adapter;
             }
             
             @Override
-            protected void onPostExecute(Void result) {
+            protected void onPostExecute(TransactionsTabletAdapter adapter) {
 
                 mLoaded = true;
-                setupList();
+                setupList(adapter);
             };
             
         }.execute(1);
+    }
+    
+    private void setupList(TransactionsTabletAdapter adapter) {
+
+        mTransactionsList.setAdapter(adapter);
+        
+        adapter.notifyDataSetChanged();
+        
+        if (adapter.getCount() == 0) {
+            adapter.notifyNoMorePages();
+        } else {
+            adapter.notifyMayHaveMorePages();
+        }
+        
+        if (!mWaiting) {
+            configureView();
+        }
     }
     
     public void onEvent(ParentAnimationEvent event) {
@@ -200,6 +264,11 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     @Override
     public boolean onBackPressed() {
         return false;
+    }
+
+    @Override
+    public void filterChanged() {
+        getInitialTransactions();
     }
 
 }

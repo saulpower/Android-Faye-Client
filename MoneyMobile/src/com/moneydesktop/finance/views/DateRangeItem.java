@@ -21,6 +21,7 @@ import com.moneydesktop.finance.util.UiUtils;
 import de.greenrobot.event.EventBus;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateRangeItem extends Drawable {
@@ -30,6 +31,7 @@ public class DateRangeItem extends Drawable {
     private final int PADDING = 4;
     
     protected Context mContext;
+    private int mIndex;
     
     private int mDefaultColor, mDefaultBorderColor;
     protected Paint mPaintMonth;
@@ -48,6 +50,10 @@ public class DateRangeItem extends Drawable {
     private SimpleDateFormat mFormatterMonth = new SimpleDateFormat("MMM");
     private SimpleDateFormat mFormatterYear = new SimpleDateFormat("yyyy");
     
+    public int getIndex() {
+        return mIndex;
+    }
+    
     public void setMonthColor(int color) {
         mPaintMonth.setColor(color);
         invalidateSelf();
@@ -58,9 +64,23 @@ public class DateRangeItem extends Drawable {
         invalidateSelf();
     }
     
-    public DateRangeItem(Context context, Date date, Rect bounds) {
+    public Date getDate() {
+        return mDate;
+    }
+    
+    public Date getEndDate() {
+        
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(mDate);
+        cal.add(Calendar.MONTH, 1);
+        
+        return cal.getTime();
+    }
+    
+    public DateRangeItem(Context context, int index, Date date, Rect bounds) {
         
         mContext = context;
+        mIndex = index;
         mDate = date;
         
         setBounds(bounds);
@@ -128,10 +148,6 @@ public class DateRangeItem extends Drawable {
         mPathBottom = new Path();
         mPathBottom.moveTo(mBottomBounds.left, mBottomBounds.top + PADDING);
         mPathBottom.lineTo(mBottomBounds.left, mBottomBounds.bottom - PADDING);
-    }
-    
-    public Date getDate() {
-        return mDate;
     }
     
     @Override

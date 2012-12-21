@@ -36,8 +36,9 @@ public class TransactionsHandsetFragment extends BaseFragment implements OnItemC
 	private static String sAccountNumber;
 
 	private AmazingListView mTransactionsList;
-	private TransactionsHandsetAdapter mAdapter;
 	private RelativeLayout mLoading;
+	
+    private String mOrderBy = "DATE", mDirection = "DESC";
 	
 	private boolean mLoaded = false;
     private boolean mWaiting = true;
@@ -88,49 +89,51 @@ public class TransactionsHandsetFragment extends BaseFragment implements OnItemC
 		
 		configureView();
 		
-		if (!mLoaded)
-			getInitialTransactions();
-		else
-			setupList();
+		getInitialTransactions();
 		
 		return mRoot;
 	}
 	
 	private void getInitialTransactions() {
 
-		new AsyncTask<Integer, Void, Void>() {
+		new AsyncTask<Integer, Void, TransactionsHandsetAdapter>() {
 			
 			@Override
-			protected Void doInBackground(Integer... params) {
+			protected TransactionsHandsetAdapter doInBackground(Integer... params) {
 				
 				int page = params[0];
 
 				Transactions.summarizedTransactions(Long.valueOf(sAccountNumber));
-				List<Transactions> row1 = Transactions.getRows(page).second;
+				List<Transactions> row1 = Transactions.getRows(page, mOrderBy, mDirection).second;
 				List<Pair<String, List<Transactions>>> initial = Transactions.groupTransactions(row1);
 
-				mAdapter = new TransactionsHandsetAdapter(mActivity, mTransactionsList, initial);
+				TransactionsHandsetAdapter adapter = new TransactionsHandsetAdapter(mActivity, mTransactionsList, initial);
 				
-				return null;
+				return adapter;
 			}
 			
 			@Override
-			protected void onPostExecute(Void result) {
+			protected void onPostExecute(TransactionsHandsetAdapter adapter) {
 
 			    mLoaded = true;
-				setupList();
+				setupList(adapter);
 			};
 			
 		}.execute(1);
 	}
 	
-	private void setupList() {
+	private void setupList(TransactionsHandsetAdapter adapter) {
 
-		mTransactionsList.setAdapter(mAdapter);
+		mTransactionsList.setAdapter(adapter);
 		mTransactionsList.setPinnedHeaderView(LayoutInflater.from(mActivity).inflate(R.layout.handset_item_transaction_header, mTransactionsList, false));
 		mTransactionsList.setLoadingView(mActivity.getLayoutInflater().inflate(R.layout.loading_view, null));
+        mTransactionsList.setEmptyView(mActivity.getLayoutInflater().inflate(R.layout.empty_view, null));
 		
-		mAdapter.notifyMayHaveMorePages();
+		if (adapter.getCount() == 0) {
+		    adapter.notifyNoMorePages();
+        } else {
+            adapter.notifyMayHaveMorePages();
+        }
 		
 		if (!mWaiting) {
 		    configureView();

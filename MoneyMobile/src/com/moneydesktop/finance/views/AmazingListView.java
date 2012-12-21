@@ -22,7 +22,10 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
 	
 	View mListFooter;
 	boolean mFooterViewAttached = false;
+    boolean mEmptyViewAttached = false;
 
+	private View mEmptyFooter;
+	
     private View mHeaderView;
     private boolean mHeaderViewVisible;
 
@@ -137,6 +140,14 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
 		return mListFooter;
 	}
     
+    public void setEmptyView(View emptyFooter) {
+        this.mEmptyFooter = emptyFooter;
+    }
+    
+    public View getEmptyView() {
+        return mEmptyFooter;
+    }
+    
     @Override
     public void setAdapter(ListAdapter adapter) {
     	if (!(adapter instanceof AmazingAdapter)) {
@@ -150,7 +161,7 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     	}
     	
     	this.mAdapter = (AmazingAdapter) adapter;
-    	((AmazingAdapter)adapter).setHasMorePagesListener(this);
+    	((AmazingAdapter) adapter).setHasMorePagesListener(this);
 		this.setOnScrollListener((AmazingAdapter) adapter);
     	
 		View dummy = new View(getContext());
@@ -166,17 +177,26 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
 
 	@Override
 	public void noMorePages() {
+	    
 		if (mListFooter != null) {
-			this.removeFooterView(mListFooter);
-		}
-		mFooterViewAttached = false;
+            this.removeFooterView(mListFooter);
+            mFooterViewAttached = false;
+        }
+		    
+	    if (!mEmptyViewAttached && mAdapter.getCount() == 0 && mEmptyFooter != null) {
+	        this.addFooterView(mEmptyFooter);
+	        mEmptyViewAttached = true;
+	    }
 	}
 
 	@Override
 	public void mayHaveMorePages() {
+	    
 		if (!mFooterViewAttached && mListFooter != null) {
+		    this.removeFooterView(mEmptyFooter);
 			this.addFooterView(mListFooter);
 			mFooterViewAttached = true;
+			mEmptyViewAttached = false;
 		}
 	}
 	
