@@ -18,6 +18,7 @@ import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.tablet.activity.LoginTabletActivity;
 import com.moneydesktop.finance.util.DialogUtils;
+import com.moneydesktop.finance.util.Enums.TabletFragments;
 
 public abstract class DashboardBaseActivity extends BaseActivity {
 
@@ -25,6 +26,7 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 	
 	protected boolean mLoggingOut = false;
 	protected boolean mOnHome = true;
+//	public static TabletFragments mCurrentFragment;
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -134,4 +136,8 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 	}
 	
 	public abstract void showFragment(int index);
+
+//    public void setCurrentFragment(TabletFragments accountTypesTablet) {
+//        mCurrentFragment = accountTypesTablet;        
+//    }
 }

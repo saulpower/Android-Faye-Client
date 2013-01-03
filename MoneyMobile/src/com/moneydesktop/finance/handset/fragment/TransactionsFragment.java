@@ -30,7 +30,6 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 	public final String TAG = this.getClass().getSimpleName();
 	
 	private static TransactionsFragment sFragment;
-	private static String sAccountNumber;
 
 	private AmazingListView mTransactionsList;
 	private TransactionsHandsetAdapter mAdapter;
@@ -38,10 +37,9 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 	
 	private boolean mLoaded = false;
 	
-	public static TransactionsFragment newInstance(String accountNumber) {
+	public static TransactionsFragment newInstance() {
 			
 		sFragment = new TransactionsFragment();
-		sAccountNumber = accountNumber;
 	
         Bundle args = new Bundle();
         sFragment.setArguments(args);
@@ -93,7 +91,6 @@ public class TransactionsFragment extends BaseFragment implements OnItemClickLis
 				
 				int page = params[0];
 
-				Transactions.summarizedTransactions(Long.valueOf(sAccountNumber));
 				List<Transactions> row1 = Transactions.getRows(page).second;
 				List<Pair<String, List<Transactions>>> initial = Transactions.groupTransactions(row1);
 

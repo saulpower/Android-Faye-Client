@@ -42,7 +42,7 @@ public class PopupWindowAtLocation extends FrameLayout {
 	int mScreenHeight;
 	int mScreenWidth;
 	View mTouchedView; 
-	//TransparentView mTransparentView;
+	TransparentView mTransparentView;
 	
 	private Paint bg;
 	private int mLeftMargin;
@@ -107,9 +107,9 @@ public class PopupWindowAtLocation extends FrameLayout {
 	    subOverlayParams.leftMargin = mX;
 	    subOverlayParams.topMargin = mY;
 	  
-	  //  mTransparentView = (TransparentView)mRoot.findViewById(R.id.transparent_account_view);
-	   // mTransparentView.setViewVisibility(View.VISIBLE);
-	   // mTransparentView.setTransparentArea(mX - (int)UiUtils.convertDpToPixel(5, mContext), mY, mTouchedView.getWidth() - (int)UiUtils.convertDpToPixel(12, mContext), mTouchedView.getHeight());
+	    mTransparentView = (TransparentView)mRoot.findViewById(R.id.transparent_account_view);
+	    mTransparentView.setViewVisibility(View.VISIBLE);
+	    mTransparentView.setTransparentArea(mX - (int)UiUtils.convertDpToPixel(5, mContext), mY, mTouchedView.getWidth() - (int)UiUtils.convertDpToPixel(12, mContext), mTouchedView.getHeight());
 	    
 	    
 	    /*

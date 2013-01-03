@@ -2,6 +2,7 @@
 package com.moneydesktop.finance.tablet.fragment;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
@@ -17,8 +19,10 @@ import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.VerticalTextView;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 @TargetApi(11)
@@ -36,10 +40,12 @@ public class SummaryTabletFragment extends BaseFragment {
     private Integer mColor;
 
     private boolean mInit = false;
+
     private Float mScale, mPercent;
     
     private GrowPagerAdapter mAdapter;
     private int mCurrentPosition = 0;
+
 
     public String getTitleText() {
         return mTitleText;
@@ -72,6 +78,7 @@ public class SummaryTabletFragment extends BaseFragment {
 
         return mRoot;
     }
+    
     
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
@@ -206,4 +213,5 @@ public class SummaryTabletFragment extends BaseFragment {
     public boolean onBackPressed() {
         return false;
     }
+
 }

@@ -15,6 +15,7 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,14 +26,16 @@ import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.tablet.adapter.AccountTypesAdapter;
+import com.moneydesktop.finance.util.Enums.TabletFragments;
 import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.PopupWindowAtLocation;
 import com.moneydesktop.finance.views.SlidingDrawerRightSide;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountTypesTabletFragment extends BaseFragment {
+public class AccountTypesTabletFragment extends BaseFragment implements FragmentVisibilityListener{
     private ExpandableListView mExpandableListView;
     private static SlidingDrawerRightSide sRightDrawer;
     private View mFooter;
@@ -49,8 +52,7 @@ public class AccountTypesTabletFragment extends BaseFragment {
 	
 	@Override
     public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        
+        super.onAttach(activity);        
         this.mActivity.onFragmentAttached(this);
 	}
 	
@@ -68,6 +70,9 @@ public class AccountTypesTabletFragment extends BaseFragment {
 	}
 	
 	private void setupView() {
+	    setupTitleBar(mActivity);
+	    mActivity.updateNavBar(getResources().getString(R.string.title_activity_accounts));
+	    
 		final LinearLayout panelLayoutHolder = (LinearLayout)mRoot.findViewById(R.id.panel_layout_holder);
         mExpandableListView.setGroupIndicator(null);
         
@@ -95,7 +100,7 @@ public class AccountTypesTabletFragment extends BaseFragment {
 			}
 		});
         
-        
+        //This allows you to grab the panel and close it by touching and dragging on any part of the panel instead of just the handle
         panelLayoutHolder.setOnTouchListener(new View.OnTouchListener() {			
 			public boolean onTouch(View view, MotionEvent event) {
 				return true;
@@ -112,7 +117,37 @@ public class AccountTypesTabletFragment extends BaseFragment {
 	}
 	
 	
-	/**
+	private void setupTitleBar(final Activity activity) {
+	    
+	    String[] icons = activity.getResources().getStringArray(R.array.account_types_title_bar_icons);
+	    
+	    ArrayList<OnClickListener> onClickListeners = new ArrayList<OnClickListener>();
+	    
+	    onClickListeners.add(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(activity, "add", Toast.LENGTH_LONG).show();
+            }
+        });
+	    
+        onClickListeners.add(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(activity, "refresh", Toast.LENGTH_LONG).show();
+            }
+        });
+       
+        onClickListeners.add(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(activity, "help", Toast.LENGTH_LONG).show();
+            }
+        });
+	    
+	    new NavBarButtons(activity, icons, onClickListeners);
+    }
+
+    /**
 	 * Setup the Panel/Drawer to show all banks attached.
 	 * @param panelLayoutHolder -- the panel container
 	 */
@@ -137,6 +172,7 @@ public class AccountTypesTabletFragment extends BaseFragment {
     	final View headerView = layoutInflater.inflate(R.layout.tablet_panel_header, null); 
 		return headerView;
 	}
+
 
     /**
      * Creates a View of a bank represented on the right panel.
@@ -193,7 +229,6 @@ public class AccountTypesTabletFragment extends BaseFragment {
         return bankTypeAccountView;
     }
 
-
 	/**
 	 * Drawer's width is set to a percentage of screen.
 	 * @param layoutParams
@@ -223,5 +258,13 @@ public class AccountTypesTabletFragment extends BaseFragment {
     public boolean onBackPressed() {
         return false;
     }
+    
+    @Override
+    public void onShow(Activity activity) {
+        if (activity != null) {
+            setupTitleBar(activity);
+        } 
+    }
 
+    
 }

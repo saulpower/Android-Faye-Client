@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This is empty on purpose. We will dynamically add icons (textviews) to this container for navigation -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/nav_bar_icon_container_sub"
+    android:orientation="horizontal">
+    
+</LinearLayout>

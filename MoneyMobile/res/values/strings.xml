@@ -13,6 +13,18 @@
         <item>UPDATE USERNAME AND PASSWORD</item>
     </string-array> 
     
+    <string-array name="account_types_title_bar_icons">
+        <item>@string/icon_add</item>
+        <item>@string/icon_refresh</item>
+        <item>@string/icon_help</item>
+    </string-array>   
+    
+   <string-array name="account_summary_title_bar_icons">
+        <item>@string/icon_print</item>
+        <item>@string/icon_email</item>
+        <item>@string/icon_help</item>
+    </string-array>
+    
     <string name="account_types_title">Accounts</string>
     <string name="account_types_indicator_show">Show</string>
     <string name="account_types_indicator_hide">Hide</string>
@@ -77,12 +89,16 @@
     <string name="feedback_email">mobile.support@moneydesktop.com</string>
     <string name="feedback_subject">MoneyMobile Feedback</string>
     <string name="feedback_title">Send Email</string>
-    <string name="hello_world">Hello world!</string>
     <string name="icon_lock">E</string>
     <string name="icon_feedback">6</string>
     <string name="icon_left_arrow">3</string>
     <string name="icon_logout">7</string>
     <string name="icon_password">§</string>
+    <string name="icon_help">v</string>
+    <string name="icon_add">A</string>
+    <string name="icon_print">print</string>
+    <string name="icon_email">email</string>
+    <string name="icon_refresh">N</string>
     <string name="label_amount">Amount</string>
     <string name="label_app_lock">APP LOCK</string>
     <string name="label_category">Category</string>
