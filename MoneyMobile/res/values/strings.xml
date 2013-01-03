@@ -122,10 +122,14 @@
     <string name="label_stmt">Statement Description</string>
     <string name="label_tags">Tags</string>
     <string name="label_unlink">UNLINK</string>
+    <string name="label_income">in income</string>
+    <string name="label_expense">in expenses</string>
     <string name="label_yes">yes</string>
     <string name="label_balances">Account Balances as of Today</string>
+    <string name="label_new_transactions">New Transactions</string>
     <string name="label_transactions">Transaction Summary</string>
     <string name="label_daily_spending">Daily Spending - This Month</string>
+    <string name="label_top_category">Top Category</string>
     <string name="loading">Loading</string>
     <string name="logging_out">Logging Out&#8230;</string>
     <string name="logout_cancel">Cancel Logout</string>
