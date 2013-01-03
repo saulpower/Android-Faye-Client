@@ -24,7 +24,7 @@
     		       android:layout_marginLeft="5dp"
     		       android:layout_weight=".06"
     		       android:gravity="center_vertical"
-    		       android:src="@string/label_transactions"
+    		       android:text="@string/label_transactions"
     		       android:textColor="@color/gray5" />
 
                <com.moneydesktop.finance.views.LineView
@@ -44,7 +44,7 @@
                        android:id="@+id/income_balance_icon"
                        android:layout_width="match_parent"
                        android:layout_height="match_parent"
-                       android:src="@string/icon_smile"
+                       android:text="@string/icon_smile"
                        android:textColor="@color/budgetColorGreenBackground" />
 
                    <LinearLayout
@@ -59,7 +59,7 @@
                        		    android:layout_width="match_parent"/>
                        		<TextView
                        		    android:id="@+id/income_balance_label"
-                       		    android:src="@string/label_income"
+                       		    android:text="@string/label_income"
                        		    android:layout_height="wrap_content"
                        		    android:layout_width="match_parent"
                        		    android:textColor="@color/gray5"/>
@@ -82,7 +82,7 @@
                        android:layout_height="match_parent"
                        android:layout_width="wrap_content"
                        android:textColor="@color/debts"
-                       android:src="@string/icon_frown"/>
+                       android:text="@string/icon_frown"/>
                    <LinearLayout
                    		android:id="@+id/expense_balance_text"
                    		android:orientation="vertical"
@@ -95,7 +95,8 @@
                        		<TextView
                        		    android:id="@+id/expense_balance_label"
                        		    android:layout_width="match_parent"
-                       			android:layout_height="wrap_content"/>
+                       			android:layout_height="wrap_content"
+                       			android:text="@string/label_expense"/>
                    </LinearLayout>
                </LinearLayout>
                <com.moneydesktop.finance.views.DottedLineView
@@ -112,7 +113,7 @@
                    android:layout_weight=".23">
 		               <TextView
 		                   android:id="@+id/daily_spending_text"
-		                   android:src="@string/label_daily_spending"
+		                   android:text="@string/label_daily_spending"
 		                   android:layout_width="match_parent"
 		                   android:layout_height="wrap_content"
 		                   android:textColor="@color/gray5"
@@ -151,7 +152,7 @@
                            android:id="@+id/new_transactions_label"
                            android:layout_width="match_parent"
                            android:layout_height="wrap_content"
-                           android:src="@string/label_new_transactions"/>
+                           android:text="@string/label_new_transactions"/>
                    </LinearLayout>
                 <com.moneydesktop.finance.views.DottedLineView
                     android:layout_width="wrap_content"
@@ -169,7 +170,7 @@
                            android:id="@+id/top_category_text"
                            android:layout_width="match_parent"
                            android:layout_height="wrap_content"
-                           android:src="@string/label_top_category"/>
+                           android:text="@string/label_top_category"/>
                        <TextView
                            android:id="@+id/top_category_icon"
                            android:layout_width="match_parent"
@@ -192,7 +193,7 @@
                        android:id="@+id/uncategorized_transaction_icon"
                        android:layout_width="wrap_content"
                        android:layout_height="match_parent"
-                       android:src="@string/icon_qmark"                       
+                       android:text="@string/icon_qmark"                       
                        />
                    <TextView
                        android:id="@+id/uncategorized_transaction_text"
