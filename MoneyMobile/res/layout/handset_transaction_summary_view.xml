@@ -65,12 +65,13 @@
                        		    android:textColor="@color/gray5"/>
                    </LinearLayout>
                </LinearLayout>
-               <com.moneydesktop.finance.views.DottedLineView
+               <com.moneydesktop.finance.views.LineView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:lineColor="@color/gray5"
                     app:lineStrokeWidth="3"
-                    app:isVertical="false" />
+                    app:isVertical="false"
+                    app:isDashed="true" />
                <LinearLayout 
                    android:id="@+id/expense_balance_summary_view"
                    android:layout_width="wrap_content"
@@ -99,12 +100,13 @@
                        			android:text="@string/label_expense"/>
                    </LinearLayout>
                </LinearLayout>
-               <com.moneydesktop.finance.views.DottedLineView
+               <com.moneydesktop.finance.views.LineView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:lineColor="@color/gray5"
                     app:lineStrokeWidth="3"
-                    app:isVertical="false" />
+                    app:isVertical="false"
+                    app:isDashed="true" />
                <LinearLayout
                    android:id="@+id/daily_spending_summary"
                    android:orientation="vertical"
@@ -126,12 +128,13 @@
 		                   android:textColor="@color/gray5"
 		                   />
                </LinearLayout>
-               <com.moneydesktop.finance.views.DottedLineView
+               <com.moneydesktop.finance.views.LineView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:lineColor="@color/gray5"
                     app:lineStrokeWidth="3"
-                    app:isVertical="false" />
+                    app:isVertical="false"
+                    app:isDashed="true" />
                <LinearLayout 
                    android:id="@+id/transactions_category_view"
                    android:orientation="horizontal"
@@ -154,12 +157,13 @@
                            android:layout_height="wrap_content"
                            android:text="@string/label_new_transactions"/>
                    </LinearLayout>
-                <com.moneydesktop.finance.views.DottedLineView
+               <com.moneydesktop.finance.views.LineView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     app:lineColor="@color/gray5"
                     app:lineStrokeWidth="3"
-                    app:isVertical="true" /> 
+                    app:isVertical="true"
+                    app:isDashed="true" />
                     <LinearLayout
                        android:id="@+id/top_category_view"
                        android:orientation="vertical"
@@ -177,12 +181,13 @@
                            android:layout_height="wrap_content"/>
                    </LinearLayout>                 
                </LinearLayout>
-               <com.moneydesktop.finance.views.DottedLineView
+               <com.moneydesktop.finance.views.LineView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:lineColor="@color/gray5"
                     app:lineStrokeWidth="3"
-                    app:isVertical="false" />
+                    app:isVertical="false"
+                    app:isDashed="true" />
                <LinearLayout
                    android:id="@+id/uncategorized_transaction_view"
                    android:orientation="horizontal"
