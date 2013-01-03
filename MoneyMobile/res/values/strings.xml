@@ -103,6 +103,9 @@
     <string name="icon_loc">J</string>
     <string name="icon_loans">H</string>
     <string name="icon_mort">L</string>
+    <string name="icon_smile">:</string>
+    <string name="icon_frown">f</string>
+    <string name="icon_qmark">\?</string>
     <string name="label_amount">Amount</string>
     <string name="label_app_lock">APP LOCK</string>
     <string name="label_category">Category</string>
@@ -121,6 +124,8 @@
     <string name="label_unlink">UNLINK</string>
     <string name="label_yes">yes</string>
     <string name="label_balances">Account Balances as of Today</string>
+    <string name="label_transactions">Transaction Summary</string>
+    <string name="label_daily_spending">Daily Spending - This Month</string>
     <string name="loading">Loading</string>
     <string name="logging_out">Logging Out&#8230;</string>
     <string name="logout_cancel">Cancel Logout</string>
