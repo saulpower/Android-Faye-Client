@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.BaseFragment;
@@ -32,8 +31,6 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         return sFragment;
     }
 
-    private Button mButton;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -50,39 +47,39 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         Fonts.applySecondaryItalicFont(mainLabel, 16);
 
         TextView incomeBalanceIcon = (TextView) v.findViewById(R.id.income_balance_icon);
-        Fonts.applyGlyphFont(incomeBalanceIcon, 24);
+        Fonts.applyGlyphFont(incomeBalanceIcon, 28);
         TextView incomeBalance = (TextView) v.findViewById(R.id.income_balance);
-        Fonts.applyPrimaryBoldFont(incomeBalance, 24);
+        Fonts.applyPrimarySemiBoldFont(incomeBalance, 28);
         TextView incomeBalanceLabel = (TextView) v.findViewById(R.id.income_balance_label);
-        Fonts.applySecondaryItalicFont(incomeBalanceLabel, 16);
+        Fonts.applySecondaryItalicFont(incomeBalanceLabel, 12);
 
         TextView expenseBalanceIcon = (TextView) v.findViewById(R.id.expense_balance_icon);
-        Fonts.applyGlyphFont(expenseBalanceIcon, 24);
+        Fonts.applyGlyphFont(expenseBalanceIcon, 28);
         TextView expenseBalance = (TextView) v.findViewById(R.id.expense_balance);
-        Fonts.applyPrimaryBoldFont(expenseBalance, 24);
+        Fonts.applyPrimarySemiBoldFont(expenseBalance, 28);
         TextView expenseBalanceLabel = (TextView) v.findViewById(R.id.expense_balance_label);
-        Fonts.applySecondaryItalicFont(expenseBalanceLabel, 16);
+        Fonts.applySecondaryItalicFont(expenseBalanceLabel, 12);
 
         TextView dailySpendingText = (TextView) v.findViewById(R.id.daily_spending_text);
-        Fonts.applySecondaryItalicFont(dailySpendingText, 16);
+        Fonts.applySecondaryItalicFont(dailySpendingText, 12);
 
         TextView newTransactionsNumber = (TextView) v.findViewById(R.id.new_transactions_number);
-        Fonts.applyPrimaryBoldFont(newTransactionsNumber, 24);
+        Fonts.applyPrimarySemiBoldFont(newTransactionsNumber, 28);
         TextView newTransactionsLabel = (TextView) v.findViewById(R.id.new_transactions_label);
-        Fonts.applySecondaryItalicFont(newTransactionsLabel, 16);
+        Fonts.applySecondaryItalicFont(newTransactionsLabel, 12);
 
         TextView topCategoryIcon = (TextView) v.findViewById(R.id.top_category_icon);
-        Fonts.applyPrimaryBoldFont(topCategoryIcon, 24);
+        Fonts.applyPrimarySemiBoldFont(topCategoryIcon, 28);
         TextView topCategoryText = (TextView) v.findViewById(R.id.top_category_text);
-        Fonts.applySecondaryItalicFont(topCategoryText, 16);
+        Fonts.applySecondaryItalicFont(topCategoryText, 12);
 
         TextView uncategorizedTransactionIcon = (TextView) v
                 .findViewById(R.id.uncategorized_transaction_icon);
-        Fonts.applyPrimaryBoldFont(uncategorizedTransactionIcon, 24);
+        Fonts.applyPrimarySemiBoldFont(uncategorizedTransactionIcon, 48);
 
         TextView uncategorizedTransactionText = (TextView) v
                 .findViewById(R.id.uncategorized_transaction_text);
-        Fonts.applyPrimaryFont(uncategorizedTransactionText, 16);
+        Fonts.applyPrimaryFont(uncategorizedTransactionText, 14);
 
         // Stub Data
         incomeBalance.setText("$0.00");

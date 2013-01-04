@@ -21,16 +21,16 @@
     		       android:id="@+id/label_transactions_view"
     		       android:layout_width="fill_parent"
     		       android:layout_height="0dp"
-    		       android:layout_marginLeft="5dp"
+    		       android:layout_marginLeft="10dp"
     		       android:layout_weight=".06"
     		       android:gravity="center_vertical"
     		       android:text="@string/label_transactions"
-    		       android:textColor="@color/gray5" />
+    		       android:textColor="@color/gray4" />
 
                <com.moneydesktop.finance.views.LineView
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        app:lineColor="@color/gray5"
+		        app:lineColor="@color/gray3"
 			    app:lineStrokeWidth="3"
 			    app:isVertical="false"/> 
                <LinearLayout 
@@ -38,6 +38,7 @@
                    android:layout_width="wrap_content"
                    android:layout_height="0dp"
                    android:layout_weight=".15"
+                   android:gravity="center_vertical"
                    android:orientation="horizontal">
 
                    <TextView
@@ -45,12 +46,15 @@
                        android:layout_width="match_parent"
                        android:layout_height="match_parent"
                        android:text="@string/icon_smile"
+                       android:gravity="center_vertical"
+                       android:layout_margin="10dp"
                        android:textColor="@color/budgetColorGreenBackground" />
 
                    <LinearLayout
                        android:id="@+id/income_balance_text"
                        android:layout_width="wrap_content"
                        android:layout_height="match_parent"
+                       android:gravity="center_vertical"
                        android:orientation="vertical" >
 
                        		<TextView
@@ -62,31 +66,36 @@
                        		    android:text="@string/label_income"
                        		    android:layout_height="wrap_content"
                        		    android:layout_width="match_parent"
-                       		    android:textColor="@color/gray5"/>
+                       		    android:textColor="@color/gray4"/>
                    </LinearLayout>
                </LinearLayout>
                <com.moneydesktop.finance.views.LineView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:lineColor="@color/gray5"
+                    app:lineColor="@color/gray3"
                     app:lineStrokeWidth="3"
                     app:isVertical="false"
-                    app:isDashed="true" />
+                    app:isDashed="true"
+                    app:dashLength="4" />
                <LinearLayout 
                    android:id="@+id/expense_balance_summary_view"
                    android:layout_width="wrap_content"
                    android:layout_height="0dp"
                    android:layout_weight=".15"
+                   android:gravity="center_vertical"
                    android:orientation="horizontal">
                    <TextView
                        android:id="@+id/expense_balance_icon"
                        android:layout_height="match_parent"
                        android:layout_width="wrap_content"
                        android:textColor="@color/debts"
+                       android:gravity="center_vertical"
+                       android:layout_margin="10dp"
                        android:text="@string/icon_frown"/>
                    <LinearLayout
                    		android:id="@+id/expense_balance_text"
                    		android:orientation="vertical"
+                   		android:gravity="center_vertical"
                    		android:layout_height="match_parent"
                    		android:layout_width="wrap_content">
                        		<TextView
@@ -97,28 +106,31 @@
                        		    android:id="@+id/expense_balance_label"
                        		    android:layout_width="match_parent"
                        			android:layout_height="wrap_content"
-                       			android:text="@string/label_expense"/>
+                       			android:text="@string/label_expense"
+                       			android:textColor="@color/gray4"/>
                    </LinearLayout>
                </LinearLayout>
                <com.moneydesktop.finance.views.LineView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:lineColor="@color/gray5"
+                    app:lineColor="@color/gray3"
                     app:lineStrokeWidth="3"
                     app:isVertical="false"
-                    app:isDashed="true" />
+                    app:isDashed="true" 
+                    app:dashLength="4"/>
                <LinearLayout
                    android:id="@+id/daily_spending_summary"
                    android:orientation="vertical"
                    android:layout_height="0dp"
                    android:layout_width="match_parent"
+                   android:layout_margin="10dp"
                    android:layout_weight=".23">
 		               <TextView
 		                   android:id="@+id/daily_spending_text"
 		                   android:text="@string/label_daily_spending"
 		                   android:layout_width="match_parent"
 		                   android:layout_height="wrap_content"
-		                   android:textColor="@color/gray5"
+		                   android:textColor="@color/gray4"
 		                   />
 		               <TextView
 		                   android:id="@+id/daily_spending_widget"
@@ -131,10 +143,11 @@
                <com.moneydesktop.finance.views.LineView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:lineColor="@color/gray5"
+                    app:lineColor="@color/gray3"
                     app:lineStrokeWidth="3"
                     app:isVertical="false"
-                    app:isDashed="true" />
+                    app:isDashed="true"
+                    app:dashLength="4" />
                <LinearLayout 
                    android:id="@+id/transactions_category_view"
                    android:orientation="horizontal"
@@ -146,7 +159,9 @@
                        android:orientation="vertical"
                        android:layout_width="0dp"
                        android:layout_height="match_parent"
-                       android:layout_weight=".5">
+                       android:gravity="center_vertical"
+                       android:layout_margin="10dp"
+                       android:layout_weight="1">
                        <TextView
                            android:id="@+id/new_transactions_number"
                            android:layout_width="match_parent"
@@ -155,56 +170,69 @@
                            android:id="@+id/new_transactions_label"
                            android:layout_width="match_parent"
                            android:layout_height="wrap_content"
-                           android:text="@string/label_new_transactions"/>
+                           android:text="@string/label_new_transactions"
+                           android:textColor="@color/gray4"/>
                    </LinearLayout>
                <com.moneydesktop.finance.views.LineView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    app:lineColor="@color/gray5"
+                    app:lineColor="@color/gray3"
                     app:lineStrokeWidth="3"
                     app:isVertical="true"
-                    app:isDashed="true" />
+                    app:isDashed="true"
+                    app:dashLength="4" />
                     <LinearLayout
                        android:id="@+id/top_category_view"
                        android:orientation="vertical"
                        android:layout_width="0dp"
                        android:layout_height="match_parent"
-                       android:layout_weight=".5">
+                       android:gravity="center_vertical"
+                       android:layout_margin="10dp"
+                       android:layout_weight="1">
                        <TextView
                            android:id="@+id/top_category_text"
                            android:layout_width="match_parent"
                            android:layout_height="wrap_content"
-                           android:text="@string/label_top_category"/>
+                           android:text="@string/label_top_category"
+                           android:textColor="@color/gray4"/>
                        <TextView
                            android:id="@+id/top_category_icon"
                            android:layout_width="match_parent"
-                           android:layout_height="wrap_content"/>
+                           android:layout_height="wrap_content"
+                           android:textColor="@color/debts"/>
                    </LinearLayout>                 
                </LinearLayout>
                <com.moneydesktop.finance.views.LineView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:lineColor="@color/gray5"
+                    app:lineColor="@color/gray3"
                     app:lineStrokeWidth="3"
                     app:isVertical="false"
-                    app:isDashed="true" />
+                    app:isDashed="true"
+                    app:dashLength="4" />
                <LinearLayout
                    android:id="@+id/uncategorized_transaction_view"
                    android:orientation="horizontal"
                    android:layout_width="match_parent"
                    android:layout_height="0dp"
+                   android:gravity="center_vertical"
                    android:layout_weight=".17">
                    <TextView
                        android:id="@+id/uncategorized_transaction_icon"
                        android:layout_width="wrap_content"
                        android:layout_height="match_parent"
-                       android:text="@string/icon_qmark"                       
+                       android:text="@string/icon_qmark"       
+                       android:textColor="@color/debts"
+                       android:gravity="center_vertical"
+                       android:layout_margin="10dp"            
                        />
                    <TextView
                        android:id="@+id/uncategorized_transaction_text"
                        android:layout_width="wrap_content"
-                       android:layout_height="match_parent"  
-                       />
+                       android:layout_height="match_parent"
+                       android:gravity="center_vertical"
+                       android:layout_margin="5dp"
+                       android:textColor="@color/gray4"/>
                </LinearLayout>
     	</LinearLayout>
     		
