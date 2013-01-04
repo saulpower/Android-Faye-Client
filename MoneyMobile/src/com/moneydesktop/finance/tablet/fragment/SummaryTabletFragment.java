@@ -200,7 +200,7 @@ public class SummaryTabletFragment extends BaseFragment {
             getView().setScaleY(scale);
 
             mCover.setAlpha(percent);
-            mCover.setVisibility((percent <= 0.05f) ? View.GONE : View.VISIBLE);
+            mCover.setVisibility((percent <= 0.05f) ? View.INVISIBLE : View.VISIBLE);
         }
     }
 

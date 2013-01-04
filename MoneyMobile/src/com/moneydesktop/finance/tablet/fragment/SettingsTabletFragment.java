@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.handset.fragment.LockFragment;
 import com.moneydesktop.finance.model.EventMessage;
+import com.moneydesktop.finance.shared.LockFragment;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.views.SettingButton;
 

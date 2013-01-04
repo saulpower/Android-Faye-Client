@@ -111,6 +111,7 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 				SyncEngine.sharedInstance().endBankStatusTimer();
 				DataController.deleteAllLocalData();
 				User.clear();
+	            Preferences.saveString(Preferences.KEY_LOCK_CODE, "");
 			
 				Preferences.saveBoolean(Preferences.KEY_IS_DEMO_MODE, false);
 
@@ -124,6 +125,7 @@ public abstract class DashboardBaseActivity extends BaseActivity {
     			
     	    	Intent i = new Intent(getApplicationContext(), isTablet ? LoginTabletActivity.class : LoginHandsetActivity.class);
     	    	startActivity(i);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     	    	finish();
     		}
 			

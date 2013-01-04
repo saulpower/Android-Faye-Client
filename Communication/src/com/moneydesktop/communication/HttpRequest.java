@@ -61,7 +61,7 @@ public class HttpRequest {
 	 * @throws ClientProtocolException 
 	 */
 	private static String sendRequest(String url, String method, HashMap<String, String> headers, HashMap<String, String> params, String data) throws ClientProtocolException, IOException {
-	    
+		
 		// Define http parameters
 	    HttpParams httpParameters = new BasicHttpParams();
 	    HttpConnectionParams.setConnectionTimeout(httpParameters, CONNECTION_TIMEOUT);
@@ -108,7 +108,7 @@ public class HttpRequest {
         	
         	//Closes the connection.
             response.getEntity().getContent().close();
-            throw new IOException(statusLine.getReasonPhrase());
+            throw new IOException(statusLine.getReasonPhrase() + " URL: " + url);
         }
         
         // Return string response

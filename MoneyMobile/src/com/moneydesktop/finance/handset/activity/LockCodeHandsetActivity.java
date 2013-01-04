@@ -6,8 +6,8 @@ import android.support.v4.app.FragmentTransaction;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.handset.fragment.LockCodeFragment;
 import com.moneydesktop.finance.shared.DashboardBaseActivity;
+import com.moneydesktop.finance.shared.LockCodeFragment;
 import com.moneydesktop.finance.util.Enums.LockType;
 
 public class LockCodeHandsetActivity extends DashboardBaseActivity {

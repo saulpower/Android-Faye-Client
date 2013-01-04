@@ -120,6 +120,7 @@ public abstract class AmazingAdapter extends BaseAdapter implements SectionIndex
     
 	public void notifyNoMorePages() {
 		mAutomaticNextPageLoading = false;
+		
 		if (mHasMorePagesListener != null) mHasMorePagesListener.noMorePages();
 	}
 	

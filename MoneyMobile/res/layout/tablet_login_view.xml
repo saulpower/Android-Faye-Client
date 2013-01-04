@@ -64,12 +64,12 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" 
-        android:background="@color/white">
+        android:layout_height="match_parent"
+        android:background="@color/black" >
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="800dp"
             android:background="@color/white" >
 
             <ImageView
@@ -103,11 +103,13 @@
             <LinearLayout
                 android:id="@+id/credentials"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_below="@id/logo"
                 android:background="@color/white"
                 android:gravity="center"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+			    android:focusable="true" 
+			    android:focusableInTouchMode="true" >
 
                 <com.moneydesktop.finance.views.DottedLineView
                     android:layout_width="450dp"
@@ -120,6 +122,7 @@
                     android:layout_height="50dp"
                     android:inputType="textEmailAddress"
                     android:textSize="25sp"
+                    android:imeOptions="actionNext"
                     app:labelColor="@color/light_gray1"
                     app:labelSize="12sp"
                     app:labelText="@string/label_email" />
@@ -135,6 +138,7 @@
                     android:layout_height="50dp"
                     android:inputType="textPassword"
                     android:textSize="25sp"
+                    android:imeOptions="actionDone"
                     app:labelColor="@color/light_gray1"
                     app:labelSize="12sp"
                     app:labelText="@string/label_password" />
@@ -149,7 +153,7 @@
             <LinearLayout
                 android:id="@+id/button_view"
                 android:layout_width="450dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_below="@id/credentials"
                 android:layout_centerHorizontal="true"
                 android:orientation="vertical" >
@@ -221,7 +225,9 @@
                 android:layout_marginTop="20dp"
                 android:background="@color/white"
                 android:gravity="center"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+			    android:focusable="true" 
+			    android:focusableInTouchMode="true" >
 
                 <com.moneydesktop.finance.views.DottedLineView
                     android:id="@+id/logindotted4"
@@ -235,6 +241,7 @@
                     android:layout_height="50dp"
                     android:inputType="text"
                     android:textSize="25sp"
+                    android:imeOptions="actionNext"
                     app:labelColor="@color/light_gray1"
                     app:labelSize="12sp"
                     app:labelText="@string/signup_name" />
@@ -251,6 +258,7 @@
                     android:layout_height="50dp"
                     android:inputType="textEmailAddress"
                     android:textSize="25sp"
+                    android:imeOptions="actionNext"
                     app:labelColor="@color/light_gray1"
                     app:labelSize="12sp"
                     app:labelText="@string/signup_email" />
@@ -266,6 +274,7 @@
                     android:layout_height="50dp"
                     android:inputType="text"
                     android:textSize="25sp"
+                    android:imeOptions="actionDone"
                     app:labelColor="@color/light_gray1"
                     app:labelSize="12sp"
                     app:labelText="@string/signup_bank" />

@@ -1,11 +1,10 @@
 package com.moneydesktop.finance.util;
 
-import java.text.DecimalFormat;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
@@ -15,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.R.drawable;
 import com.moneydesktop.finance.data.Constant;
 
 public class UiUtils {
@@ -48,6 +46,16 @@ public class UiUtils {
         final Display display = context.getWindowManager().getDefaultDisplay();
         display.getMetrics(metrics);
         return (metrics.densityDpi / Constant.STANDARD_DPI);
+    }
+    
+    public static Bitmap loadBitmapFromView(View v) {
+        
+        Bitmap b = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);                
+        Canvas c = new Canvas(b);
+        v.layout(0, 0, v.getLayoutParams().width, v.getLayoutParams().height);
+        v.draw(c);
+        
+        return b;
     }
     
     /**
@@ -100,6 +108,10 @@ public class UiUtils {
    
     public static float getDynamicPixels(Context context, float pixels) {
     	return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixels, context.getResources().getDisplayMetrics());
+    }
+    
+    public static float getScaledPixels(Context context, float size) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, size, context.getResources().getDisplayMetrics());
     }
 
 }

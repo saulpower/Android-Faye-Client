@@ -7,7 +7,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.crypto.SimpleCrypto;
+import com.moneydesktop.finance.crypto.StringEncrypter;
 
 public class Preferences {
 
@@ -27,7 +27,7 @@ public class Preferences {
 	public static final String KEY_NEEDS_SYNC = "md_needs_sync";
 	public static final String KEY_NEEDS_FULL_SYNC = "md_needs_full_sync";
 
-	private static final String SEED = "moneydesktop";
+	private static final String PASSWORD = "m0n3y_d3skt0p";
 
 	private static SharedPreferences getPrefs() {
 		
@@ -120,9 +120,12 @@ public class Preferences {
 			
 			String token = getString(KEY_TOKEN, "");
 			
-			return !token.equals("") ? SimpleCrypto.decrypt(SEED, token) : "";
+			StringEncrypter crypto = new StringEncrypter(PASSWORD);
+			
+			return !token.equals("") ? crypto.decrypt(token) : "";
 			
 		} catch (Exception e) {
+		    Log.e(TAG, "Error Decrypting", e);
 			return "";
 		}
 	}
@@ -130,8 +133,10 @@ public class Preferences {
 	public static void saveUserToken(String userToken) {
 		
 		try {
-			
-			saveString(KEY_TOKEN, SimpleCrypto.encrypt(SEED, userToken));
+
+            StringEncrypter crypto = new StringEncrypter(PASSWORD);
+            
+			saveString(KEY_TOKEN, crypto.encrypt(userToken));
 		
 		} catch (Exception e) {
 			Log.e(TAG, "Error Saving Password", e);

@@ -12,9 +12,9 @@ import android.widget.TextView;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.handset.fragment.LockFragment;
-import com.moneydesktop.finance.handset.fragment.TransactionsFragment;
+import com.moneydesktop.finance.handset.fragment.TransactionsHandsetFragment;
 import com.moneydesktop.finance.shared.DashboardBaseActivity;
+import com.moneydesktop.finance.shared.LockFragment;
 import com.moneydesktop.finance.util.Fonts;
 
 public class PopupTabletActivity extends DashboardBaseActivity {
@@ -90,7 +90,7 @@ public class PopupTabletActivity extends DashboardBaseActivity {
         case 0:
             return LockFragment.newInstance(true);
         case 1:
-            return TransactionsFragment.newInstance();
+          // return TransactionsFragment.newInstance(getIntent().getExtras().get);
         }
         
         return null;

@@ -120,8 +120,17 @@ public class Constant {
 	
 	public static final String QUERY_SUMMED_TRANSACTIONS = "SELECT DATE, sum(RAW_AMOUNT) FROM TRANSACTIONS WHERE BANK_ACCOUNT_ID = ? GROUP BY DATE ORDER BY DATE ASC";
 	public static final String QUERY_BUSINESS_BASE_JOIN = ", BUSINESS_OBJECT_BASE B WHERE T.BUSINESS_OBJECT_ID = B._ID AND B.DATA_STATE = ?";
-	public static final String QUERY_TRANSACTIONS = " ORDER BY DATE DESC LIMIT ? OFFSET ?";
-	
+	public static final String QUERY_TRANSACTIONS = " ORDER BY %s %s LIMIT ? OFFSET ?";
+    public static final String QUERY_DATE_TRANSACTIONS = ", CATEGORY C WHERE T.CATEGORY_ID = C._ID AND T.DATE BETWEEN ? AND ? ORDER BY %s %s LIMIT ? OFFSET ?";
+    
+    public static final String ORDER_ASC = "ASC";
+    public static final String ORDER_DESC = "DESC";
+    
+    public static final String FIELD_DATE = "T.DATE";
+    public static final String FIELD_TITLE = "T.TITLE";
+    public static final String FIELD_CATEGORY = "C.CATEGORY_NAME";
+    public static final String FIELD_AMOUNT = "T.AMOUNT";
+    
 	/*******************************************************************
 	 * VALUES
 	 *******************************************************************/
