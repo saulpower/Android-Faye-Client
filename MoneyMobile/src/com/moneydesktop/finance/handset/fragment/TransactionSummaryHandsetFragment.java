@@ -7,9 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.database.Category;
+import com.moneydesktop.finance.database.CategoryDao;
+import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.util.Fonts;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class TransactionSummaryHandsetFragment extends BaseFragment {
 
@@ -34,16 +43,20 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
+        TransactionsDao transactions = ApplicationContext.getDaoSession().getTransactionsDao();
+        CategoryDao categories = ApplicationContext.getDaoSession().getCategoryDao();
+        List<Category> catList = categories.loadAll();
+        List<Transactions> transList = transactions.loadAll();
         mRoot = inflater.inflate(R.layout.handset_transaction_summary_view, null);
-        setupView(mRoot);
+        setupView(transList, catList, mRoot);
 
         return mRoot;
     }
 
     // TODO: fill with actual data, stubbing for now.
-    private void setupView(View v) {
+    private void setupView(List<Transactions> transList, List<Category> catList, View v) {
         TextView mainLabel = (TextView) v.findViewById(R.id.label_transactions_view);
+        HashMap transInfo = parseTransactions(transList);
         Fonts.applySecondaryItalicFont(mainLabel, 16);
 
         TextView incomeBalanceIcon = (TextView) v.findViewById(R.id.income_balance_icon);
@@ -82,12 +95,36 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         Fonts.applyPrimaryFont(uncategorizedTransactionText, 16);
 
         // Stub Data
-        incomeBalance.setText("$0.00");
-        expenseBalance.setText("$0.00");
-        newTransactionsNumber.setText("0");
+        incomeBalance.setText("$" + transInfo.get("income").toString());
+        expenseBalance.setText("$" + transInfo.get("expenses").toString());
+        newTransactionsNumber.setText(transInfo.get("new_transactions").toString());
         topCategoryIcon.setText("?");
         uncategorizedTransactionText.setText("You have no uncategorized transactions.");
 
+    }
+
+    private HashMap<String, Object> parseTransactions(List<Transactions> l) {
+        HashMap<String, Object> t = new HashMap<String, Object>();
+        t.put("uncat_transactions", Integer.valueOf(0));
+        t.put("new_transactions", Integer.valueOf(0));
+        t.put("income", Double.valueOf(0));
+        t.put("expenses", Double.valueOf(0));
+        List<Category> catList = new ArrayList<Category>();
+        for (int i = 0; i < l.size(); i++) {
+            catList.add(l.get(i).getCategory());
+        }
+        for (int i = 0; i < l.size(); i++) {
+            if (l.get(i).isIncome()) {
+                t.put("income", (Double) t.get("income") + l.get(i).getAmount());
+            }
+            else {
+                t.put("expenses", (Double) t.get("expenses") + l.get(i).getAmount());
+            }
+            if (l.get(i).isNew()) {
+                t.put("new_transactions", (Integer) t.get("cash_accounts") + 1);
+            }
+        }
+        return t;
     }
 
     @Override

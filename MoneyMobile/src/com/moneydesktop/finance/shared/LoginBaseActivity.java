@@ -244,16 +244,16 @@ public abstract class LoginBaseActivity extends BaseActivity {
             }
         });
         mPassword.setOnEditorActionListener(new OnEditorActionListener() {
-            
+
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                
+
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                     mCredentialView.requestFocus();
-                     hideKeyboard();
-                     login();
+                    mCredentialView.requestFocus();
+                    hideKeyboard();
+                    login();
                 }
-                
+
                 return false;
             }
         });
@@ -294,16 +294,16 @@ public abstract class LoginBaseActivity extends BaseActivity {
             }
         });
         mSignupBank.setOnEditorActionListener(new OnEditorActionListener() {
-            
+
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                
+
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     mSignupView.requestFocus();
                     hideKeyboard();
                     signup();
                 }
-                
+
                 return false;
             }
         });
@@ -415,9 +415,9 @@ public abstract class LoginBaseActivity extends BaseActivity {
     }
 
     private void demoMode() {
-        
+
         fadeCurrentView();
-        
+
         User.registerDemoUser();
 
         DialogUtils.showProgress(this, getString(R.string.demo_message));
@@ -440,18 +440,20 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
         }.execute();
     }
-    
+
     private void fadeCurrentView() {
 
         Animation fade = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         fade.setAnimationListener(new AnimationListener() {
-            
+
             @Override
-            public void onAnimationStart(Animation animation) {}
-            
+            public void onAnimationStart(Animation animation) {
+            }
+
             @Override
-            public void onAnimationRepeat(Animation animation) {}
-            
+            public void onAnimationRepeat(Animation animation) {
+            }
+
             @Override
             public void onAnimationEnd(Animation animation) {
                 mViewFlipper.getCurrentView().setVisibility(View.GONE);
@@ -482,7 +484,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mSignupName.setText("");
         mSignupEmail.setText("");
         mSignupBank.setText("");
-        
+
         toThankYou();
     }
 
@@ -600,12 +602,14 @@ public abstract class LoginBaseActivity extends BaseActivity {
                     eventBus.post(new EventMessage().new LoginEvent());
 
                     Intent i = new Intent(LoginBaseActivity.this, IntroTabletActivity.class);
-                    
-                    // TODO: We need to create a handset version of the intro activity
-//                    if (!BaseActivity.isTablet(LoginBaseActivity.this)) {
-//                        i = new Intent(LoginBaseActivity.this, IntroHandsetActivity.class);
-//                    }
-                    
+
+                    // TODO: We need to create a handset version of the intro
+                    // activity
+                    // if (!BaseActivity.isTablet(LoginBaseActivity.this)) {
+                    // i = new Intent(LoginBaseActivity.this,
+                    // IntroHandsetActivity.class);
+                    // }
+
                     startActivity(i);
                     finish();
                 }
