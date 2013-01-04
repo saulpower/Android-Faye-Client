@@ -124,6 +124,10 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
                 t.put("new_transactions", (Integer) t.get("cash_accounts") + 1);
             }
         }
+        HashMap<String, Object> c = new HashMap<String, Object>();
+        for (int i = 0; i < l.size(); i++) {
+
+        }
         return t;
     }
 
