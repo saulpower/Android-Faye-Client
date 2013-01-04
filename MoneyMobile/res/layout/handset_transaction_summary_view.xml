@@ -232,7 +232,7 @@
                        android:layout_height="match_parent"
                        android:gravity="center_vertical"
                        android:layout_margin="5dp"
-                       android:textColor="@color/gray4"/>
+                       android:textColor="@color/gray5"/>
                </LinearLayout>
     	</LinearLayout>
     		

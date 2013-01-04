@@ -51,27 +51,27 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         TextView incomeBalance = (TextView) v.findViewById(R.id.income_balance);
         Fonts.applyPrimarySemiBoldFont(incomeBalance, 28);
         TextView incomeBalanceLabel = (TextView) v.findViewById(R.id.income_balance_label);
-        Fonts.applySecondaryItalicFont(incomeBalanceLabel, 12);
+        Fonts.applySecondaryItalicFont(incomeBalanceLabel, 14);
 
         TextView expenseBalanceIcon = (TextView) v.findViewById(R.id.expense_balance_icon);
         Fonts.applyGlyphFont(expenseBalanceIcon, 28);
         TextView expenseBalance = (TextView) v.findViewById(R.id.expense_balance);
         Fonts.applyPrimarySemiBoldFont(expenseBalance, 28);
         TextView expenseBalanceLabel = (TextView) v.findViewById(R.id.expense_balance_label);
-        Fonts.applySecondaryItalicFont(expenseBalanceLabel, 12);
+        Fonts.applySecondaryItalicFont(expenseBalanceLabel, 14);
 
         TextView dailySpendingText = (TextView) v.findViewById(R.id.daily_spending_text);
-        Fonts.applySecondaryItalicFont(dailySpendingText, 12);
+        Fonts.applySecondaryItalicFont(dailySpendingText, 14);
 
         TextView newTransactionsNumber = (TextView) v.findViewById(R.id.new_transactions_number);
         Fonts.applyPrimarySemiBoldFont(newTransactionsNumber, 28);
         TextView newTransactionsLabel = (TextView) v.findViewById(R.id.new_transactions_label);
-        Fonts.applySecondaryItalicFont(newTransactionsLabel, 12);
+        Fonts.applySecondaryItalicFont(newTransactionsLabel, 14);
 
         TextView topCategoryIcon = (TextView) v.findViewById(R.id.top_category_icon);
         Fonts.applyPrimarySemiBoldFont(topCategoryIcon, 28);
         TextView topCategoryText = (TextView) v.findViewById(R.id.top_category_text);
-        Fonts.applySecondaryItalicFont(topCategoryText, 12);
+        Fonts.applySecondaryItalicFont(topCategoryText, 14);
 
         TextView uncategorizedTransactionIcon = (TextView) v
                 .findViewById(R.id.uncategorized_transaction_icon);
@@ -79,7 +79,7 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
 
         TextView uncategorizedTransactionText = (TextView) v
                 .findViewById(R.id.uncategorized_transaction_text);
-        Fonts.applyPrimaryFont(uncategorizedTransactionText, 14);
+        Fonts.applyPrimaryFont(uncategorizedTransactionText, 16);
 
         // Stub Data
         incomeBalance.setText("$0.00");
