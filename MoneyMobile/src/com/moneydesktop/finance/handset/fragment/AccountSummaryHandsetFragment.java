@@ -63,6 +63,7 @@ public class AccountSummaryHandsetFragment extends BaseFragment {
         AccountBalanceItemView cashAccounts = (AccountBalanceItemView) v
                 .findViewById(R.id.account_balance_cash);
         cashAccounts.setAccountStatus(makeAccountsString((Integer) mAccountInfo
+
                 .get("cash_accounts")));
         cashAccounts.setAccountAmount(makeTotalsString((Double) mAccountInfo.get("cash_amount")));
 
