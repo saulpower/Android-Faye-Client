@@ -44,7 +44,7 @@ public class NavBarButtons extends LinearLayout  {
             
             TextView icon = new TextView(mContext);
 
-           // icon.setPadding(0, 0, 25, 0);
+            icon.setPadding(0, 0, 25, 0);
             
             if (mButtonTexts[i].equals(getResources().getString(R.string.icon_print))) {
                 icon.setBackgroundDrawable(getResources().getDrawable(R.drawable.tablet_button_print));                

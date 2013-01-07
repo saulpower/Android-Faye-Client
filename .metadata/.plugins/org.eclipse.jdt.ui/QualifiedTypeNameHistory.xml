@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="android.view.WindowManager"/>
-<fullyQualifiedTypeName name="android.view.LayoutInflater"/>
-<fullyQualifiedTypeName name="android.view.animation.AnimationUtils"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.R.anim"/>
 <fullyQualifiedTypeName name="android.view.animation.Animation"/>
 <fullyQualifiedTypeName name="android.view.animation.Animation.AnimationListener"/>
-<fullyQualifiedTypeName name="com.moneydesktop.finance.tablet.activity.DashboardTabletActivity"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.BaseActivity"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.R.layout"/>
 <fullyQualifiedTypeName name="android.content.Context"/>
 <fullyQualifiedTypeName name="android.widget.LinearLayout.LayoutParams"/>
 <fullyQualifiedTypeName name="android.widget.AbsoluteLayout"/>
-<fullyQualifiedTypeName name="com.moneydesktop.finance.R.drawable"/>
 <fullyQualifiedTypeName name="android.widget.ImageView"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.data.BankLogoManager"/>
 <fullyQualifiedTypeName name="android.text.TextUtils"/>
@@ -51,13 +46,18 @@
 <fullyQualifiedTypeName name="android.widget.TextView"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.R.array"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
-<fullyQualifiedTypeName name="android.view.View.OnClickListener"/>
 <fullyQualifiedTypeName name="android.widget.Toast"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.util.Fonts"/>
-<fullyQualifiedTypeName name="android.app.Activity"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.R.id"/>
 <fullyQualifiedTypeName name="android.view.View"/>
 <fullyQualifiedTypeName name="android.view.ViewGroup"/>
 <fullyQualifiedTypeName name="android.graphics.Color"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.util.UiUtils"/>
+<fullyQualifiedTypeName name="com.moneydesktop.finance.R.string"/>
+<fullyQualifiedTypeName name="com.moneydesktop.finance.R.drawable"/>
+<fullyQualifiedTypeName name="android.view.View.OnClickListener"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="com.moneydesktop.finance.tablet.fragment.FragmentVisibilityListener"/>
+<fullyQualifiedTypeName name="android.app.Activity"/>
+<fullyQualifiedTypeName name="com.moneydesktop.finance.tablet.activity.DashboardTabletActivity"/>
 </qualifiedTypeNameHistroy>
