@@ -12,6 +12,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -255,6 +256,15 @@ public class DateRangeView extends View implements AnchorMoveListener {
         return mTouchingAnchorLeft || mTouchingAnchorRight;
     }
     
+    private DateRangeItem isTouchingItem() {
+        
+        PointF touch = new PointF(mLastTouchX, mLastTouchY);
+        
+        DateRangeItem item = getItem(touch);
+        
+        return item;
+    }
+    
     private void setAnchors() {
         
         boolean useLeft = false;
@@ -379,6 +389,13 @@ public class DateRangeView extends View implements AnchorMoveListener {
 
                 boolean touching = isTouchingAnchor();
                 mScroller.setScrollingEnabled(!touching);
+                
+                if (!touching) {
+                    DateRangeItem item = isTouchingItem();
+                    if (item != null) {
+                        Log.i(TAG, "Touching: " + item.getDate());
+                    }
+                }
                 
                 break;
             }
