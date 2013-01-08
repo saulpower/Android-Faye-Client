@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-   <LinearLayout
+    <LinearLayout
         android:id="@+id/introImageWrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
-		android:orientation="vertical">
-        	<ImageView
-        	
+        android:orientation="vertical" >
+
+        <ImageView
             android:id="@+id/introImage"
             android:layout_width="match_parent"
-            android:scaleType="fitCenter"
             android:layout_height="0dp"
             android:layout_weight=".6"
-            android:gravity="center_horizontal"/>
+            android:gravity="center_horizontal"
+            android:scaleType="fitCenter" />
 
-
-        	<LinearLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:orientation="vertical"
             android:layout_weight=".3"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/handset_intro_text_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
+                android:gravity="center"
                 android:textColor="@color/gray9" />
+
             <com.moneydesktop.finance.views.LineView
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        android:layout_marginTop="4dp"
-		        android:layout_marginBottom="4dp"
-		        app:lineColor="@color/white"
-			    app:lineStrokeWidth="2"
-			    app:isVertical="false" />  
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                app:isVertical="false"
+                app:lineColor="@color/white"
+                app:lineStrokeWidth="2" />
 
             <TextView
                 android:id="@+id/handset_intro_text_description"
@@ -53,6 +53,7 @@
                 android:layout_marginRight="10dp"
                 android:gravity="center"
                 android:textColor="@color/gray9" />
-            </LinearLayout>
         </LinearLayout>
+    </LinearLayout>
+
 </RelativeLayout>
