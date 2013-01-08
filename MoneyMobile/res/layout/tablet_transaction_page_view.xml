@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray1" >
@@ -37,7 +39,7 @@
             android:layout_height="@dimen/tablet_header_1"
             android:orientation="horizontal" >
 
-            <EditText
+            <com.moneydesktop.finance.views.ClearEditText
                 android:id="@+id/search"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -45,8 +47,12 @@
                 android:background="@color/white"
                 android:paddingLeft="10dp"
                 android:singleLine="true"
-                android:textColorHint="@color/gray2"
-                android:hint="@string/hint_search_transactions" />
+                android:textColor="@color/primaryColor"
+                android:textColorHint="@color/gray3"
+                app:iconText="8"
+                app:clearText="X"
+                android:hint="@string/hint_search_transactions"
+                android:imeOptions="actionSearch"/>
 
             <View
                 android:layout_width="@dimen/tablet_header_1"

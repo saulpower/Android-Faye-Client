@@ -23,6 +23,7 @@ import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.EventMessage.ParentAnimationEvent;
 import com.moneydesktop.finance.tablet.adapter.TransactionsTabletAdapter;
+import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.AmazingListView;
 import com.moneydesktop.finance.views.DateRangeView;
 import com.moneydesktop.finance.views.DateRangeView.FilterChangeListener;
@@ -132,6 +133,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         mSearch.addTextChangedListener(mWatcher);
         
         setupListeners();
+        applyFonts();
     }
     
     private void setupListeners() {
@@ -169,6 +171,15 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         });
         
         mDate.performClick();
+    }
+    
+    private void applyFonts() {
+        
+        Fonts.applyPrimaryBoldFont(mDate, 14);
+        Fonts.applyPrimaryBoldFont(mPayee, 14);
+        Fonts.applyPrimaryBoldFont(mCategory, 14);
+        Fonts.applyPrimaryBoldFont(mAmount, 14);
+        Fonts.applyPrimaryBoldFont(mSearch, 18);
     }
     
     private void applySort(HeaderView clicked, String field) {
