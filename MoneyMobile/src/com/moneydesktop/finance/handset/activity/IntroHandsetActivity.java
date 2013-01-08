@@ -14,6 +14,7 @@ import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.BaseActivity;
@@ -95,6 +96,8 @@ public class IntroHandsetActivity extends BaseActivity {
         if (event.isFinished()) {
             TextView mStartButton = (TextView) findViewById(R.id.get_started);
             mSpinner = (SmallSpinnerView) findViewById(R.id.loading_spinner);
+            LinearLayout l = (LinearLayout) findViewById(R.id.button_container);
+            l.setBackgroundDrawable(getResources().getDrawable(R.drawable.tablet_wood));
             mLoadingMessage.setVisibility(View.GONE);
             mSpinner.setVisibility(View.GONE);
             Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out_fast);

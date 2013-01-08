@@ -42,7 +42,7 @@ public class IntroHandsetFragment extends BaseFragment {
         TextView introTextTitle = (TextView) view.findViewById(R.id.handset_intro_text_title);
         String Title = getResources().getString(mIntroTitle);
         introTextTitle.setText(Title);
-        Fonts.applyPrimaryBoldFont(introTextTitle, 24);
+        Fonts.applyPrimaryBoldFont(introTextTitle, 18);
         String Description = getResources().getString(mIntroDescription);
         TextView introTextDescription = (TextView) view
                 .findViewById(R.id.handset_intro_text_description);

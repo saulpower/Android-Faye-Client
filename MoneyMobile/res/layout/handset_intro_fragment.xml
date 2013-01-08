@@ -26,25 +26,31 @@
             android:layout_height="0dp"
             android:orientation="vertical"
             android:layout_weight=".3"
-            android:gravity="center_horizontal">
+            android:gravity="center">
 
             <TextView
                 android:id="@+id/handset_intro_text_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:textColor="@color/gray9" />
             <com.moneydesktop.finance.views.LineView
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
+		        android:layout_marginTop="4dp"
+		        android:layout_marginBottom="4dp"
 		        app:lineColor="@color/white"
-			    app:lineStrokeWidth="1"
+			    app:lineStrokeWidth="2"
 			    app:isVertical="false" />  
 
             <TextView
                 android:id="@+id/handset_intro_text_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:gravity="center"
                 android:textColor="@color/gray9" />
             </LinearLayout>
