@@ -42,7 +42,7 @@ public class AccountBalanceItemView extends LinearLayout {
         mAccountType = (TextView) findViewById(R.id.account_type);
         mAccountStatus = (TextView) findViewById(R.id.account_status);
         mAccountAmount = (TextView) findViewById(R.id.account_amount);
-        mLayout = (LinearLayout) findViewById(R.id.account_balance_item_base_layout);
+        mLayout = (LinearLayout) findViewById(R.id.account_balance_item_view);
     }
 
     public void setVariableItems(String s, String a) {
@@ -87,10 +87,7 @@ public class AccountBalanceItemView extends LinearLayout {
         }
         mAccountType.setTextColor(getContext().getResources().getColor(R.color.gray7));
         mAccountStatus.setTextColor(getContext().getResources().getColor(R.color.gray3));
-        Fonts.applyGlyphFont(mTextIcon, 24);
-        Fonts.applyPrimarySemiBoldFont(mAccountType, 16);
-        Fonts.applyPrimaryBoldFont(mAccountAmount, 16);
-        Fonts.applySecondaryItalicFont(mAccountStatus, 14);
+        initFonts();
     }
 
     private void displayDebt() {
@@ -99,5 +96,14 @@ public class AccountBalanceItemView extends LinearLayout {
         mTextIcon.setTextColor(getContext().getResources().getColor(R.color.gray7));
         mAccountAmount.setTextColor(getContext().getResources().getColor(R.color.debts));
         invalidate();
+
     }
+
+    private void initFonts() {
+        Fonts.applyGlyphFont(mTextIcon, 24);
+        Fonts.applyPrimarySemiBoldFont(mAccountType, 16);
+        Fonts.applyPrimaryBoldFont(mAccountAmount, 16);
+        Fonts.applySecondaryItalicFont(mAccountStatus, 14);
+    }
+
 }
