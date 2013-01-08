@@ -57,7 +57,8 @@
             
         <activity
             android:name=".tablet.activity.DashboardTabletActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustPan" />
         
         <activity
             android:name=".tablet.activity.LockCodeTabletActivity"

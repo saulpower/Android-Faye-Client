@@ -1,14 +1,14 @@
 package com.moneydesktop.finance.views;
 
-import com.moneydesktop.finance.R;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.moneydesktop.finance.R;
 
 public class DottedLineView extends View {
    private Paint mLinePaint;
@@ -21,7 +21,7 @@ public class DottedLineView extends View {
         
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
             setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        } 
+        }
     }
     
     public void setDash(float dashwhite, float dashblack) {

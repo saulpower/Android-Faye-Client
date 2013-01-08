@@ -37,18 +37,16 @@
             android:layout_height="@dimen/tablet_header_1"
             android:orientation="horizontal" >
 
-            <View
+            <EditText
+                android:id="@+id/search"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="3" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="46"
+                android:layout_weight="49"
                 android:background="@color/white"
                 android:paddingLeft="10dp"
-                android:textColor="@color/gray2" />
+                android:singleLine="true"
+                android:textColorHint="@color/gray2"
+                android:hint="@string/hint_search_transactions" />
 
             <View
                 android:layout_width="@dimen/tablet_header_1"
@@ -71,6 +69,7 @@
                 android:layout_marginLeft="@dimen/tablet_header_1_half"
                 android:layout_marginRight="@dimen/tablet_header_1_half"
                 android:background="@color/transparent" />
+            
         </LinearLayout>
 
         <View

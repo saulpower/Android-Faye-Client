@@ -119,9 +119,6 @@ public class NavWheelView extends View {
 	 */
 	public NavWheelView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-        
-		float[] size = UiUtils.getScreenMeasurements(context);
-		mCenter = new PointF((size[0] / 2.0f), (size[1] / 2.0f));
 		
 		mBg = new Paint(Paint.ANTI_ALIAS_FLAG);
 		mBg.setStyle(Paint.Style.FILL);
@@ -138,6 +135,10 @@ public class NavWheelView extends View {
 	 */
 	private void initializeItems() {
 
+	    if (mCenter == null) {
+	        return;
+	    }
+	    
 		mPointer = new PointerDrawable(getContext(), mCenter, mItems.size());
 		mPointer.setCallback(this);
 		
@@ -435,6 +436,11 @@ public class NavWheelView extends View {
     	
     	int width = MeasureSpec.getSize(widthMeasureSpec);
     	int height = MeasureSpec.getSize(heightMeasureSpec);
+
+    	if (mCenter == null) {
+    	    mCenter = new PointF((width / 2.0f), (height / 2.0f));
+    	    initializeItems();
+    	}
     	
         setMeasuredDimension(width, height);
     }

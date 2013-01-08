@@ -6,6 +6,8 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
@@ -41,11 +44,28 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     private TransactionsTabletFragment mParent;
     private int[] mLocation = new int[2];
     private String mOrderBy = Constant.FIELD_DATE, mDirection = Constant.ORDER_DESC;
+    private String mSearchTitle = "%";
     
     private HeaderView mDate, mPayee, mCategory, mAmount;
+    private EditText mSearch;
     
     private boolean mLoaded = false;
     private boolean mWaiting = true;
+    
+    private TextWatcher mWatcher = new TextWatcher() {
+        
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        
+        @Override
+        public void afterTextChanged(Editable s) {
+            mSearchTitle = "%" + mSearch.getText().toString().toLowerCase() + "%";
+            getInitialTransactions();
+        }
+    };
     
     public static TransactionsPageTabletFragment newInstance() {
             
@@ -107,6 +127,9 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         mCategory.setOnFilterChangeListener(this);
         mAmount = (HeaderView) mRoot.findViewById(R.id.amount_header);
         mAmount.setOnFilterChangeListener(this);
+        
+        mSearch = (EditText) mRoot.findViewById(R.id.search);
+        mSearch.addTextChangedListener(mWatcher);
         
         setupListeners();
     }
@@ -199,7 +222,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     }
     
     private void getInitialTransactions() {
-        
+
         new AsyncTask<Integer, Void, TransactionsTabletAdapter>() {
             
             @Override
@@ -207,10 +230,12 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
                 
                 int page = params[0];
                 
-                List<Transactions> row1 = Transactions.getRows(page, mDateRange.getStartDate(), mDateRange.getEndDate(), mOrderBy, mDirection).second;
+                List<Transactions> row1 = Transactions.getRows(page, mSearchTitle, mDateRange.getStartDate(), mDateRange.getEndDate(), mOrderBy, mDirection).second;
 
                 TransactionsTabletAdapter adapter = new TransactionsTabletAdapter(mActivity, mTransactionsList, row1);
                 adapter.setDateRange(mDateRange.getStartDate(), mDateRange.getEndDate());
+                adapter.setOrder(mOrderBy, mDirection);
+                adapter.setSearch(mSearchTitle);
                 
                 return adapter;
             }
@@ -231,7 +256,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         
         adapter.notifyDataSetChanged();
         
-        if (adapter.getCount() == 0) {
+        if (adapter.getCount() < Constant.QUERY_LIMIT) {
             adapter.notifyNoMorePages();
         } else {
             adapter.notifyMayHaveMorePages();
