@@ -6,35 +6,36 @@
 
    <LinearLayout
         android:id="@+id/introImageWrapper"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
 		android:orientation="vertical">
         	<ImageView
             android:id="@+id/introImage"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:layout_weight=".5"
             android:gravity="center_horizontal"/>
 
 
         	<LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:orientation="vertical"
-            android:layout_weight="2"
+            android:layout_weight=".5"
             android:gravity="center_horizontal">
 
             <TextView
                 android:id="@+id/handset_intro_text_title"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textColor="@color/gray9" />
+            
 
             <TextView
                 android:id="@+id/handset_intro_text_description"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textColor="@color/gray9" />
