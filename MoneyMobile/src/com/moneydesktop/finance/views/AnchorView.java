@@ -10,6 +10,7 @@ import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
+import android.view.animation.DecelerateInterpolator;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.model.PointEvaluator;
@@ -57,6 +58,7 @@ public class AnchorView extends Drawable {
     public void animateToPosition(PointF position) {
         
         ObjectAnimator move = ObjectAnimator.ofObject(this, "position", new PointEvaluator(), position);
+        move.setInterpolator(new DecelerateInterpolator());
         move.setDuration(300);
         move.start();
     }
@@ -110,14 +112,14 @@ public class AnchorView extends Drawable {
     
     private void updateBounds() {
 
-        int left = (int) (mPosition.x - mWidth / 2);
+        int left = (int) (mPosition.x - mWidth / 2.0f);
         int top = (int) mPosition.y;
-        int right = (int) (left + mWidth + mPadding * 2);
+        int right = (int) (left + mWidth + mPadding);
         int bottom = (int) (top + mHeight);
         
         if (mIsLeft) {
-            right = (int) (mPosition.x + mWidth / 2);
-            left = (int) (right - mWidth - mPadding * 2);
+            right = (int) (mPosition.x + mWidth / 2.0f);
+            left = (int) (right - mWidth - mPadding);
         }
         
         setBounds(left, top, right, bottom);

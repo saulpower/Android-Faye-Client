@@ -19,6 +19,9 @@ import com.moneydesktop.finance.util.Fonts;
 
 public class LabelEditText extends EditText {
     
+    public final String TAG = this.getClass().getSimpleName();
+    
+    private final int PADDING_RIGHT = 40;
     private Paint labelPaint;
     private String text;
     private Rect bounds = new Rect();
@@ -44,13 +47,10 @@ public class LabelEditText extends EditText {
         Resources res = getResources();
         clearButton = BitmapFactory.decodeResource(res, R.drawable.clear_button);
         mClearButtonPressed = BitmapFactory.decodeResource(res, R.drawable.clear_button_pressed);
-        startClearButton();
+        
+        setPadding(getPaddingLeft(), getPaddingTop(), (int) (PADDING_RIGHT * 1.3), getPaddingBottom());
         
         a.recycle();
-    }
-
-    private void startClearButton() {
-
     }
 
     public void setTextColor(int color) {
@@ -139,10 +139,10 @@ public class LabelEditText extends EditText {
     public void onDraw(Canvas c) {
         super.onDraw(c);
         
-        c.drawText(text, 10, (bounds.height() + 10), labelPaint);
+        c.drawText(text, 10 + getScrollX(), (bounds.height() + 10), labelPaint);
         
         if (!this.getText().toString().equals("") && hasFocus()) {
-            c.drawBitmap(mIsPressed ? mClearButtonPressed : clearButton, this.getWidth() - 40, ((this.getHeight() / 2) - (clearButton.getHeight() / 2)), null);
+            c.drawBitmap(mIsPressed ? mClearButtonPressed : clearButton, this.getWidth() - PADDING_RIGHT + getScrollX(), ((this.getHeight() / 2) - (clearButton.getHeight() / 2)), null);
         }
     }
 

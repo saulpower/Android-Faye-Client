@@ -41,6 +41,7 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	private Date mStart, mEnd;
 	
 	private String mOrderBy = Constant.FIELD_DATE, mDirection = Constant.ORDER_DESC;
+	private String mSearch = "%";
 
 	private Activity mActivity;
 
@@ -71,7 +72,11 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	    mDirection = direction;
 	}
 
-	public long getItemId(int position) {
+	public void setSearch(String search) {
+        this.mSearch = search;
+    }
+
+    public long getItemId(int position) {
 		return position;
 	}
 
@@ -94,7 +99,7 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 				if (mStart == null || mEnd == null) {
 				    rows = Transactions.getRows(page, mOrderBy, mDirection);
 				} else {
-				    rows = Transactions.getRows(page, mStart, mEnd, mOrderBy, mDirection);
+				    rows = Transactions.getRows(page, mSearch, mStart, mEnd, mOrderBy, mDirection);
 				}
 				
 				return rows;

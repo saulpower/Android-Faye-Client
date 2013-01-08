@@ -95,6 +95,7 @@
     <string name="feedback_title">Send Email</string>
     <string name="get_started">BEGIN USING THE APP</string>
     <string name="hello_world">Hello world!</string>
+    <string name="hint_search_transactions">Search For Transactions</string>
     <string name="icon_lock">E</string>
     <string name="icon_feedback">6</string>
     <string name="icon_left_arrow">3</string>

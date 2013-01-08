@@ -7,6 +7,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
@@ -15,7 +16,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
 import com.moneydesktop.finance.model.PointEvaluator;
@@ -33,6 +33,7 @@ public class NavWheelView extends View {
 	public final String TAG = this.getClass().getSimpleName();
 
 	private final float RADIUS = 200;
+	private final int ALPHA = 200;
 	
 	private PointF mCenter;
 	private List<NavItemDrawable> mDrawables;
@@ -118,13 +119,11 @@ public class NavWheelView extends View {
 	 */
 	public NavWheelView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-        
-		float[] size = UiUtils.getScreenMeasurements(context);
-		mCenter = new PointF((size[0] / 2.0f), (size[1] / 2.0f));
 		
 		mBg = new Paint(Paint.ANTI_ALIAS_FLAG);
 		mBg.setStyle(Paint.Style.FILL);
-		mBg.setColor(context.getResources().getColor(R.color.transparent50percent));
+		mBg.setColor(Color.BLACK);
+		mBg.setAlpha(ALPHA);
 		
 		EventBus.getDefault().register(this);
 	}
@@ -136,6 +135,10 @@ public class NavWheelView extends View {
 	 */
 	private void initializeItems() {
 
+	    if (mCenter == null) {
+	        return;
+	    }
+	    
 		mPointer = new PointerDrawable(getContext(), mCenter, mItems.size());
 		mPointer.setCallback(this);
 		
@@ -278,7 +281,7 @@ public class NavWheelView extends View {
 	    mHandler.removeCallbacks(mTask);
 	    
 		setVisibility(View.VISIBLE);
-		ObjectAnimator fade = ObjectAnimator.ofInt(this, "mAlpha", 0, 255);
+		ObjectAnimator fade = ObjectAnimator.ofInt(this, "mAlpha", 0, ALPHA);
 		fade.setDuration(250);
 		fade.start();
 		
@@ -296,7 +299,7 @@ public class NavWheelView extends View {
 
         mShowing = false;
 		
-		ObjectAnimator fade = ObjectAnimator.ofInt(this, "mAlpha", 255, 0);
+		ObjectAnimator fade = ObjectAnimator.ofInt(this, "mAlpha", ALPHA, 0);
 		fade.setDuration(250);
 		fade.start();
 		
@@ -433,6 +436,11 @@ public class NavWheelView extends View {
     	
     	int width = MeasureSpec.getSize(widthMeasureSpec);
     	int height = MeasureSpec.getSize(heightMeasureSpec);
+
+    	if (mCenter == null) {
+    	    mCenter = new PointF((width / 2.0f), (height / 2.0f));
+    	    initializeItems();
+    	}
     	
         setMeasuredDimension(width, height);
     }
