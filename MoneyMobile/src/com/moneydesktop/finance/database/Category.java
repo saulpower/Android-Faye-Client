@@ -362,7 +362,7 @@ public class Category extends BusinessObject  {
     		}
     	}
     	
-    	String imageName = String.format("%s.png", category.getCategoryId());
+    	String imageName = getIconForId(category);
     	category.setImageName(imageName);
     	
     	boolean isIncome = json.optBoolean(Constant.KEY_INCOME);
@@ -413,6 +413,148 @@ public class Category extends BusinessObject  {
     	json.put(Constant.KEY_USER_GUID, User.getCurrentUser().getUserId());
     	
     	return json;
+    }
+    
+    private static String getIconForId(Category category) {
+
+        while (category.getParent() != null) {
+            category = category.getParent();
+        }
+        
+        String categoryId = category.getCategoryId();
+        
+        String ret = "S"; //empty circle?
+
+        if (categoryId.equals("CAT-0cb1d99d-f558-99e3-2282-b31f359b411a")) { //bike
+            ret ="n";
+        }
+        else if (categoryId.equals("CAT-6c7de3f8-de6c-7061-1dd2-b093044014bf")) { //bank
+            ret ="o";
+        }
+        else if (categoryId.equals("CAT-7cccbafa-87d7-c9a6-661b-8b3402fe9e78")) { //pet
+            ret ="q";
+        }
+        else if (categoryId.equals("CAT-8edf9663-623e-4735-490e-31288f0a70b0")) { //gifts
+            ret ="h";
+        }
+        else if (categoryId.equals("CAT-52fa4693-c088-afb2-2a99-7bc39bb23a0f")) { //health
+            ret ="i";
+        }
+        else if (categoryId.equals("CAT-79b02f2f-2adc-88f0-ac2b-4e71ead9cfc8")) { //bills
+            ret ="b";
+        }
+        else if (categoryId.equals("CAT-94b11142-e97b-941a-f67f-6e18d246a23f")) { //business
+            ret ="c";
+        }
+        else if (categoryId.equals("CAT-7829f71c-2e8c-afa5-2f55-fa3634b89874")) { //auto
+            ret ="a";
+        }
+        else if (categoryId.equals("CAT-aad51b46-d6f7-3da5-fd6e-492328b3023f")) { //shopping
+            ret ="r";
+        }
+        else if (categoryId.equals("CAT-b709172b-4eb7-318e-3b5d-e0f0500b32ac")) { //housing
+            ret ="j";
+        }
+        else if (categoryId.equals("CAT-bce48142-fea4-ff45-20d9-0a642d44de83")) { //transfer
+            ret ="t";
+        }
+        else if (categoryId.equals("CAT-bd56d35a-a9a7-6e10-66c1-5b9cc1b6c81a")) { //food
+            ret ="g";
+        }
+        else if (categoryId.equals("CAT-bf5c9cca-c96b-b50d-440d-38d9adfda5b0")) { //education
+            ret ="d";
+        }
+        else if (categoryId.equals("CAT-bf9f3294-4c40-1677-d269-54fbc189faf3")) { //piggy banks
+            ret ="k";
+        }
+        else if (categoryId.equals("CAT-ccd42390-9e8c-3fb6-a5d9-6c31182d9c5c")) { //investments
+            ret ="m";
+        }
+        else if (categoryId.equals("CAT-d00fc539-aa14-009b-4ffb-7e8c7b839954")) { //tax
+            ret ="s";
+        }
+        else if (categoryId.equals("CAT-d73ee74b-13a4-ac3e-4015-fc4ba9a62b2a")) { //fees
+            ret ="f";
+        }
+        else if (categoryId.equals("CAT-d7851c65-3353-e490-1953-fb9235e681e4")) { //uncategorized
+            ret ="v";
+        }
+        else if (categoryId.equals("CAT-e04e9d1e-e041-c315-2e50-094143ab3f73")) { //entertainment
+            ret ="e";
+        }
+        else if (categoryId.equals("CAT-e5154228-fe45-790d-a280-f6bf5ae5ac9f")) { //personal care
+            ret ="p";
+        }
+        else if (categoryId.equals("CAT-ea23d844-cbd1-eb10-f6ac-0df9610e59ae")) { //travel
+            ret ="u";
+        }
+
+        //demo data
+        if (categoryId.equals("9a63ecd4-eef3-4ab2-8101-d2a15ccc3470")) { //bike
+            ret ="n";
+        }
+        else if (categoryId.equals("f2bab5a3-1de2-4b3a-a51c-38279f0ef3b4")) { //bank
+            ret ="o";
+        }
+        else if (categoryId.equals("bd213200-14b2-46d3-bb4c-22ec50a29e5f")) { //pet
+            ret ="q";
+        }
+        else if (categoryId.equals("666f0027-c821-4f5b-bf7b-e435849b264c")) { //gifts
+            ret ="h";
+        }
+        else if (categoryId.equals("793bb6a4-2d70-41af-b9af-ed3c81977df1")) { //health
+            ret ="i";
+        }
+        else if (categoryId.equals("abfc0603-57f4-4cdc-ae69-d3509c847366")) { //bills
+            ret ="b";
+        }
+        else if (categoryId.equals("e8e7fee4-83cc-4d88-8575-89645aa66334")) { //business
+            ret ="c";
+        }
+        else if (categoryId.equals("787481a6-ff1b-44e9-8782-9796c68be2f2")) { //auto
+            ret ="a";
+        }
+        else if (categoryId.equals("7d1a04ae-80d1-4a26-bed0-007849e96979")) { //shopping
+            ret ="r";
+        }
+        else if (categoryId.equals("38810b0d-8a1b-44ed-b537-c19a086549a1")) { //housing
+            ret ="j";
+        }
+        else if (categoryId.equals("1ce9a23e-fbcc-481f-b478-7fd792333f4c")) { //transfer
+            ret ="t";
+        }
+        else if (categoryId.equals("83b5d02e-3700-445c-9842-1e14e70d3529")) { //food
+            ret ="g";
+        }
+        else if (categoryId.equals("ceca6857-dfb8-4cb8-b0ea-7156bc0cc40c")) { //education
+            ret ="d";
+        }
+        else if (categoryId.equals("f2bab5a3-1de2-4b3a-a51c-38279f0ef3b4")) { //piggy banks
+            ret ="k";
+        }
+        else if (categoryId.equals("b96f0d88-a9dc-4e55-889d-a9ac81e85ba9")) { //investments
+            ret ="m";
+        }
+        else if (categoryId.equals("bb6d9961-d791-4b26-aafd-34718fc5b175")) { //tax
+            ret ="s";
+        }
+        else if (categoryId.equals("dbf0224e-a94c-40e0-88af-2f07ca1cedc1")) { //fees
+            ret ="f";
+        }
+        else if (categoryId.equals("c8b330c9-3d0f-4c5a-bb7b-82a33839431a")) { //uncategorized
+            ret ="v";
+        }
+        else if (categoryId.equals("bcf47747-6510-4840-802d-1a9900429da9")) { //entertainment
+            ret ="e";
+        }
+        else if (categoryId.equals("ff748236-9863-448b-9503-28ab3e48e578")) { //personal care
+            ret ="p";
+        }
+        else if (categoryId.equals("4cc82d0d-f392-4bc4-8e46-717019edef9f")) { //travel
+            ret ="u";
+        }
+        
+        return ret;
     }
     
     // KEEP METHODS END

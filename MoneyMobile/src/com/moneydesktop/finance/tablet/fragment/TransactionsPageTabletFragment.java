@@ -3,18 +3,24 @@ package com.moneydesktop.finance.tablet.fragment;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.EditText;
 
 import com.moneydesktop.finance.BaseFragment;
@@ -52,6 +58,8 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     
     private boolean mLoaded = false;
     private boolean mWaiting = true;
+    
+    private AsyncTask<Integer, Void, TransactionsTabletAdapter> mBackgroundTask;
     
     private TextWatcher mWatcher = new TextWatcher() {
         
@@ -105,6 +113,10 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         super.onPause();
         
         EventBus.getDefault().unregister(this);
+        
+        if (mBackgroundTask != null) {
+            mBackgroundTask.cancel(false);
+        }
     }
     
     private void setupView() {
@@ -170,16 +182,36 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
             }
         });
         
+
+        mSearch.setOnEditorActionListener(new OnEditorActionListener() {
+            
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                     hideKeyboard();
+                }
+                
+                return false;
+            }
+        });
+        
         mDate.performClick();
+    }
+
+    private void hideKeyboard() {
+
+        InputMethodManager in = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        in.hideSoftInputFromWindow(mSearch.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
     
     private void applyFonts() {
         
-        Fonts.applyPrimaryBoldFont(mDate, 14);
-        Fonts.applyPrimaryBoldFont(mPayee, 14);
-        Fonts.applyPrimaryBoldFont(mCategory, 14);
-        Fonts.applyPrimaryBoldFont(mAmount, 14);
-        Fonts.applyPrimaryBoldFont(mSearch, 18);
+        Fonts.applyPrimaryBoldFont(mDate, 12);
+        Fonts.applyPrimaryBoldFont(mPayee, 12);
+        Fonts.applyPrimaryBoldFont(mCategory, 12);
+        Fonts.applyPrimaryBoldFont(mAmount, 12);
+        Fonts.applyPrimaryBoldFont(mSearch, 14);
     }
     
     private void applySort(HeaderView clicked, String field) {
@@ -234,7 +266,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     
     private void getInitialTransactions() {
 
-        new AsyncTask<Integer, Void, TransactionsTabletAdapter>() {
+        mBackgroundTask = new AsyncTask<Integer, Void, TransactionsTabletAdapter>() {
             
             @Override
             protected TransactionsTabletAdapter doInBackground(Integer... params) {
@@ -242,7 +274,11 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
                 int page = params[0];
                 
                 List<Transactions> row1 = Transactions.getRows(page, mSearchTitle, mDateRange.getStartDate(), mDateRange.getEndDate(), mOrderBy, mDirection).second;
-
+                
+                if (isCancelled()) {
+                    return null;
+                }
+                
                 TransactionsTabletAdapter adapter = new TransactionsTabletAdapter(mActivity, mTransactionsList, row1);
                 adapter.setDateRange(mDateRange.getStartDate(), mDateRange.getEndDate());
                 adapter.setOrder(mOrderBy, mDirection);
@@ -254,6 +290,10 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
             @Override
             protected void onPostExecute(TransactionsTabletAdapter adapter) {
 
+                if (isCancelled()) {
+                    return;
+                }
+                
                 mLoaded = true;
                 setupList(adapter);
             };

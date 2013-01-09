@@ -167,7 +167,7 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 		if (transactions != null) {
 		
 			viewHolder.date.setText(mDateFormatter.format(transactions.getDate()));
-			viewHolder.payee.setText(WordUtils.capitalize(transactions.getTitle()));
+			viewHolder.payee.setText(WordUtils.capitalize(transactions.getTitle().toLowerCase()));
 			viewHolder.caret.setVisibility(transactions.isIncome() ? View.VISIBLE : View.GONE);
 			
 			int gravity = Gravity.CENTER_VERTICAL|Gravity.RIGHT;
@@ -207,11 +207,11 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	
 	private void applyFonts(TransactionViewHolder viewHolder) {
 
-        Fonts.applyPrimaryBoldFont(viewHolder.newText, 10);
-        Fonts.applyPrimarySemiBoldFont(viewHolder.date, 12);
-        Fonts.applyPrimarySemiBoldFont(viewHolder.payee, 12);
-        Fonts.applyPrimarySemiBoldFont(viewHolder.category, 12);
-        Fonts.applyPrimaryBoldFont(viewHolder.amount, 12);
+        Fonts.applyPrimaryBoldFont(viewHolder.newText, 8);
+        Fonts.applyPrimarySemiBoldFont(viewHolder.date, 10);
+        Fonts.applyPrimarySemiBoldFont(viewHolder.payee, 10);
+        Fonts.applyPrimarySemiBoldFont(viewHolder.category, 10);
+        Fonts.applyPrimaryBoldFont(viewHolder.amount, 10);
 	}
 
 	@Override

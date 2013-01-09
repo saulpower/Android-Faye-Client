@@ -15,7 +15,7 @@ public class GrowPagerAdapter extends FragmentPagerAdapter implements OnPageChan
 
     public final String TAG = this.getClass().getSimpleName();
     
-    private final int COUNT = 4;
+    private final int COUNT = 2;
     
     public static final float BASE_SIZE = 0.8f;
     public static final float BASE_ALPHA = 0.8f;

@@ -140,7 +140,7 @@ public class LockCodeFragment extends BaseFragment implements ProcessCodeListene
 			}
 		});
 		
-		Fonts.applyPrimaryFont(mCancel, 14);
+		Fonts.applyPrimaryFont(mCancel, 12);
 		
 		// The container prevents the user from selecting
 		// the text fields manually

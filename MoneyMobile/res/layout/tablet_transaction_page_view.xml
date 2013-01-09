@@ -186,13 +186,19 @@
         android:id="@+id/transactions"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="52dp"
+        android:layout_marginBottom="50dp"
         android:layout_below="@id/header_row"
         android:layout_toRightOf="@id/white_right"
         android:divider="@color/gray2"
         android:dividerHeight="1dp"
         android:background="@color/white"
         android:visibility="gone" />
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/shadow_top_right" />
 
     <com.moneydesktop.finance.views.HorizontalScroller
         android:id="@+id/date_scroller"

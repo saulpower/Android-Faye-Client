@@ -13,19 +13,23 @@
 	        android:id="@+id/fragment"
 		    android:layout_width="0dp"
 		    android:layout_height="match_parent"
-		    android:layout_weight="74" />
+		    android:layout_weight="74"
+    		android:background="@color/gray1" />
 	
 	    <RelativeLayout
 	        android:layout_width="0dp"
 	        android:layout_height="match_parent"
 	        android:layout_weight="26"
 	        android:background="@color/gray1" >
-	
-	        <TextView
-	            style="@style/tablet_txn_text"
+
+		    <com.moneydesktop.finance.views.AmazingListView
+		        android:id="@+id/filters"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
-	            android:gravity="center" />
+	            android:layout_marginLeft="4dp"
+		        android:divider="@color/white"
+		        android:dividerHeight="0dp"
+		        android:background="@color/gray5" />
 	        
 	    </RelativeLayout>
 	

@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,15 +28,19 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
 import com.moneydesktop.finance.animation.FlipXAnimation;
 import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.shared.FilterViewHolder;
+import com.moneydesktop.finance.tablet.adapter.FiltersTabletAdapter;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment.onBackPressedListener;
 import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.AmazingListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @TargetApi(11)
 public class TransactionsTabletFragment extends BaseFragment implements onBackPressedListener {
 	
 	public final String TAG = this.getClass().getSimpleName();
-	
-	private static TransactionsTabletFragment sFragment;
 	
 	private static final int MOVE_DURATION = 300;
 	
@@ -45,6 +50,8 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
 	private View mCellView;
 	private int mCenterX, mCellX, mCellY, mHeight;
 	private TransactionsDetailTabletFragment mDetailFragment;
+	
+    private AmazingListView mFiltersList;
 	
 	private boolean mStartFix = true;
 	
@@ -152,12 +159,12 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
 	
 	public static TransactionsTabletFragment newInstance() {
 			
-		sFragment = new TransactionsTabletFragment();
+	    TransactionsTabletFragment fragment = new TransactionsTabletFragment();
 	
         Bundle args = new Bundle();
-        sFragment.setArguments(args);
+        fragment.setArguments(args);
         
-        return sFragment;
+        return fragment;
 	}
 	
 	public void setDetailFragment(TransactionsDetailTabletFragment fragment) {
@@ -215,6 +222,29 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
                 configureDetailView();
             }
         });
+	    
+        mFiltersList = (AmazingListView) mRoot.findViewById(R.id.filters);
+        
+        List<Pair<String, List<FilterViewHolder>>> sections = new ArrayList<Pair<String, List<FilterViewHolder>>>();
+        
+        for (int j = 0; j < 5; j++) {
+
+            List<FilterViewHolder> subItems = new ArrayList<FilterViewHolder>();
+            
+            for (int i = 0; i < 20; i++) {
+                FilterViewHolder holder = new FilterViewHolder();
+                holder.text = ("SUBITEM " + i);
+                holder.subText = ("SubText for " + i);
+                subItems.add(holder);
+            }
+            
+            Pair<String, List<FilterViewHolder>> temp = new Pair<String, List<FilterViewHolder>>("HEADER " + j, subItems);
+            sections.add(temp);
+        }
+        
+        FiltersTabletAdapter adapter = new FiltersTabletAdapter(mActivity, mFiltersList, sections);
+        mFiltersList.setAdapter(adapter);
+        mFiltersList.setPinnedHeaderView(LayoutInflater.from(mActivity).inflate(R.layout.tablet_filter_item_header, mFiltersList, false));
 	}
 	
 	public void showTransactionDetails(View view, int offset, Transactions transaction) {
@@ -314,7 +344,7 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
         
         float startAlpha = out ? 0 : 1;
         float endAlpha = out ? 1 : 0;
-	    
+        
 	    ObjectAnimator moveY = ObjectAnimator.ofFloat(mFakeCell, "y", startY, endY);
         moveY.setInterpolator(new AccelerateDecelerateInterpolator());
         ObjectAnimator moveX = ObjectAnimator.ofFloat(mFakeCell, "x", startX, endX);
