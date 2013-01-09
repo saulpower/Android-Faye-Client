@@ -133,7 +133,7 @@ public class ClearEditText extends EditText {
     public void onDraw(Canvas c) {
         super.onDraw(c);
         
-        if (!getText().toString().equals("") && hasFocus()) {
+        if (!getText().toString().equals("")) {
             c.drawText(mClear, getWidth() - PADDING_RIGHT + getScrollX(), ((getHeight() / 2) + (mClearBounds.height() / 2) + 5), mClearPaint);
         } else {
             c.drawText(mIcon, getWidth() - PADDING_RIGHT + getScrollX(), ((getHeight() / 2) + (mIconBounds.height() / 2)), mIconPaint);

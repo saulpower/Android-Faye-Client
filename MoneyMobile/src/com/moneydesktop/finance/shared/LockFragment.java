@@ -102,7 +102,7 @@ public class LockFragment extends BaseFragment {
 			}
 		});
 		
-		Fonts.applyPrimaryFont(mChange, 14);
+		Fonts.applyPrimaryFont(mChange, 12);
 		
 		return mRoot;
 	}

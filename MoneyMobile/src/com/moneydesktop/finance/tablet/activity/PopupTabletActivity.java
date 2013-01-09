@@ -52,8 +52,8 @@ public class PopupTabletActivity extends DashboardBaseActivity {
         mLabel = (TextView) findViewById(R.id.label);
         mContainer = (LinearLayout) findViewById(R.id.container);
         
-        Fonts.applyPrimaryBoldFont(mLabel, 18);
-        Fonts.applyGlyphFont(mArrow, 18);
+        Fonts.applyPrimaryBoldFont(mLabel, 14);
+        Fonts.applyGlyphFont(mArrow, 14);
         
         mContainer.setOnClickListener(new OnClickListener() {
             

@@ -60,7 +60,7 @@ public class WheelToggle extends RelativeLayout {
 		});
 
         title = (TextView) findViewById(R.id.title);
-        Fonts.applyPrimaryFont(title, 16);
+        Fonts.applyPrimaryFont(title, 12);
         
         wheel = (WheelView) findViewById(R.id.wheel);
     }

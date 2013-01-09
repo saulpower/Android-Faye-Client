@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -19,7 +18,6 @@ import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
 import com.moneydesktop.finance.util.Enums.TxFilter;
-import com.moneydesktop.finance.util.Enums.TxType;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;

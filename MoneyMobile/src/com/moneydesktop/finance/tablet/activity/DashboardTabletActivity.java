@@ -3,9 +3,8 @@ package com.moneydesktop.finance.tablet.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
@@ -31,7 +30,6 @@ import com.moneydesktop.finance.shared.DashboardBaseActivity;
 import com.moneydesktop.finance.tablet.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.SettingsTabletFragment;
-import com.moneydesktop.finance.tablet.fragment.SummaryTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
@@ -56,6 +54,15 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	private NavWheelView mNavigation;
 	private ImageView mHomeButton;
 	private TextSwitcher mNavTitle;
+	
+	private Handler mHandler = new Handler();
+	private Runnable mTask = new Runnable() {
+        
+        @Override
+        public void run() {
+            viewDidAppear();
+        }
+    };
 	
 	private Animation mIn, mOut;
 	
@@ -248,8 +255,8 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         items.add(R.drawable.tablet_newnav_dashboard_white);
         items.add(R.drawable.tablet_newnav_accounts_white);
         items.add(R.drawable.tablet_newnav_txns_white);
-        items.add(R.drawable.tablet_newnav_budgets_white);
-        items.add(R.drawable.tablet_newnav_reports_white);
+//        items.add(R.drawable.tablet_newnav_budgets_white);
+//        items.add(R.drawable.tablet_newnav_reports_white);
         items.add(R.drawable.tablet_newnav_settings_white);
         
         mNavigation.setItems(items);
@@ -300,6 +307,13 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
     		mCurrentIndex = index;
     		
 	        FragmentTransaction ft = mFm.beginTransaction();
+	        
+	        if (!mOnHome) {
+	            ft.setCustomAnimations(R.anim.in_up, R.anim.out_up);
+	            
+	            mHandler.postDelayed(mTask, 850);
+	        }
+	        
 	        ft.replace(R.id.fragment, fragment);
 	        ft.commit();
     	}
@@ -315,7 +329,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         	return AccountTypesTabletFragment.newInstance(index);
         case 2:
             return TransactionsTabletFragment.newInstance();
-        case 5:
+        case 3:
             return SettingsTabletFragment.newInstance(index);
         }
         
@@ -340,27 +354,6 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 		
 		showFragment(index);
 	}
-	
-	public class FragmentAdapter extends FragmentPagerAdapter {
-
-	    public final String TAG = this.getClass().getSimpleName();
-	    
-	    private final int COUNT = 4;
-	    
-	    public FragmentAdapter(FragmentManager fm) {
-	        super(fm);
-	    }
-
-	    @Override
-	    public int getCount() {
-	        return COUNT;
-	    }
-
-	    @Override
-	    public Fragment getItem(int position) {
-	        return SummaryTabletFragment.newInstance(position);
-	    }
-	}
 
     @Override
     public View makeView() {
@@ -371,8 +364,9 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         t.setGravity(Gravity.CENTER);
         t.setTextColor(Color.WHITE);
         t.setBackgroundColor(Color.TRANSPARENT);
+        t.setShadowLayer(2.0f, 1.0f, 1.0f, getResources().getColor(R.color.gray8));
 
-        Fonts.applyPrimaryBoldFont(t, 18);
+        Fonts.applyPrimaryBoldFont(t, 14);
         
         return t;
     }
