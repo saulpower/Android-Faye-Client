@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app1="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/tablet_wood"
+    android:orientation="vertical" >
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10" />
+
+    <com.viewpagerindicator.CirclePageIndicator
+        android:id="@+id/titles"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".5"
+        app:fillColor="#FFFFFFFF"
+        app:pageColor="#AAAAAAAA"
+        app:radius="5dp"
+        app:strokeColor="#FF000000"
+        app:strokeWidth="0dp" />
+
+    <LinearLayout
+        android:id="@+id/button_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:background="@color/white"
+        android:gravity="center_horizontal" >
+
+        <TextView
+            android:id="@+id/get_started"
+            android:layout_width="300dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal|bottom"
+            android:background="@drawable/primary_to_gray"
+            android:gravity="center"
+            android:text="@+string/get_started"
+            android:textColor="@color/white"
+            android:visibility="gone" />
+
+        <com.moneydesktop.finance.views.SmallSpinnerView
+            android:id="@+id/loading_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp" />
+
+        <TextView
+            android:id="@+id/loading_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="15dp"
+            android:textColor="@color/gray9"
+            android:textSize="24sp" />
+    </LinearLayout>
+
+</LinearLayout>

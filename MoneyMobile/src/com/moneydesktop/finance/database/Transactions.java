@@ -778,11 +778,15 @@ public class Transactions extends BusinessObject  {
     	return list;
     }
     
-    public static Pair<Boolean, List<Transactions>> getRows(int page, Date start, Date end, String orderBy, String direction) {
+    public static Pair<Boolean, List<Transactions>> getRows(int page, String search, Date start, Date end, String orderBy, String direction) {
         
         int offset = (page - 1) * Constant.QUERY_LIMIT;
         
-        return getRows(page, String.format(Constant.QUERY_DATE_TRANSACTIONS, orderBy, direction), Long.toString(start.getTime()), Long.toString(end.getTime()), Integer.toString(Constant.QUERY_LIMIT), Integer.toString(offset));
+        if (search == null || search.equals("")) {
+            search = "%";
+        }
+        
+        return getRows(page, String.format(Constant.QUERY_DATE_TRANSACTIONS, orderBy, direction), search, search, Long.toString(start.getTime()), Long.toString(end.getTime()), Integer.toString(Constant.QUERY_LIMIT), Integer.toString(offset));
     }
     
     public static Pair<Boolean, List<Transactions>> getRows(int page, String orderBy, String direction) {

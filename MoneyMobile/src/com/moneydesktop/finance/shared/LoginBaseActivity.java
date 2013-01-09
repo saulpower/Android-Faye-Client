@@ -30,6 +30,7 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.DataBridge;
 import com.moneydesktop.finance.data.DemoData;
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
+import com.moneydesktop.finance.handset.activity.IntroHandsetActivity;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
@@ -49,7 +50,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
     private final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-\\+]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private final String TAG = "LoginActivity";
-
+    private boolean mIsTablet = false;
     private ViewFlipper mViewFlipper;
     private LinearLayout mButtonView, mCredentialView, mSignupView;
     private Button mLoginViewButton, mDemoButton, mLoginButton, mCancelButton, mSubmitButton,
@@ -100,6 +101,9 @@ public abstract class LoginBaseActivity extends BaseActivity {
     }
 
     protected void setupView() {
+        if (BaseActivity.isTablet(this)) {
+            mIsTablet = true;
+        }
 
         mViewFlipper = (ViewFlipper) findViewById(R.id.flipper);
         mButtonView = (LinearLayout) findViewById(R.id.button_view);
@@ -244,16 +248,16 @@ public abstract class LoginBaseActivity extends BaseActivity {
             }
         });
         mPassword.setOnEditorActionListener(new OnEditorActionListener() {
-
+            
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-
+                
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    mCredentialView.requestFocus();
-                    hideKeyboard();
-                    login();
+                     mCredentialView.requestFocus();
+                     hideKeyboard();
+                     login();
                 }
-
+                
                 return false;
             }
         });
@@ -294,16 +298,16 @@ public abstract class LoginBaseActivity extends BaseActivity {
             }
         });
         mSignupBank.setOnEditorActionListener(new OnEditorActionListener() {
-
+            
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-
+                
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     mSignupView.requestFocus();
                     hideKeyboard();
                     signup();
                 }
-
+                
                 return false;
             }
         });
@@ -415,9 +419,9 @@ public abstract class LoginBaseActivity extends BaseActivity {
     }
 
     private void demoMode() {
-
+        
         fadeCurrentView();
-
+        
         User.registerDemoUser();
 
         DialogUtils.showProgress(this, getString(R.string.demo_message));
@@ -440,20 +444,18 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
         }.execute();
     }
-
+    
     private void fadeCurrentView() {
 
         Animation fade = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         fade.setAnimationListener(new AnimationListener() {
-
+            
             @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
+            public void onAnimationStart(Animation animation) {}
+            
             @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
+            public void onAnimationRepeat(Animation animation) {}
+            
             @Override
             public void onAnimationEnd(Animation animation) {
                 mViewFlipper.getCurrentView().setVisibility(View.GONE);
@@ -484,7 +486,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mSignupName.setText("");
         mSignupEmail.setText("");
         mSignupBank.setText("");
-
+        
         toThankYou();
     }
 
@@ -600,18 +602,16 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
                     EventBus eventBus = EventBus.getDefault();
                     eventBus.post(new EventMessage().new LoginEvent());
-
-                    Intent i = new Intent(LoginBaseActivity.this, IntroTabletActivity.class);
-
-                    // TODO: We need to create a handset version of the intro
-                    // activity
-                    // if (!BaseActivity.isTablet(LoginBaseActivity.this)) {
-                    // i = new Intent(LoginBaseActivity.this,
-                    // IntroHandsetActivity.class);
-                    // }
-
-                    startActivity(i);
-                    finish();
+                    if (mIsTablet == true) {
+                        Intent i = new Intent(LoginBaseActivity.this, IntroTabletActivity.class);
+                        startActivity(i);
+                        finish();
+                    }
+                    else {
+                        Intent i = new Intent(LoginBaseActivity.this, IntroHandsetActivity.class);
+                        startActivity(i);
+                        finish();
+                    }
                 }
             }
 

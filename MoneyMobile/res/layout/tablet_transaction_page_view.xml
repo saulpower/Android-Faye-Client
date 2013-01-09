@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray1" >
@@ -37,18 +39,20 @@
             android:layout_height="@dimen/tablet_header_1"
             android:orientation="horizontal" >
 
-            <View
+            <com.moneydesktop.finance.views.ClearEditText
+                android:id="@+id/search"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="3" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="46"
+                android:layout_weight="49"
                 android:background="@color/white"
                 android:paddingLeft="10dp"
-                android:textColor="@color/gray2" />
+                android:singleLine="true"
+                android:textColor="@color/primaryColor"
+                android:textColorHint="@color/gray3"
+                app:iconText="8"
+                app:clearText="X"
+                android:hint="@string/hint_search_transactions"
+                android:imeOptions="actionSearch"/>
 
             <View
                 android:layout_width="@dimen/tablet_header_1"
@@ -71,6 +75,7 @@
                 android:layout_marginLeft="@dimen/tablet_header_1_half"
                 android:layout_marginRight="@dimen/tablet_header_1_half"
                 android:background="@color/transparent" />
+            
         </LinearLayout>
 
         <View

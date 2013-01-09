@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    
     <declare-styleable name="LabelEditText">
         <attr name="labelColor" format="color" />
         <attr name="labelSize" format="dimension" />
         <attr name="labelText" format="string" />
     </declare-styleable>
+    
+    <declare-styleable name="ClearEditText">
+        <attr name="clearText" format="string" />
+        <attr name="iconText" format="string" />
+    </declare-styleable>
+    
     <declare-styleable name="Caret">
         <attr name="color" format="color" />
         <attr name="secondaryColor" format="color" />

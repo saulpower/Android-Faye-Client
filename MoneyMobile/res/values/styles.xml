@@ -120,7 +120,7 @@
         <item name="android:windowExitAnimation">@anim/fade_out_fast</item>
     </style>
 
-    <style name="MoneyDesktopTheme" parent="android:Theme.NoTitleBar.Fullscreen">
+    <style name="MoneyDesktopTheme" parent="android:Theme.NoTitleBar">
         <item name="android:windowBackground">@color/white</item>
         <item name="android:colorBackground">@color/white</item>
         <item name="android:textColor">@color/gray7</item>

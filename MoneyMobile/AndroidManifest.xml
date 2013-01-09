@@ -57,7 +57,8 @@
             
         <activity
             android:name=".tablet.activity.DashboardTabletActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustPan" />
         
         <activity
             android:name=".tablet.activity.LockCodeTabletActivity"
@@ -71,9 +72,14 @@
         <activity
             android:name=".tablet.activity.LoginTabletActivity"
             android:screenOrientation="landscape" />
+        
         <activity
             android:name="com.moneydesktop.finance.tablet.activity.IntroTabletActivity"
             android:screenOrientation="landscape"/>
+        
+        <activity
+            android:name="com.moneydesktop.finance.handset.activity.IntroHandsetActivity"
+            android:screenOrientation="portrait"/>
         
     </application>
 

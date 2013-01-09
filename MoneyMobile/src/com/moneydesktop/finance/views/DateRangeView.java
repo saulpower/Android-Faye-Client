@@ -48,6 +48,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
     private boolean mTouchingAnchorLeft = false;
     private boolean mTouchingAnchorRight = false;
     private boolean mAnchorsMoved = false;
+    private DateRangeItem mTapped;
     
     private DateRangeItem mCurrentItem;
     
@@ -187,7 +188,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
         DateRangeItem item = getItem(new Date());
         
         if (item != null && mScroller != null) {
-            mScroller.scrollBy(item.getBounds().left + item.getBounds().width() / 2, 0);
+            mScroller.scrollBy(item.getBounds().left / 2 + item.getBounds().width() / 2, 0);
         }
     }
     
@@ -253,6 +254,15 @@ public class DateRangeView extends View implements AnchorMoveListener {
         }
         
         return mTouchingAnchorLeft || mTouchingAnchorRight;
+    }
+    
+    private DateRangeItem isTouchingItem() {
+        
+        PointF touch = new PointF(mLastTouchX, mLastTouchY);
+        
+        DateRangeItem item = getItem(touch);
+        
+        return item;
     }
     
     private void setAnchors() {
@@ -351,6 +361,23 @@ public class DateRangeView extends View implements AnchorMoveListener {
         }
     }
     
+    private void moveAnchorsTo(DateRangeItem item) {
+
+        PointF left = new PointF(item.getBounds().left, 0);
+        PointF right = new PointF(item.getBounds().right, 0);
+        
+        mLeft.animateToPosition(left);
+        mRight.animateToPosition(right);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            
+            @Override
+            public void run() {
+                setAnchors();
+            }
+        }, 300);
+    }
+    
     /**
      * @see android.view.View#measure(int, int)
      */
@@ -379,6 +406,11 @@ public class DateRangeView extends View implements AnchorMoveListener {
 
                 boolean touching = isTouchingAnchor();
                 mScroller.setScrollingEnabled(!touching);
+                    
+                DateRangeItem item = isTouchingItem();
+                if (item != null) {
+                    mTapped = item;
+                }
                 
                 break;
             }
@@ -392,7 +424,13 @@ public class DateRangeView extends View implements AnchorMoveListener {
                     
                     mAnchorsMoved = false;
                     setAnchors();
+                    
+                } else if (mTapped != null) {
+                    
+                    moveAnchorsTo(mTapped);
                 }
+                
+                mTapped = null;
                 
                 mScroller.setScrollingEnabled(true);
                 
@@ -412,7 +450,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
                 mLastTouchY = y;
                 mLastTouchX = x;
                 
-                if (mTouchingAnchorLeft || mTouchingAnchorRight) {
+                if ((mTouchingAnchorLeft || mTouchingAnchorRight) && Math.abs(mDistance.x) < 20.0f) {
 
                     mAnchorsMoved = true;
                     moveAnchors();

@@ -60,6 +60,12 @@
     <string name="button_return_home">RETURN TO HOME</string>
     <string name="button_setup">I NEED TO SET UP MY MOBILE ACCOUNT</string>
     <string name="button_submit">SUBMIT</string>
+    <string name="handset_intro_title_1">THERE\'S NO PLACE LIKE HOME</string>
+    <string name="handset_intro_title_2">DROPDOWNS ARE AWESOME</string>
+    <string name="handset_intro_title_3">TRANSACTION FOLDERS</string>
+    <string name="handset_intro_desc_1">No matter where you are in the app, you can always press this home button to take you right back to the dashboard.</string>
+    <string name="handset_intro_desc_2">We fill our dropdown menus chuck full of useful tools like \"Add another Account\", or \"Print this Transaction\", or \"Call Mom.\" Seriously, call her.</string>
+    <string name="handset_intro_desc_3">Giving a little sideways swipe on the transactions list will open up the transactions folders. Think of the folders as preset filters.</string>
     <string name="intro_title_1">DID YOU KNOW?</string>
     <string name="intro_title_2">PRINT OR EMAIL</string>
     <string name="intro_title_3">BIZ/PERSONAL</string>
@@ -89,6 +95,7 @@
     <string name="feedback_title">Send Email</string>
     <string name="get_started">BEGIN USING THE APP</string>
     <string name="hello_world">Hello world!</string>
+    <string name="hint_search_transactions">Search For Transactions</string>
     <string name="icon_lock">E</string>
     <string name="icon_feedback">6</string>
     <string name="icon_left_arrow">3</string>
