@@ -53,7 +53,6 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         return mRoot;
     }
 
-    // TODO: fill with actual data, stubbing for now.
     private void setupView(List<Transactions> transList, List<Category> catList, View v) {
         TextView mainLabel = (TextView) v.findViewById(R.id.label_transactions_view);
         HashMap transInfo = parseTransactions(transList);
@@ -95,10 +94,9 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
                 .findViewById(R.id.uncategorized_transaction_text);
         Fonts.applyPrimaryFont(uncategorizedTransactionText, 16);
 
-        // Stub Data
-        incomeBalance.setText("$" + transInfo.get("income").toString());
-        expenseBalance.setText("$" + transInfo.get("expenses").toString());
-        newTransactionsNumber.setText(transInfo.get("new_transactions").toString());
+        incomeBalance.setText("$" + Transactions.getIncomeTotal().toString());
+        expenseBalance.setText("$" + Transactions.getExpensesTotal().toString());
+        newTransactionsNumber.setText(Integer.toString(Transactions.getProcessedTransactions()));
         uncategorizedTransactionText.setText("You have no uncategorized transactions.");
 
     }

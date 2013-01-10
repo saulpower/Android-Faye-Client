@@ -817,6 +817,73 @@ public class Transactions extends BusinessObject {
         return "S";
     }
 
+    public static Double getExpensesTotal() {
+        double retVal = 0;
+        SQLiteDatabase db = ApplicationContext.getDb();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_YEAR, -30);
+        Date start = cal.getTime();
+        Date now = new Date();
+        Cursor cursor = db.rawQuery(Constant.QUERY_TOP_SPENDING_CATEGORY, new String[] {
+                Long.toString(start.getTime()), Long.toString(now.getTime())
+        });
+
+        cursor.moveToFirst();
+        CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
+        while (cursor.isAfterLast() == false) {
+            long cat_id = cursor.getLong(0);
+            Category category = cat.load(cat_id);
+            if (!isCategoryIncome(category)) {
+                retVal = retVal + cursor.getLong(1);
+            }
+            cursor.moveToNext();
+        }
+        return retVal;
+    }
+
+    public static Double getIncomeTotal() {
+        double retVal = 0;
+        SQLiteDatabase db = ApplicationContext.getDb();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_YEAR, -30);
+        Date start = cal.getTime();
+        Date now = new Date();
+        Cursor cursor = db.rawQuery(Constant.QUERY_TOP_SPENDING_CATEGORY, new String[] {
+                Long.toString(start.getTime()), Long.toString(now.getTime())
+        });
+
+        cursor.moveToFirst();
+        CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
+        while (cursor.isAfterLast() == false) {
+            long cat_id = cursor.getLong(0);
+            Category category = cat.load(cat_id);
+            if (isCategoryIncome(category)) {
+                retVal = retVal + cursor.getLong(1);
+            }
+            cursor.moveToNext();
+        }
+        return retVal;
+    }
+
+    public static int getProcessedTransactions() {
+        SQLiteDatabase db = ApplicationContext.getDb();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_YEAR, -30);
+        Date start = cal.getTime();
+        Date now = new Date();
+        Cursor cursor = db.rawQuery(Constant.QUERY_UNVIEWED_TRANSACTIONS, new String[] {
+                Long.toString(start.getTime()), Long.toString(now.getTime())
+        });
+
+        cursor.moveToFirst();
+        CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
+        return cursor.getInt(0);
+
+    }
+
     @SuppressWarnings("rawtypes")
     public static List<Map> summarizedTransactions(Long bankAccountId) {
 
