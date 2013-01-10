@@ -82,7 +82,8 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         Fonts.applySecondaryItalicFont(newTransactionsLabel, 14);
 
         TextView topCategoryIcon = (TextView) v.findViewById(R.id.top_category_icon);
-        Fonts.applyPrimarySemiBoldFont(topCategoryIcon, 28);
+        topCategoryIcon.setText(Transactions.topCategory());
+        Fonts.applyGlyphFont(topCategoryIcon, 28);
         TextView topCategoryText = (TextView) v.findViewById(R.id.top_category_text);
         Fonts.applySecondaryItalicFont(topCategoryText, 14);
 
@@ -98,7 +99,6 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         incomeBalance.setText("$" + transInfo.get("income").toString());
         expenseBalance.setText("$" + transInfo.get("expenses").toString());
         newTransactionsNumber.setText(transInfo.get("new_transactions").toString());
-        topCategoryIcon.setText("?");
         uncategorizedTransactionText.setText("You have no uncategorized transactions.");
 
     }
