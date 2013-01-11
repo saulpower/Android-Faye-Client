@@ -2235,3 +2235,11 @@ java.lang.NullPointerException
 	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:629)
 	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:584)
 	at org.eclipse.equinox.launcher.Main.run(Main.java:1438)
+
+!ENTRY com.android.ide.eclipse.adt 1 0 2013-01-11 12:39:35.075
+!MESSAGE No valid Android XML Editor Delegate found for file /MoneyMobile/lint.xml [Res null, type null]
+
+!ENTRY org.eclipse.ui 4 0 2013-01-11 15:04:28.473
+!MESSAGE Unhandled event loop exception
+!STACK 0
+java.lang.NullPointerException

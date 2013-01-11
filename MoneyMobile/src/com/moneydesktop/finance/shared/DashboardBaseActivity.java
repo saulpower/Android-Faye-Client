@@ -72,6 +72,12 @@ public abstract class DashboardBaseActivity extends BaseActivity {
                 
                 DialogUtils.dismissAlert();
             }
+        }, new OnClickListener() {
+            
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                DialogUtils.dismissAlert();                
+            }
         });
 	}
 	

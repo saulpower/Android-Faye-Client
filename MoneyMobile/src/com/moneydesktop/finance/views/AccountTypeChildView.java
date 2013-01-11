@@ -3,6 +3,7 @@ package com.moneydesktop.finance.views;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +59,8 @@ public class AccountTypeChildView extends FrameLayout {
         	final TextView accountSum = (TextView)view.findViewById(R.id.tablet_account_type_bank_sum);
         	ImageView bankLogo = (ImageView)view.findViewById(R.id.tablet_account_type_bank_logo);
         		
+        	
+        	accountName.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
         	accountName.setText(account.getAccountName() == null ? "" : account.getAccountName());
         	accountSum.setText(account.getBalance() == null ? "" : mFormatter.format(account.getBalance()));
         	BankLogoManager.getBankImage(bankLogo, account.getInstitutionId());

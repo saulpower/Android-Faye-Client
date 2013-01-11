@@ -144,26 +144,31 @@ public class PopupWindowAtLocation extends FrameLayout {
 	    overlay.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Animation dismissPopupAnimation = AnimationUtils.loadAnimation(mContext, R.anim.fade_out_fast);
-				dismissPopupAnimation.setAnimationListener(new AnimationListener() {
-					
-					@Override
-					public void onAnimationStart(Animation animation) {
-					}
-					
-					@Override
-					public void onAnimationRepeat(Animation animation) {
-					}
-					
-					@Override
-					public void onAnimationEnd(Animation animation) {
-						
-					}
-				});
-				mRoot.startAnimation(dismissPopupAnimation);
-				mParentView.removeView(mRoot);
+				fadeOutTransparency();
 			}
 		});
 	}
+
+
+    public void fadeOutTransparency() {
+        Animation dismissPopupAnimation = AnimationUtils.loadAnimation(mContext, R.anim.fade_out_fast);
+        dismissPopupAnimation.setAnimationListener(new AnimationListener() {
+        	
+        	@Override
+        	public void onAnimationStart(Animation animation) {
+        	}
+        	
+        	@Override
+        	public void onAnimationRepeat(Animation animation) {
+        	}
+        	
+        	@Override
+        	public void onAnimationEnd(Animation animation) {
+        		
+        	}
+        });
+        mRoot.startAnimation(dismissPopupAnimation);
+        mParentView.removeView(mRoot);
+    }
 	
 }
