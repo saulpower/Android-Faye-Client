@@ -112,6 +112,7 @@ public class Constant {
     public static final String BUSINESS_OBJECT = "business_object";
     public static final String INCOME = "income";
     public static final String PERSONAL = "personal";
+    public static final String UNCATEGORIZED = "uncategorized";
     public static final int QUERY_LIMIT = 30;
     public static final float STANDARD_DPI = 160f;
 
@@ -138,6 +139,7 @@ public class Constant {
             + FIELD_DATE
             + " BETWEEN ? AND ? ORDER BY %s %s LIMIT ? OFFSET ?";
     public static final String QUERY_TOP_SPENDING_CATEGORY = "SELECT CATEGORY_ID, Sum(AMOUNT) As AMOUNT FROM TRANSACTIONS WHERE DATE BETWEEN ? AND ? GROUP BY CATEGORY_ID ORDER BY AMOUNT desc ";
+    public static final String QUERY_DATED_TRANSACTIONS = "SELECT * FROM TRANSACTIONS WHERE DATE BETWEEN ? AND ?";
     public static final String QUERY_UNVIEWED_TRANSACTIONS = "SELECT COUNT(IS_PROCESSED) As UnProcessedTrans FROM TRANSACTIONS WHERE IS_PROCESSED='0' AND DATE BETWEEN ? AND ? ";
     /*******************************************************************
      * VALUES

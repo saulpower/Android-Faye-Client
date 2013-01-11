@@ -97,7 +97,8 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         incomeBalance.setText("$" + Transactions.getIncomeTotal().toString());
         expenseBalance.setText("$" + Transactions.getExpensesTotal().toString());
         newTransactionsNumber.setText(Integer.toString(Transactions.getProcessedTransactions()));
-        uncategorizedTransactionText.setText("You have no uncategorized transactions.");
+        uncategorizedTransactionText.setText("You have "
+                + Transactions.getUncategorizedTransactions() + " uncategorized transactions.");
 
     }
 

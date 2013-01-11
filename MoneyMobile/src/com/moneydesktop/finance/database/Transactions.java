@@ -867,6 +867,31 @@ public class Transactions extends BusinessObject {
         return retVal;
     }
 
+    public static int getUncategorizedTransactions() {
+        int retVal = 0;
+        SQLiteDatabase db = ApplicationContext.getDb();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_YEAR, -30);
+        Date start = cal.getTime();
+        Date now = new Date();
+        Cursor cursor = db.rawQuery(Constant.QUERY_DATED_TRANSACTIONS, new String[] {
+                Long.toString(start.getTime()), Long.toString(now.getTime())
+        });
+
+        cursor.moveToFirst();
+        TransactionsDao trans = ApplicationContext.getDaoSession().getTransactionsDao();
+        while (cursor.isAfterLast() == false) {
+            long cat_id = cursor.getLong(0);
+            Transactions transaction = trans.load(cat_id);
+            if (isTransactionUncategorized((transaction))) {
+                retVal++;
+            }
+            cursor.moveToNext();
+        }
+        return retVal;
+    }
+
     public static int getProcessedTransactions() {
         SQLiteDatabase db = ApplicationContext.getDb();
         Calendar cal = Calendar.getInstance();
@@ -1061,6 +1086,23 @@ public class Transactions extends BusinessObject {
         json.put(Constant.KEY_TAGS, tags);
 
         return json;
+    }
+
+    public static boolean isTransactionUncategorized(Transactions t) {
+        Category c = t.getCategory();
+        if (c.getCategoryName().equalsIgnoreCase(Constant.UNCATEGORIZED)) {
+            return true;
+        }
+        else {
+            while (c.getParent() != null) {
+                c = c.getParent();
+                if (c.getCategoryName().equalsIgnoreCase(Constant.UNCATEGORIZED
+                        )) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     public static boolean isCategoryIncome(Category c) {
