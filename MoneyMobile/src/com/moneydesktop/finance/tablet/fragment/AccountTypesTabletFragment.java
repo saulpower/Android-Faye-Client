@@ -12,10 +12,13 @@ import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
@@ -24,21 +27,24 @@ import android.widget.Toast;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.adapters.AccountsExpandableListAdapter;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.tablet.adapter.AccountTypesAdapter;
 import com.moneydesktop.finance.util.Enums.TabletFragments;
 import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.AccountTypeChildView;
 import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.PopupWindowAtLocation;
 import com.moneydesktop.finance.views.SlidingDrawerRightSide;
+import com.moneydesktop.finance.views.AnimatedListView.SlideExpandableListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AccountTypesTabletFragment extends BaseFragment implements FragmentVisibilityListener{
-    private ExpandableListView mExpandableListView;
+    private ListView mListView;
     private static SlidingDrawerRightSide sRightDrawer;
     private View mFooter;
 	
@@ -62,9 +68,9 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
-		mRoot = inflater.inflate(R.layout.activity_account_types, null);
+		mRoot = inflater.inflate(R.layout.tablet_account_types, null);
 		mFooter = inflater.inflate(R.layout.account_type_list_footer, null);
-		mExpandableListView = (ExpandableListView) mRoot.findViewById(R.id.accounts_expandable_list_view);
+		mListView = (ListView) mRoot.findViewById(R.id.accounts_expandable_list_view);
 		sRightDrawer = (SlidingDrawerRightSide) mRoot.findViewById(R.id.account_slider);
 		setupView();
 		
@@ -76,31 +82,44 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	    mActivity.updateNavBar(getResources().getString(R.string.title_activity_accounts));
 	    
 		final LinearLayout panelLayoutHolder = (LinearLayout)mRoot.findViewById(R.id.panel_layout_holder);
-        mExpandableListView.setGroupIndicator(null);
         
         List<AccountType> accountTypes = ApplicationContext.getDaoSession().getAccountTypeDao().loadAll();
         List<AccountType> accountTypesFiltered = new ArrayList<AccountType>();
         
-        for (AccountType type : accountTypes) {  //This could possibly be optimized by throwing a "where" in the query builder
+        
+        for (AccountType type : accountTypes) {  //This  could possibly be optimized by throwing a "where" in the query builder
         	if (!type.getBankAccounts().isEmpty()) {
         		accountTypesFiltered.add(type);
         	}
         }
+
         
         if (!accountTypesFiltered.isEmpty()) {        	
-        	mExpandableListView.addFooterView(mFooter);
-        	mExpandableListView.setAdapter(new AccountTypesAdapter(accountTypesFiltered, mActivity, mExpandableListView));
+            mListView.addFooterView(mFooter);
+            
+            //This sets the GroupView
+            ListAdapter adapter = new AccountsExpandableListAdapter(getActivity(),  
+                    R.layout.account_type_group, 
+                    R.id.account_type_group_name, 
+                    accountTypesFiltered);
+         
+            
+            
+            //this animates and sets the ChildView
+            mListView.setAdapter(
+                    new SlideExpandableListAdapter(
+                            adapter, 
+                            R.id.account_type_group_container, 
+                            R.id.expandable,
+                            getActivity(),
+                            accountTypesFiltered));
+            
+            
+            
         } else {
         	Toast.makeText(mActivity, "No Accounts types that have bank accounts...show empty state", Toast.LENGTH_SHORT).show();
         }
 
-        mExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-			public boolean onGroupClick(ExpandableListView expandableListView, View view, int groupPosition, long id) {
-	            ((AccountTypesAdapter)mExpandableListView.getExpandableListAdapter()).notifyDataSetChanged();
-	            mExpandableListView.smoothScrollToPosition(groupPosition);
-	            return false;
-			}
-		});
         
         //This allows you to grab the panel and close it by touching and dragging on any part of the panel instead of just the handle
         panelLayoutHolder.setOnTouchListener(new View.OnTouchListener() {			
@@ -268,6 +287,5 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
             setupTitleBar(activity);
         } 
     }
-
-    
+   
 }

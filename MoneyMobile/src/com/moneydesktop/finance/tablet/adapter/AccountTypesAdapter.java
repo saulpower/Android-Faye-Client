@@ -56,12 +56,12 @@ public class AccountTypesAdapter extends BaseExpandableListAdapter {
 
 
 	public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-		AccountTypeGroupView view = new AccountTypeGroupView(mContext, mAccountTypes.get(groupPosition), mExpandableListView.isGroupExpanded(groupPosition));
+		AccountTypeGroupView view = new AccountTypeGroupView(mContext, mAccountTypes.get(groupPosition));
 		return view;
 	}
 	
 	public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-      AccountTypeChildView accountTypeChildView = new AccountTypeChildView(mContext, mAccountTypes.get(groupPosition).getBankAccounts(), mExpandableListView, groupPosition);
+      AccountTypeChildView accountTypeChildView = new AccountTypeChildView(mContext, mAccountTypes.get(groupPosition).getBankAccounts(), convertView);
       return accountTypeChildView;
 	}
 

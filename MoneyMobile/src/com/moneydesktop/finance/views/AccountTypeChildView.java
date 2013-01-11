@@ -20,6 +20,7 @@ import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
 import com.moneydesktop.finance.util.Enums.TxFilter;
 import com.moneydesktop.finance.util.Enums.TxType;
+import com.moneydesktop.finance.util.UiUtils;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -33,16 +34,14 @@ public class AccountTypeChildView extends FrameLayout {
     private Context mContext;
     private List<BankAccount> mBankAccounts;
     private LinearLayout mBankAccountContainer;
-    private ExpandableListView mExpandableListView;
-    private int mGroupPosition;
     private Activity mActivity;
+    private View mParent;
     
-    public AccountTypeChildView (Context context, List<BankAccount> bankAccounts, ExpandableListView expandableListView, int groupPosition) {
+    public AccountTypeChildView (Context context, List<BankAccount> bankAccounts, View parent) {
         super(context);
         mContext = context;
         mBankAccounts = bankAccounts;
-        mExpandableListView = expandableListView;
-        mGroupPosition = groupPosition;
+        mParent = parent;
         
         mActivity = (Activity)mContext;
 
@@ -53,7 +52,7 @@ public class AccountTypeChildView extends FrameLayout {
     }
 
     private void populateView () {
-        for (final BankAccount account : mBankAccounts) {        	
+        for (final BankAccount account : mBankAccounts) {
         	final View view = createChildView();
         	final TextView accountName = (TextView)view.findViewById(R.id.tablet_account_type_bank_name);
         	final TextView accountSum = (TextView)view.findViewById(R.id.tablet_account_type_bank_sum);
@@ -73,12 +72,12 @@ public class AccountTypeChildView extends FrameLayout {
 						@Override
 						public void onClick(View v) {
 							Toast.makeText(mContext, "VIEW ALL TXNS", Toast.LENGTH_SHORT).show();
-						    Intent i = new Intent(mActivity, PopupTabletActivity.class);
-					        i.putExtra("fragment", 1);
-					        i.putExtra("accountNumber", account.getAccountId());
-					        i.putExtra("txnType", TxFilter.ALL);
-					        mContext.startActivity(i);
-					        mActivity.overridePendingTransition(R.anim.in_down, R.anim.none);
+//						    Intent i = new Intent(mActivity, PopupTabletActivity.class);
+//					        i.putExtra("fragment", 1);
+//					        i.putExtra("accountNumber", account.getAccountId());
+//					        i.putExtra("txnType", TxFilter.ALL);
+//					        mContext.startActivity(i);
+//					        mActivity.overridePendingTransition(R.anim.in_down, R.anim.none);
 						}
 					});
 					
@@ -86,12 +85,12 @@ public class AccountTypeChildView extends FrameLayout {
 						@Override
 						public void onClick(View v) {
 							Toast.makeText(mContext, "VIEW UNCLEARED TXNS", Toast.LENGTH_SHORT).show();
-	                        Intent i = new Intent(mActivity, PopupTabletActivity.class);
-	                        i.putExtra("fragment", 1);
-	                        i.putExtra("accountNumber", account.getAccountId());
-	                        i.putExtra("txnType", TxFilter.UNCLEARED);
-	                        mContext.startActivity(i);
-	                        mActivity.overridePendingTransition(R.anim.in_down, R.anim.none);
+//	                        Intent i = new Intent(mActivity, PopupTabletActivity.class);
+//	                        i.putExtra("fragment", 1);
+//	                        i.putExtra("accountNumber", account.getAccountId());
+//	                        i.putExtra("txnType", TxFilter.UNCLEARED);
+//	                        mContext.startActivity(i);
+//	                        mActivity.overridePendingTransition(R.anim.in_down, R.anim.none);
 						}
 					});
 					
@@ -118,7 +117,7 @@ public class AccountTypeChildView extends FrameLayout {
 					
 					RelativeLayout parentView = (RelativeLayout)((Activity)mContext).findViewById(R.id.account_types_container);
 					
-				    new PopupWindowAtLocation(mContext, parentView, (int)view.getLeft() + view.getWidth(), (int)mChildView.getTop() + 10, 
+				    new PopupWindowAtLocation(mContext, parentView, (int)view.getLeft() + view.getWidth(), (int)mParent.getTop() + (int)UiUtils.convertDpToPixel(62, mContext), 
 							mContext.getResources().getStringArray(R.array.account_selection_popup), onClickListeners, view);
 					
 				}

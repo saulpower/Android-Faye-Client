@@ -86,14 +86,12 @@ public class PopupWindowAtLocation extends FrameLayout {
 	  
         Animation loadPopupAnimation = AnimationUtils.loadAnimation(mContext, R.anim.scale_fade_in);
         mSubOverlay.startAnimation(loadPopupAnimation);
-        
         Animation backgroundFadeIn = AnimationUtils.loadAnimation(mContext, R.anim.fade_in_fast);
         mRoot.startAnimation(backgroundFadeIn);
 
 	    mParentView.addView(mRoot);
 	    
 	    populateView();
-	
 	}
 	
 
@@ -142,8 +140,6 @@ public class PopupWindowAtLocation extends FrameLayout {
 	    
 	    subOverlay.setLayoutParams(subOverlayParams);
 	    
-
-        
 	    
 	    overlay.setOnClickListener(new OnClickListener() {
 			@Override
