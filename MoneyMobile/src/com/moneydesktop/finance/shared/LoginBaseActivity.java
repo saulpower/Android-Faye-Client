@@ -137,23 +137,23 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mNeedAccount = (TextView) findViewById(R.id.need_account);
         mNagBank = (TextView) findViewById(R.id.nag_bank);
 
-        Fonts.applyPrimaryFont(mLoginViewButton, 20);
-        Fonts.applyPrimaryFont(mDemoButton, 20);
-        Fonts.applyPrimaryFont(mDemoButton2, 20);
-        Fonts.applyPrimaryFont(mReturnHomeButton, 20);
-        Fonts.applyPrimaryFont(mLoginButton, 20);
-        Fonts.applyPrimaryFont(mCancelButton, 20);
-        Fonts.applyPrimaryFont(mSubmitButton, 20);
-        Fonts.applyPrimaryFont(mSignupText, 15);
-        Fonts.applyPrimaryFont(mLoginText, 15);
-        Fonts.applyPrimaryFont(mCancelText, 15);
-        Fonts.applyPrimaryBoldFont(mThankYou, 20);
-        Fonts.applyPrimaryFont(mTryDemo, 20);
-        Fonts.applyPrimarySemiBoldFont(mUsername, 25);
-        Fonts.applyPrimarySemiBoldFont(mPassword, 25);
-        Fonts.applyPrimaryBoldFont(mNeedAccount, 20);
-        Fonts.applySecondaryItalicFont(mNagBank, 15);
-        Fonts.applyPrimaryBoldFont(mSubmitButton, 15);
+        Fonts.applyPrimaryFont(mLoginViewButton, 14);
+        Fonts.applyPrimaryFont(mDemoButton, 14);
+        Fonts.applyPrimaryFont(mDemoButton2, 14);
+        Fonts.applyPrimaryFont(mReturnHomeButton, 14);
+        Fonts.applyPrimaryFont(mLoginButton, 14);
+        Fonts.applyPrimaryFont(mCancelButton, 14);
+        Fonts.applyPrimaryFont(mSubmitButton, 14);
+        Fonts.applyPrimaryFont(mSignupText, 12);
+        Fonts.applyPrimaryFont(mLoginText, 12);
+        Fonts.applyPrimaryFont(mCancelText, 12);
+        Fonts.applyPrimaryBoldFont(mThankYou, 14);
+        Fonts.applyPrimaryFont(mTryDemo, 14);
+        Fonts.applyPrimarySemiBoldFont(mUsername, 22);
+        Fonts.applyPrimarySemiBoldFont(mPassword, 22);
+        Fonts.applyPrimaryBoldFont(mNeedAccount, 14);
+        Fonts.applySecondaryItalicFont(mNagBank, 12);
+        Fonts.applyPrimaryBoldFont(mSubmitButton, 12);
         addListeners();
     }
 

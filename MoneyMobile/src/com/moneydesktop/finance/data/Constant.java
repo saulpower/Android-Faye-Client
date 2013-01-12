@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BudgetItem;
@@ -155,6 +156,28 @@ public class Constant {
 			KEY_TRANSACTIONS, 
 			KEY_BUDGETS 
 		};
+    
+    public static int[] FILTERS = new int[] {
+            R.string.filter_folder, 
+            R.string.filter_accounts, 
+            R.string.filter_cats, 
+            R.string.filter_tags, 
+            R.string.filter_payees
+        };
+    
+    public static int[] FOLDER_TITLE = new int[] {
+            R.string.folder_all, 
+            R.string.folder_new, 
+            R.string.folder_flag, 
+            R.string.folder_clear
+        };
+    
+    public static int[] FOLDER_SUBTITLE = new int[] {
+            R.string.folder_all_sub, 
+            R.string.folder_new_sub, 
+            R.string.folder_flag_sub, 
+            R.string.folder_clear_sub
+        };
 	
 	public static final Map<String, DataState> OPERATIONS;
     static {

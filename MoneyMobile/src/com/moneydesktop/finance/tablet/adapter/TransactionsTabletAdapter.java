@@ -232,7 +232,16 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 
 	@Override
 	public String[] getSections() {
-
 		return null;
 	}
+
+    @Override
+    protected boolean isSectionVisible(int position) {
+        return true;
+    }
+
+    @Override
+    protected boolean isPositionVisible(int position) {
+        return true;
+    }
 }

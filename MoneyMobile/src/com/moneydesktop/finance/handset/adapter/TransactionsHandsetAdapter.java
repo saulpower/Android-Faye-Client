@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.AmazingAdapter;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.shared.TransactionViewHolder;
-import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.AmazingListView;
 
@@ -247,4 +245,14 @@ public class TransactionsHandsetAdapter extends AmazingAdapter {
 
 		return res;
 	}
+
+    @Override
+    protected boolean isSectionVisible(int position) {
+        return true;
+    }
+
+    @Override
+    protected boolean isPositionVisible(int position) {
+        return true;
+    }
 }

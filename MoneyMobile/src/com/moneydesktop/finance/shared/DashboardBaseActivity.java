@@ -123,7 +123,7 @@ public abstract class DashboardBaseActivity extends BaseActivity {
     			
     	    	Intent i = new Intent(getApplicationContext(), isTablet ? LoginTabletActivity.class : LoginHandsetActivity.class);
     	    	startActivity(i);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                overridePendingTransition(R.anim.in_up, R.anim.none);
     	    	finish();
     		}
 			

@@ -196,8 +196,9 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	
 	public void onEvent(NavigationEvent event) {
 		
-		if (event.isShowing() == null && event.getDirection() == null)
+		if (event.isShowing() == null && event.getDirection() == null) {
 			toggleNavigation();
+		}
 	}
 	
 	private void loadAnimations() {

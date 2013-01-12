@@ -4,24 +4,17 @@
     xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
     android:id="@+id/item_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical" >
-
-    <include
-        android:id="@+id/header"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/tablet_filter_item_header" />
     
 	<LinearLayout
 	    android:id="@+id/item_cell"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@id/header"
 	    android:paddingLeft="20dp"
 	    android:paddingTop="8dp"
 	    android:paddingBottom="8dp"
-    	android:background="@color/gray4" 
+    	android:background="@drawable/gray4_to_primary" 
 	    android:orientation="vertical" >
 	
 	    <TextView
@@ -31,7 +24,7 @@
 	        android:layout_height="wrap_content" />
 		
 	    <TextView
-	        android:id="@+id/subtext"
+	        android:id="@+id/subtitle"
 	        style="@style/tablet_filter_text"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content" />
@@ -39,6 +32,7 @@
     </LinearLayout>
 	
 	<com.moneydesktop.finance.views.LineView
+	    android:id="@+id/item_divider"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@id/item_cell"

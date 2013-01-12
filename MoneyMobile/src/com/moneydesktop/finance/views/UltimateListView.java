@@ -6,11 +6,11 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.View;
-import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 
-import com.moneydesktop.finance.adapters.AmazingAdapter;
-import com.moneydesktop.finance.adapters.AmazingAdapter.HasMorePagesListener;
+import com.moneydesktop.finance.adapters.UltimateAdapter;
+import com.moneydesktop.finance.adapters.UltimateAdapter.HasMorePagesListener;
 
 /**
  * A ListView that maintains a header pinned at the top of the list. The
@@ -19,9 +19,9 @@ import com.moneydesktop.finance.adapters.AmazingAdapter.HasMorePagesListener;
  * It also supports pagination by setting a custom view as the loading
  * indicator.
  */
-public class AmazingListView extends ListView implements HasMorePagesListener {
+public class UltimateListView extends ExpandableListView implements HasMorePagesListener {
     
-	public static final String TAG = AmazingListView.class.getSimpleName();
+	public static final String TAG = UltimateListView.class.getSimpleName();
 	
 	View mListFooter;
 	boolean mFooterViewAttached = false;
@@ -35,30 +35,19 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     private int mHeaderViewWidth;
     private int mHeaderViewHeight;
 
-    private AmazingAdapter mAdapter;
+    private UltimateAdapter mAdapter;
     
     private boolean mIsPressed = false;
     private boolean mHeaderClicked = false;
-    
-    private OnSectionHeaderClickListener mSectionHeaderClickListener;
-    
-    public OnSectionHeaderClickListener getOnSectionHeaderClickListener() {
-        return mSectionHeaderClickListener;
-    }
 
-    public void setOnSectionHeaderClickListener(OnSectionHeaderClickListener sectionHeaderClickListener) {
-        this.mSectionHeaderClickListener = sectionHeaderClickListener;
-    }
-
-    public void setPinnedHeaderView(View view) {
+    private void setHeaderView(View view) {
+        
         mHeaderView = view;
         
-        // Disable vertical fading when the pinned header is present
-        // TODO change ListView to allow separate measures for top and bottom fading edge;
-        // in this particular case we would like to disable the top, but not the bottom edge.
         if (mHeaderView != null) {
             setFadingEdgeLength(0);
         }
+        
         requestLayout();
     }
     
@@ -87,12 +76,17 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
                 
                 if (mIsPressed && isPointInsideHeader(ev.getRawX(), ev.getRawY())) {
                     
-                    if (mSectionHeaderClickListener != null) {
-                        playSoundEffect(SoundEffectConstants.CLICK);
-                        mSectionHeaderClickListener.onSectionHeaderClicked(mHeaderView, mAdapter.getSectionForPosition(getFirstVisiblePosition()));
-                        mHeaderClicked = true;
+                    int section = mAdapter.getSectionForPosition(getFirstVisiblePosition());
+                    
+                    if (mAdapter.isSectionVisible(section)) {
+                        collapseGroup(section);
+                    } else {
+                        expandGroup(section);
                     }
                     
+                    playSoundEffect(SoundEffectConstants.CLICK);
+                    
+                    mHeaderClicked = true;
                     result = true;
                     mIsPressed = false;
                 }
@@ -107,17 +101,14 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     @Override
     public boolean performItemClick(View view, int position, long id) {
         
-        if (!mHeaderClicked && getOnItemClickListener() != null) {
+        if (!mHeaderClicked) {
             
-            getOnItemClickListener().onItemClick(this, view, position, id);
-            playSoundEffect(SoundEffectConstants.CLICK);
-            
-            return true;
+            return super.performItemClick(view, position, id);
         }
 
         mHeaderClicked = false;
         
-        return false;
+        return true;
     }
 
     protected boolean isPointInsideHeader(float x, float y) {
@@ -159,7 +150,7 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     
     public void resetHeaderView(int position) {
         
-        mAdapter.configurePinnedHeader(mHeaderView, position, 255);
+        mAdapter.configureHeader(mHeaderView, position);
         if (mHeaderView.getTop() != 0) {
             mHeaderView.layout(0, 0, mHeaderViewWidth, mHeaderViewHeight);
         }
@@ -173,28 +164,37 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     }
 
     public void configureHeaderView(int position) {
+        
         if (mHeaderView == null) {
             return;
         }
-
-        int state = mAdapter.getPinnedHeaderState(position);
+        
+        int section = mAdapter.getSectionForPosition(position);
+        int state = mAdapter.getPinnedHeaderState(position, section);
         
         switch (state) {
-            case AmazingAdapter.PINNED_HEADER_GONE: {
+            
+            case UltimateAdapter.PINNED_HEADER_GONE: {
+                
                 mHeaderViewVisible = false;
+                
                 break;
             }
 
-            case AmazingAdapter.PINNED_HEADER_VISIBLE: {
-            	mAdapter.configurePinnedHeader(mHeaderView, position, 255);
+            case UltimateAdapter.PINNED_HEADER_VISIBLE: {
+                
+            	mAdapter.configureHeader(mHeaderView, section);
+            	
                 if (mHeaderView.getTop() != 0) {
                     mHeaderView.layout(0, 0, mHeaderViewWidth, mHeaderViewHeight);
                 }
+                
                 mHeaderViewVisible = true;
+                
                 break;
             }
 
-            case AmazingAdapter.PINNED_HEADER_PUSHED_UP: {
+            case UltimateAdapter.PINNED_HEADER_PUSHED_UP: {
                 
                 View firstView = getChildAt(0);
                 
@@ -203,17 +203,14 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
 	                int bottom = firstView.getBottom();
 	                int headerHeight = mHeaderView.getHeight();
 	                int y;
-	                int alpha;
 	                
 	                if (bottom < headerHeight) {
 	                    y = (bottom - headerHeight);
-	                    alpha = 255; // * (headerHeight + y) / headerHeight;
 	                } else {
 	                    y = 0;
-	                    alpha = 255;
 	                }
 	                
-	                mAdapter.configurePinnedHeader(mHeaderView, position, alpha);
+	                mAdapter.configureHeader(mHeaderView, section);
 	                
 	                if (mHeaderView.getTop() != y) {
 	                    mHeaderView.layout(0, y, mHeaderViewWidth, mHeaderViewHeight + y);
@@ -236,15 +233,15 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
         }
     }
     
-    public AmazingListView(Context context) {
+    public UltimateListView(Context context) {
         super(context);
     }
 
-    public AmazingListView(Context context, AttributeSet attrs) {
+    public UltimateListView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public AmazingListView(Context context, AttributeSet attrs, int defStyle) {
+    public UltimateListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
     
@@ -265,9 +262,10 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     }
     
     @Override
-    public void setAdapter(ListAdapter adapter) {
-    	if (!(adapter instanceof AmazingAdapter)) {
-    		throw new IllegalArgumentException(AmazingListView.class.getSimpleName() + " must use adapter of type " + AmazingAdapter.class.getSimpleName());
+    public void setAdapter(ExpandableListAdapter adapter) {
+        
+    	if (!(adapter instanceof UltimateAdapter)) {
+    		throw new IllegalArgumentException(UltimateListView.class.getSimpleName() + " must use adapter of type " + UltimateAdapter.class.getSimpleName());
     	}
     	
     	// previous adapter
@@ -275,20 +273,18 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     		this.mAdapter.setHasMorePagesListener(null);
     		this.setOnScrollListener(null);
     	}
-    	
-    	this.mAdapter = (AmazingAdapter) adapter;
-    	((AmazingAdapter) adapter).setHasMorePagesListener(this);
-		this.setOnScrollListener((AmazingAdapter) adapter);
-    	
+
+    	this.mAdapter = (UltimateAdapter) adapter;
+    	this.mAdapter.setHasMorePagesListener(this);
+		this.setOnScrollListener(mAdapter);
+		
+		View header = mAdapter.getSectionView(0, false, null, this);
+		setHeaderView(header);
+		
 		View dummy = new View(getContext());
     	super.addFooterView(dummy);
-    	super.setAdapter(adapter);
+        super.setAdapter(adapter);
     	super.removeFooterView(dummy);
-    }
-    
-    @Override
-    public AmazingAdapter getAdapter() {
-    	return mAdapter;
     }
 
 	@Override
@@ -299,7 +295,7 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
             mFooterViewAttached = false;
         }
 		    
-	    if (!mEmptyViewAttached && mAdapter.getCount() == 0 && mEmptyFooter != null) {
+	    if (!mEmptyViewAttached && mAdapter.getGroupCount() == 0 && mEmptyFooter != null) {
 	        this.addFooterView(mEmptyFooter);
 	        mEmptyViewAttached = true;
 	    }
@@ -318,9 +314,5 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
 	
 	public boolean isLoadingViewVisible() {
 		return mFooterViewAttached;
-	}
-	
-	public interface OnSectionHeaderClickListener {
-	    public void onSectionHeaderClicked(View view, int section);
 	}
 }

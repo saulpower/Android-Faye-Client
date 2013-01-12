@@ -8,7 +8,9 @@ public class FilterViewHolder {
     
     public TextView title;
     public TextView subTitle;
+    public TextView headerTitle;
     public CaretView caret;
+    
     public String text;
     public String subText;
 }
