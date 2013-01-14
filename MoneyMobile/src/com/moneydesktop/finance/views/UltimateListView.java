@@ -148,17 +148,6 @@ public class UltimateListView extends ExpandableListView implements HasMorePages
         }
     }
     
-    public void resetHeaderView(int position) {
-        
-        mAdapter.configureHeader(mHeaderView, position);
-        if (mHeaderView.getTop() != 0) {
-            mHeaderView.layout(0, 0, mHeaderViewWidth, mHeaderViewHeight);
-        }
-        mHeaderViewVisible = true;
-        
-        invalidate();
-    }
-    
     public void configureHeaderView() {
         configureHeaderView(getFirstVisiblePosition());
     }

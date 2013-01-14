@@ -2,40 +2,55 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
-    android:id="@+id/item_root"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="70dp"
     android:orientation="vertical" >
     
 	<LinearLayout
-	    android:id="@+id/item_cell"
+	    android:id="@+id/info"
 	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
+	    android:layout_height="match_parent"
 	    android:paddingLeft="20dp"
 	    android:paddingTop="8dp"
 	    android:paddingBottom="8dp"
-    	android:background="@drawable/gray4_to_primary" 
+    	android:background="@drawable/gray4_to_primary"
 	    android:orientation="vertical" >
 	
 	    <TextView
 	        android:id="@+id/title"
 	        style="@style/tablet_filter_text"
 	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content" />
+	        android:layout_height="0dp"
+	        android:layout_weight="50"
+	        android:gravity="bottom" />
 		
 	    <TextView
 	        android:id="@+id/subtitle"
 	        style="@style/tablet_filter_text"
 	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content" />
+	        android:layout_height="0dp"
+	        android:layout_weight="50"
+	        android:gravity="top" />
 	    
     </LinearLayout>
+	
+    <TextView
+        android:id="@+id/single_title"
+        style="@style/tablet_filter_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+	    android:paddingLeft="20dp"
+	    android:paddingTop="8dp"
+	    android:paddingBottom="8dp"
+        android:gravity="center_vertical"
+    	android:background="@drawable/gray4_to_primary"
+        android:visibility="gone" />
 	
 	<com.moneydesktop.finance.views.LineView
 	    android:id="@+id/item_divider"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@id/item_cell"
+	    android:layout_below="@id/info"
 	    android:layout_marginTop="-2dp"
 	    app:lineColor="@color/white"
 	    app:isDashed="true"

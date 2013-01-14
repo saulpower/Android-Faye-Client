@@ -142,6 +142,7 @@
     <string name="label_yes">yes</string>
     <string name="label_balances">Account Balances as of Today</string>
     <string name="loading">Loading</string>
+    <string name="loading_menu">Loading menu&#8230;</string>
     <string name="logging_out">Logging Out&#8230;</string>
     <string name="logout_cancel">Cancel Logout</string>
     <string name="logout_message">Waiting for sync to complete.</string>

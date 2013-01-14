@@ -1,9 +1,12 @@
 package com.moneydesktop.finance.tablet.adapter;
 
 import android.app.Activity;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ExpandableListView.OnGroupExpandListener;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
@@ -11,20 +14,25 @@ import com.moneydesktop.finance.adapters.UltimateAdapter;
 import com.moneydesktop.finance.shared.FilterViewHolder;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.CaretView;
+import com.moneydesktop.finance.views.UltimateListView;
 
 import java.util.List;
 
-public class FilterTabletAdapter extends UltimateAdapter {
+public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpandListener {
     
     public final String TAG = this.getClass().getSimpleName();
 
     private List<Pair<String, List<FilterViewHolder>>> mData;
     private Activity mActivity;
+    private UltimateListView mListView;
 
-    public FilterTabletAdapter(Activity activity, List<Pair<String, List<FilterViewHolder>>> data) {
+    public FilterTabletAdapter(Activity activity, UltimateListView listView, List<Pair<String, List<FilterViewHolder>>> data) {
         
         mActivity = activity;
+        mListView = listView;
         mData = data;
+        
+        mListView.setOnGroupExpandListener(this);
     }
     
     @Override
@@ -58,8 +66,16 @@ public class FilterTabletAdapter extends UltimateAdapter {
         
         if (filter != null) {
             
-            viewHolder.title.setText(filter.text);
-            viewHolder.subTitle.setText(filter.subText);
+            if (filter.subText == null || filter.subText.equals("")) {
+                viewHolder.info.setVisibility(View.INVISIBLE);
+                viewHolder.singleTitle.setVisibility(View.VISIBLE);
+                viewHolder.singleTitle.setText(filter.text);
+            } else {
+                viewHolder.info.setVisibility(View.VISIBLE);
+                viewHolder.singleTitle.setVisibility(View.GONE);
+                viewHolder.title.setText(filter.text);
+                viewHolder.subTitle.setText(filter.subText);
+            }
         }
         
         return cell;
@@ -124,6 +140,8 @@ public class FilterTabletAdapter extends UltimateAdapter {
         viewHolder.subTitle = (TextView) cell.findViewById(R.id.subtitle);
         viewHolder.headerTitle = (TextView) cell.findViewById(R.id.header_title);
         viewHolder.caret = (CaretView) cell.findViewById(R.id.caret);
+        viewHolder.singleTitle = (TextView) cell.findViewById(R.id.single_title);
+        viewHolder.info = (LinearLayout) cell.findViewById(R.id.info);
         
         applyFonts(viewHolder);
         
@@ -136,6 +154,7 @@ public class FilterTabletAdapter extends UltimateAdapter {
 
         Fonts.applyPrimarySemiBoldFont(viewHolder.title, 12);
         Fonts.applyPrimaryFont(viewHolder.subTitle, 9);
+        Fonts.applyPrimarySemiBoldFont(viewHolder.singleTitle, 12);
         Fonts.applyPrimaryBoldFont(viewHolder.headerTitle, 12);
     }
 
@@ -168,5 +187,13 @@ public class FilterTabletAdapter extends UltimateAdapter {
 
     @Override
     protected void onNextPageRequested(int page) {
+    }
+
+    @Override
+    public void onGroupExpand(int groupPosition) {
+        
+        if (groupPosition != 0) {
+            Log.i(TAG, "Load section " + groupPosition);
+        }
     }
 }

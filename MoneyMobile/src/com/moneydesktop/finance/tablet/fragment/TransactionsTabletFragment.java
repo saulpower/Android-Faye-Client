@@ -198,6 +198,7 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
 		mRoot = inflater.inflate(R.layout.tablet_transactions_view, null);
 		
 		setupView();
+		setupFilterList();
 		
 		TransactionsPageTabletFragment frag = TransactionsPageTabletFragment.newInstance();
       
@@ -232,8 +233,11 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
         mFiltersList.setDividerHeight(0);
         mFiltersList.setDivider(null);
         mFiltersList.setChildDivider(null);
-        
-        List<Pair<String, List<FilterViewHolder>>> data = new ArrayList<Pair<String, List<FilterViewHolder>>>();
+	}
+	
+	private void setupFilterList() {
+
+	    List<Pair<String, List<FilterViewHolder>>> data = new ArrayList<Pair<String, List<FilterViewHolder>>>();
         
         for (int j = 0; j < Constant.FILTERS.length; j++) {
 
@@ -247,13 +251,20 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
                     holder.subText = getString(Constant.FOLDER_SUBTITLE[i]);
                     subItems.add(holder);
                 }
+                
+            } else {
+                
+                FilterViewHolder holder = new FilterViewHolder();
+                holder.text = getString(R.string.loading_menu);
+                subItems.add(holder);
+                
             }
             
             Pair<String, List<FilterViewHolder>> temp = new Pair<String, List<FilterViewHolder>>(getString(Constant.FILTERS[j]), subItems);
             data.add(temp);
         }
         
-        mAdapter = new FilterTabletAdapter(mActivity, data);
+        mAdapter = new FilterTabletAdapter(mActivity, mFiltersList, data);
         mFiltersList.setAdapter(mAdapter);
         mFiltersList.setOnChildClickListener(this);
         mFiltersList.expandGroup(0);
