@@ -13,9 +13,21 @@
         <item>UPDATE USERNAME AND PASSWORD</item>
     </string-array> 
     
+    <string-array name="account_types_title_bar_icons">
+        <item>@string/icon_add</item>
+        <item>@string/icon_refresh</item>
+        <item>@string/icon_help</item>
+    </string-array>   
+    
+   <string-array name="account_summary_title_bar_icons">
+        <item>@string/icon_print</item>
+        <item>@string/icon_email</item>
+        <item>@string/icon_help</item>
+    </string-array>
+    
     <string name="account_types_title">Accounts</string>
-    <string name="account_types_indicator_show">Show</string>
-    <string name="account_types_indicator_hide">Hide</string>
+    <string name="account_types_indicator_show">SHOW</string>
+    <string name="account_types_indicator_hide">HIDE</string>
     <string name="dashboard_title">Financial Dashboard:</string>
     <string name="app_name">MoneyMobile</string>
     <string name="at_unknown">Unknown</string>
@@ -123,6 +135,11 @@
     <string name="icon_loc">J</string>
     <string name="icon_loans">H</string>
     <string name="icon_mort">L</string>
+    <string name="icon_help">v</string>
+    <string name="icon_add">A</string>
+    <string name="icon_print">print</string>
+    <string name="icon_email">email</string>
+    <string name="icon_refresh">N</string>
     <string name="label_amount">Amount</string>
     <string name="label_app_lock">APP LOCK</string>
     <string name="label_category">Category</string>

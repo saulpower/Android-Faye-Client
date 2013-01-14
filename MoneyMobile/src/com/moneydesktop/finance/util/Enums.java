@@ -1,6 +1,44 @@
 package com.moneydesktop.finance.util;
 
 public class Enums {
+    
+    public enum TabletFragments {
+        ACCOUNT_SUMMARY_TABLET (0),
+        ACCOUNT_TYPES_TABLET (1),
+        SETTINGS_TABLET (2),
+        TRANSACTIONS_TABLET (3);
+        
+        private int index;
+        
+        TabletFragments(int index) {
+            this.index = index;
+        }
+        
+        public static TabletFragments fromInteger(Integer value) {
+            
+            switch(value) {
+            case 0:
+                return ACCOUNT_SUMMARY_TABLET;
+            case 1:
+                return ACCOUNT_TYPES_TABLET;
+            case 2:
+                return SETTINGS_TABLET;
+            case 3:
+                return TRANSACTIONS_TABLET;
+            }
+            
+            return null;
+        }
+        
+        public int index() {
+            return index;
+        }
+        
+    };
+    
+    public enum HandsetFragments {
+        
+    }
 
     public enum TxFilter {
         ALL, UNCLEARED

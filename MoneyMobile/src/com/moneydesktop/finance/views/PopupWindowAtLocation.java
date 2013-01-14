@@ -42,7 +42,8 @@ public class PopupWindowAtLocation extends FrameLayout {
 	int mScreenHeight;
 	int mScreenWidth;
 	View mTouchedView; 
-	//TransparentView mTransparentView;
+	TransparentView mTransparentView;
+	RelativeLayout mSubOverlay;
 	
 	private Paint bg;
 	private int mLeftMargin;
@@ -74,16 +75,23 @@ public class PopupWindowAtLocation extends FrameLayout {
 		
 		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	    mRoot = (RelativeLayout) mInflater.inflate(R.layout.popup_with_buttons, null);
+	    mSubOverlay = (RelativeLayout) mRoot.findViewById(R.id.popup_sub_overlay);
+	    
 	    
 	    LinearLayout.LayoutParams overlayParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT);
 	    mRoot.setLayoutParams(overlayParams);
 	    
 	    mScreenHeight = UiUtils.getScreenHeight((Activity)mContext);
 	    mScreenWidth = UiUtils.getScreenWidth((Activity)mContext);
-	    
+	  
+        Animation loadPopupAnimation = AnimationUtils.loadAnimation(mContext, R.anim.scale_fade_in);
+        mSubOverlay.startAnimation(loadPopupAnimation);
+        Animation backgroundFadeIn = AnimationUtils.loadAnimation(mContext, R.anim.fade_in_fast);
+        mRoot.startAnimation(backgroundFadeIn);
+
 	    mParentView.addView(mRoot);
+	    
 	    populateView();
-	
 	}
 	
 
@@ -107,9 +115,9 @@ public class PopupWindowAtLocation extends FrameLayout {
 	    subOverlayParams.leftMargin = mX;
 	    subOverlayParams.topMargin = mY;
 	  
-	  //  mTransparentView = (TransparentView)mRoot.findViewById(R.id.transparent_account_view);
-	   // mTransparentView.setViewVisibility(View.VISIBLE);
-	   // mTransparentView.setTransparentArea(mX - (int)UiUtils.convertDpToPixel(5, mContext), mY, mTouchedView.getWidth() - (int)UiUtils.convertDpToPixel(12, mContext), mTouchedView.getHeight());
+	    mTransparentView = (TransparentView)mRoot.findViewById(R.id.transparent_account_view);
+	    mTransparentView.setViewVisibility(View.VISIBLE);
+	    mTransparentView.setTransparentArea(mX - (int)UiUtils.convertDpToPixel(5, mContext), mY, mTouchedView.getWidth() - (int)UiUtils.convertDpToPixel(12, mContext), mTouchedView.getHeight());
 	    
 	    
 	    /*
@@ -127,59 +135,40 @@ public class PopupWindowAtLocation extends FrameLayout {
 	    }
 	    if (popupWillDisplayOffScreenRight) {
 	    	subOverlayParams.leftMargin = (int) (mScreenWidth - (UiUtils.getMinimumPanalWidth((Activity)mContext)*2.2));
-	    	//mTransparentView.setTransparentArea(subOverlayParams.leftMargin + subOverlayParams.width + mTouchedView.getWidth() + (int)UiUtils.convertDpToPixel(8, mContext), mY, mTouchedView.getWidth() + 10, mTouchedView.getHeight());
+	    	mTransparentView.setTransparentArea(subOverlayParams.leftMargin + subOverlayParams.width + mTouchedView.getWidth() + (int)UiUtils.convertDpToPixel(8, mContext), mY, mTouchedView.getWidth() + 10, mTouchedView.getHeight());
 	    }
 	    
 	    subOverlay.setLayoutParams(subOverlayParams);
 	    
-	    Animation loadPopupAnimation = AnimationUtils.loadAnimation(mContext, R.anim.scale_fade_in);
-	    subOverlay.startAnimation(loadPopupAnimation);
-
+	    
 	    overlay.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Animation dismissPopupAnimation = AnimationUtils.loadAnimation(mContext, R.anim.fade_out_fast);
-				dismissPopupAnimation.setAnimationListener(new AnimationListener() {
-					
-					@Override
-					public void onAnimationStart(Animation animation) {
-					}
-					
-					@Override
-					public void onAnimationRepeat(Animation animation) {
-					}
-					
-					@Override
-					public void onAnimationEnd(Animation animation) {
-						
-					}
-				});
-				mRoot.startAnimation(dismissPopupAnimation);
-				mParentView.removeView(mRoot);
+				fadeOutTransparency();
 			}
 		});
 	}
-	
-	
-//	public void setTransparentArea(int x, int y, int width, int height) {
-//		mLeftMargin = x;
-//		mTopMargin = y;
-//		mWidth = width;
-//		mHeight = height;
-//		
-//		mRect = new Rect(mLeftMargin - mWidth, mTopMargin, mWidth, mHeight);
-//		
-//		invalidate();
-//	}
-//	
-//    private void drawRects(Canvas canvas, PorterDuff.Mode mode) {
-//        canvas.drawRect(mRect, bg);
-//    }
-//    
-//	@Override
-//	protected void onDraw(Canvas canvas) {
-//		super.onDraw(canvas);		
-//		 drawRects(canvas, Mode.CLEAR);
-//	}
+
+
+    public void fadeOutTransparency() {
+        Animation dismissPopupAnimation = AnimationUtils.loadAnimation(mContext, R.anim.fade_out_fast);
+        dismissPopupAnimation.setAnimationListener(new AnimationListener() {
+        	
+        	@Override
+        	public void onAnimationStart(Animation animation) {
+        	}
+        	
+        	@Override
+        	public void onAnimationRepeat(Animation animation) {
+        	}
+        	
+        	@Override
+        	public void onAnimationEnd(Animation animation) {
+        		
+        	}
+        });
+        mRoot.startAnimation(dismissPopupAnimation);
+        mParentView.removeView(mRoot);
+    }
 	
 }

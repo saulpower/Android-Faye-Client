@@ -19,8 +19,11 @@ import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
 import com.moneydesktop.finance.util.Enums.TxFilter;
+<<<<<<< HEAD
+=======
 import com.moneydesktop.finance.util.Enums.TxType;
 import com.moneydesktop.finance.util.UiUtils;
+>>>>>>> titleBarAndAccountsList
 
 import java.text.NumberFormat;
 import java.util.ArrayList;

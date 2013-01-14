@@ -15,8 +15,8 @@
     
     <ImageView
         android:id="@+id/bank_account_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dip"
+        android:layout_height="50dip"
         android:layout_marginLeft="25dip"
         android:layout_marginTop="17dip"
         android:src="@drawable/bank1" />

@@ -1,5 +1,6 @@
 package com.moneydesktop.finance.tablet.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -19,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 import android.widget.ViewSwitcher.ViewFactory;
 
@@ -29,12 +32,15 @@ import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
 import com.moneydesktop.finance.shared.DashboardBaseActivity;
 import com.moneydesktop.finance.tablet.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.FragmentVisibilityListener;
 import com.moneydesktop.finance.tablet.fragment.SettingsTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsTabletFragment;
+import com.moneydesktop.finance.util.Enums.TabletFragments;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.FixedSpeedScroller;
 import com.moneydesktop.finance.views.GrowViewPager;
+import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.NavWheelView;
 import com.moneydesktop.finance.views.NavWheelView.onNavigationChangeListener;
 
@@ -54,6 +60,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	private NavWheelView mNavigation;
 	private ImageView mHomeButton;
 	private TextSwitcher mNavTitle;
+	private int mCurrentFragment;
 	
 	private Handler mHandler = new Handler();
 	private Runnable mTask = new Runnable() {
@@ -124,6 +131,9 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         super.onResume();
         
         updateNavBar(getActivityTitle());
+        if (getActivityTitle().equals(getResources().getString(R.string.title_activity_dashboard))) {
+            setupTitleBar();
+        }
     }
 	
 	@Override
@@ -152,6 +162,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 		super.configureView(home);
 
         mOnHome = home;
+        setupTitleBar();
         
     	if (home) {
     		
@@ -182,6 +193,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         
         return (mFlipper.getDisplayedChild() + 1) % mFlipper.getChildCount();
     }
+   
     
     @Override
     public void updateNavBar(String titleString) {
@@ -192,7 +204,9 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
             
             mNavTitle.setText(titleString.toUpperCase());
         }
+       
     }
+    
 	
 	public void onEvent(NavigationEvent event) {
 		
@@ -296,6 +310,36 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	    overridePendingTransition(R.anim.in_down, R.anim.none);
 	}
 
+    private void setupTitleBar() {
+        
+        String[] icons = getResources().getStringArray(R.array.account_summary_title_bar_icons);
+        
+        ArrayList<OnClickListener> onClickListeners = new ArrayList<OnClickListener>();
+        
+        onClickListeners.add(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(DashboardTabletActivity.this, "print", Toast.LENGTH_LONG).show();
+            }
+        });
+        
+        onClickListeners.add(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(DashboardTabletActivity.this, "email", Toast.LENGTH_LONG).show();
+            }
+        });
+       
+        onClickListeners.add(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(DashboardTabletActivity.this, "help", Toast.LENGTH_LONG).show();
+            }
+        });
+        
+        new NavBarButtons(DashboardTabletActivity.this, icons, onClickListeners);
+     }
+	
 	@Override
     public void showFragment(int index) {
     	
@@ -303,8 +347,8 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
     	
     	BaseFragment fragment = getFragment(index);
     	
-    	if (fragment != null) {
-    		
+    	if (fragment != null) {    		
+    	    mCurrentFragment = fragment.getPosition();
     		mCurrentIndex = index;
     		
 	        FragmentTransaction ft = mFm.beginTransaction();
@@ -317,6 +361,10 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	        
 	        ft.replace(R.id.fragment, fragment);
 	        ft.commit();
+	        
+            if (fragment instanceof FragmentVisibilityListener) {
+                ((FragmentVisibilityListener) fragment).onShow(DashboardTabletActivity.this);
+            }
     	}
     }
 

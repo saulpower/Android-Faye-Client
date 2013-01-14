@@ -6,11 +6,12 @@
                 android:id="@+id/account_types_container"
                 android:background="@drawable/wooddark">                
  
-    <com.moneydesktop.finance.views.SlideExpandableListView
-        		    android:layout_height="wrap_content"
+    <com.moneydesktop.finance.views.AnimatedListView.SlideExpandableListView
+        		    android:layout_height="fill_parent"
                     android:layout_width="fill_parent"
                     android:id="@+id/accounts_expandable_list_view"
                     android:dividerHeight="0dip"
+                    android:listSelector="@android:color/transparent"
                     android:cacheColorHint="#00000000"/>
 
     <com.moneydesktop.finance.views.SlidingDrawerRightSide
