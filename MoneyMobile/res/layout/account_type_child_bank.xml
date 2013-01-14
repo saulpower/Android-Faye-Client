@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    android:id="@+id/account_type_child_bank_container"
     android:layout_width="200dip"
-    android:layout_height="200dip"
-    android:id="@+id/account_type_child_bank_container" >
+    android:layout_height="200dip" >
 
     <ImageView
         android:layout_width="200dip"
@@ -50,18 +50,16 @@
             android:gravity="center_vertical"
             android:orientation="horizontal" >
 
-            
-     		<com.moneydesktop.finance.views.LineView
-		        android:layout_width="wrap_content"
-		        android:layout_height="55dip"
-		        android:layout_marginLeft="25dip"
-		        app:lineColor="@color/primaryColor"
-			    app:lineStrokeWidth="3"
-			    android:gravity="center_vertical"
-			    app:isVertical="true" 
-			    app:isDashed="true"
-			    app:dashLength="4"/>
-            
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="wrap_content"
+                android:layout_height="55dip"
+                android:layout_marginLeft="25dip"
+                android:gravity="center_vertical"
+                app:dashLength="4"
+                app:isDashed="true"
+                app:isVertical="true"
+                app:lineColor="@color/primaryColor"
+                app:lineStrokeWidth="3" />
 
             <TextView
                 android:id="@+id/tablet_account_type_bank_sum"
