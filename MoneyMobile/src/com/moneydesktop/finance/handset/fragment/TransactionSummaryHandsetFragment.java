@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.ApplicationContext;
@@ -15,10 +17,15 @@ import com.moneydesktop.finance.database.CategoryDao;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.views.BarView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 
 public class TransactionSummaryHandsetFragment extends BaseFragment {
 
@@ -93,6 +100,7 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         TextView uncategorizedTransactionText = (TextView) v
                 .findViewById(R.id.uncategorized_transaction_text);
         Fonts.applyPrimaryFont(uncategorizedTransactionText, 16);
+        setupBarGraphView(v);
 
         incomeBalance.setText("$" + Transactions.getIncomeTotal().toString());
         expenseBalance.setText("$" + Transactions.getExpensesTotal().toString());
@@ -100,6 +108,33 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         uncategorizedTransactionText.setText("You have "
                 + Transactions.getUncategorizedTransactions() + " uncategorized transactions.");
 
+    }
+
+    private void setupBarGraphView(View v) {
+        HashMap<Date, Double> data = Transactions.get30DayExpenseTotals();
+        int widthscale = data.size();
+        double heightscale = Collections.max(data.values());
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.setTimeZone(TimeZone.getDefault());
+        cal.add(Calendar.DAY_OF_YEAR, -30);
+        cal.set(Calendar.HOUR, 0);
+        cal.add(Calendar.HOUR, -12);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        LinearLayout l = (LinearLayout) v.findViewById(R.id.daily_spending_graph);
+        for (int i = 0; i < 30; i++) {
+            if (data.get(cal.getTime()) != null) {
+                BarView b = new BarView(getActivity(), Integer.toString(cal
+                        .get(Calendar.DAY_OF_MONTH)),
+                        data.get(cal.getTime()), heightscale);
+                LayoutParams layout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 1);
+                b.setLayoutParams(layout);
+                l.addView(b);
+            }
+            cal.add(Calendar.DAY_OF_YEAR, 1);
+        }
     }
 
     private HashMap<String, Object> parseTransactions(List<Transactions> l) {

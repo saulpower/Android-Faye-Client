@@ -132,13 +132,12 @@
 		                   android:layout_height="wrap_content"
 		                   android:textColor="@color/gray4"
 		                   />
-		               <TextView
-		                   android:id="@+id/daily_spending_widget"
-		                   android:layout_width="match_parent"
-		                   android:layout_height="wrap_content"
-		                   android:text="Not Implemented"
-		                   android:textColor="@color/gray5"
-		                   />
+		              <LinearLayout
+		                  android:id="@+id/daily_spending_graph"
+		                  android:orientation="horizontal"
+		                  android:layout_height="0dp"
+		                  android:layout_width="match_parent"
+		                  android:layout_weight=".77"/>
                </LinearLayout>
                <com.moneydesktop.finance.views.LineView
                     android:layout_width="match_parent"
