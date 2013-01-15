@@ -116,7 +116,7 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         double heightscale = Collections.max(data.values());
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        cal.setTimeZone(TimeZone.getDefault());
+        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
         cal.add(Calendar.DAY_OF_YEAR, -30);
         cal.set(Calendar.HOUR, 0);
         cal.add(Calendar.HOUR, -12);

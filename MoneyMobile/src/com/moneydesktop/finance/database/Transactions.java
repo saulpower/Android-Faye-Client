@@ -855,7 +855,7 @@ public class Transactions extends BusinessObject {
         while (cursor.isAfterLast() == false) {
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(cursor.getLong(0));
-            c.setTimeZone(TimeZone.getDefault());
+            c.setTimeZone(TimeZone.getTimeZone("UTC"));
             c.set(Calendar.HOUR, 0);
             c.set(Calendar.MINUTE, 0);
             c.set(Calendar.SECOND, 0);
