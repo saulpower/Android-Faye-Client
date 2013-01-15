@@ -11,8 +11,8 @@ import android.widget.ImageView;
 import com.moneydesktop.finance.R;
 
 public class CaretView extends ImageView {
-    
-	private float mWidth = 10;
+
+    private float mWidth = 10;
 	private float mHeight = 10;
 	
 	private float mDegrees = 0.0f;
@@ -100,7 +100,7 @@ public class CaretView extends ImageView {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-
+		
 		canvas.save();
 		
 		canvas.rotate(mDegrees, getWidth()/2, getHeight()/2);
@@ -108,5 +108,4 @@ public class CaretView extends ImageView {
 	    
 	    canvas.restore();
 	}
-
 }

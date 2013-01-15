@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/accounts_title_bar"
     android:layout_width="fill_parent"
-    android:layout_height="40dp"
+    android:layout_height="50dp"
     android:background="@drawable/top_nav_wood" >
 
     <ImageView
@@ -10,12 +10,12 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginBottom="7dp"
-        android:scaleType="fitCenter"
+        android:contentDescription="@string/description"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:src="@drawable/ipad_button_home"
-        android:contentDescription="@string/description" />
-    
+        android:scaleType="fitCenter"
+        android:src="@drawable/ipad_button_home" />
+
     <TextSwitcher
         android:id="@+id/title_bar_name"
         android:layout_width="wrap_content"
@@ -24,46 +24,47 @@
         android:layout_toRightOf="@id/home"
         android:paddingTop="2dp" />
 
+    <!-- <include layout="@id/tablet_nav_icon"/> -->
+
     <LinearLayout
+        android:id="@+id/nav_bar_icon_container"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_alignParentRight="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:visibility="gone" >
+        android:layout_marginTop="-10dip"
+        android:gravity="center_vertical|right"
+        android:orientation="horizontal" >
 
-        <ImageView
+        <!--
+             <TextView
             android:id="@+id/title_bar_icon4"
-            android:layout_width="35dip"
-            android:layout_height="35dip"
-            android:layout_marginRight="10dip"
-            android:contentDescription="@string/description"
-            android:visibility="gone" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dip"
+            android:textColor="@color/white"/>
 
-        <ImageView
+        <TextView
             android:id="@+id/title_bar_icon3"
-            android:layout_width="35dip"
-            android:layout_height="35dip"
-            android:layout_marginRight="10dip"
-            android:contentDescription="@string/description"
-            android:visibility="gone" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dip"
+            android:textColor="@color/white" />
 
-        <ImageView
+        <TextView
             android:id="@+id/title_bar_icon2"
-            android:layout_width="35dip"
-            android:layout_height="35dip"
-            android:layout_marginRight="10dip"
-            android:contentDescription="@string/description"
-            android:visibility="gone" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dip"
+            android:textColor="@color/white"/>
 
-        <ImageView
+        <TextView
             android:id="@+id/title_bar_icon1"
-            android:layout_width="35dip"
-            android:layout_height="35dip"
-            android:layout_marginRight="10dip"
-            android:contentDescription="@string/description"
-            android:visibility="gone" />
-        
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dip"
+            android:textColor="@color/white"/>
+        -->
+
     </LinearLayout>
 
 </RelativeLayout>

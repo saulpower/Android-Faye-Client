@@ -43,7 +43,6 @@ public class TransparentView extends View {
 		
 	}
 	
-	
 	@SuppressLint("DrawAllocation")
 	@Override
 	protected void onDraw(Canvas canvas) {

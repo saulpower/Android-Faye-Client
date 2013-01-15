@@ -1,4 +1,3 @@
-
 package com.moneydesktop.finance.shared;
 
 import android.content.DialogInterface;
@@ -19,127 +18,134 @@ import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.tablet.activity.LoginTabletActivity;
 import com.moneydesktop.finance.util.DialogUtils;
+import com.moneydesktop.finance.util.Enums.TabletFragments;
 
 public abstract class DashboardBaseActivity extends BaseActivity {
 
-    protected final String KEY_PAGER = "pager";
+	protected final String KEY_PAGER = "pager";
+	
+	protected boolean mLoggingOut = false;
+	protected boolean mOnHome = true;
+//	public static TabletFragments mCurrentFragment;
 
-    protected boolean mLoggingOut = false;
-    protected boolean mOnHome = true;
-
-    @Override
+	@Override
     public void onCreate(Bundle savedInstanceState) {
-
+        
         super.onCreate(savedInstanceState);
-
+        
         if (SyncEngine.sharedInstance().isSyncing()) {
-            DialogUtils.showProgress(this, getString(R.string.text_syncing));
+        	DialogUtils.showProgress(this, getString(R.string.text_syncing));
         }
     }
 
-    /**
-     * Sync has completed and if database defaults are loaded we can dismiss the
-     * progress dialog
-     * 
-     * @param event
-     */
-    public void onEvent(SyncEvent event) {
-
-        if (event.isFinished()) {
-
-            DialogUtils.hideProgress();
-
-            if (mLoggingOut) {
-
-                logout(ApplicationContext.isTablet());
+	/**
+	 * Sync has completed and if database defaults are
+	 * loaded we can dismiss the progress dialog
+	 * 
+	 * @param event
+	 */
+	public void onEvent(SyncEvent event) {
+		
+		if (event.isFinished()) {
+			
+			DialogUtils.hideProgress();
+			
+			if (mLoggingOut) {
+				
+				logout(ApplicationContext.isTablet());
+			}
+		}
+	}
+	
+	public void onEvent(LogoutEvent event) {
+		
+	    DialogUtils.alertDialog(getString(R.string.unlink_title).toUpperCase(), getString(R.string.unlink_message), getString(R.string.label_yes).toUpperCase(), getString(R.string.label_no).toUpperCase(), this, new OnClickListener() {
+            
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                
+                switch (which) {
+                    case -2:
+                        processLogout();
+                        break;
+                }
+                
+                DialogUtils.dismissAlert();
             }
-        }
-    }
-
-    public void onEvent(LogoutEvent event) {
-
-        DialogUtils.alertDialog(getString(R.string.unlink_title).toUpperCase(),
-                getString(R.string.unlink_message), getString(R.string.label_yes).toUpperCase(),
-                getString(R.string.label_no).toUpperCase(), this, new OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        switch (which) {
-                            case -2:
-                                processLogout();
-                                break;
-                        }
-
-                        DialogUtils.dismissAlert();
-                    }
-                });
-    }
-
-    private void processLogout() {
+        }, new OnClickListener() {
+            
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                DialogUtils.dismissAlert();                
+            }
+        });
+	}
+	
+	private void processLogout() {
 
         if (User.getCurrentUser().getCanSync())
             SyncEngine.sharedInstance().syncIfNeeded();
-
+        
         if (SyncEngine.sharedInstance().isSyncing()) {
-
+            
             mLoggingOut = true;
-            DialogUtils.alertDialog(getString(R.string.logout_title),
-                    getString(R.string.logout_message), getString(R.string.logout_cancel), this,
-                    new OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            DialogUtils.dismissAlert();
-                        }
-                    });
-
+            DialogUtils.alertDialog(getString(R.string.logout_title), getString(R.string.logout_message), getString(R.string.logout_cancel), this, new OnClickListener() {
+                
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    DialogUtils.dismissAlert();
+                }
+            });
+            
         } else {
-
+            
             logout(ApplicationContext.isTablet());
         }
-    }
+	}
+	
+	private void logout(final boolean isTablet) {
+		
+		mLoggingOut = false;
+		
+		DialogUtils.showProgress(this, getString(R.string.logging_out));
+		
+		new AsyncTask<Void, Void, Boolean>() {
+    		
+			@Override
+			protected Boolean doInBackground(Void... params) {
 
-    private void logout(final boolean isTablet) {
+				SyncEngine.sharedInstance().endBankStatusTimer();
+				DataController.deleteAllLocalData();
+				User.clear();
+	            Preferences.saveString(Preferences.KEY_LOCK_CODE, "");
+			
+				Preferences.saveBoolean(Preferences.KEY_IS_DEMO_MODE, false);
 
-        mLoggingOut = false;
+				return true;
+			}
+    		
+    		@Override
+    		protected void onPostExecute(Boolean result) {
 
-        DialogUtils.showProgress(this, getString(R.string.logging_out));
-
-        new AsyncTask<Void, Void, Boolean>() {
-
-            @Override
-            protected Boolean doInBackground(Void... params) {
-
-                SyncEngine.sharedInstance().endBankStatusTimer();
-                DataController.deleteAllLocalData();
-                User.clear();
-                Preferences.saveString(Preferences.KEY_LOCK_CODE, "");
-
-                Preferences.saveBoolean(Preferences.KEY_IS_DEMO_MODE, false);
-
-                return true;
-            }
-
-            @Override
-            protected void onPostExecute(Boolean result) {
-
-                DialogUtils.hideProgress();
-
-                Intent i = new Intent(getApplicationContext(), isTablet ? LoginTabletActivity.class
-                        : LoginHandsetActivity.class);
-                startActivity(i);
+    			DialogUtils.hideProgress();
+    			
+    	    	Intent i = new Intent(getApplicationContext(), isTablet ? LoginTabletActivity.class : LoginHandsetActivity.class);
+    	    	startActivity(i);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                finish();
-            }
+    	    	finish();
+    		}
+			
+		}.execute();
+	}
 
-        }.execute();
-    }
+	@Override
+	public String getActivityTitle() {
+		return getString(R.string.title_activity_dashboard);
+	}
+	
+	public abstract void showFragment(int index);
 
-    @Override
-    public String getActivityTitle() {
-        return getString(R.string.title_activity_dashboard);
-    }
-
-    public abstract void showFragment(int index);
+//    public void setCurrentFragment(TabletFragments accountTypesTablet) {
+//        mCurrentFragment = accountTypesTablet;        
+//    }
 }

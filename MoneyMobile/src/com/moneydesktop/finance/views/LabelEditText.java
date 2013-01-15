@@ -16,6 +16,7 @@ import android.widget.EditText;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.util.UiUtils;
 
 public class LabelEditText extends EditText {
     
@@ -67,7 +68,7 @@ public class LabelEditText extends EditText {
         labelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         labelPaint.setStyle(Paint.Style.FILL);
         labelPaint.setTypeface(Fonts.getFont(Fonts.SECONDARY_ITALIC));
-        labelPaint.setTextSize(9);
+        labelPaint.setTextSize(UiUtils.getScaledPixels(getContext(), 10));
     }
 
     public void setLabelText(String t) {

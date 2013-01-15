@@ -58,8 +58,21 @@ public abstract class AmazingAdapter extends BaseAdapter implements SectionIndex
     	
     	// The header should get pushed up if the top item shown
     	// is the last item in a section for a particular letter.
-    	int section = getSectionForPosition(position);
+
+        int section = getSectionForPosition(position);
+        
+        while (!isPositionVisible(position) ) {
+            
+            position++;
+            
+            if (isPositionVisible(position) || getSectionForPosition(position) != section) {
+                position--;
+                break;
+            }
+        }
+    	
     	int nextSectionPosition = getPositionForSection(section + 1);
+    	
     	if (nextSectionPosition != -1 && position == nextSectionPosition - 1) {
     		return PINNED_HEADER_PUSHED_UP;
     	}
@@ -105,6 +118,7 @@ public abstract class AmazingAdapter extends BaseAdapter implements SectionIndex
 	public final View getView(int position, View convertView, ViewGroup parent) {
 		
 		View res = getAmazingView(position, convertView, parent);
+		res.requestLayout();
 		
 		if (position == getCount() - 1 && mAutomaticNextPageLoading) {
 			onNextPageRequested(mPage + 1);
@@ -156,6 +170,9 @@ public abstract class AmazingAdapter extends BaseAdapter implements SectionIndex
      * @param alpha fading of the header view, between 0 and 255.
      */
     public abstract void configurePinnedHeader(View header, int position, int alpha);
+
+    protected abstract boolean isPositionVisible(int position);
+    protected abstract boolean isSectionVisible(int section);
 
 	@Override
 	public abstract int getPositionForSection(int section);

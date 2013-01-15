@@ -70,25 +70,25 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
     @Override
     protected void applyFonts() {
         
-        Fonts.applyPrimaryBoldFont(mAccountName, 18);
-        Fonts.applyPrimaryBoldFont(mBankName, 12);
-        Fonts.applyPrimaryBoldFont(mPayee, 24);
-        Fonts.applyPrimaryBoldFont(mAmount, 40);
-        Fonts.applyPrimaryBoldFont(mDate, 24);
-        Fonts.applyPrimaryBoldFont(mCategory, 24);
-        Fonts.applyPrimaryBoldFont(mTags, 24);
-        Fonts.applyPrimaryBoldFont(mMemo, 24);
-        Fonts.applyPrimaryBoldFont(mStatement, 12);
+        Fonts.applyPrimaryBoldFont(mAccountName, 16);
+        Fonts.applyPrimaryBoldFont(mBankName, 10);
+        Fonts.applyPrimaryBoldFont(mPayee, 20);
+        Fonts.applyPrimaryBoldFont(mAmount, 34);
+        Fonts.applyPrimaryBoldFont(mDate, 20);
+        Fonts.applyPrimaryBoldFont(mCategory, 20);
+        Fonts.applyPrimaryBoldFont(mTags, 20);
+        Fonts.applyPrimaryBoldFont(mMemo, 20);
+        Fonts.applyPrimaryBoldFont(mStatement, 10);
         
         // labels
-        Fonts.applyPrimaryBoldFont((TextView) mRoot.findViewById(R.id.payee), 12);
-        Fonts.applyPrimaryBoldFont((TextView) mRoot.findViewById(R.id.amount_label), 12);
-        Fonts.applyPrimaryBoldFont((TextView) mRoot.findViewById(R.id.date_label), 12);
-        Fonts.applyPrimaryBoldFont((TextView) mRoot.findViewById(R.id.category), 12);
-        Fonts.applyPrimaryBoldFont((TextView) mRoot.findViewById(R.id.tags_label), 12);
-        Fonts.applyPrimaryBoldFont((TextView) mRoot.findViewById(R.id.markers_label), 12);
-        Fonts.applyPrimaryBoldFont((TextView) mRoot.findViewById(R.id.memo_label), 12);
-        Fonts.applyPrimaryBoldFont((TextView) mRoot.findViewById(R.id.stmt_label), 12);
+        Fonts.applyPrimaryBoldFont((TextView) mRoot.findViewById(R.id.payee), 10);
+        Fonts.applyPrimaryBoldFont((TextView) mRoot.findViewById(R.id.amount_label), 10);
+        Fonts.applyPrimaryBoldFont((TextView) mRoot.findViewById(R.id.date_label), 10);
+        Fonts.applyPrimaryBoldFont((TextView) mRoot.findViewById(R.id.category), 10);
+        Fonts.applyPrimaryBoldFont((TextView) mRoot.findViewById(R.id.tags_label), 10);
+        Fonts.applyPrimaryBoldFont((TextView) mRoot.findViewById(R.id.markers_label), 10);
+        Fonts.applyPrimaryBoldFont((TextView) mRoot.findViewById(R.id.memo_label), 10);
+        Fonts.applyPrimaryBoldFont((TextView) mRoot.findViewById(R.id.stmt_label), 10);
     }
     
     public interface onBackPressedListener {

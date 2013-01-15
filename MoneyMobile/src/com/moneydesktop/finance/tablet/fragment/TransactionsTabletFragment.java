@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,8 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.Interpolator;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -27,18 +30,19 @@ import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
 import com.moneydesktop.finance.animation.FlipXAnimation;
+import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.shared.FilterViewHolder;
-import com.moneydesktop.finance.tablet.adapter.FiltersTabletAdapter;
+import com.moneydesktop.finance.tablet.adapter.FilterTabletAdapter;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment.onBackPressedListener;
 import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.views.AmazingListView;
+import com.moneydesktop.finance.views.UltimateListView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @TargetApi(11)
-public class TransactionsTabletFragment extends BaseFragment implements onBackPressedListener {
+public class TransactionsTabletFragment extends BaseFragment implements onBackPressedListener, OnChildClickListener {
 	
 	public final String TAG = this.getClass().getSimpleName();
 	
@@ -51,7 +55,8 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
 	private int mCenterX, mCellX, mCellY, mHeight;
 	private TransactionsDetailTabletFragment mDetailFragment;
 	
-    private AmazingListView mFiltersList;
+    private UltimateListView mFiltersList;
+    private FilterTabletAdapter mAdapter;
 	
 	private boolean mStartFix = true;
 	
@@ -193,6 +198,7 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
 		mRoot = inflater.inflate(R.layout.tablet_transactions_view, null);
 		
 		setupView();
+		setupFilterList();
 		
 		TransactionsPageTabletFragment frag = TransactionsPageTabletFragment.newInstance();
       
@@ -201,7 +207,7 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
         ft.commit();
         
         setDetailFragment(TransactionsDetailTabletFragment.newInstance());
-        
+
         ft = getChildFragmentManager().beginTransaction();
         ft.replace(R.id.detail_fragment, mDetailFragment);
         ft.commit();
@@ -223,28 +229,45 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
             }
         });
 	    
-        mFiltersList = (AmazingListView) mRoot.findViewById(R.id.filters);
+        mFiltersList = (UltimateListView) mRoot.findViewById(R.id.filters);
+        mFiltersList.setDividerHeight(0);
+        mFiltersList.setDivider(null);
+        mFiltersList.setChildDivider(null);
+	}
+	
+	private void setupFilterList() {
+
+	    List<Pair<String, List<FilterViewHolder>>> data = new ArrayList<Pair<String, List<FilterViewHolder>>>();
         
-        List<Pair<String, List<FilterViewHolder>>> sections = new ArrayList<Pair<String, List<FilterViewHolder>>>();
-        
-        for (int j = 0; j < 5; j++) {
+        for (int j = 0; j < Constant.FILTERS.length; j++) {
 
             List<FilterViewHolder> subItems = new ArrayList<FilterViewHolder>();
             
-            for (int i = 0; i < 20; i++) {
+            if (j == 0) {
+                
+                for (int i = 0; i < Constant.FOLDER_TITLE.length; i++) {
+                    FilterViewHolder holder = new FilterViewHolder();
+                    holder.text = getString(Constant.FOLDER_TITLE[i]);
+                    holder.subText = getString(Constant.FOLDER_SUBTITLE[i]);
+                    subItems.add(holder);
+                }
+                
+            } else {
+                
                 FilterViewHolder holder = new FilterViewHolder();
-                holder.text = ("SUBITEM " + i);
-                holder.subText = ("SubText for " + i);
+                holder.text = getString(R.string.loading_menu);
                 subItems.add(holder);
+                
             }
             
-            Pair<String, List<FilterViewHolder>> temp = new Pair<String, List<FilterViewHolder>>("HEADER " + j, subItems);
-            sections.add(temp);
+            Pair<String, List<FilterViewHolder>> temp = new Pair<String, List<FilterViewHolder>>(getString(Constant.FILTERS[j]), subItems);
+            data.add(temp);
         }
         
-        FiltersTabletAdapter adapter = new FiltersTabletAdapter(mActivity, mFiltersList, sections);
-        mFiltersList.setAdapter(adapter);
-        mFiltersList.setPinnedHeaderView(LayoutInflater.from(mActivity).inflate(R.layout.tablet_filter_item_header, mFiltersList, false));
+        mAdapter = new FilterTabletAdapter(mActivity, mFiltersList, data);
+        mFiltersList.setAdapter(mAdapter);
+        mFiltersList.setOnChildClickListener(this);
+        mFiltersList.expandGroup(0);
 	}
 	
 	public void showTransactionDetails(View view, int offset, Transactions transaction) {
@@ -403,5 +426,13 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
     @Override
     public void onFragmentBackPressed() {
         configureDetailView();
+    }
+
+    @Override
+    public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+        
+        Log.i(TAG, "Section: " + groupPosition + " Item: " + childPosition);
+        
+        return true;
     }
 }

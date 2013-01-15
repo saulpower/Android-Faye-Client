@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -35,6 +36,9 @@ import com.moneydesktop.finance.shared.LockCodeFragment;
 import com.moneydesktop.finance.tablet.activity.LockCodeTabletActivity;
 import com.moneydesktop.finance.util.Enums.LockType;
 import com.moneydesktop.finance.util.Fonts;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -173,6 +177,8 @@ abstract public class BaseActivity extends FragmentActivity {
 	 * back button if necessary.
 	 * 
 	 * @param titleString the title for the navigation bar
+	 * @param navButtons 
+	 * @return 
 	 */
 	public void updateNavBar(String titleString) {
 		

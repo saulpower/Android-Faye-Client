@@ -16,13 +16,12 @@ import com.moneydesktop.finance.database.BankAccount;
 public class AccountTypeGroupView extends FrameLayout {
     
     private TextView mAccountTypeName;
-    private TextView mIndicator;
     private Context mContext;
     private AccountType mAccountType;
     private TextView mAccountTypeSum;
 
     
-    public AccountTypeGroupView (Context context, AccountType accountType, final boolean isGroupExpanded) {
+    public AccountTypeGroupView (Context context, AccountType accountType) {
         super(context);
         mContext = context;
         mAccountType = accountType;
@@ -30,14 +29,13 @@ public class AccountTypeGroupView extends FrameLayout {
         final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View view = inflater.inflate(R.layout.account_type_group, this, true);
         mAccountTypeName = (TextView)view.findViewById(R.id.account_type_group_name);
-        mIndicator = (TextView)view.findViewById(R.id.account_type_group_indicator);
         mAccountTypeSum = (TextView)findViewById(R.id.account_type_group_sum);
 
 
-        populateView(isGroupExpanded);
+        populateView();
     }
 
-    private void populateView (boolean isGroupExpanded) {
+    private void populateView () {
 
         mAccountTypeName.setText(mAccountType.getAccountTypeName()); //get the account name (Checking, savings, etc)
         double accountTypeSum = 0;
@@ -49,12 +47,6 @@ public class AccountTypeGroupView extends FrameLayout {
         String formatedSum = NumberFormat.getCurrencyInstance().format(accountTypeSum);
         
         mAccountTypeSum.setText(formatedSum);
-
-        if (isGroupExpanded) {
-            mIndicator.setText(mContext.getString(R.string.account_types_indicator_hide));
-        } else {
-            mIndicator.setText(mContext.getString(R.string.account_types_indicator_show));
-        }
 
     }
     

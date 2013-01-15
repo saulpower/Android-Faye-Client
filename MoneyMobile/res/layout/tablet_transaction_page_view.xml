@@ -198,7 +198,7 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/shadow_top_right" />
+        android:background="@drawable/shadow_top" />
 
     <com.moneydesktop.finance.views.HorizontalScroller
         android:id="@+id/date_scroller"

@@ -1,6 +1,11 @@
 
 package com.moneydesktop.finance.data;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BudgetItem;
@@ -14,10 +19,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Constant {
+    
+	/*******************************************************************
+	 * FLAGS
+	 *******************************************************************/
+	
+	public static final int FLAG_BANK_USER_CREATED = 1 << 8;
 
-    /*******************************************************************
-     * FLAGS
-     *******************************************************************/
+	/*******************************************************************
+	 * KEYS
+	 *******************************************************************/
 
     public static final int FLAG_BANK_USER_CREATED = 1 << 8;
 
@@ -116,17 +127,22 @@ public class Constant {
     public static final int QUERY_LIMIT = 30;
     public static final float STANDARD_DPI = 160f;
 
-    /*******************************************************************
-     * QUERIES
-     *******************************************************************/
-
+	/*******************************************************************
+	 * QUERIES
+	 *******************************************************************/
+    
     public static final String ORDER_ASC = "ASC";
     public static final String ORDER_DESC = "DESC";
-
+    
     public static final String FIELD_DATE = "T.DATE";
     public static final String FIELD_TITLE = "T.TITLE";
     public static final String FIELD_CATEGORY = "C.CATEGORY_NAME";
     public static final String FIELD_AMOUNT = "T.AMOUNT";
+	
+	public static final String QUERY_SUMMED_TRANSACTIONS = "SELECT DATE, sum(RAW_AMOUNT) FROM TRANSACTIONS WHERE BANK_ACCOUNT_ID = ? GROUP BY DATE ORDER BY DATE ASC";
+	public static final String QUERY_BUSINESS_BASE_JOIN = ", BUSINESS_OBJECT_BASE B WHERE T.BUSINESS_OBJECT_ID = B._ID AND B.DATA_STATE = ?";
+	public static final String QUERY_TRANSACTIONS = " ORDER BY %s %s LIMIT ? OFFSET ?";
+    public static final String QUERY_DATE_TRANSACTIONS = ", CATEGORY C WHERE T.CATEGORY_ID = C._ID AND (" + FIELD_TITLE + " LIKE ? OR " + FIELD_CATEGORY + " LIKE ?) AND " + FIELD_DATE + " BETWEEN ? AND ? ORDER BY %s %s LIMIT ? OFFSET ?";
 
     public static final String QUERY_SUMMED_TRANSACTIONS = "SELECT DATE, sum(RAW_AMOUNT) FROM TRANSACTIONS WHERE BANK_ACCOUNT_ID = ? GROUP BY DATE ORDER BY DATE ASC";
     public static final String QUERY_BUSINESS_BASE_JOIN = ", BUSINESS_OBJECT_BASE B WHERE T.BUSINESS_OBJECT_ID = B._ID AND B.DATA_STATE = ?";
@@ -153,21 +169,43 @@ public class Constant {
      *******************************************************************/
 
     public static String[] OPERATION_ORDER = new String[] {
-            KEY_CREATED,
-            KEY_UPDATED,
-            KEY_DELETED
-    };
-
+			KEY_CREATED, 
+			KEY_UPDATED, 
+			KEY_DELETED
+		};
+	
     public static String[] OBJECT_ORDER = new String[] {
-            KEY_TAGS,
-            KEY_CATEGORIES,
-            KEY_MEMBERS,
-            KEY_ACCOUNTS,
-            KEY_TRANSACTIONS,
-            KEY_BUDGETS
-    };
-
-    public static final Map<String, DataState> OPERATIONS;
+			KEY_TAGS, 
+			KEY_CATEGORIES, 
+			KEY_MEMBERS, 
+			KEY_ACCOUNTS, 
+			KEY_TRANSACTIONS, 
+			KEY_BUDGETS 
+		};
+    
+    public static int[] FILTERS = new int[] {
+            R.string.filter_folder, 
+            R.string.filter_accounts, 
+            R.string.filter_cats, 
+            R.string.filter_tags, 
+            R.string.filter_payees
+        };
+    
+    public static int[] FOLDER_TITLE = new int[] {
+            R.string.folder_all, 
+            R.string.folder_new, 
+            R.string.folder_flag, 
+            R.string.folder_clear
+        };
+    
+    public static int[] FOLDER_SUBTITLE = new int[] {
+            R.string.folder_all_sub, 
+            R.string.folder_new_sub, 
+            R.string.folder_flag_sub, 
+            R.string.folder_clear_sub
+        };
+	
+	public static final Map<String, DataState> OPERATIONS;
     static {
         Map<String, DataState> aMap = new HashMap<String, DataState>();
         aMap.put(KEY_CREATED, DataState.DATA_STATE_NEW);
@@ -175,8 +213,8 @@ public class Constant {
         aMap.put(KEY_UPDATED, DataState.DATA_STATE_DELETED);
         OPERATIONS = Collections.unmodifiableMap(aMap);
     }
-
-    public static final Map<Class<?>, String> OBJECT_TYPES;
+    
+	public static final Map<Class<?>, String> OBJECT_TYPES;
     static {
         Map<Class<?>, String> aMap = new HashMap<Class<?>, String>();
         aMap.put(Transactions.class, KEY_TRANSACTIONS);

@@ -6,7 +6,8 @@
                 android:id="@+id/account_types_container"
                 android:background="@drawable/wooddark">                
  
-    <ExpandableListView android:layout_height="wrap_content"
+    <com.moneydesktop.finance.views.SlideExpandableListView
+        		    android:layout_height="wrap_content"
                     android:layout_width="fill_parent"
                     android:id="@+id/accounts_expandable_list_view"
                     android:dividerHeight="0dip"

@@ -3,6 +3,8 @@ package com.moneydesktop.finance.views;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -18,6 +20,7 @@ import com.moneydesktop.finance.adapters.AmazingAdapter.HasMorePagesListener;
  * indicator.
  */
 public class AmazingListView extends ListView implements HasMorePagesListener {
+    
 	public static final String TAG = AmazingListView.class.getSimpleName();
 	
 	View mListFooter;
@@ -34,9 +37,22 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
 
     private AmazingAdapter mAdapter;
     
+    private boolean mIsPressed = false;
+    private boolean mHeaderClicked = false;
+    
+    private OnSectionHeaderClickListener mSectionHeaderClickListener;
+    
+    public OnSectionHeaderClickListener getOnSectionHeaderClickListener() {
+        return mSectionHeaderClickListener;
+    }
+
+    public void setOnSectionHeaderClickListener(OnSectionHeaderClickListener sectionHeaderClickListener) {
+        this.mSectionHeaderClickListener = sectionHeaderClickListener;
+    }
+
     public void setPinnedHeaderView(View view) {
         mHeaderView = view;
-
+        
         // Disable vertical fading when the pinned header is present
         // TODO change ListView to allow separate measures for top and bottom fading edge;
         // in this particular case we would like to disable the top, but not the bottom edge.
@@ -45,10 +61,85 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
         }
         requestLayout();
     }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        boolean result = super.onTouchEvent(ev);
+        
+        if (!mHeaderViewVisible) {
+            return result;
+        }
+        
+        int action = ev.getAction();
+        
+        switch (action) {
+
+            case MotionEvent.ACTION_DOWN: {
+                
+                if (isPointInsideHeader(ev.getRawX(), ev.getRawY())) {
+                    mIsPressed = true;
+                }
+                
+                break;
+            }
+
+            case MotionEvent.ACTION_UP: {
+                
+                if (mIsPressed && isPointInsideHeader(ev.getRawX(), ev.getRawY())) {
+                    
+                    if (mSectionHeaderClickListener != null) {
+                        playSoundEffect(SoundEffectConstants.CLICK);
+                        mSectionHeaderClickListener.onSectionHeaderClicked(mHeaderView, mAdapter.getSectionForPosition(getFirstVisiblePosition()));
+                        mHeaderClicked = true;
+                    }
+                    
+                    result = true;
+                    mIsPressed = false;
+                }
+                
+                break;
+            }
+        }
+        
+        return result;
+    }
+    
+    @Override
+    public boolean performItemClick(View view, int position, long id) {
+        
+        if (!mHeaderClicked && getOnItemClickListener() != null) {
+            
+            getOnItemClickListener().onItemClick(this, view, position, id);
+            playSoundEffect(SoundEffectConstants.CLICK);
+            
+            return true;
+        }
+
+        mHeaderClicked = false;
+        
+        return false;
+    }
+
+    protected boolean isPointInsideHeader(float x, float y) {
+        
+        int location[] = new int[2];
+        getLocationOnScreen(location);
+        
+        int viewX = location[0];
+        int viewY = location[1];
+        
+        // point is inside view bounds
+        if ((x > viewX && x < (viewX + mHeaderView.getWidth())) && (y > viewY && y < (viewY + mHeaderView.getHeight()))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        
         if (mHeaderView != null) {
             measureChild(mHeaderView, widthMeasureSpec, heightMeasureSpec);
             mHeaderViewWidth = mHeaderView.getMeasuredWidth();
@@ -59,10 +150,26 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
+        
         if (mHeaderView != null) {
             mHeaderView.layout(0, 0, mHeaderViewWidth, mHeaderViewHeight);
-            configureHeaderView(getFirstVisiblePosition());
+            configureHeaderView();
         }
+    }
+    
+    public void resetHeaderView(int position) {
+        
+        mAdapter.configurePinnedHeader(mHeaderView, position, 255);
+        if (mHeaderView.getTop() != 0) {
+            mHeaderView.layout(0, 0, mHeaderViewWidth, mHeaderViewHeight);
+        }
+        mHeaderViewVisible = true;
+        
+        invalidate();
+    }
+    
+    public void configureHeaderView() {
+        configureHeaderView(getFirstVisiblePosition());
     }
 
     public void configureHeaderView(int position) {
@@ -71,6 +178,7 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
         }
 
         int state = mAdapter.getPinnedHeaderState(position);
+        
         switch (state) {
             case AmazingAdapter.PINNED_HEADER_GONE: {
                 mHeaderViewVisible = false;
@@ -87,12 +195,16 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
             }
 
             case AmazingAdapter.PINNED_HEADER_PUSHED_UP: {
+                
                 View firstView = getChildAt(0);
+                
                 if (firstView != null) {
+                    
 	                int bottom = firstView.getBottom();
 	                int headerHeight = mHeaderView.getHeight();
 	                int y;
 	                int alpha;
+	                
 	                if (bottom < headerHeight) {
 	                    y = (bottom - headerHeight);
 	                    alpha = 255; // * (headerHeight + y) / headerHeight;
@@ -100,12 +212,16 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
 	                    y = 0;
 	                    alpha = 255;
 	                }
+	                
 	                mAdapter.configurePinnedHeader(mHeaderView, position, alpha);
+	                
 	                if (mHeaderView.getTop() != y) {
 	                    mHeaderView.layout(0, y, mHeaderViewWidth, mHeaderViewHeight + y);
 	                }
+	                
 	                mHeaderViewVisible = true;
                 }
+                
                 break;
             }
         }
@@ -114,11 +230,11 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
+        
         if (mHeaderViewVisible) {
             drawChild(canvas, mHeaderView, getDrawingTime());
         }
     }
-    
     
     public AmazingListView(Context context) {
         super(context);
@@ -202,5 +318,9 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
 	
 	public boolean isLoadingViewVisible() {
 		return mFooterViewAttached;
+	}
+	
+	public interface OnSectionHeaderClickListener {
+	    public void onSectionHeaderClicked(View view, int section);
 	}
 }

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/gray1">
     
 	<LinearLayout
 	    android:layout_width="match_parent"
@@ -20,16 +21,14 @@
 	        android:layout_width="0dp"
 	        android:layout_height="match_parent"
 	        android:layout_weight="26"
-	        android:background="@color/gray1" >
+            android:layout_marginLeft="4dp"
+	        android:background="@color/gray4" >
 
-		    <com.moneydesktop.finance.views.AmazingListView
+		    <com.moneydesktop.finance.views.UltimateListView
 		        android:id="@+id/filters"
 	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginLeft="4dp"
-		        android:divider="@color/white"
-		        android:dividerHeight="0dp"
-		        android:background="@color/gray5" />
+	            android:layout_height="match_parent"
+	            android:groupIndicator="@null" />
 	        
 	    </RelativeLayout>
 	

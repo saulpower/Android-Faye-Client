@@ -11,6 +11,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -102,8 +103,9 @@ public class HomeButton extends View {
 		
 		this.mTouching = touching && touchingButton();
     	
-		if (this.mTouching || (wasTouching && !this.mTouching))
+		if (this.mTouching || (wasTouching && !this.mTouching)) {
 			animateButtonBounce();
+		}
 		
 		configurePaint();
 		configureButton();
@@ -375,8 +377,8 @@ public class HomeButton extends View {
 	 * considered a click.
 	 */
     public void clickCheck() {
-    	
-    	if (mDistance < 5.0f && (touchingButton() || touchingSlider())) {
+        
+    	if (mDistance < (mRadius * 0.5f) && (touchingButton() || touchingSlider())) {
         	
         	mDistance = 0.0f;
         	EventBus.getDefault().post(new EventMessage().new NavigationEvent());
@@ -529,6 +531,8 @@ public class HomeButton extends View {
 	            final float dx = x - mLastTouchX;
 	            
 	            mDistance += Math.abs(dy);
+	            
+	            Log.i(TAG, "Distance: " + mDistance);
 	            
 	            // Move the object if we are touching the button
 	            updateButtonPosition(dy);
