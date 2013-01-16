@@ -48,7 +48,7 @@ public class IntroHandsetActivity extends BaseActivity {
         mTitleIndicator.setViewPager(mPager);
         mLoadingMessage = (TextView) findViewById(R.id.loading_text);
         mLoadingMessage.setText(getResources().getText(R.string.loading_app));
-        Fonts.applyPrimaryFont(mLoadingMessage, 24);
+        Fonts.applyPrimaryFont(mLoadingMessage, 20);
         // Hack fix to adjust scroller velocity on view pager
         try {
 
@@ -119,7 +119,7 @@ public class IntroHandsetActivity extends BaseActivity {
             });
             mLoadingMessage.startAnimation(fadeOut);
             mSpinner.startAnimation(fadeOut);
-            Fonts.applyPrimarySemiBoldFont(mStartButton, 18);
+            Fonts.applyPrimarySemiBoldFont(mStartButton, 14);
             mStartButton.setVisibility(View.VISIBLE);
             Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in_fast);
             mStartButton.startAnimation(fadeIn);

@@ -63,43 +63,43 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
     private void setupView(List<Transactions> transList, List<Category> catList, View v) {
         TextView mainLabel = (TextView) v.findViewById(R.id.label_transactions_view);
         HashMap transInfo = parseTransactions(transList);
-        Fonts.applySecondaryItalicFont(mainLabel, 16);
+        Fonts.applySecondaryItalicFont(mainLabel, 12);
 
         TextView incomeBalanceIcon = (TextView) v.findViewById(R.id.income_balance_icon);
-        Fonts.applyGlyphFont(incomeBalanceIcon, 28);
+        Fonts.applyGlyphFont(incomeBalanceIcon, 24);
         TextView incomeBalance = (TextView) v.findViewById(R.id.income_balance);
-        Fonts.applyPrimarySemiBoldFont(incomeBalance, 28);
+        Fonts.applyPrimarySemiBoldFont(incomeBalance, 24);
         TextView incomeBalanceLabel = (TextView) v.findViewById(R.id.income_balance_label);
-        Fonts.applySecondaryItalicFont(incomeBalanceLabel, 14);
+        Fonts.applySecondaryItalicFont(incomeBalanceLabel, 10);
 
         TextView expenseBalanceIcon = (TextView) v.findViewById(R.id.expense_balance_icon);
-        Fonts.applyGlyphFont(expenseBalanceIcon, 28);
+        Fonts.applyGlyphFont(expenseBalanceIcon, 24);
         TextView expenseBalance = (TextView) v.findViewById(R.id.expense_balance);
-        Fonts.applyPrimarySemiBoldFont(expenseBalance, 28);
+        Fonts.applyPrimarySemiBoldFont(expenseBalance, 24);
         TextView expenseBalanceLabel = (TextView) v.findViewById(R.id.expense_balance_label);
-        Fonts.applySecondaryItalicFont(expenseBalanceLabel, 14);
+        Fonts.applySecondaryItalicFont(expenseBalanceLabel, 10);
 
         TextView dailySpendingText = (TextView) v.findViewById(R.id.daily_spending_text);
-        Fonts.applySecondaryItalicFont(dailySpendingText, 14);
+        Fonts.applySecondaryItalicFont(dailySpendingText, 10);
 
         TextView newTransactionsNumber = (TextView) v.findViewById(R.id.new_transactions_number);
-        Fonts.applyPrimarySemiBoldFont(newTransactionsNumber, 28);
+        Fonts.applyPrimarySemiBoldFont(newTransactionsNumber, 24);
         TextView newTransactionsLabel = (TextView) v.findViewById(R.id.new_transactions_label);
-        Fonts.applySecondaryItalicFont(newTransactionsLabel, 14);
+        Fonts.applySecondaryItalicFont(newTransactionsLabel, 10);
 
         TextView topCategoryIcon = (TextView) v.findViewById(R.id.top_category_icon);
         topCategoryIcon.setText(Transactions.topCategory());
-        Fonts.applyGlyphFont(topCategoryIcon, 28);
+        Fonts.applyGlyphFont(topCategoryIcon, 24);
         TextView topCategoryText = (TextView) v.findViewById(R.id.top_category_text);
-        Fonts.applySecondaryItalicFont(topCategoryText, 14);
+        Fonts.applySecondaryItalicFont(topCategoryText, 10);
 
         TextView uncategorizedTransactionIcon = (TextView) v
                 .findViewById(R.id.uncategorized_transaction_icon);
-        Fonts.applyPrimarySemiBoldFont(uncategorizedTransactionIcon, 48);
+        Fonts.applyPrimarySemiBoldFont(uncategorizedTransactionIcon, 44);
 
         TextView uncategorizedTransactionText = (TextView) v
                 .findViewById(R.id.uncategorized_transaction_text);
-        Fonts.applyPrimaryFont(uncategorizedTransactionText, 16);
+        Fonts.applyPrimaryFont(uncategorizedTransactionText, 12);
         setupBarGraphView(v);
 
         incomeBalance.setText("$" + Transactions.getIncomeTotal().toString());
