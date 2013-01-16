@@ -2253,3 +2253,6 @@ Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -keyring /Users/kenta
 
 !ENTRY org.eclipse.core.net 1 0 2013-01-14 11:52:54.223
 !MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+
+!ENTRY org.eclipse.ui 2 2 2013-01-16 13:38:58.253
+!MESSAGE Invalid property category path: ValidationPropertiesPage (bundle: org.eclipse.wst.xml.ui, propertyPage: org.eclipse.wst.xml.ui.propertyPage.project.validation)

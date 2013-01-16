@@ -12,7 +12,13 @@
 bin/
 gen/
 
-*metadata*
+.metadata
+.project
+.classpath
+
+*.orig
+*.log
+*.properties
 
 # Local configuration file (sdk path, etc)
 local.properties
