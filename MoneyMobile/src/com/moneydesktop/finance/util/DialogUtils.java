@@ -54,32 +54,29 @@ public class DialogUtils {
     }
     
     public static void alertDialog(String title, String message, Context context) {
-    	alertDialog(title, message, context.getString(R.string.button_ok), null, context, null, null);
+    	alertDialog(title, message, context.getString(R.string.button_ok), null, context, null);
     }
     
     public static void alertDialog(String title, String message, Context context, DialogInterface.OnClickListener clickListener) {
-    	alertDialog(title, message, context.getString(R.string.button_ok), null, context, clickListener, null);
+    	alertDialog(title, message, context.getString(R.string.button_ok), null, context, clickListener);
     }
 
     public static void alertDialog(String title, String message, String positiveButton, Context context, DialogInterface.OnClickListener clickListener) {
-        alertDialog(title, message, context.getString(R.string.button_ok), null, context, clickListener, null);
+        alertDialog(title, message, context.getString(R.string.button_ok), null, context, clickListener);
     }
     
-    public static void alertDialog(String title, String message, String positiveButton, String negativeButton, Context context, DialogInterface.OnClickListener positiveClickListener, DialogInterface.OnClickListener negativeClickListener) {
+    public static void alertDialog(String title, String message, String positiveButton, String negativeButton, Context context, DialogInterface.OnClickListener clickListener) {
     	
     	if (sAlert != null)
     		dismissAlert();
     	
     	AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
 		alertBuilder.setMessage(message)
-				.setCancelable(false);
-				
-		if (negativeClickListener != null) {
-            alertBuilder.setNegativeButton(negativeButton, negativeClickListener);
-        }		
+				.setCancelable(false);	
 			
-		if (positiveClickListener != null) {
-		    alertBuilder.setPositiveButton(positiveButton, positiveClickListener);
+		if (clickListener != null) {
+            alertBuilder.setNegativeButton(negativeButton, clickListener);
+		    alertBuilder.setPositiveButton(positiveButton, clickListener);
 		}
 		
 		sAlert = alertBuilder.create();

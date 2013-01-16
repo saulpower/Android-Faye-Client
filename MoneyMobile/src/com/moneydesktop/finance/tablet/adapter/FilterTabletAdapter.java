@@ -1,7 +1,7 @@
 package com.moneydesktop.finance.tablet.adapter;
 
 import android.app.Activity;
-import android.util.Log;
+import android.os.AsyncTask;
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +9,28 @@ import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.UltimateAdapter;
+import com.moneydesktop.finance.database.Bank;
+import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.database.BankDao;
+import com.moneydesktop.finance.database.Category;
+import com.moneydesktop.finance.database.CategoryDao;
+import com.moneydesktop.finance.database.PowerQuery;
+import com.moneydesktop.finance.database.QueryProperty;
+import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.shared.FilterViewHolder;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.CaretView;
 import com.moneydesktop.finance.views.UltimateListView;
 
+import org.apache.commons.lang.WordUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpandListener {
@@ -25,6 +40,7 @@ public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpan
     private List<Pair<String, List<FilterViewHolder>>> mData;
     private Activity mActivity;
     private UltimateListView mListView;
+    private ArrayList<AsyncTask<Integer, Void, Integer>> mLoaders = new ArrayList<AsyncTask<Integer, Void, Integer>>();
 
     public FilterTabletAdapter(Activity activity, UltimateListView listView, List<Pair<String, List<FilterViewHolder>>> data) {
         
@@ -37,12 +53,17 @@ public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpan
     
     @Override
     public Object getChild(int groupPosition, int childPosition) {
+        
+        if (!isSectionLoaded(groupPosition)) {
+            return null;
+        }
+        
         return mData.get(groupPosition).second.get(childPosition);
     }
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
-        return 0;
+        return (new String(groupPosition + "-" + childPosition)).hashCode();
     }
 
     @Override
@@ -64,26 +85,56 @@ public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpan
         
         FilterViewHolder filter = (FilterViewHolder) getChild(groupPosition, childPosition);
         
-        if (filter != null) {
-            
-            if (filter.subText == null || filter.subText.equals("")) {
-                viewHolder.info.setVisibility(View.INVISIBLE);
-                viewHolder.singleTitle.setVisibility(View.VISIBLE);
-                viewHolder.singleTitle.setText(filter.text);
-            } else {
-                viewHolder.info.setVisibility(View.VISIBLE);
-                viewHolder.singleTitle.setVisibility(View.GONE);
-                viewHolder.title.setText(filter.text);
-                viewHolder.subTitle.setText(filter.subText);
-            }
+        if (filter == null) {
+            filter = new FilterViewHolder();
+            filter.mText = mActivity.getString(R.string.loading_menu);
         }
         
+        boolean isSelected = (groupPosition == mSelectedGroupPosition && childPosition == mSelectedChildPosition);
+        
+        configureCell(viewHolder, filter, isSelected);
+        
         return cell;
+    }
+    
+    private void configureCell(FilterViewHolder viewHolder, FilterViewHolder filter, boolean isSelected) {
+        
+        viewHolder.mSubSection = filter.mSubSection;
+        viewHolder.mQuery = filter.mQuery;
+        
+        if (!filter.mIsSubSection) {
+            viewHolder.mInfo.setBackgroundResource(R.drawable.gray4_to_primary);
+            viewHolder.mSingleTitle.setBackgroundResource(R.drawable.gray4_to_primary);
+        } else {
+            viewHolder.mInfo.setBackgroundResource(R.drawable.gray3_to_primary);
+            viewHolder.mSingleTitle.setBackgroundResource(R.drawable.gray3_to_primary);
+        }
+        
+        if (filter.mSubText == null || filter.mSubText.equals("")) {
+            
+            viewHolder.mInfo.setVisibility(View.INVISIBLE);
+            viewHolder.mSingleTitle.setVisibility(View.VISIBLE);
+            viewHolder.mSingleTitle.setText(filter.mText);
+            viewHolder.mSingleTitle.setSelected(isSelected);
+            
+            return;
+        }
+        
+        viewHolder.mInfo.setVisibility(View.VISIBLE);
+        viewHolder.mInfo.setSelected(isSelected);
+        viewHolder.mSingleTitle.setVisibility(View.GONE);
+        viewHolder.mTitle.setText(filter.mText);
+        viewHolder.mSubTitle.setText(filter.mSubText);
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return mData.get(groupPosition).second.size();
+        
+        int size = mData.get(groupPosition).second.size();
+        
+        size = getLoadedAdjustment(size, groupPosition);
+        
+        return size;
     }
 
     @Override
@@ -98,7 +149,7 @@ public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpan
 
     @Override
     public long getGroupId(int groupPosition) {
-        return 0;
+        return (new String("section" + groupPosition)).hashCode();
     }
 
     @Override
@@ -119,9 +170,9 @@ public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpan
         }
         
         String title = (String) getGroup(groupPosition);
-        viewHolder.headerTitle.setText(title);
+        viewHolder.mHeaderTitle.setText(title);
         
-        CaretView caret = viewHolder.caret;
+        CaretView caret = viewHolder.mCaret;
         
         if (isExpanded) {
             caret.setCaretRotation(0);
@@ -136,12 +187,12 @@ public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpan
 
         FilterViewHolder viewHolder = new FilterViewHolder();
 
-        viewHolder.title = (TextView) cell.findViewById(R.id.title);
-        viewHolder.subTitle = (TextView) cell.findViewById(R.id.subtitle);
-        viewHolder.headerTitle = (TextView) cell.findViewById(R.id.header_title);
-        viewHolder.caret = (CaretView) cell.findViewById(R.id.caret);
-        viewHolder.singleTitle = (TextView) cell.findViewById(R.id.single_title);
-        viewHolder.info = (LinearLayout) cell.findViewById(R.id.info);
+        viewHolder.mTitle = (TextView) cell.findViewById(R.id.title);
+        viewHolder.mSubTitle = (TextView) cell.findViewById(R.id.subtitle);
+        viewHolder.mHeaderTitle = (TextView) cell.findViewById(R.id.header_title);
+        viewHolder.mCaret = (CaretView) cell.findViewById(R.id.caret);
+        viewHolder.mSingleTitle = (TextView) cell.findViewById(R.id.single_title);
+        viewHolder.mInfo = (LinearLayout) cell.findViewById(R.id.info);
         
         applyFonts(viewHolder);
         
@@ -152,15 +203,15 @@ public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpan
     
     private void applyFonts(FilterViewHolder viewHolder) {
 
-        Fonts.applyPrimarySemiBoldFont(viewHolder.title, 12);
-        Fonts.applyPrimaryFont(viewHolder.subTitle, 9);
-        Fonts.applyPrimarySemiBoldFont(viewHolder.singleTitle, 12);
-        Fonts.applyPrimaryBoldFont(viewHolder.headerTitle, 12);
+        Fonts.applyPrimarySemiBoldFont(viewHolder.mTitle, 12);
+        Fonts.applyPrimarySemiBoldFont(viewHolder.mSubTitle, 10);
+        Fonts.applyPrimarySemiBoldFont(viewHolder.mSingleTitle, 12);
+        Fonts.applyPrimaryBoldFont(viewHolder.mHeaderTitle, 12);
     }
 
     @Override
     public boolean hasStableIds() {
-        return false;
+        return true;
     }
 
     @Override
@@ -173,10 +224,10 @@ public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpan
 
         FilterViewHolder holder = (FilterViewHolder) header.getTag();
         
-        TextView sectionHeader = holder.headerTitle;
+        TextView sectionHeader = holder.mHeaderTitle;
         sectionHeader.setText((String) getGroup(section));
         
-        CaretView caret = holder.caret;
+        CaretView caret = holder.mCaret;
         
         if (isSectionVisible(section)) {
             caret.setCaretRotation(0);
@@ -186,14 +237,174 @@ public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpan
     }
 
     @Override
-    protected void onNextPageRequested(int page) {
+    protected void onSectionRequested(final int section) {
+        
+        AsyncTask<Integer, Void, Integer> temp = new AsyncTask<Integer, Void, Integer>() {
+
+            @Override
+            protected Integer doInBackground(Integer... params) {
+                
+                int section = params[0];
+
+                if (isCancelled()) {
+                    return -1;
+                }
+                
+                loadFilter(section);
+                
+                return section;
+            }
+
+            @Override
+            protected void onPostExecute(Integer section) {
+
+                sectionLoaded(section, (section != -1));
+                
+                if (isCancelled()) {
+                    return;
+                }
+                
+                mLoaders.remove(this);
+            }
+
+        }.execute(section);
+        
+        mLoaders.add(temp);
     }
 
     @Override
     public void onGroupExpand(int groupPosition) {
+        super.onGroupExpanded(groupPosition);
+    }
+    
+    public void cancelLoaders() {
         
-        if (groupPosition != 0) {
-            Log.i(TAG, "Load section " + groupPosition);
+        for (AsyncTask<Integer, Void, Integer> task : mLoaders) {
+            task.cancel(false);
+        }
+        
+        mLoaders.clear();
+    }
+    
+    private void loadFilter(int section) {
+        
+        String sectionTitle = mData.get(section).first;
+        List<FilterViewHolder> sectionData = new ArrayList<FilterViewHolder>();
+        
+        switch (section) {
+            
+            case 1: {
+                
+                BankDao bankDao = ApplicationContext.getDaoSession().getBankDao();
+                List<Bank> banks = bankDao.loadAll();
+                
+                for (Bank bank : banks) {
+                    
+                    if (bank.getBankAccounts().size() > 1) {
+                        
+                        FilterViewHolder temp = new FilterViewHolder();
+                        temp.mText = bank.getBankName().toUpperCase();
+                        temp.mSubText = mActivity.getString(R.string.all_accounts);
+                        
+                        sectionData.add(temp);
+                    }
+                    
+                    for (BankAccount account : bank.getBankAccounts()) {
+                        
+                        FilterViewHolder temp = new FilterViewHolder();
+                        temp.mText = bank.getBankName().toUpperCase();
+                        temp.mSubText = WordUtils.capitalize(account.getAccountName().toLowerCase());
+                        
+                        sectionData.add(temp);
+                    }
+                }
+                
+                Collections.sort(sectionData, new FilterComparator());
+                
+                mData.set(section, new Pair<String, List<FilterViewHolder>>(sectionTitle, sectionData));
+                
+                break;
+            }
+            
+            case 2: {
+                
+                CategoryDao catDao = ApplicationContext.getDaoSession().getCategoryDao();
+                List<Category> categories = catDao.loadAll();
+                
+                for (Category cat : categories) {
+
+                    PowerQuery query = PowerQuery.where(false, new QueryProperty(CategoryDao.TABLENAME, CategoryDao.Properties.CategoryName), cat.getCategoryName());
+                    
+                    FilterViewHolder temp = new FilterViewHolder();
+                    temp.mText = cat.getCategoryName().toUpperCase();
+                    temp.mQuery = query;
+                    
+                    sectionData.add(temp);
+                }
+                
+                Collections.sort(sectionData, new FilterComparator());
+                
+                mData.set(section, new Pair<String, List<FilterViewHolder>>(sectionTitle, sectionData));
+                
+                break;
+            }
+            
+            case 4: {
+                
+                TransactionsDao transactionsDao = ApplicationContext.getDaoSession().getTransactionsDao();
+                List<Transactions> transactions = transactionsDao.queryRaw("GROUP BY TITLE ORDER BY TITLE", new String[] {});
+                
+                String startUpper = transactions.get(0).getTitle().substring(0, 1).toUpperCase();
+
+                List<FilterViewHolder> subSection = new ArrayList<FilterViewHolder>();
+                FilterViewHolder temp = new FilterViewHolder();
+                temp.mText = startUpper;
+                
+                for (Transactions transaction : transactions) {
+                    
+                    FilterViewHolder subTemp = new FilterViewHolder();
+                    subTemp.mText = transaction.getTitle().toUpperCase();
+                    subTemp.mIsSubSection = true;
+                    
+                    if (!subTemp.mText.substring(0, 1).equals(startUpper)) {
+
+                        temp.mSubSection = subSection;
+                        sectionData.add(temp);
+                        
+                        startUpper = subTemp.mText.substring(0, 1);
+                        
+                        subSection = new ArrayList<FilterViewHolder>();
+                        subSection.add(subTemp);
+                        temp = new FilterViewHolder();
+                        temp.mText = startUpper;
+                        
+                    } else {
+
+                        subSection.add(subTemp);
+                    }
+                }
+                
+                temp.mSubSection = subSection;
+                sectionData.add(temp);
+                
+                mData.set(section, new Pair<String, List<FilterViewHolder>>(sectionTitle, sectionData));
+                
+                break;
+            }
+        }
+    }
+    
+    public void expandSubSection(int groupPosition, int childPosition, List<FilterViewHolder> subSection) {
+        List<FilterViewHolder> position = mData.get(groupPosition).second;
+        position.addAll(childPosition + 1, subSection);
+        notifyDataSetChanged();
+    }
+    
+    public class FilterComparator implements Comparator<FilterViewHolder> {
+        
+        @Override
+        public int compare(FilterViewHolder holder1, FilterViewHolder holder2) {
+            return holder1.mText.compareTo(holder2.mText);
         }
     }
 }

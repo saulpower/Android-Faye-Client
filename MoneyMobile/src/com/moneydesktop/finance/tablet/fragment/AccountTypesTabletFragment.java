@@ -201,7 +201,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         ImageView bankImage = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_image);  
         final ImageView booklet = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_bankbook);
         
-        BankLogoManager.getBankImage(bankImage, bank.getInstitution().getInstitutionId());
+        BankLogoManager.getBankImage(bankImage, bank.getBankId());
         
         TextView bankName = (TextView)bankTypeAccountView.findViewById(R.id.account_bank_name);
         
@@ -256,17 +256,15 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
             @Override
             public void onClick(DialogInterface dialog, int which) {   
                 DialogUtils.dismissAlert();
-                //set the bank for deletion
-                bank.setDeleted(true);
+                
+                switch (which) {
+                    case -2:
+                        //set the bank for deletion
+                        bank.setDeleted(true);
+                        panelView.removeView(v);
+                        break;
+                }
                 mPopup.fadeOutTransparency();
-                panelView.removeView(v);
-            }
-        }, new DialogInterface.OnClickListener() {
-            
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                DialogUtils.dismissAlert();
-                mPopup.fadeOutTransparency();                
             }
         });
                 

@@ -89,7 +89,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
         if (User.getCurrentUser() != null) {
             Intent i;
-            if (BaseActivity.isTablet(this)) {
+            if (isTablet(this)) {
                 i = new Intent(this, DashboardTabletActivity.class);
             }
             else {
@@ -101,7 +101,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
     }
 
     protected void setupView() {
-        if (BaseActivity.isTablet(this)) {
+        if (isTablet(this)) {
             mIsTablet = true;
         }
 

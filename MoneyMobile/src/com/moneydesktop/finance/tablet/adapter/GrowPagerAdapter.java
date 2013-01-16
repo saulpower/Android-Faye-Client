@@ -71,6 +71,7 @@ public class GrowPagerAdapter extends FragmentPagerAdapter implements OnPageChan
      * @param position
      * @param percent
      */
+    @SuppressWarnings("unused")
     private void adjustSize(int position, float percent) {
         
         position += (mScrollingLeft ? 1 : 0);
@@ -100,7 +101,7 @@ public class GrowPagerAdapter extends FragmentPagerAdapter implements OnPageChan
             current.transitionFragment(percentIn, scaleUp);
             next.transitionFragment(percentOut, scaleDown);
             
-            if (afterNext != null) {
+            if (afterNext != null && COUNT > 2) {
                 afterNext.transitionFragment(BASE_ALPHA, BASE_SIZE);
             }
         }

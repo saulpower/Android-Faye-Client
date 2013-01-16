@@ -10,10 +10,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.AmazingAdapter;
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.database.CategoryDao;
+import com.moneydesktop.finance.database.PowerQuery;
+import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.shared.TransactionViewHolder;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.AmazingListView;
@@ -32,7 +37,9 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
     
     public final String TAG = this.getClass().getSimpleName();
 
-	private List<Transactions> mAllTransactions = new ArrayList<Transactions>();
+    private OnDataLoadedListener mOnDataLoadedListener;
+
+    private List<Transactions> mAllTransactions = new ArrayList<Transactions>();
 	private AsyncTask<Integer, Void, Pair<Boolean, List<Transactions>>> mBackgroundTask;
     private DecimalFormat mFormatter = new DecimalFormat("$#,##0.00;-$#,##0.00");
     private SimpleDateFormat mDateFormatter = new SimpleDateFormat("M/d/yy");
@@ -40,17 +47,28 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	
 	private Date mStart, mEnd;
 	
-	private String mOrderBy = Constant.FIELD_DATE, mDirection = Constant.ORDER_DESC;
+	private QueryProperty mOrderBy = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Date);
+	private boolean mDirection = true;
 	private String mSearch = "%";
+	private PowerQuery mQueries;
 
 	private Activity mActivity;
+	
+    private QueryProperty mTransactionDate = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Date);
+    private QueryProperty mTransactionTitle = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Title);
+    private QueryProperty mCategoryId = new QueryProperty(CategoryDao.TABLENAME, TransactionsDao.Properties.CategoryId);
+    private QueryProperty mCategoryName = new QueryProperty(CategoryDao.TABLENAME, CategoryDao.Properties.CategoryName);
+    
+    TransactionsDao mDao = ApplicationContext.getDaoSession().getTransactionsDao();
 
-	public TransactionsTabletAdapter(Activity activity, AmazingListView listView, List<Transactions> transactions) {
+	public TransactionsTabletAdapter(Activity activity, AmazingListView listView) {
 		this.mActivity = activity;
 		this.mListView = listView;
-
-		mAllTransactions = transactions;
 	}
+    
+    public void setOnDataLoadedListener(OnDataLoadedListener mOnDataLoadedListener) {
+        this.mOnDataLoadedListener = mOnDataLoadedListener;
+    }
 
 	public int getCount() {
 
@@ -67,13 +85,17 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	    mEnd = end;
 	}
 	
-	public void setOrder(String orderBy, String direction) {
+	public void setOrder(QueryProperty orderBy, boolean direction) {
 	    mOrderBy = orderBy;
 	    mDirection = direction;
 	}
 
 	public void setSearch(String search) {
         this.mSearch = search;
+    }
+
+    public void setQueries(PowerQuery queries) {
+        this.mQueries = queries;
     }
 
     public long getItemId(int position) {
@@ -83,49 +105,86 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	@Override
 	protected void onNextPageRequested(int page) {
 
-		if (mBackgroundTask != null) {
-			mBackgroundTask.cancel(false);
-		}
+		loadPage(page);
+	}
+	
+	public void initializeData() {
+	    
+	    mAllTransactions = new ArrayList<Transactions>();
+	    resetPage();
+	    loadPage(1);
+	}
+	
+	private void loadPage(final int page) {
+	    
+	    if (mBackgroundTask != null) {
+            mBackgroundTask.cancel(false);
+        }
 
-		mBackgroundTask = new AsyncTask<Integer, Void, Pair<Boolean, List<Transactions>>>() {
+        mBackgroundTask = new AsyncTask<Integer, Void, Pair<Boolean, List<Transactions>>>() {
 
-			@Override
-			protected Pair<Boolean, List<Transactions>> doInBackground(Integer... params) {
-				
-				int page = params[0];
+            @Override
+            protected Pair<Boolean, List<Transactions>> doInBackground(Integer... params) {
+                
+                int page = params[0];
 
-				Pair<Boolean, List<Transactions>> rows;
-				
-				if (mStart == null || mEnd == null) {
-				    rows = Transactions.getRows(page, mOrderBy, mDirection);
-				} else {
-				    rows = Transactions.getRows(page, mSearch, mStart, mEnd, mOrderBy, mDirection);
-				}
-				
-				return rows;
-			}
+                Pair<Boolean, List<Transactions>> rows = Transactions.getRows(generateQuery(page));
+                
+                return rows;
+            }
 
-			@Override
-			protected void onPostExecute(Pair<Boolean, List<Transactions>> rows) {
+            @Override
+            protected void onPostExecute(Pair<Boolean, List<Transactions>> rows) {
 
-				if (isCancelled()) {
-					return;
-				}
+                if (isCancelled()) {
+                    return;
+                }
 
-				mAllTransactions.addAll(rows.second);
+                mAllTransactions.addAll(rows.second);
+                
+                if (mOnDataLoadedListener != null) {
+                    mOnDataLoadedListener.dataLoaded(page > 1);
+                }
 
-				nextPage();
+                if (page > 1) {
+                    nextPage();
+                }
 
-				if (rows.first) {
-					notifyMayHaveMorePages();
-				} else {
-					notifyNoMorePages();
-				}
-				
-				mListView.requestLayout();
-			}
+                if (rows.first) {
+                    notifyMayHaveMorePages();
+                } else {
+                    notifyNoMorePages();
+                }
+                
+                mListView.requestLayout();
+            }
 
-		}.execute(page);
+        }.execute(page);
+	}
+	
+	private PowerQuery generateQuery(int page) {
+	    
+	    int offset = (page - 1) * Constant.QUERY_LIMIT;
+	    
+	    PowerQuery subQuery = new PowerQuery(true);
+	    
+	    if (mQueries == null || !mQueries.hasQueryProperty(mCategoryName)) {
+	        subQuery.or().whereLike(mCategoryName, mSearch);
+	    }
+        if (mQueries == null || !mQueries.hasQueryProperty(mTransactionTitle)) {
+            subQuery.or().whereLike(mTransactionTitle, mSearch);
+        }
+	    
+        PowerQuery query = new PowerQuery(mDao);
+        query.join(mCategoryId)
+            .where(subQuery).and()
+            .where(mQueries).and()
+            .between(mTransactionDate, mStart, mEnd)
+            .orderBy(mOrderBy, mDirection)
+            .limit(Constant.QUERY_LIMIT)
+            .offset(offset);
+        
+        return query;
 	}
 
 	@Override
@@ -243,5 +302,9 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
     @Override
     protected boolean isPositionVisible(int position) {
         return true;
+    }
+    
+    public interface OnDataLoadedListener {
+        public void dataLoaded(boolean isRequest);
     }
 }

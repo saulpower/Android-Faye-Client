@@ -4,7 +4,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.tablet.fragment.TestFragment;
 import com.viewpagerindicator.IconPagerAdapter;
 

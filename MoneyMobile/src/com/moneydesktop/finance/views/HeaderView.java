@@ -60,7 +60,9 @@ public class HeaderView extends TextView {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
-        createCaret();
+        if (mCaret == null) {
+            createCaret();
+        }
     }
     
     public void createCaret() {
@@ -98,7 +100,7 @@ public class HeaderView extends TextView {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     if (mListener != null) {
-                        mListener.filterChanged();
+                        mListener.filterChanged(mIsAscending ? 1 : 0);
                     }
                 }
                 
@@ -112,7 +114,7 @@ public class HeaderView extends TextView {
             mCaret.setCaretRotation(mIsAscending ? 180 : 0);
             
             if (mListener != null) {
-                mListener.filterChanged();
+                mListener.filterChanged(mIsAscending ? 1 : 0);
             }
         }
     }

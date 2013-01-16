@@ -1,13 +1,14 @@
 package com.moneydesktop.finance.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.graphics.Typeface;
 import android.util.Log;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.ApplicationContext;
+import com.moneydesktop.finance.data.Constant;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Fonts {
 	
@@ -98,7 +99,9 @@ public class Fonts {
 		
 		if (view instanceof TextView) {
 			TextView tv = (TextView) view;
-			tv.setTextSize(UiUtils.getScaledPixels(ApplicationContext.getContext(), size));
+			float additional = ApplicationContext.isLargeTablet() ? Constant.LARGE_TABLET_SCALE : 1.0f;
+			float adjusted = UiUtils.getScaledPixels(ApplicationContext.getContext(), size) * additional;
+			tv.setTextSize(adjusted);
 			tv.setTypeface(font);
 			return;
 		}

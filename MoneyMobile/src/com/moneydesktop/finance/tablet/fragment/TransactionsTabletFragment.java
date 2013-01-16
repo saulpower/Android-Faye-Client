@@ -10,7 +10,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,17 +25,21 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
 import com.moneydesktop.finance.animation.FlipXAnimation;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.shared.FilterViewHolder;
 import com.moneydesktop.finance.tablet.adapter.FilterTabletAdapter;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment.onBackPressedListener;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.UltimateListView;
+
+import de.greenrobot.event.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -221,6 +224,11 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
 	    mContainer = (RelativeLayout) mRoot.findViewById(R.id.detail_container);
 	    mDetail = (FrameLayout) mRoot.findViewById(R.id.detail_fragment);
 	    
+	    if (ApplicationContext.isLargeTablet()) {
+	        mDetail.getLayoutParams().width *= Constant.LARGE_TABLET_SCALE;
+            mDetail.getLayoutParams().height *= Constant.LARGE_TABLET_SCALE;
+	    }
+	    
 	    mContainer.setOnClickListener(new OnClickListener() {
             
             @Override
@@ -247,17 +255,10 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
                 
                 for (int i = 0; i < Constant.FOLDER_TITLE.length; i++) {
                     FilterViewHolder holder = new FilterViewHolder();
-                    holder.text = getString(Constant.FOLDER_TITLE[i]);
-                    holder.subText = getString(Constant.FOLDER_SUBTITLE[i]);
+                    holder.mText = getString(Constant.FOLDER_TITLE[i]);
+                    holder.mSubText = getString(Constant.FOLDER_SUBTITLE[i]);
                     subItems.add(holder);
                 }
-                
-            } else {
-                
-                FilterViewHolder holder = new FilterViewHolder();
-                holder.text = getString(R.string.loading_menu);
-                subItems.add(holder);
-                
             }
             
             Pair<String, List<FilterViewHolder>> temp = new Pair<String, List<FilterViewHolder>>(getString(Constant.FILTERS[j]), subItems);
@@ -265,9 +266,12 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
         }
         
         mAdapter = new FilterTabletAdapter(mActivity, mFiltersList, data);
+        mAdapter.setAutomaticSectionLoading(true);
         mFiltersList.setAdapter(mAdapter);
         mFiltersList.setOnChildClickListener(this);
-        mFiltersList.expandGroup(0);
+        mFiltersList.setChoiceMode(ExpandableListView.CHOICE_MODE_SINGLE);
+//        mFiltersList.expandGroup(0);
+        mFiltersList.setSelectedChild(0, 0, true);
 	}
 	
 	public void showTransactionDetails(View view, int offset, Transactions transaction) {
@@ -430,8 +434,17 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
 
     @Override
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+
+        mFiltersList.setSelectedChild(groupPosition, childPosition, true);
+        FilterViewHolder holder = (FilterViewHolder) v.getTag();
         
-        Log.i(TAG, "Section: " + groupPosition + " Item: " + childPosition);
+        // Notify transaction list view of new filter
+        EventBus.getDefault().post(new EventMessage().new FilterEvent(holder.mQuery));
+        
+        // Expand any existing sub sections (PAYEES)
+        if (holder != null && holder.mSubSection != null) {
+            mAdapter.expandSubSection(groupPosition, childPosition, holder.mSubSection);
+        }
         
         return true;
     }

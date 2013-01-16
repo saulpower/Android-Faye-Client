@@ -2,6 +2,7 @@ package com.moneydesktop.finance.database;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.util.Pair;
 
 import com.moneydesktop.finance.ApplicationContext;
@@ -794,6 +795,21 @@ public class Transactions extends BusinessObject  {
         int offset = (page - 1) * Constant.QUERY_LIMIT;
         
         return getRows(page, String.format(Constant.QUERY_TRANSACTIONS, orderBy, direction), Integer.toString(Constant.QUERY_LIMIT), Integer.toString(offset));
+    }
+    
+    public static Pair<Boolean, List<Transactions>> getRows(PowerQuery query) {
+        
+        TransactionsDao dao = (TransactionsDao) DataController.getDao(Transactions.class);
+        
+        String queryString = query.toString();
+        
+        Log.i(TAG, "Query: " + queryString);
+        
+        List<Transactions>transactions = dao.queryRaw(queryString, query.getSelectionArgs());
+        
+        boolean more = (transactions.size() == Constant.QUERY_LIMIT);
+        
+        return new Pair<Boolean, List<Transactions>>(more, transactions);
     }
     
     private static Pair<Boolean, List<Transactions>> getRows(int page, String query, String... selectionArgs) {

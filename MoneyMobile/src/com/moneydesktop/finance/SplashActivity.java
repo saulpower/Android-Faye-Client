@@ -62,6 +62,7 @@ public class SplashActivity extends BaseActivity {
         Intent i = new Intent(getApplicationContext(), DashboardHandsetActivity.class);
 
         ApplicationContext.setIsTablet(isTablet(this));
+        ApplicationContext.setIsLargeTablet(isLargeTablet(this));
         
         if (User.getCurrentUser() != null) {
 

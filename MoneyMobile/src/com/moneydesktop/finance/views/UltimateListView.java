@@ -10,7 +10,6 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
 import com.moneydesktop.finance.adapters.UltimateAdapter;
-import com.moneydesktop.finance.adapters.UltimateAdapter.HasMorePagesListener;
 
 /**
  * A ListView that maintains a header pinned at the top of the list. The
@@ -19,15 +18,9 @@ import com.moneydesktop.finance.adapters.UltimateAdapter.HasMorePagesListener;
  * It also supports pagination by setting a custom view as the loading
  * indicator.
  */
-public class UltimateListView extends ExpandableListView implements HasMorePagesListener {
+public class UltimateListView extends ExpandableListView {
     
 	public static final String TAG = UltimateListView.class.getSimpleName();
-	
-	View mListFooter;
-	boolean mFooterViewAttached = false;
-    boolean mEmptyViewAttached = false;
-
-	private View mEmptyFooter;
 	
     private View mHeaderView;
     private boolean mHeaderViewVisible;
@@ -234,22 +227,6 @@ public class UltimateListView extends ExpandableListView implements HasMorePages
         super(context, attrs, defStyle);
     }
     
-    public void setLoadingView(View listFooter) {
-		this.mListFooter = listFooter;
-	}
-    
-    public View getLoadingView() {
-		return mListFooter;
-	}
-    
-    public void setEmptyView(View emptyFooter) {
-        this.mEmptyFooter = emptyFooter;
-    }
-    
-    public View getEmptyView() {
-        return mEmptyFooter;
-    }
-    
     @Override
     public void setAdapter(ExpandableListAdapter adapter) {
         
@@ -259,49 +236,31 @@ public class UltimateListView extends ExpandableListView implements HasMorePages
     	
     	// previous adapter
     	if (this.mAdapter != null) {
-    		this.mAdapter.setHasMorePagesListener(null);
     		this.setOnScrollListener(null);
     	}
 
     	this.mAdapter = (UltimateAdapter) adapter;
-    	this.mAdapter.setHasMorePagesListener(this);
 		this.setOnScrollListener(mAdapter);
 		
 		View header = mAdapter.getSectionView(0, false, null, this);
 		setHeaderView(header);
 		
-		View dummy = new View(getContext());
-    	super.addFooterView(dummy);
         super.setAdapter(adapter);
-    	super.removeFooterView(dummy);
     }
-
-	@Override
-	public void noMorePages() {
-	    
-		if (mListFooter != null) {
-            this.removeFooterView(mListFooter);
-            mFooterViewAttached = false;
+    
+    @Override
+    public boolean setSelectedChild(int groupPosition, int childPosition, boolean shouldExpandGroup) {
+        
+        if (shouldExpandGroup) {
+            expandGroup(groupPosition);
         }
-		    
-	    if (!mEmptyViewAttached && mAdapter.getGroupCount() == 0 && mEmptyFooter != null) {
-	        this.addFooterView(mEmptyFooter);
-	        mEmptyViewAttached = true;
-	    }
-	}
-
-	@Override
-	public void mayHaveMorePages() {
-	    
-		if (!mFooterViewAttached && mListFooter != null) {
-		    this.removeFooterView(mEmptyFooter);
-			this.addFooterView(mListFooter);
-			mFooterViewAttached = true;
-			mEmptyViewAttached = false;
-		}
-	}
-	
-	public boolean isLoadingViewVisible() {
-		return mFooterViewAttached;
-	}
+        
+        if (mAdapter != null) {
+            mAdapter.setSelectedGroupPosition(groupPosition);
+            mAdapter.setSelectedChildPosition(childPosition);
+            mAdapter.notifyDataSetChanged();
+        }
+        
+        return true;
+    }
 }

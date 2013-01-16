@@ -302,7 +302,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
                 @Override
                 public void run() {
 
-                    mListener.filterChanged();
+                    mListener.filterChanged(-1);
                 }
             }, 300);
         }
@@ -504,6 +504,6 @@ public class DateRangeView extends View implements AnchorMoveListener {
     }
     
     public interface FilterChangeListener {
-        public void filterChanged();
+        public void filterChanged(int direction);
     }
 }

@@ -114,6 +114,7 @@ public class Constant {
 	public static final String PERSONAL = "personal";
 	public static final int QUERY_LIMIT = 30;
     public static final float STANDARD_DPI = 160f;
+    public static final float LARGE_TABLET_SCALE = 1.43f;
 
 	/*******************************************************************
 	 * QUERIES
