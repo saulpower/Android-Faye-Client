@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -32,8 +31,11 @@ public class DateRangeView extends View implements AnchorMoveListener {
     public final String TAG = this.getClass().getSimpleName();
 
     private final float ITEM_WIDTH = 100.0f;
+    private final float THRESHOLD = 20.0f;
     
+    private Float mDynamicThreshold;
     private Float mDynamicWidth;
+    
     private List<DateRangeItem> mDates;
     
     private Paint mTopBorderPaint;
@@ -47,6 +49,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
     private PointF mDistance;
     private boolean mTouchingAnchorLeft = false;
     private boolean mTouchingAnchorRight = false;
+    private boolean mTouchingSelection = false;
     private boolean mAnchorsMoved = false;
     private DateRangeItem mTapped;
     
@@ -183,6 +186,15 @@ public class DateRangeView extends View implements AnchorMoveListener {
         return mDynamicWidth;
     }
     
+    private Float getDynamicThreshold() {
+        
+        if (mDynamicThreshold == null) {
+            mDynamicThreshold = UiUtils.getDynamicPixels(getContext(), THRESHOLD);
+        }
+        
+        return mDynamicThreshold;
+    }
+    
     private void moveScroller() {
 
         DateRangeItem item = getItem(new Date());
@@ -243,17 +255,16 @@ public class DateRangeView extends View implements AnchorMoveListener {
     
     private boolean isTouchingAnchor() {
         
-        Point touch = new Point((int) mLastTouchX, (int) mLastTouchY);
+        mTouchingAnchorLeft = mLeft.getBounds().contains((int) mLastTouchX, (int) mLastTouchY);
+        mTouchingAnchorRight = mRight.getBounds().contains((int) mLastTouchX, (int) mLastTouchY);
         
-        mTouchingAnchorLeft = mLeft.getBounds().contains(touch.x, touch.y);
-        mTouchingAnchorRight = mRight.getBounds().contains(touch.x, touch.y);
-        
-        if (mHighlightBounds.contains(touch.x, touch.y) && !mTouchingAnchorLeft && !mTouchingAnchorRight) {
+        if (mHighlightBounds.contains((int) mLastTouchX, (int) mLastTouchY) && !mTouchingAnchorLeft && !mTouchingAnchorRight) {
             mTouchingAnchorLeft = true;
             mTouchingAnchorRight = true;
+            mTouchingSelection = true;
         }
         
-        return mTouchingAnchorLeft || mTouchingAnchorRight;
+        return mTouchingAnchorLeft || mTouchingAnchorRight || mTouchingSelection;
     }
     
     private DateRangeItem isTouchingItem() {
@@ -459,7 +470,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
                 mLastTouchY = y;
                 mLastTouchX = x;
                 
-                if ((mTouchingAnchorLeft || mTouchingAnchorRight) && Math.abs(mDistance.x) < 20.0f) {
+                if ((mTouchingAnchorLeft || mTouchingAnchorRight || mTouchingSelection) && Math.abs(mDistance.x) < getDynamicThreshold()) {
 
                     mAnchorsMoved = true;
                     moveAnchors();

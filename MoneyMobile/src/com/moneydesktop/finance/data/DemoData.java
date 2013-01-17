@@ -39,7 +39,6 @@ public class DemoData {
 							 PARENT_ID			 = 1,
 							 NAME				 = 2,
 							 CATEGORY_TYPE		 = 3,
-							 IMAGE_NUMBER		 = 4,
 							 BUDGET_AMOUNT		 = 5;
 	
 	// Bank indexes
