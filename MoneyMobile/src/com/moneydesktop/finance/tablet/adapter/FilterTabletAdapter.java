@@ -14,6 +14,7 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.UltimateAdapter;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.database.BankAccountDao;
 import com.moneydesktop.finance.database.BankDao;
 import com.moneydesktop.finance.database.Category;
 import com.moneydesktop.finance.database.CategoryDao;
@@ -101,6 +102,7 @@ public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpan
         
         viewHolder.mSubSection = filter.mSubSection;
         viewHolder.mQuery = filter.mQuery;
+        viewHolder.mCaret.setVisibility(isSelected ? View.VISIBLE : View.INVISIBLE);
         
         if (!filter.mIsSubSection) {
             viewHolder.mInfo.setBackgroundResource(R.drawable.gray4_to_primary);
@@ -302,18 +304,24 @@ public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpan
                     
                     if (bank.getBankAccounts().size() > 1) {
                         
+                        PowerQuery query = PowerQuery.where(false, new QueryProperty(BankAccountDao.TABLENAME, BankAccountDao.Properties.InstitutionId), bank.getBankId());
+                        
                         FilterViewHolder temp = new FilterViewHolder();
                         temp.mText = bank.getBankName().toUpperCase();
                         temp.mSubText = mActivity.getString(R.string.all_accounts);
+                        temp.mQuery = query;
                         
                         sectionData.add(temp);
                     }
                     
                     for (BankAccount account : bank.getBankAccounts()) {
                         
+                        PowerQuery query = PowerQuery.where(false, new QueryProperty(BankAccountDao.TABLENAME, BankAccountDao.Properties.AccountId), account.getAccountId());
+                        
                         FilterViewHolder temp = new FilterViewHolder();
                         temp.mText = bank.getBankName().toUpperCase();
                         temp.mSubText = WordUtils.capitalize(account.getAccountName().toLowerCase());
+                        temp.mQuery = query;
                         
                         sectionData.add(temp);
                     }
@@ -357,14 +365,21 @@ public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpan
                 String startUpper = transactions.get(0).getTitle().substring(0, 1).toUpperCase();
 
                 List<FilterViewHolder> subSection = new ArrayList<FilterViewHolder>();
+                
+                PowerQuery query = PowerQuery.whereLike(false, new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Title), startUpper + "%");
+                
                 FilterViewHolder temp = new FilterViewHolder();
                 temp.mText = startUpper;
+                temp.mQuery = query;
                 
                 for (Transactions transaction : transactions) {
+
+                    query = PowerQuery.whereLike(false, new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Title), transaction.getTitle());
                     
                     FilterViewHolder subTemp = new FilterViewHolder();
                     subTemp.mText = transaction.getTitle().toUpperCase();
                     subTemp.mIsSubSection = true;
+                    subTemp.mQuery = query;
                     
                     if (!subTemp.mText.substring(0, 1).equals(startUpper)) {
 
@@ -375,8 +390,12 @@ public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpan
                         
                         subSection = new ArrayList<FilterViewHolder>();
                         subSection.add(subTemp);
+                        
+                        query = PowerQuery.whereLike(false, new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Title), startUpper + "%");
+                        
                         temp = new FilterViewHolder();
                         temp.mText = startUpper;
+                        temp.mQuery = query;
                         
                     } else {
 

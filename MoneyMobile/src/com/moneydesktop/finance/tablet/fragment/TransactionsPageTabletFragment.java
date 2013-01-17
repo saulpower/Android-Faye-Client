@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -176,7 +175,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
             public void onAnimationEnd(Animation animation) {
                 
                 mTransactionsList.setVisibility(View.INVISIBLE);
-                mAdapter.notifyDataSetInvalidated();
+                mAdapter.applyNewData();
                 mTransactionsList.setVisibility(View.VISIBLE);
                 mTransactionsList.startAnimation(mFadeIn);
             }
@@ -338,6 +337,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
                 @Override
                 public void run() {
 
+                    mAdapter.applyNewData();
                     mTransactionsList.setVisibility(View.VISIBLE);
                     mTransactionsList.startAnimation(mFadeIn);
                 }

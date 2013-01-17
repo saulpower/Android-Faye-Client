@@ -14,11 +14,12 @@ public class PowerQuery {
     private Map<String, String> mTableMap = new HashMap<String, String>();
     
     private List<String> mSelectionArgs = new ArrayList<String>();
-    
-    private String mJoin = "";
+
+    private List<QueryProperty> mJoins = new ArrayList<QueryProperty>();
     private List<QueryProperty> mWhereQueries = new ArrayList<QueryProperty>();
     private String mConnector = "WHERE ";
-    private String mOrder = "";
+    private QueryProperty mOrder;
+    private boolean mIsDescending = false;
     private String mOffset = "";
     private String mLimit = "";
     
@@ -57,8 +58,7 @@ public class PowerQuery {
     
     public PowerQuery join(QueryProperty foreignKey) {
         
-        String tableRef = addTable(foreignKey.getTablename());
-        mJoin = " JOIN " + foreignKey.getTablename() + " " + tableRef + " ON T." + foreignKey.getColumnName() + " = " + tableRef + "._ID";
+        mJoins.add(foreignKey);
         
         return this;
     }
@@ -159,7 +159,8 @@ public class PowerQuery {
     
     public PowerQuery orderBy(QueryProperty field, boolean isDescending) {
         
-        mOrder = " ORDER BY " + getTableRef(field.getTablename()) + "." + field.getColumnName() + (isDescending ? " DESC" : "");
+        mOrder = field;
+        mIsDescending = isDescending;
         
         return this;
     }
@@ -187,7 +188,12 @@ public class PowerQuery {
     private String buildQuery() {
         
         StringBuilder builder = new StringBuilder();
-        builder.append(mJoin);
+        
+        for (QueryProperty prop : mJoins) {
+            String tableRef = addTable(prop.getTablename());
+            builder.append(" JOIN " + prop.getTablename() + " " + tableRef + " ON T." + prop.getColumnName() + " = " + tableRef + "._ID");
+        }
+        
         builder.append(" WHERE");
         
         boolean isGroup = false;
@@ -212,7 +218,7 @@ public class PowerQuery {
             builder.append((isEnd ? grouper : "") + field.getConnector(i) + " " + (isEnd ? "" : grouper) + getTableRef(field.getTablename()) + "." + field.getColumnName() + " " + field.getComparator());
         }
         
-        builder.append(mOrder);
+        builder.append(" ORDER BY " + getTableRef(mOrder.getTablename()) + "." + mOrder.getColumnName() + (mIsDescending ? " DESC" : ""));
         builder.append(mLimit);
         builder.append(mOffset);
         

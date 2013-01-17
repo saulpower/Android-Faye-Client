@@ -3,6 +3,7 @@ package com.moneydesktop.finance.tablet.adapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.AmazingAdapter;
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.database.BankAccountDao;
 import com.moneydesktop.finance.database.CategoryDao;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.database.QueryProperty;
@@ -40,10 +42,12 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
     private OnDataLoadedListener mOnDataLoadedListener;
 
     private List<Transactions> mAllTransactions = new ArrayList<Transactions>();
+    private List<Transactions> mNewTransactions = new ArrayList<Transactions>();
 	private AsyncTask<Integer, Void, Pair<Boolean, List<Transactions>>> mBackgroundTask;
     private DecimalFormat mFormatter = new DecimalFormat("$#,##0.00;-$#,##0.00");
     private SimpleDateFormat mDateFormatter = new SimpleDateFormat("M/d/yy");
 	private AmazingListView mListView;
+	private boolean mHasMore = false;
 	
 	private Date mStart, mEnd;
 	
@@ -58,6 +62,7 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
     private QueryProperty mTransactionTitle = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Title);
     private QueryProperty mCategoryId = new QueryProperty(CategoryDao.TABLENAME, TransactionsDao.Properties.CategoryId);
     private QueryProperty mCategoryName = new QueryProperty(CategoryDao.TABLENAME, CategoryDao.Properties.CategoryName);
+    private QueryProperty mBankAccountId = new QueryProperty(BankAccountDao.TABLENAME, TransactionsDao.Properties.BankAccountId);
     
     TransactionsDao mDao = ApplicationContext.getDaoSession().getTransactionsDao();
 
@@ -110,9 +115,23 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	
 	public void initializeData() {
 	    
-	    mAllTransactions = new ArrayList<Transactions>();
 	    resetPage();
 	    loadPage(1);
+	}
+	
+	public void applyNewData() {
+	    
+	    mAllTransactions.clear();
+	    mAllTransactions.addAll(mNewTransactions);
+        mNewTransactions.clear();
+	    notifyDataSetInvalidated();
+        mListView.requestLayout();
+
+        if (mHasMore) {
+            notifyMayHaveMorePages();
+        } else {
+            notifyNoMorePages();
+        }
 	}
 	
 	private void loadPage(final int page) {
@@ -140,14 +159,11 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
                     return;
                 }
 
-                mAllTransactions.addAll(rows.second);
-                
-                if (mOnDataLoadedListener != null) {
-                    mOnDataLoadedListener.dataLoaded(page > 1);
-                }
-
-                if (page > 1) {
-                    nextPage();
+                if (page == 1) {
+                    mHasMore = rows.first;
+                    mNewTransactions.addAll(rows.second);
+                    notifyDataLoaded(false);
+                    return;
                 }
 
                 if (rows.first) {
@@ -156,10 +172,21 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
                     notifyNoMorePages();
                 }
                 
+                nextPage();
+                
+                mAllTransactions.addAll(rows.second);
+                notifyDataLoaded(true);
+                
                 mListView.requestLayout();
             }
 
         }.execute(page);
+	}
+	
+	private void notifyDataLoaded(boolean isRequest) {
+	    if (mOnDataLoadedListener != null) {
+            mOnDataLoadedListener.dataLoaded(isRequest);
+        }
 	}
 	
 	private PowerQuery generateQuery(int page) {
@@ -177,6 +204,7 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	    
         PowerQuery query = new PowerQuery(mDao);
         query.join(mCategoryId)
+            .join(mBankAccountId)
             .where(subQuery).and()
             .where(mQueries).and()
             .between(mTransactionDate, mStart, mEnd)

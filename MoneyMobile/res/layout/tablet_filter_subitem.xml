@@ -10,7 +10,7 @@
 	    android:id="@+id/info"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
-	    android:paddingLeft="20dp"
+	    android:paddingLeft="30dp"
 	    android:paddingTop="8dp"
 	    android:paddingBottom="8dp"
     	android:background="@drawable/gray4_to_primary"
@@ -39,12 +39,24 @@
         style="@style/tablet_filter_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-	    android:paddingLeft="20dp"
+	    android:paddingLeft="30dp"
 	    android:paddingTop="8dp"
 	    android:paddingBottom="8dp"
         android:gravity="center_vertical"
     	android:background="@drawable/gray4_to_primary"
         android:visibility="gone" />
+			    
+	    <com.moneydesktop.finance.views.CaretView
+	        android:id="@+id/caret"
+		    android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="10dp"
+	        android:layout_centerVertical="true"
+	        android:visibility="invisible"
+	        app:color="@color/white"
+	        app:width="10dp"
+	        app:height="10dp"
+	        app:rotation="90" />
 	
 	<com.moneydesktop.finance.views.LineView
 	    android:id="@+id/item_divider"

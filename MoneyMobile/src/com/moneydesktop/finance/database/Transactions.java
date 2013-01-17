@@ -2,7 +2,6 @@ package com.moneydesktop.finance.database;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 import android.util.Pair;
 
 import com.moneydesktop.finance.ApplicationContext;
@@ -801,11 +800,7 @@ public class Transactions extends BusinessObject  {
         
         TransactionsDao dao = (TransactionsDao) DataController.getDao(Transactions.class);
         
-        String queryString = query.toString();
-        
-        Log.i(TAG, "Query: " + queryString);
-        
-        List<Transactions>transactions = dao.queryRaw(queryString, query.getSelectionArgs());
+        List<Transactions>transactions = dao.queryRaw(query.toString(), query.getSelectionArgs());
         
         boolean more = (transactions.size() == Constant.QUERY_LIMIT);
         
