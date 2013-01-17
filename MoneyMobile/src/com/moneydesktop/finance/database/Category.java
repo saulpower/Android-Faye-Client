@@ -462,14 +462,15 @@ public class Category extends BusinessObject {
 
         return json;
     }
+    
+    public static String getIconForId(Category category) {
 
-    private static String getIconForId(Category category) {
         try {
             while (category.getParent() != null) {
                 category = category.getParent();
             }
-        } catch (Exception e) {
-
+        } catch (DaoException ex) {
+//            Log.e(TAG, "DaoException");
         }
         String categoryId = category.getCategoryId();
 
