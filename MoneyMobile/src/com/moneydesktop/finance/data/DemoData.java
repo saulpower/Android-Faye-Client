@@ -105,8 +105,9 @@ public class DemoData {
 					
 					Category cat = createCategory(category);
 					
-					if (index.containsKey(cat.getCategoryId()))
+					if (index.containsKey(cat.getCategoryId())) {
 						processChildrenCategories(cat, index.get(cat.getCategoryId()));
+					}
 					
 					cat.acceptChanges();
 				}
@@ -137,8 +138,9 @@ public class DemoData {
 		CategoryType type = (CategoryType) BusinessObject.getObject(CategoryType.class, row[CATEGORY_TYPE]);
 		if (type != null)
 			category.setCategoryTypeId(type.getId());
-		
-		category.setImageName(String.format("%s.png", row[IMAGE_NUMBER]));
+
+        String imageName = Category.getIconForId(category);
+		category.setImageName(imageName);
 		category.setIsSystem(true);
 		
 		if (row.length > BUDGET_AMOUNT) {

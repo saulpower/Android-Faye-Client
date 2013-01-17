@@ -330,24 +330,33 @@ public class DateRangeView extends View implements AnchorMoveListener {
             positionLeft = mLeft.getPosition();
         }
         
-        // If we are moving both anchors set the positions
         if (mTouchingAnchorLeft && mTouchingAnchorRight) {
-            positionLeft = new PointF(mLeft.getPosition().x + mDistance.x, 0);
-            positionRight = new PointF(mRight.getPosition().x + mDistance.x, 0);
+            positionLeft.x = mLeft.getPosition().x + mDistance.x;
+            positionLeft.y = 0;
+            positionRight.x = mRight.getPosition().x + mDistance.x;
+            positionRight.y = 0;
         }
         
         // Calculate left adjustments if necessary
-        if (positionLeft.x < mDates.get(0).getBounds().left && mTouchingAnchorLeft) {
-            positionLeft = new PointF(mDates.get(0).getBounds().left, 0);
-        } else if (positionLeft.x > (positionRight.x - mDynamicWidth) && mTouchingAnchorLeft) {
-            positionLeft = new PointF(positionRight.x - mDynamicWidth, 0);
+        if (mTouchingAnchorLeft) {
+            if (positionLeft.x < mDates.get(0).getBounds().left) {
+                positionLeft.x = mDates.get(0).getBounds().left;
+                positionLeft.y = 0;
+            } else if (positionLeft.x > (positionRight.x - mDynamicWidth)) {
+                positionLeft.x = positionRight.x - mDynamicWidth;
+                positionLeft.y = 0;
+            }
         }
         
         // Calculate right adjustment if necessary
-        if (positionRight.x > mDates.get(mDates.size() - 1).getBounds().right && mTouchingAnchorRight) {
-            positionRight = new PointF(mDates.get(mDates.size() - 1).getBounds().right, 0);
-        } else if (positionRight.x < (positionLeft.x + mDynamicWidth) && mTouchingAnchorRight) {
-            positionRight = new PointF(positionLeft.x + mDynamicWidth, 0);
+        if (mTouchingAnchorRight) {
+            if (positionRight.x > mDates.get(mDates.size() - 1).getBounds().right) {
+                positionRight.x = (mDates.get(mDates.size() - 1).getBounds().right);
+                positionRight.y = 0;
+            } else if (positionRight.x < (positionLeft.x + mDynamicWidth)) {
+                positionRight.x = positionLeft.x + mDynamicWidth;
+                positionRight.y = 0;
+            }
         }
         
         // Apply change if touching this anchor

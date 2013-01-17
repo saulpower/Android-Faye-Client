@@ -415,7 +415,7 @@ public class Category extends BusinessObject  {
     	return json;
     }
     
-    private static String getIconForId(Category category) {
+    public static String getIconForId(Category category) {
 
         while (category.getParent() != null) {
             category = category.getParent();
