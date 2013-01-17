@@ -117,12 +117,12 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.setTimeZone(TimeZone.getTimeZone("UTC"));
-        cal.add(Calendar.DAY_OF_YEAR, -30);
+        cal.set(Calendar.HOUR_OF_DAY,0);
         cal.set(Calendar.HOUR, 0);
-        cal.add(Calendar.HOUR, -12);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
+        cal.add(Calendar.DAY_OF_YEAR, -30);
         LinearLayout l = (LinearLayout) v.findViewById(R.id.daily_spending_graph);
         for (int i = 0; i < 30; i++) {
             if (data.get(cal.getTime()) != null) {

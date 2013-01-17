@@ -838,8 +838,6 @@ public class Transactions extends BusinessObject {
         }
         SQLQuery = SQLQuery.substring(0, (SQLQuery.length() - 4));
         String query = String.format(Constant.QUERY_DAILY_TRANSACTIONS, SQLQuery);
-        // TODO: equalize the incoming date to match whatever we're going to
-        // compare it with.
         SQLiteDatabase db = ApplicationContext.getDb();
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
@@ -856,6 +854,7 @@ public class Transactions extends BusinessObject {
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(cursor.getLong(0));
             c.setTimeZone(TimeZone.getTimeZone("UTC"));
+            c.set(Calendar.HOUR_OF_DAY,0);
             c.set(Calendar.HOUR, 0);
             c.set(Calendar.MINUTE, 0);
             c.set(Calendar.SECOND, 0);
