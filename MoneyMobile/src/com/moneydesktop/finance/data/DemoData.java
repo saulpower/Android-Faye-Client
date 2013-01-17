@@ -135,9 +135,10 @@ public class DemoData {
 		category.setCategoryName(row[NAME]);
 		
 		CategoryType type = (CategoryType) BusinessObject.getObject(CategoryType.class, row[CATEGORY_TYPE]);
-		if (type != null)
+		if (type != null) {
 			category.setCategoryTypeId(type.getId());
-
+		}
+		
         String imageName = Category.getIconForId(category);
 		category.setImageName(imageName);
 		category.setIsSystem(true);
