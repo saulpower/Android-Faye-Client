@@ -9,7 +9,8 @@
         android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true" >
+        android:layout_centerInParent="true"
+    	android:background="@color/white" >
         
 	    <TextView
 	        android:id="@+id/title"
@@ -21,6 +22,13 @@
 	        android:textSize="48sp"
 	        android:textColor="@color/white"
 	        android:text="@string/title_activity_spending" />
+	    
+	    <ImageView 
+	        android:id="@+id/image"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:scaleType="fitCenter"
+	        android:contentDescription="@string/description"/>
 	    
 	    <RelativeLayout 
 	        android:id="@+id/cover"

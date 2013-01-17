@@ -177,7 +177,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
     private Float getDynamicWidth() {
         
         if (mDynamicWidth == null) {
-            mDynamicWidth = UiUtils.convertPixelsToDp(ITEM_WIDTH, getContext());
+            mDynamicWidth = UiUtils.getDynamicPixels(getContext(), ITEM_WIDTH);
         }
         
         return mDynamicWidth;
@@ -302,7 +302,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
                 @Override
                 public void run() {
 
-                    mListener.filterChanged();
+                    mListener.filterChanged(-1);
                 }
             }, 300);
         }
@@ -504,6 +504,6 @@ public class DateRangeView extends View implements AnchorMoveListener {
     }
     
     public interface FilterChangeListener {
-        public void filterChanged();
+        public void filterChanged(int direction);
     }
 }

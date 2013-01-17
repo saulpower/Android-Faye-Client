@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.util.UiUtils;
 
 import java.util.ArrayList;
 
@@ -64,7 +62,7 @@ public class NavBarButtons extends LinearLayout  {
             } else {
                 icon.setText(mButtonTexts[i]);
                 icon.setTextColor(Color.WHITE);
-                Fonts.applyGlyphFont(icon, 30);
+                Fonts.applyGlyphFont(icon, 18);
                 
                 icon.setLayoutParams(new LayoutParams(
                         LayoutParams.WRAP_CONTENT,

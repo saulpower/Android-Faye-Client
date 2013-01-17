@@ -186,13 +186,19 @@ public class DateRangeItem extends Drawable {
         
         boolean leftCheck = left.getPosition().x < centerX;
         boolean rightCheck = right.getPosition().x > centerX;
+        boolean leftCheck1 = left.getPosition().x < getBounds().left;
+        boolean rightCheck1 = right.getPosition().x > getBounds().left;
+        
+        if (leftCheck1 && rightCheck1) {
+            setBorderColor(Color.WHITE);
+        } else {
+            setBorderColor(mDefaultBorderColor);
+        }
         
         if (leftCheck && rightCheck) {
             setMonthColor(Color.WHITE);
-            setBorderColor(Color.WHITE);
         } else {
             setMonthColor(mDefaultColor);
-            setBorderColor(mDefaultBorderColor);
         }
     }
 

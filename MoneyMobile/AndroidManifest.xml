@@ -21,16 +21,18 @@
         android:theme="@style/MoneyDesktopTheme"
         android:hardwareAccelerated="true" >
         
+        <service android:name=".shared.Services.SyncService" />
+        
         <activity android:name="com.crittercism.NotificationActivity" />
         
         <activity
             android:name=".DebugActivity"
             android:screenOrientation="portrait" />
         
-        
         <activity
             android:name=".handset.activity.DashboardHandsetActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
         
         <activity
             android:name=".handset.activity.LockCodeHandsetActivity"
@@ -38,7 +40,8 @@
         
         <activity
             android:name=".handset.activity.LoginHandsetActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
                 
         <activity
             android:name=".SplashActivity"
@@ -71,7 +74,8 @@
         
         <activity
             android:name=".tablet.activity.LoginTabletActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustPan" />
         
         <activity
             android:name="com.moneydesktop.finance.tablet.activity.IntroTabletActivity"

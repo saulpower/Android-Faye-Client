@@ -2,16 +2,15 @@
 package com.moneydesktop.finance.tablet.fragment;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
@@ -19,10 +18,8 @@ import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.VerticalTextView;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 @TargetApi(11)
@@ -35,6 +32,7 @@ public class SummaryTabletFragment extends BaseFragment {
     private RelativeLayout mBackground, mCover;
     private TextView mTitle;
     private VerticalTextView mLeft, mRight;
+    private ImageView mImage;
 
     private String mTitleText;
     private Integer mColor;
@@ -45,7 +43,6 @@ public class SummaryTabletFragment extends BaseFragment {
     
     private GrowPagerAdapter mAdapter;
     private int mCurrentPosition = 0;
-
 
     public String getTitleText() {
         return mTitleText;
@@ -72,7 +69,7 @@ public class SummaryTabletFragment extends BaseFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         
         mRoot = inflater.inflate(R.layout.tablet_dummy_view, null);
-
+        
         setupViews();
         configureView();
 
@@ -94,7 +91,9 @@ public class SummaryTabletFragment extends BaseFragment {
     @Override
     public void onSaveInstanceState(Bundle outState)  {
         
-        outState.putInt("color", mColor);
+        if (mColor != null) {
+            outState.putInt("color", mColor);
+        }
         
         super.onSaveInstanceState(outState);
     }
@@ -135,12 +134,13 @@ public class SummaryTabletFragment extends BaseFragment {
         mRight = (VerticalTextView) mRoot.findViewById(R.id.title_right);
         mBackground = (RelativeLayout) mRoot.findViewById(R.id.root);
         mTitle = (TextView) mRoot.findViewById(R.id.title);
+        mImage = (ImageView) mRoot.findViewById(R.id.image);
     }
     
     private void configureView() {
 
-        Fonts.applyPrimaryBoldFont(mLeft, 15);
-        Fonts.applyPrimaryBoldFont(mRight, 15);
+        Fonts.applyPrimaryBoldFont(mLeft, 12);
+        Fonts.applyPrimaryBoldFont(mRight, 12);
 
         float[] size = UiUtils.getScreenMeasurements(mActivity);
         int width = (int) (size[0] * SCALE_SIZE);
@@ -149,14 +149,25 @@ public class SummaryTabletFragment extends BaseFragment {
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, height);
         mBackground.setLayoutParams(params);
 
-        if (mScale != null)
+        if (mScale != null) {
             transitionFragment(mPercent, mScale);
+        }
 
-        setRandomBackground();
-
-        setTitleText("Fragment " + getPosition());
-
-        mTitle.setText(getTitleText().toUpperCase());
+        switch (getPosition()) {
+            case 0:
+                mImage.setImageResource(R.drawable.accounts);
+                setTitleText("Account Balances");
+                break;
+            case 1:
+                mImage.setImageResource(R.drawable.transactions);
+                setTitleText("Spending By Month");
+                break;
+            default:
+                mTitle.setText(getTitleText().toUpperCase());
+                setRandomBackground();
+                break;
+        }
+        
         mLeft.setText(getTitleText().toUpperCase());
         mRight.setText(getTitleText().toUpperCase());
 

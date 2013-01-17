@@ -1,7 +1,6 @@
 package com.moneydesktop.finance.tablet.fragment;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -27,7 +26,6 @@ import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.PopupWindowAtLocation;
@@ -201,7 +199,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         ImageView bankImage = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_image);  
         final ImageView booklet = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_bankbook);
         
-        BankLogoManager.getBankImage(bankImage, bank.getInstitution().getInstitutionId());
+        BankLogoManager.getBankImage(bankImage, bank.getBankId());
         
         TextView bankName = (TextView)bankTypeAccountView.findViewById(R.id.account_bank_name);
         
@@ -250,25 +248,35 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	
     private void deleteAccount(final View v, final LinearLayout panelView, final Bank bank) {
         Toast.makeText(getActivity(), "REMOVE", Toast.LENGTH_SHORT).show();
-       
-        
-        DialogUtils.alertDialog("Remove" + bank.getBankName() + "?" , "All associated accounts will also be removed", "YES", "NO", getActivity(), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {   
-                DialogUtils.dismissAlert();
-                //set the bank for deletion
-                bank.setDeleted(true);
-                mPopup.fadeOutTransparency();
-                panelView.removeView(v);
-            }
-        }, new DialogInterface.OnClickListener() {
             
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                DialogUtils.dismissAlert();
-                mPopup.fadeOutTransparency();                
-            }
-        });
+//        DialogUtils.alertDialog(String.format(getString(R.string.delete_bank_title), bank.getBankName()), 
+//                getString(R.string.delete_bank_message), 
+//                getString(R.string.label_yes).toUpperCase(), 
+//                getString(R.string.label_no).toUpperCase(), 
+//                getActivity(), 
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {   
+//                        DialogUtils.dismissAlert();
+//                        //set the bank for deletion
+//                        bank.setDeleted(true);
+//                        mPopup.fadeOutTransparency();
+//                        
+//                        //start the sync
+//                        Intent intent = new Intent(getActivity(), SyncService.class);
+//                        getActivity().startService(intent);
+//                        
+//                        //remove bank from view
+//                      //  panelView.removeView(v);
+//                    }
+//        }, new DialogInterface.OnClickListener() {
+//            
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                DialogUtils.dismissAlert();
+//                mPopup.fadeOutTransparency();                
+//            }
+//        });
                 
     }
 

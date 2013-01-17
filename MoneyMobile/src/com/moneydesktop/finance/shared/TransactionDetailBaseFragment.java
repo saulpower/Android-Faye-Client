@@ -163,9 +163,10 @@ public class TransactionDetailBaseFragment extends BaseFragment {
             return;
         }
         
-        if (mTransaction.getBankAccount() != null)
+        if (mTransaction.getBankAccount() != null) {
             BankLogoManager.getBankImage(mBankIcon, mTransaction.getBankAccount().getInstitutionId());
-        
+        }
+            
         mAccountName.setText(mTransaction.getBankAccount().getAccountName());
         mBankName.setText(mTransaction.getBankAccount().getBank().getBankName());
         mCategory.setText(mTransaction.getCategory().getCategoryName());

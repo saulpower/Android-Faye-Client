@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.graphics.Typeface;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -99,12 +98,9 @@ public class Fonts {
 		
 		if (view instanceof TextView) {
 			TextView tv = (TextView) view;
-			float scaleSize = UiUtils.getScaledPixels(ApplicationContext.getContext(), size);
-			DisplayMetrics metrics = ApplicationContext.getContext().getResources().getDisplayMetrics();
-			if(ApplicationContext.isTablet() == false && metrics.densityDpi == DisplayMetrics.DENSITY_XHIGH){
-			    scaleSize = (float) (scaleSize*.75);
-			}
-			tv.setTextSize(scaleSize);
+			float additional = UiUtils.getScreenAdjustment(ApplicationContext.getContext());
+			float adjusted = UiUtils.getScaledPixels(ApplicationContext.getContext(), size) * additional;
+			tv.setTextSize(adjusted);
 			tv.setTypeface(font);
 			return;
 		}

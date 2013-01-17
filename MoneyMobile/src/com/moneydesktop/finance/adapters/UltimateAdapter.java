@@ -11,26 +11,17 @@ import com.moneydesktop.finance.views.UltimateListView;
 public abstract class UltimateAdapter extends BaseExpandableListAdapter implements OnScrollListener {
     
 	public static final String TAG = UltimateAdapter.class.getSimpleName();
-
-	public interface HasMorePagesListener {
-		void noMorePages();
-		void mayHaveMorePages();
-	}
-
-	/**
-	 * The <em>current</em> page, not the page that is going to be loaded.
-	 */
-	private int mPage = 1;
-	private int mInitialPage = 1;
-	private boolean mAutomaticNextPageLoading = false;
-	private HasMorePagesListener mHasMorePagesListener;
+	
+	private boolean mAutomaticSectionLoading = false;
     
 	private boolean[] mVisible;
-	
-	public void setHasMorePagesListener(HasMorePagesListener hasMorePagesListener) {
-		this.mHasMorePagesListener = hasMorePagesListener;
-	}
-	
+    private boolean[] mLoaded;
+    private boolean[] mLoading;
+    
+    protected int mSelectedGroupPosition = -1, mSelectedChildPosition = -1;
+
+    private boolean mInitialized = false;
+
     /**
      * Pinned header state: don't show the header.
      */
@@ -46,7 +37,27 @@ public abstract class UltimateAdapter extends BaseExpandableListAdapter implemen
      * the bottom of the first shown element, push it up and clip.
      */
     public static final int PINNED_HEADER_PUSHED_UP = 2;
+    
+    public int getSelectedGroupPosition() {
+        return mSelectedGroupPosition;
+    }
 
+    public void setSelectedGroupPosition(int mSelectedGroupPosition) {
+        this.mSelectedGroupPosition = mSelectedGroupPosition;
+    }
+
+    public int getSelectedChildPosition() {
+        return mSelectedChildPosition;
+    }
+
+    public void setSelectedChildPosition(int mSelectedChildPosition) {
+        this.mSelectedChildPosition = mSelectedChildPosition;
+    }
+
+    public void setAutomaticSectionLoading(boolean automaticSectionLoading) {
+        mAutomaticSectionLoading = automaticSectionLoading;
+    }
+    
     /**
      * Computes the desired state of the pinned header for the given
      * position of the first visible list item. Allowed return values are
@@ -70,26 +81,15 @@ public abstract class UltimateAdapter extends BaseExpandableListAdapter implemen
     	return PINNED_HEADER_VISIBLE;
     }
     
-    /**
-     * Sets the initial page when {@link #resetPage()} is called.
-     * Default is 1 (for APIs with 1-based page number).
-     */
-    public void setInitialPage(int initialPage) {
-		this.mInitialPage = initialPage;
-	}
-    
-    /**
-     * Resets the current page to the page specified in {@link #setInitialPage(int)}.
-     */
-    public void resetPage() {
-    	this.mPage = this.mInitialPage;
+    protected boolean isSectionLoaded(int section) {
+        
+        initializeLoaded();
+        
+        return mLoaded[section];
     }
     
-    /**
-     * Increases the current page number.
-     */
-    public void nextPage() {
-    	this.mPage++;
+    protected boolean isInitialized() {
+        return mInitialized;
     }
     
 	@Override
@@ -104,12 +104,31 @@ public abstract class UltimateAdapter extends BaseExpandableListAdapter implemen
 		// nop
 	}
 	
+	private void initializeLoaded() {
+	    
+	    if (mLoaded == null) {
+            mLoaded = new boolean[getGroupCount()];
+            mLoading = new boolean[getGroupCount()];
+            
+            for (int i = 0; i < getGroupCount(); i++) {
+                mLoaded[i] = getChildrenCount(i) != 0;
+            }
+            
+            mInitialized = true;
+        }
+	}
+	
+	protected int getLoadedAdjustment(int size, int groupPosition) {
+	    
+	    if (size == 0) {
+            size += (isSectionLoaded(groupPosition) || !isInitialized() ? 0 : 1);
+        }
+	    
+	    return size;
+	}
+	
 	@Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-	    
-	    if (groupPosition == getGroupCount() - 1 && mAutomaticNextPageLoading) {
-            onNextPageRequested(mPage + 1);
-        }
         
         View res = getItemView(groupPosition, childPosition, isLastChild, convertView, parent);
         res.requestLayout();
@@ -120,10 +139,8 @@ public abstract class UltimateAdapter extends BaseExpandableListAdapter implemen
 	@Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 		
-		if (groupPosition == getGroupCount() - 1 && mAutomaticNextPageLoading) {
-			onNextPageRequested(mPage + 1);
-		}
-		
+        initializeLoaded();
+	    
 		View res = getSectionView(groupPosition, isExpanded, convertView, parent);
 		res.requestLayout();
 		
@@ -136,6 +153,13 @@ public abstract class UltimateAdapter extends BaseExpandableListAdapter implemen
 	    if (mVisible == null) {
 	        mVisible = new boolean[getGroupCount()];
 	    }
+	    
+	    initializeLoaded();
+	    
+        if (mAutomaticSectionLoading && !mLoaded[groupPosition] && !mLoading[groupPosition]) {
+            mLoading[groupPosition] = true;
+            onSectionRequested(groupPosition);
+        }
 	    
 	    mVisible[groupPosition] = true;
 	}
@@ -160,25 +184,21 @@ public abstract class UltimateAdapter extends BaseExpandableListAdapter implemen
         
         return result;
     }
-    
-	public void notifyNoMorePages() {
-		mAutomaticNextPageLoading = false;
-		
-		if (mHasMorePagesListener != null) mHasMorePagesListener.noMorePages();
-	}
 	
-	public void notifyMayHaveMorePages() {
-		mAutomaticNextPageLoading = true;
-		if (mHasMorePagesListener != null) mHasMorePagesListener.mayHaveMorePages();
+	protected void sectionLoaded(int section, boolean isLoaded) {
+	    
+	    mLoading[section] = false;
+	    mLoaded[section] = isLoaded;
+	    notifyDataSetChanged();
 	}
 	
 	/**
-	 * The last item on the list is requested to be seen, so do the request 
+	 * The section is requested to be seen, so do the request 
 	 * and call {@link UltimateListView#tellNoMoreData()} if there is no more pages.
 	 * 
-	 * @param page the page number to load.
+	 * @param section the section number to load.
 	 */
-	protected abstract void onNextPageRequested(int page);
+	protected abstract void onSectionRequested(int section);
 	
 	/**
 	 * read: get view too

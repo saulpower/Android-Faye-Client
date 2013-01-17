@@ -18,7 +18,6 @@ import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.tablet.activity.LoginTabletActivity;
 import com.moneydesktop.finance.util.DialogUtils;
-import com.moneydesktop.finance.util.Enums.TabletFragments;
 
 public abstract class DashboardBaseActivity extends BaseActivity {
 
@@ -65,18 +64,12 @@ public abstract class DashboardBaseActivity extends BaseActivity {
             public void onClick(DialogInterface dialog, int which) {
                 
                 switch (which) {
-                    case -2:
+                    case -1:
                         processLogout();
                         break;
                 }
                 
                 DialogUtils.dismissAlert();
-            }
-        }, new OnClickListener() {
-            
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                DialogUtils.dismissAlert();                
             }
         });
 	}

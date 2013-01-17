@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray1" >
+    android:background="@color/white" >
 
     <View
         android:layout_width="10dp"
@@ -189,7 +189,7 @@
         android:layout_marginBottom="50dp"
         android:layout_below="@id/header_row"
         android:layout_toRightOf="@id/white_right"
-        android:divider="@color/gray2"
+        android:divider="@color/gray1"
         android:dividerHeight="1dp"
         android:background="@color/white"
         android:visibility="gone" />

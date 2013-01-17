@@ -53,7 +53,7 @@
 		        android:paddingRight="3dp"
 		        android:gravity="center"
 	            android:text="@string/dollar_sign"
-				android:textColor="@drawable/gray3_to_white"
+				android:textColor="@drawable/gray3_to_white_text"
 				android:textSize="10sp" />
 		    
 		    <View
@@ -99,7 +99,7 @@
 		        android:paddingLeft="8dp"
 		        android:gravity="center_vertical|left"
 	            android:text="@string/default_category"
-				android:textColor="@drawable/gray3_to_white"
+				android:textColor="@drawable/gray3_to_white_text"
 				android:textSize="10sp"
 				android:singleLine="true"
 				android:ellipsize="end" />

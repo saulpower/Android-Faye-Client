@@ -7,27 +7,22 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.data.Constant;
 
 public class UiUtils {
 
     public static int getScreenWidth (Activity activity) {
-           final DisplayMetrics metrics = new DisplayMetrics();
-           activity.getWindow().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+           final DisplayMetrics metrics = getDisplayMetrics(activity);
 
            return metrics.widthPixels;
        }
 
     public static int getScreenHeight (Activity activity) {
-           final DisplayMetrics metrics = new DisplayMetrics();
-           activity.getWindow().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+           final DisplayMetrics metrics = getDisplayMetrics(activity);
 
            return metrics.heightPixels;
        }
@@ -42,9 +37,7 @@ public class UiUtils {
     }
 
     public static float getDensityRatio (final Activity context) {
-        final DisplayMetrics metrics = new DisplayMetrics();
-        final Display display = context.getWindowManager().getDefaultDisplay();
-        display.getMetrics(metrics);
+        final DisplayMetrics metrics = getDisplayMetrics(context);
         return (metrics.densityDpi / Constant.STANDARD_DPI);
     }
     
@@ -65,26 +58,11 @@ public class UiUtils {
      * @param context -- Context to get resources and device specific display metrics
      * @return A float value to represent Pixels equivalent to dp according to device
      */
-    public static float convertDpToPixel(float dp,Context context){
+    public static float convertDpToPixel(float dp, Context context){
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
         float px = dp * (metrics.densityDpi/160f);
         return px;
-    }
-    
-    /**
-     * This method converts device specific pixels to device independent pixels.
-     * 
-     * @param px      -- A value in pixels. Which we need to convert into db
-     * @param context -- Context to get resources and device specific display metrics
-     * @return A float value to represent db equivalent to px value
-     */
-    public static float convertPixelsToDp(float px,Context context){
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        float dp = px / (metrics.densityDpi / 160f);
-        return dp;
-
     }
 
     /**
@@ -96,9 +74,7 @@ public class UiUtils {
 		
 		float[] values = new float[2];
 		
-        final DisplayMetrics metrics = new DisplayMetrics();
-        final WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        windowManager.getDefaultDisplay().getMetrics(metrics);
+        final DisplayMetrics metrics = getDisplayMetrics(context);
         
         values[0] = metrics.widthPixels;
         values[1] = metrics.heightPixels;
@@ -112,6 +88,37 @@ public class UiUtils {
     
     public static float getScaledPixels(Context context, float size) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, size, context.getResources().getDisplayMetrics());
+    }
+    
+    public static DisplayMetrics getDisplayMetrics(Context context) {
+
+        final DisplayMetrics metrics = new DisplayMetrics();
+        final WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getMetrics(metrics);
+        
+        return metrics;
+    }
+    
+    public static float getScreenAdjustment(Context context) {
+        
+        float adjustment = 1.0f;
+        
+        int dpi = getDensity(context);
+        
+        if (dpi >= DisplayMetrics.DENSITY_XHIGH) {
+            adjustment = Constant.XHDPI_SCALE;
+        } else if (ApplicationContext.isLargeTablet()) {
+            adjustment = Constant.LARGE_TABLET_SCALE;
+        }
+        
+        return adjustment;
+    }
+    
+    private static int getDensity(Context context) {
+
+        DisplayMetrics metrics = UiUtils.getDisplayMetrics(context);
+        
+        return metrics.densityDpi;
     }
 
 }

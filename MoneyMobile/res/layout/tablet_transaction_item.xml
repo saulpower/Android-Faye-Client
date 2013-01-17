@@ -14,8 +14,7 @@
 	    <RelativeLayout
 	        android:layout_width="0dp"
 	        android:layout_weight="3"
-	        android:layout_height="match_parent"
-	        android:background="@drawable/primary_to_white" >
+	        android:layout_height="match_parent" >
 	
 		    <com.moneydesktop.finance.views.VerticalTextView
 		        android:id="@+id/text_new"
@@ -25,6 +24,7 @@
 		        android:paddingLeft="8dp"
 		        android:text="@string/text_new"
 		        android:textColor="@drawable/white_to_primary_text"
+        		android:background="@drawable/primary_to_white"
 		        app:isLeft="false" />
 	    
 	    </RelativeLayout>

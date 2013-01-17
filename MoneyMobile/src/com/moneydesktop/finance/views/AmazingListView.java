@@ -302,6 +302,9 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
 	    if (!mEmptyViewAttached && mAdapter.getCount() == 0 && mEmptyFooter != null) {
 	        this.addFooterView(mEmptyFooter);
 	        mEmptyViewAttached = true;
+	    } else if (mEmptyViewAttached && mAdapter.getCount() != 0) {
+            this.removeFooterView(mEmptyFooter);
+            mEmptyViewAttached = false;
 	    }
 	}
 

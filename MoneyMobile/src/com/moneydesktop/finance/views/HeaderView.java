@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.DateRangeView.FilterChangeListener;
 
 @SuppressLint("NewApi")
@@ -60,12 +61,14 @@ public class HeaderView extends TextView {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
-        createCaret();
+        if (mCaret == null) {
+            createCaret();
+        }
     }
     
     public void createCaret() {
         
-        float size = 10.0f;
+        float size = UiUtils.getDynamicPixels(getContext(), 10.0f);
         
         PointF position = new PointF(getWidth() - (size * 1.5f), (getHeight() / 2.0f) - (size / 2.0f));
         
@@ -98,7 +101,7 @@ public class HeaderView extends TextView {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     if (mListener != null) {
-                        mListener.filterChanged();
+                        mListener.filterChanged(mIsAscending ? 1 : 0);
                     }
                 }
                 
@@ -112,7 +115,7 @@ public class HeaderView extends TextView {
             mCaret.setCaretRotation(mIsAscending ? 180 : 0);
             
             if (mListener != null) {
-                mListener.filterChanged();
+                mListener.filterChanged(mIsAscending ? 1 : 0);
             }
         }
     }

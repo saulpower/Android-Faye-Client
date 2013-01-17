@@ -14,21 +14,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
+import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.database.CategoryDao;
+import com.moneydesktop.finance.database.PowerQuery;
+import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.database.TransactionsDao;
+import com.moneydesktop.finance.model.EventMessage.FilterEvent;
 import com.moneydesktop.finance.model.EventMessage.ParentAnimationEvent;
 import com.moneydesktop.finance.tablet.adapter.TransactionsTabletAdapter;
+import com.moneydesktop.finance.tablet.adapter.TransactionsTabletAdapter.OnDataLoadedListener;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.AmazingListView;
 import com.moneydesktop.finance.views.DateRangeView;
@@ -38,26 +46,30 @@ import com.moneydesktop.finance.views.HorizontalScroller;
 
 import de.greenrobot.event.EventBus;
 
-import java.util.List;
-
 @TargetApi(11)
-public class TransactionsPageTabletFragment extends BaseFragment implements OnItemClickListener, FilterChangeListener {
+public class TransactionsPageTabletFragment extends BaseFragment implements OnItemClickListener, FilterChangeListener, OnDataLoadedListener {
     
     public final String TAG = this.getClass().getSimpleName();
 
     private AmazingListView mTransactionsList;
+    private TransactionsTabletAdapter mAdapter;
     private DateRangeView mDateRange;
     private HorizontalScroller mScroller;
     private TransactionsTabletFragment mParent;
     private int[] mLocation = new int[2];
-    private String mOrderBy = Constant.FIELD_DATE, mDirection = Constant.ORDER_DESC;
+    
+    private QueryProperty mOrderBy = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Date);
+    private boolean mDirection = true;
     private String mSearchTitle = "%";
+    private PowerQuery mQueries;
     
     private HeaderView mDate, mPayee, mCategory, mAmount;
     private EditText mSearch;
     
     private boolean mLoaded = false;
     private boolean mWaiting = true;
+    
+    private Animation mFadeIn, mFadeOut;
     
     private AsyncTask<Integer, Void, TransactionsTabletAdapter> mBackgroundTask;
     
@@ -72,9 +84,11 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         @Override
         public void afterTextChanged(Editable s) {
             mSearchTitle = "%" + mSearch.getText().toString().toLowerCase() + "%";
-            getInitialTransactions();
+            setupTransactionsList();
         }
     };
+    
+    TransactionsDao mDao = ApplicationContext.getDaoSession().getTransactionsDao();
     
     public static TransactionsPageTabletFragment newInstance() {
             
@@ -102,8 +116,9 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         mParent = ((TransactionsTabletFragment) getParentFragment());
         
         setupView();
+        setupAnimations();
         
-        getInitialTransactions();
+        setupTransactionsList();
         
         return mRoot;
     }
@@ -148,13 +163,35 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         applyFonts();
     }
     
+    private void setupAnimations() {
+        mFadeIn = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in_now);
+        mFadeOut = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out_now);
+        mFadeOut.setAnimationListener(new AnimationListener() {
+            
+            @Override
+            public void onAnimationStart(Animation animation) {}
+            
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+            
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                
+                mTransactionsList.setVisibility(View.INVISIBLE);
+                mAdapter.applyNewData();
+                mTransactionsList.setVisibility(View.VISIBLE);
+                mTransactionsList.startAnimation(mFadeIn);
+            }
+        });
+    }
+    
     private void setupListeners() {
         
         mDate.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View v) {
-                applySort(mDate, Constant.FIELD_DATE);
+                applySort(mDate, new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Date));
             }
         });
         
@@ -162,7 +199,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
             
             @Override
             public void onClick(View v) {
-                applySort(mPayee, Constant.FIELD_TITLE);
+                applySort(mPayee, new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Title));
             }
         });
         
@@ -170,7 +207,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
             
             @Override
             public void onClick(View v) {
-                applySort(mCategory, Constant.FIELD_CATEGORY);
+                applySort(mCategory, new QueryProperty(CategoryDao.TABLENAME, CategoryDao.Properties.CategoryName));
             }
         });
         
@@ -178,7 +215,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
             
             @Override
             public void onClick(View v) {
-                applySort(mAmount, Constant.FIELD_AMOUNT);
+                applySort(mAmount, new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Amount));
             }
         });
         
@@ -214,7 +251,9 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         Fonts.applyPrimaryBoldFont(mSearch, 14);
     }
     
-    private void applySort(HeaderView clicked, String field) {
+    private void applySort(HeaderView clicked, QueryProperty field) {
+        
+        mOrderBy = field;
         
         final boolean wasShowing = clicked.isShowing();
         
@@ -230,9 +269,6 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         } else {
             clicked.setIsAscending(false, false);
         }
-        
-        mOrderBy = field;
-        mDirection = clicked.isAscending() ? Constant.ORDER_ASC : Constant.ORDER_DESC;
     }
 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -243,7 +279,59 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
 
             mRoot.getLocationOnScreen(mLocation);
             mParent.showTransactionDetails(view, mLocation[1], transaction);
+            
+            transaction.setIsProcessed(true);
+            mDao.update(transaction);
+            mAdapter.notifyDataSetChanged();
         }
+    }
+    
+    private void setupTransactionsList() {
+        
+        mLoaded = false;
+        
+        if (mAdapter == null) {
+            mAdapter = new TransactionsTabletAdapter(mActivity, mTransactionsList);
+            mAdapter.setOnDataLoadedListener(this);
+            mTransactionsList.setAdapter(mAdapter);
+        }
+        
+        mAdapter.setDateRange(mDateRange.getStartDate(), mDateRange.getEndDate());
+        mAdapter.setOrder(mOrderBy, mDirection);
+        mAdapter.setSearch(mSearchTitle);
+        mAdapter.setQueries(mQueries);
+        mAdapter.initializeData();
+    }
+    
+    @Override
+    public void dataLoaded(boolean isRequest) {
+        
+        mLoaded = true;
+
+        if (mTransactionsList.getVisibility() == View.VISIBLE && !isRequest) {
+            mTransactionsList.startAnimation(mFadeOut);
+        } else {
+            configureView();
+        }
+    }
+    
+    public void onEvent(ParentAnimationEvent event) {
+        
+        if (!event.isOutAnimation() && !event.isFinished()) {
+            mWaiting = true;
+        }
+        
+        if (event.isOutAnimation() && event.isFinished()) {
+
+            mWaiting = false;
+            configureView();
+        }
+    }
+    
+    public void onEvent(FilterEvent event) {
+
+        mQueries = event.getQueries();
+        filterChanged(-1);
     }
 
     private void configureView() {
@@ -256,79 +344,11 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
                 @Override
                 public void run() {
 
+                    mAdapter.applyNewData();
                     mTransactionsList.setVisibility(View.VISIBLE);
-                    mTransactionsList.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in_fast));
+                    mTransactionsList.startAnimation(mFadeIn);
                 }
             }, 100);
-        
-        }
-    }
-    
-    private void getInitialTransactions() {
-
-        mBackgroundTask = new AsyncTask<Integer, Void, TransactionsTabletAdapter>() {
-            
-            @Override
-            protected TransactionsTabletAdapter doInBackground(Integer... params) {
-                
-                int page = params[0];
-                
-                List<Transactions> row1 = Transactions.getRows(page, mSearchTitle, mDateRange.getStartDate(), mDateRange.getEndDate(), mOrderBy, mDirection).second;
-                
-                if (isCancelled()) {
-                    return null;
-                }
-                
-                TransactionsTabletAdapter adapter = new TransactionsTabletAdapter(mActivity, mTransactionsList, row1);
-                adapter.setDateRange(mDateRange.getStartDate(), mDateRange.getEndDate());
-                adapter.setOrder(mOrderBy, mDirection);
-                adapter.setSearch(mSearchTitle);
-                
-                return adapter;
-            }
-            
-            @Override
-            protected void onPostExecute(TransactionsTabletAdapter adapter) {
-
-                if (isCancelled()) {
-                    return;
-                }
-                
-                mLoaded = true;
-                setupList(adapter);
-            };
-            
-        }.execute(1);
-    }
-    
-    private void setupList(TransactionsTabletAdapter adapter) {
-
-        mTransactionsList.setAdapter(adapter);
-        
-        adapter.notifyDataSetChanged();
-        
-        if (adapter.getCount() < Constant.QUERY_LIMIT) {
-            adapter.notifyNoMorePages();
-        } else {
-            adapter.notifyMayHaveMorePages();
-        }
-        
-        if (!mWaiting) {
-            configureView();
-        }
-    }
-    
-    public void onEvent(ParentAnimationEvent event) {
-        
-        if (!event.isOutAnimation() && !event.isFinished()) {
-            mWaiting = true;
-        }
-        
-        if (event.isOutAnimation() && event.isFinished()) {
-            
-            mWaiting = false;
-            
-            configureView();
         }
     }
     
@@ -343,8 +363,12 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     }
 
     @Override
-    public void filterChanged() {
-        getInitialTransactions();
-    }
+    public void filterChanged(int direction) {
 
+        if (direction != -1) {
+            mDirection = direction == 0;
+        }
+        
+        setupTransactionsList();
+    }
 }

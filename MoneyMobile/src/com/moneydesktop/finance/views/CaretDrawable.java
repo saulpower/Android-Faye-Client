@@ -11,6 +11,8 @@ import android.graphics.drawable.Drawable;
 
 public class CaretDrawable extends Drawable {
     
+    public final String TAG = this.getClass().getSimpleName();
+    
     private int mColor = Color.BLUE;
     private float mWidth = 10;
     private float mHeight = 10;

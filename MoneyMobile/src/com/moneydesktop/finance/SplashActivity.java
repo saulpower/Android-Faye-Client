@@ -37,7 +37,9 @@ public class SplashActivity extends BaseActivity {
 
         Log.i(TAG, "onCreate");
         
-        if (isTablet(this)) {
+        ApplicationContext.setIsTablet(isTablet(this));
+        
+        if (ApplicationContext.isTablet()) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
 
@@ -61,7 +63,6 @@ public class SplashActivity extends BaseActivity {
 
         Intent i = new Intent(getApplicationContext(), DashboardHandsetActivity.class);
 
-        ApplicationContext.setIsTablet(isTablet(this));
         
         if (User.getCurrentUser() != null) {
 
