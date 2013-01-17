@@ -87,26 +87,24 @@ public class AnchorView extends Drawable {
     }
     
     private void createPath() {
+
+        if (mPath == null) {
+            mPath = new Path();
+            mPath.setFillType(Path.FillType.EVEN_ODD);
+        }
         
         float leftX = mPosition.x - mWidth / 2;
         float rightX = mPosition.x + mWidth / 2;
         float topY = mPosition.y + mHeight / 3.25f;
         float pointY = mPosition.y + mHeight / 5;
         
-        PointF point1 = new PointF(leftX, mPosition.y + mHeight);
-        PointF point2 = new PointF(leftX, topY);
-        PointF point3 = new PointF(mPosition.x, pointY);
-        PointF point4 = new PointF(rightX, topY);
-        PointF point5 = new PointF(rightX, mPosition.y + mHeight);
-        
-        mPath = new Path();
-        mPath.setFillType(Path.FillType.EVEN_ODD);
-        mPath.moveTo(point1.x, point1.y);
-        mPath.lineTo(point2.x, point2.y);
-        mPath.lineTo(point3.x, point3.y);
-        mPath.lineTo(point4.x, point4.y);
-        mPath.lineTo(point5.x, point5.y);
-        mPath.lineTo(point1.x, point1.y);
+        mPath.reset();
+        mPath.moveTo(leftX, (mPosition.y + mHeight));
+        mPath.lineTo(leftX, topY);
+        mPath.lineTo(mPosition.x, pointY);
+        mPath.lineTo(rightX, topY);
+        mPath.lineTo(rightX, (mPosition.y + mHeight));
+        mPath.lineTo(leftX, (mPosition.y + mHeight));
         mPath.close();
     }
     
