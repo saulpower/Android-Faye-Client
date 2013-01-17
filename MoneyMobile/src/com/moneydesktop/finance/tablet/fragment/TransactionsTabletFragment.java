@@ -31,7 +31,11 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
 import com.moneydesktop.finance.animation.FlipXAnimation;
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.database.CategoryDao;
+import com.moneydesktop.finance.database.PowerQuery;
+import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.shared.FilterViewHolder;
 import com.moneydesktop.finance.tablet.adapter.FilterTabletAdapter;
@@ -252,11 +256,12 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
             List<FilterViewHolder> subItems = new ArrayList<FilterViewHolder>();
             
             if (j == 0) {
-                
+
                 for (int i = 0; i < Constant.FOLDER_TITLE.length; i++) {
                     FilterViewHolder holder = new FilterViewHolder();
                     holder.mText = getString(Constant.FOLDER_TITLE[i]);
                     holder.mSubText = getString(Constant.FOLDER_SUBTITLE[i]);
+                    holder.mQuery = Constant.FOLDER_QUERIES[i];
                     subItems.add(holder);
                 }
             }
@@ -269,8 +274,6 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
         mAdapter.setAutomaticSectionLoading(true);
         mFiltersList.setAdapter(mAdapter);
         mFiltersList.setOnChildClickListener(this);
-        mFiltersList.setChoiceMode(ExpandableListView.CHOICE_MODE_SINGLE);
-//        mFiltersList.expandGroup(0);
         mFiltersList.setSelectedChild(0, 0, true);
 	}
 	

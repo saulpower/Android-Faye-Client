@@ -136,6 +136,12 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mSubmitButton = (Button) findViewById(R.id.submit_button);
         mNeedAccount = (TextView) findViewById(R.id.need_account);
         mNagBank = (TextView) findViewById(R.id.nag_bank);
+        
+        applyFonts();
+        addListeners();
+    }
+    
+    private void applyFonts() {
 
         Fonts.applyPrimaryFont(mLoginViewButton, 14);
         Fonts.applyPrimaryFont(mDemoButton, 14);
@@ -154,7 +160,6 @@ public abstract class LoginBaseActivity extends BaseActivity {
         Fonts.applyPrimaryBoldFont(mNeedAccount, 14);
         Fonts.applySecondaryItalicFont(mNagBank, 12);
         Fonts.applyPrimaryBoldFont(mSubmitButton, 12);
-        addListeners();
     }
 
     private void addListeners() {
@@ -407,7 +412,9 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mViewFlipper.setOutAnimation(mOutLeft);
         mViewFlipper.setInAnimation(mInRight);
         mViewFlipper.setDisplayedChild(1);
-
+        
+        mUsername.requestFocus();
+        showKeyboard(mUsername);
     }
 
     private void toSignupView() {
@@ -416,6 +423,8 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mViewFlipper.setInAnimation(mInUp);
         mViewFlipper.setDisplayedChild(2);
 
+        mSignupName.requestFocus();
+        showKeyboard(mSignupName);
     }
 
     private void demoMode() {
@@ -670,6 +679,11 @@ public abstract class LoginBaseActivity extends BaseActivity {
         InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         in.hideSoftInputFromWindow(mViewFlipper.getApplicationWindowToken(),
                 InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+    
+    private void showKeyboard(View view) {
+        InputMethodManager keyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        keyboard.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
     }
 
     @Override

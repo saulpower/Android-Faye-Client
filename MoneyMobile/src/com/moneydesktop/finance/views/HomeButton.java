@@ -11,7 +11,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -531,8 +530,6 @@ public class HomeButton extends View {
 	            final float dx = x - mLastTouchX;
 	            
 	            mDistance += Math.abs(dy);
-	            
-	            Log.i(TAG, "Distance: " + mDistance);
 	            
 	            // Move the object if we are touching the button
 	            updateButtonPosition(dy);

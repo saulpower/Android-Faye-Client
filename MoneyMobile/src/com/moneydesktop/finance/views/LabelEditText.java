@@ -23,6 +23,8 @@ public class LabelEditText extends EditText {
     public final String TAG = this.getClass().getSimpleName();
     
     private final int PADDING_RIGHT = 40;
+    
+    private float mPaddingRight;
     private Paint labelPaint;
     private String text;
     private Rect bounds = new Rect();
@@ -33,6 +35,7 @@ public class LabelEditText extends EditText {
     public LabelEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
         
+        mPaddingRight = UiUtils.getDynamicPixels(getContext(), PADDING_RIGHT);
         init(attrs);
     }
 
@@ -49,7 +52,7 @@ public class LabelEditText extends EditText {
         clearButton = BitmapFactory.decodeResource(res, R.drawable.clear_button);
         mClearButtonPressed = BitmapFactory.decodeResource(res, R.drawable.clear_button_pressed);
         
-        setPadding(getPaddingLeft(), getPaddingTop(), (int) (PADDING_RIGHT * 1.3), getPaddingBottom());
+        setPadding(getPaddingLeft(), getPaddingTop(), (int) (mPaddingRight * 1.3), getPaddingBottom());
         
         a.recycle();
     }
@@ -143,7 +146,7 @@ public class LabelEditText extends EditText {
         c.drawText(text, 10 + getScrollX(), (bounds.height() + 10), labelPaint);
         
         if (!this.getText().toString().equals("") && hasFocus()) {
-            c.drawBitmap(mIsPressed ? mClearButtonPressed : clearButton, this.getWidth() - PADDING_RIGHT + getScrollX(), ((this.getHeight() / 2) - (clearButton.getHeight() / 2)), null);
+            c.drawBitmap(mIsPressed ? mClearButtonPressed : clearButton, this.getWidth() - mPaddingRight + getScrollX(), ((this.getHeight() / 2) - (clearButton.getHeight() / 2)), null);
         }
     }
 

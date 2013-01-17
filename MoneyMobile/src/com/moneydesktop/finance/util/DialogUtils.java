@@ -72,11 +72,11 @@ public class DialogUtils {
     	
     	AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
 		alertBuilder.setMessage(message)
-				.setCancelable(false);	
+				.setCancelable(false)
+                .setPositiveButton(positiveButton, clickListener);
 			
 		if (clickListener != null) {
             alertBuilder.setNegativeButton(negativeButton, clickListener);
-		    alertBuilder.setPositiveButton(positiveButton, clickListener);
 		}
 		
 		sAlert = alertBuilder.create();

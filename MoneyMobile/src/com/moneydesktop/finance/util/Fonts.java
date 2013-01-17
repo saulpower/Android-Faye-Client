@@ -5,7 +5,6 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.data.Constant;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -99,7 +98,7 @@ public class Fonts {
 		
 		if (view instanceof TextView) {
 			TextView tv = (TextView) view;
-			float additional = ApplicationContext.isLargeTablet() ? Constant.LARGE_TABLET_SCALE : 1.0f;
+			float additional = UiUtils.getScreenAdjustment(ApplicationContext.getContext());
 			float adjusted = UiUtils.getScaledPixels(ApplicationContext.getContext(), size) * additional;
 			tv.setTextSize(adjusted);
 			tv.setTypeface(font);

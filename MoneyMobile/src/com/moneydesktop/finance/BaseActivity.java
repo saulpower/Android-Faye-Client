@@ -13,7 +13,6 @@ import android.util.DisplayMetrics;
 import android.util.FloatMath;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -35,6 +34,7 @@ import com.moneydesktop.finance.shared.LockCodeFragment;
 import com.moneydesktop.finance.tablet.activity.LockCodeTabletActivity;
 import com.moneydesktop.finance.util.Enums.LockType;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.util.UiUtils;
 
 import de.greenrobot.event.EventBus;
 
@@ -51,7 +51,9 @@ abstract public class BaseActivity extends FragmentActivity {
     
     public boolean isTablet(Context context) {
 
-        DisplayMetrics metrics = getDisplayMetrics(context);
+        DisplayMetrics metrics = UiUtils.getDisplayMetrics(context);
+        
+        ApplicationContext.setIsLargeTablet(isLargeTablet(context, metrics));
 
         int size = getDeviceDisplaySize(context, metrics) > MINIMUM_TABLET_SCREEN_INCHES
                 ? DEVICE_DISPLAY_SIZE_TABLET
@@ -69,22 +71,11 @@ abstract public class BaseActivity extends FragmentActivity {
         return screenSizeInInches;
     }
     
-    public boolean isLargeTablet(Context context) {
-
-        DisplayMetrics metrics = getDisplayMetrics(context);
+    private boolean isLargeTablet(Context context, DisplayMetrics metrics) {
         
         float size = getDeviceDisplaySize(context, metrics);
         
         return size > MINIMUM_LARGE_TABLET_SCREEN_INCHES;
-    }
-    
-    private DisplayMetrics getDisplayMetrics(Context context) {
-
-        final DisplayMetrics metrics = new DisplayMetrics();
-        final WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        windowManager.getDefaultDisplay().getMetrics(metrics);
-        
-        return metrics;
     }
     
 	protected final long TRANSITION_DURATION = 300;

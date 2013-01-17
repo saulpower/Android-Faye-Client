@@ -9,8 +9,11 @@ import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BudgetItem;
 import com.moneydesktop.finance.database.Category;
+import com.moneydesktop.finance.database.PowerQuery;
+import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.database.Tag;
 import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.util.Enums.DataState;
 
 public class Constant {
@@ -115,6 +118,7 @@ public class Constant {
 	public static final int QUERY_LIMIT = 30;
     public static final float STANDARD_DPI = 160f;
     public static final float LARGE_TABLET_SCALE = 1.43f;
+    public static final float XHDPI_SCALE = 0.75f;
 
 	/*******************************************************************
 	 * QUERIES
@@ -173,6 +177,13 @@ public class Constant {
             R.string.folder_clear
         };
     
+    public static PowerQuery[] FOLDER_QUERIES = new PowerQuery[] {
+            null, 
+            PowerQuery.where(false, new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.IsProcessed), "0"), 
+            PowerQuery.where(false, new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.IsFlagged), "1"), 
+            PowerQuery.where(false, new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.IsCleared), "0")
+        };
+        
     public static int[] FOLDER_SUBTITLE = new int[] {
             R.string.folder_all_sub, 
             R.string.folder_new_sub, 

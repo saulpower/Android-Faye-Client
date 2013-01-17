@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.CategoryDao;
@@ -86,6 +87,8 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
             setupTransactionsList();
         }
     };
+    
+    TransactionsDao mDao = ApplicationContext.getDaoSession().getTransactionsDao();
     
     public static TransactionsPageTabletFragment newInstance() {
             
@@ -276,6 +279,10 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
 
             mRoot.getLocationOnScreen(mLocation);
             mParent.showTransactionDetails(view, mLocation[1], transaction);
+            
+            transaction.setIsProcessed(true);
+            mDao.update(transaction);
+            mAdapter.notifyDataSetChanged();
         }
     }
     

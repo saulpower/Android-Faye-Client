@@ -52,6 +52,7 @@ public class NavWheelView extends View {
     private boolean mShouldHide = false;
 	
 	private double mDegreeChange = 0.0;
+	private int mStartIndex = -1;
 	private int mCurrentIndex = 0;
 	private int mLastIndex = 0;
 	
@@ -378,6 +379,10 @@ public class NavWheelView extends View {
 	            mLastTouchX = ev.getX();
 	        	
 	        	mDistance = new PointF(0.0f, 0.0f);
+	        	
+	        	boolean touching = itemTouchCheck();
+	        	
+	        	mStartIndex = touching ? mCurrentIndex : -2;
 	            
 	            break;
 	        }
@@ -388,7 +393,7 @@ public class NavWheelView extends View {
                 mLastTouchX = ev.getX();
 
                 // Touched to dismiss navigation
-                if (mDistance.x <= 10.0f && mDistance.y <= 10.0f) {
+                if (mStartIndex != -1) {
                     
                     mShouldHide = true;
                     
@@ -419,11 +424,16 @@ public class NavWheelView extends View {
 	            mLastTouchY = y;
 	            mLastTouchX = x;
 	            
+                boolean touching = itemTouchCheck();
+                
+                // Touched outside of our initial item's bounds
+                if ((mCurrentIndex != mStartIndex || !touching) && mStartIndex != -2) {
+                    mStartIndex = -1;
+                }
+	            
 	            break;
 	        }
         }
-        
-        itemTouchCheck();
         
         return true;
     }

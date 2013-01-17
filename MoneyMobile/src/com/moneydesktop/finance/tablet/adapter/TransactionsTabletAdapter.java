@@ -3,7 +3,6 @@ package com.moneydesktop.finance.tablet.adapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
@@ -264,6 +263,9 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 			    value = Math.abs(value);
 			    gravity = Gravity.CENTER_VERTICAL|Gravity.LEFT;
 			}
+			
+			viewHolder.newText.setText(!transactions.getIsProcessed() ? "NEW" : "");
+			viewHolder.newText.setBackgroundResource(!transactions.getIsProcessed() ? R.drawable.primary_to_white : R.drawable.gray1_to_white);
 			
 			viewHolder.amount.setText(mFormatter.format(value));
 			viewHolder.amount.setGravity(gravity);

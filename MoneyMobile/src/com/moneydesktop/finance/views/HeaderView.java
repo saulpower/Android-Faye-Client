@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.DateRangeView.FilterChangeListener;
 
 @SuppressLint("NewApi")
@@ -67,7 +68,7 @@ public class HeaderView extends TextView {
     
     public void createCaret() {
         
-        float size = 10.0f;
+        float size = UiUtils.getDynamicPixels(getContext(), 10.0f);
         
         PointF position = new PointF(getWidth() - (size * 1.5f), (getHeight() / 2.0f) - (size / 2.0f));
         

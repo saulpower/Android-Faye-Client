@@ -177,7 +177,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
     private Float getDynamicWidth() {
         
         if (mDynamicWidth == null) {
-            mDynamicWidth = UiUtils.convertPixelsToDp(ITEM_WIDTH, getContext());
+            mDynamicWidth = UiUtils.getDynamicPixels(getContext(), ITEM_WIDTH);
         }
         
         return mDynamicWidth;
