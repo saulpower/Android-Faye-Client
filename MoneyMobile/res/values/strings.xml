@@ -93,6 +93,8 @@
     <string name="default_header">Header</string>
     <string name="default_price">5.99</string>
     <string name="default_title">Title</string>
+    <string name="delete_bank_message">All associated accounts will also be removed</string>
+    <string name="delete_bank_title">Remove %1$s?</string>
     <string name="description">description</string>
     <string name="demo_message">Creating Demo Data&#8230;</string>
     <string name="dollar_sign">$</string>
@@ -203,7 +205,7 @@
     <string name="title_activity_spending">Spending</string>
     <string name="title_activity_transaction">Transaction</string>
     <string name="title_activity_transactions">Transactions</string>
-     <string name="unlink_title">Unlink?</string>
+    <string name="unlink_title">Unlink?</string>
     <string name="unlink_message">Unlinking will remove this device from your list of approved devices. you can re-link it at any time. Would you like to continue?</string>
 
 </resources>
