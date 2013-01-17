@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="android.graphics.Bitmap"/>
-<fullyQualifiedTypeName name="android.graphics.Bitmap.Config"/>
-<fullyQualifiedTypeName name="android.view.ViewGroup.LayoutParams"/>
-<fullyQualifiedTypeName name="android.widget.FrameLayout.LayoutParams"/>
-<fullyQualifiedTypeName name="android.widget.RelativeLayout.LayoutParams"/>
-<fullyQualifiedTypeName name="android.graphics.Rect"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.R.color"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.util.Enums.TxType"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.util.Enums.TxFilter"/>
@@ -13,8 +7,6 @@
 <fullyQualifiedTypeName name="com.moneydesktop.finance.database.Transactions"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.util.Enums.TabletFragments"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.R.array"/>
-<fullyQualifiedTypeName name="android.widget.Toast"/>
-<fullyQualifiedTypeName name="com.moneydesktop.finance.util.Fonts"/>
 <fullyQualifiedTypeName name="android.graphics.Color"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.R.drawable"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.tablet.fragment.FragmentVisibilityListener"/>
@@ -36,11 +28,9 @@
 <fullyQualifiedTypeName name="android.widget.ListAdapter"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.adapters.TestAdapter"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.adapters.AccountsExpandableListAdapter"/>
-<fullyQualifiedTypeName name="android.content.Context"/>
 <fullyQualifiedTypeName name="android.R.id"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.R.id"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.R"/>
-<fullyQualifiedTypeName name="com.moneydesktop.finance.R.string"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.database.AccountType"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.views.AccountTypeChildView"/>
 <fullyQualifiedTypeName name="android.widget.LinearLayout"/>
@@ -52,12 +42,22 @@
 <fullyQualifiedTypeName name="com.moneydesktop.finance.data.DataController"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.database.BankAccount"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment"/>
-<fullyQualifiedTypeName name="com.moneydesktop.finance.data.SyncEngine"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.database.BusinessObject"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.database.AccountTypeDao"/>
 <fullyQualifiedTypeName name="android.view.View.OnClickListener"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.views.PopupWindowAtLocation"/>
-<fullyQualifiedTypeName name="android.content.DialogInterface"/>
 <fullyQualifiedTypeName name="android.content.DialogInterface.OnClickListener"/>
+<fullyQualifiedTypeName name="android.app.IntentService"/>
+<fullyQualifiedTypeName name="android.widget.Toast"/>
+<fullyQualifiedTypeName name="com.moneydesktop.finance.R.string"/>
+<fullyQualifiedTypeName name="com.moneydesktop.finance.util.Fonts"/>
+<fullyQualifiedTypeName name="com.moneydesktop.finance.data.DataBridge"/>
+<fullyQualifiedTypeName name="com.moneydesktop.finance.data.SyncEngine"/>
+<fullyQualifiedTypeName name="android.app.Service"/>
+<fullyQualifiedTypeName name="android.content.Intent"/>
+<fullyQualifiedTypeName name="com.moneydesktop.finance.shared.Services.SyncService"/>
+<fullyQualifiedTypeName name="android.content.DialogInterface"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.util.DialogUtils"/>
+<fullyQualifiedTypeName name="android.content.Context"/>
+<fullyQualifiedTypeName name="com.moneydesktop.finance.model.EventMessage.SyncEvent"/>
 </qualifiedTypeNameHistroy>

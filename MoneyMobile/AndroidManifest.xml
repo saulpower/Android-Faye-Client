@@ -21,6 +21,8 @@
         android:theme="@style/MoneyDesktopTheme"
         android:hardwareAccelerated="true" >
         
+        <service android:name=".shared.Services.SyncService" />
+        
         <activity android:name="com.crittercism.NotificationActivity" />
         
         <activity

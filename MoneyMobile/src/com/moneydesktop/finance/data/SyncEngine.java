@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
@@ -27,6 +28,7 @@ import com.moneydesktop.finance.database.Institution;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.util.Comparators;
+import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.Enums.DataState;
 
 import de.greenrobot.event.EventBus;
