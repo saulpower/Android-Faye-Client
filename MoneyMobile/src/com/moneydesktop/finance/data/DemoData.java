@@ -39,7 +39,6 @@ public class DemoData {
 							 PARENT_ID			 = 1,
 							 NAME				 = 2,
 							 CATEGORY_TYPE		 = 3,
-							 IMAGE_NUMBER		 = 4,
 							 BUDGET_AMOUNT		 = 5;
 	
 	// Bank indexes
@@ -136,9 +135,10 @@ public class DemoData {
 		category.setCategoryName(row[NAME]);
 		
 		CategoryType type = (CategoryType) BusinessObject.getObject(CategoryType.class, row[CATEGORY_TYPE]);
-		if (type != null)
+		if (type != null) {
 			category.setCategoryTypeId(type.getId());
-
+		}
+		
         String imageName = Category.getIconForId(category);
 		category.setImageName(imageName);
 		category.setIsSystem(true);

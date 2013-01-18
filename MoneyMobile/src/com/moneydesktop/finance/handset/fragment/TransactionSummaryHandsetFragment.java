@@ -62,7 +62,6 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
 
     private void setupView(List<Transactions> transList, List<Category> catList, View v) {
         TextView mainLabel = (TextView) v.findViewById(R.id.label_transactions_view);
-        HashMap transInfo = parseTransactions(transList);
         Fonts.applySecondaryItalicFont(mainLabel, 12);
 
         TextView incomeBalanceIcon = (TextView) v.findViewById(R.id.income_balance_icon);
@@ -112,7 +111,6 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
 
     private void setupBarGraphView(View v) {
         HashMap<Date, Double> data = Transactions.get30DayExpenseTotals();
-        int widthscale = data.size();
         double heightscale = Collections.max(data.values());
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
@@ -135,34 +133,6 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
             }
             cal.add(Calendar.DAY_OF_YEAR, 1);
         }
-    }
-
-    private HashMap<String, Object> parseTransactions(List<Transactions> l) {
-        HashMap<String, Object> t = new HashMap<String, Object>();
-        t.put("uncat_transactions", Integer.valueOf(0));
-        t.put("new_transactions", Integer.valueOf(0));
-        t.put("income", Double.valueOf(0));
-        t.put("expenses", Double.valueOf(0));
-        List<Category> catList = new ArrayList<Category>();
-        for (int i = 0; i < l.size(); i++) {
-            catList.add(l.get(i).getCategory());
-        }
-        for (int i = 0; i < l.size(); i++) {
-            if (l.get(i).isIncome()) {
-                t.put("income", (Double) t.get("income") + l.get(i).getAmount());
-            }
-            else {
-                t.put("expenses", (Double) t.get("expenses") + l.get(i).getAmount());
-            }
-            if (l.get(i).isNew()) {
-                t.put("new_transactions", (Integer) t.get("cash_accounts") + 1);
-            }
-        }
-        HashMap<String, Object> c = new HashMap<String, Object>();
-        for (int i = 0; i < l.size(); i++) {
-
-        }
-        return t;
     }
 
     @Override
