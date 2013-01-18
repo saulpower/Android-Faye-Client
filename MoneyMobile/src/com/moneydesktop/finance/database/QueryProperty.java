@@ -6,9 +6,16 @@ public class QueryProperty {
 
     private String mTablename;
     private Property mField;
+    private Property mForeignKey;
     private String mComparator;
     private String mConnector;
     private boolean mGroup = false;
+    
+    public QueryProperty(String tablename, Property field, Property foreignKey) {
+        mTablename = tablename;
+        mField = field;
+        mForeignKey = foreignKey;
+    }
     
     public QueryProperty(String tablename, Property field) {
         mTablename = tablename;
@@ -33,6 +40,14 @@ public class QueryProperty {
     
     public String getColumnName() {
         return mField.columnName;
+    }
+    
+    public void setForeignKey(Property foreignKey) {
+        mForeignKey = foreignKey;
+    }
+    
+    public String getForeignKey() {
+        return mForeignKey.columnName;
     }
 
     public String getComparator() {

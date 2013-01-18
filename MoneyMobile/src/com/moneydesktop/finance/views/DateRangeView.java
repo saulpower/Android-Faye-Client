@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -32,8 +31,11 @@ public class DateRangeView extends View implements AnchorMoveListener {
     public final String TAG = this.getClass().getSimpleName();
 
     private final float ITEM_WIDTH = 100.0f;
+    private final float THRESHOLD = 20.0f;
     
+    private Float mDynamicThreshold;
     private Float mDynamicWidth;
+    
     private List<DateRangeItem> mDates;
     
     private Paint mTopBorderPaint;
@@ -47,7 +49,9 @@ public class DateRangeView extends View implements AnchorMoveListener {
     private PointF mDistance;
     private boolean mTouchingAnchorLeft = false;
     private boolean mTouchingAnchorRight = false;
+    private boolean mTouchingSelection = false;
     private boolean mAnchorsMoved = false;
+    private PointF mAnchorDistance;
     private DateRangeItem mTapped;
     
     private DateRangeItem mCurrentItem;
@@ -72,7 +76,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
     @TargetApi(11)
 	public DateRangeView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
+        
         initStartEndDates();
         initPaints();
     }
@@ -183,6 +187,15 @@ public class DateRangeView extends View implements AnchorMoveListener {
         return mDynamicWidth;
     }
     
+    private Float getDynamicThreshold() {
+        
+        if (mDynamicThreshold == null) {
+            mDynamicThreshold = UiUtils.getDynamicPixels(getContext(), THRESHOLD);
+        }
+        
+        return mDynamicThreshold;
+    }
+    
     private void moveScroller() {
 
         DateRangeItem item = getItem(new Date());
@@ -194,13 +207,10 @@ public class DateRangeView extends View implements AnchorMoveListener {
     
     private void initAnchors() {
         
-        PointF left = new PointF(mCurrentItem.getBounds().left, 0);
-        PointF right = new PointF(mCurrentItem.getBounds().right, 0);
-        
-        mLeft = new AnchorView(getContext(), left, getHeight(), true);
+        mLeft = new AnchorView(getContext(), mCurrentItem.getBounds().left, getHeight(), true);
         mLeft.setCallback(this);
         mLeft.setAnchorMoveListener(this);
-        mRight = new AnchorView(getContext(), right, getHeight(), false);
+        mRight = new AnchorView(getContext(), mCurrentItem.getBounds().right, getHeight(), false);
         mRight.setCallback(this);
         mRight.setAnchorMoveListener(this);
         
@@ -222,14 +232,14 @@ public class DateRangeView extends View implements AnchorMoveListener {
         return null;
     }
  
-    public DateRangeItem getItem(PointF point) {
+    public DateRangeItem getItem(float positionX) {
         
         if (mDates == null) {
             return null;
         }
         
         for (DateRangeItem item : mDates) {
-            if (item.getBounds().contains((int) point.x, (int)point.y) || item.getBounds().left == point.x || item.getBounds().right == point.x) {
+            if (item.getBounds().contains((int) positionX, 0) || item.getBounds().left == positionX || item.getBounds().right == positionX) {
                 return item;
             }
         }
@@ -243,14 +253,13 @@ public class DateRangeView extends View implements AnchorMoveListener {
     
     private boolean isTouchingAnchor() {
         
-        Point touch = new Point((int) mLastTouchX, (int) mLastTouchY);
+        mTouchingAnchorLeft = mLeft.getBounds().contains((int) mLastTouchX, (int) mLastTouchY);
+        mTouchingAnchorRight = mRight.getBounds().contains((int) mLastTouchX, (int) mLastTouchY);
         
-        mTouchingAnchorLeft = mLeft.getBounds().contains(touch.x, touch.y);
-        mTouchingAnchorRight = mRight.getBounds().contains(touch.x, touch.y);
-        
-        if (mHighlightBounds.contains(touch.x, touch.y) && !mTouchingAnchorLeft && !mTouchingAnchorRight) {
+        if (mHighlightBounds.contains((int) mLastTouchX, (int) mLastTouchY) && !mTouchingAnchorLeft && !mTouchingAnchorRight) {
             mTouchingAnchorLeft = true;
             mTouchingAnchorRight = true;
+            mAnchorDistance = new PointF(mLastTouchX - mLeft.getPosition(), mRight.getPosition() - mLastTouchX);
         }
         
         return mTouchingAnchorLeft || mTouchingAnchorRight;
@@ -258,9 +267,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
     
     private DateRangeItem isTouchingItem() {
         
-        PointF touch = new PointF(mLastTouchX, mLastTouchY);
-        
-        DateRangeItem item = getItem(touch);
+        DateRangeItem item = getItem(mLastTouchX);
         
         return item;
     }
@@ -272,8 +279,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
         DateRangeItem itemLeft = getItem(mLeft.getPosition());
         if (itemLeft != null) {
             useLeft = closerToLeft(itemLeft.getBounds(), mLeft.getPosition());
-            PointF left = new PointF(useLeft ? itemLeft.getBounds().left : itemLeft.getBounds().right, 0);
-            mLeft.animateToPosition(left);
+            mLeft.animateToPosition(useLeft ? itemLeft.getBounds().left : itemLeft.getBounds().right);
             
             // Make adjustment to the right date to set our start date
             if (!useLeft) {
@@ -285,8 +291,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
         DateRangeItem itemRight = getItem(mRight.getPosition());
         if (itemRight != null) {
             useLeft = closerToLeft(itemRight.getBounds(), mRight.getPosition());
-            PointF right = new PointF(useLeft ? itemRight.getBounds().left : itemRight.getBounds().right, 0);
-            mRight.animateToPosition(right);
+            mRight.animateToPosition(useLeft ? itemRight.getBounds().left : itemRight.getBounds().right);
 
             // Make adjustment to the right date to set our end date
             if (useLeft) {
@@ -308,44 +313,49 @@ public class DateRangeView extends View implements AnchorMoveListener {
         }
     }
     
-    private boolean closerToLeft(Rect bounds, PointF point) {
+    private boolean closerToLeft(Rect bounds, float positionX) {
         
-        float difLeft = bounds.left - point.x;
-        float difRight = bounds.right - point.x;
+        float difLeft = bounds.left - positionX;
+        float difRight = bounds.right - positionX;
         
         return (Math.abs(difLeft) < Math.abs(difRight));
     }
     
     private void moveAnchors() {
-
+        
         // Facilitate moving both anchors at once
-        PointF positionLeft = new PointF(mLastTouchX, 0);
-        PointF positionRight = positionLeft;
+        float positionLeft = mLastTouchX;
+        float positionRight = mLastTouchX;
         
         if (mTouchingAnchorLeft && !mTouchingAnchorRight) {
             positionRight = mRight.getPosition();
-        } else if (!mTouchingAnchorLeft && mTouchingAnchorRight) {
+        }
+        
+        if (!mTouchingAnchorLeft && mTouchingAnchorRight) {
             positionLeft = mLeft.getPosition();
-        } else {
-            positionLeft = new PointF(mLeft.getPosition().x + mDistance.x, 0);
-            positionRight = new PointF(mRight.getPosition().x + mDistance.x, 0);
+        }
+        
+        // If we are moving both anchors set the positions
+        if (mTouchingAnchorLeft && mTouchingAnchorRight) {
+            positionLeft = (mLastTouchX - mAnchorDistance.x);
+            positionRight = (mLastTouchX + mAnchorDistance.y);
         }
         
         // Calculate left adjustments if necessary
         if (mTouchingAnchorLeft) {
-            if (positionLeft.x < mDates.get(0).getBounds().left) {
-                positionLeft = new PointF(mDates.get(0).getBounds().left, 0);
-            } else if (positionLeft.x > (positionRight.x - mDynamicWidth)) {
-                positionLeft = new PointF(positionRight.x - mDynamicWidth, 0);
+            if (positionLeft < mDates.get(0).getBounds().left) {
+                positionLeft = mDates.get(0).getBounds().left;
+            } else if (positionLeft > (positionRight - mDynamicWidth)) {
+                positionLeft = (positionRight - mDynamicWidth);
             }
         }
         
         // Calculate right adjustment if necessary
         if (mTouchingAnchorRight) {
-            if (positionRight.x > mDates.get(mDates.size() - 1).getBounds().right) {
-                positionRight = new PointF(mDates.get(mDates.size() - 1).getBounds().right, 0);
-            } else if (positionRight.x < (positionLeft.x + mDynamicWidth)) {
-                positionRight = new PointF(positionLeft.x + mDynamicWidth, 0);
+            if (positionRight > mDates.get(mDates.size() - 1).getBounds().right) {
+                positionRight = mDates.get(mDates.size() - 1).getBounds().right;
+            } else if (positionRight < (positionLeft + mDynamicWidth)) {
+                positionRight = (positionLeft + mDynamicWidth);
             }
         }
         
@@ -361,12 +371,9 @@ public class DateRangeView extends View implements AnchorMoveListener {
     }
     
     private void moveAnchorsTo(DateRangeItem item) {
-
-        PointF left = new PointF(item.getBounds().left, 0);
-        PointF right = new PointF(item.getBounds().right, 0);
         
-        mLeft.animateToPosition(left);
-        mRight.animateToPosition(right);
+        mLeft.animateToPosition(item.getBounds().left);
+        mRight.animateToPosition(item.getBounds().right);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             
@@ -449,7 +456,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
                 mLastTouchY = y;
                 mLastTouchX = x;
                 
-                if ((mTouchingAnchorLeft || mTouchingAnchorRight) && Math.abs(mDistance.x) < 20.0f) {
+                if ((mTouchingAnchorLeft || mTouchingAnchorRight || mTouchingSelection) && Math.abs(mDistance.x) < getDynamicThreshold()) {
 
                     mAnchorsMoved = true;
                     moveAnchors();
@@ -493,11 +500,11 @@ public class DateRangeView extends View implements AnchorMoveListener {
     public void anchorDidMove() {
         
         if (mHighlightBounds == null) {
-            mHighlightBounds = new RectF(mLeft.getPosition().x, getHeight() * 2 / 5, mRight.getPosition().x, getHeight());
+            mHighlightBounds = new RectF(mLeft.getPosition(), getHeight() * 2 / 5, mRight.getPosition(), getHeight());
         }
         
-        mHighlightBounds.left = mLeft.getPosition().x;
-        mHighlightBounds.right = mRight.getPosition().x;
+        mHighlightBounds.left = mLeft.getPosition();
+        mHighlightBounds.right = mRight.getPosition();
         
         eventBus.post(new EventMessage().new AnchorChangeEvent(mLeft, mRight));
     }

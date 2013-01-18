@@ -1,7 +1,6 @@
 package com.moneydesktop.finance.database;
 
 import java.util.List;
-
 import com.moneydesktop.finance.database.DaoSession;
 import de.greenrobot.dao.DaoException;
 
@@ -459,7 +458,6 @@ public class Bank extends BusinessObject  {
     	
     	return json;
     }
-    
     // KEEP METHODS END
 
 }

@@ -20,6 +20,9 @@ import com.moneydesktop.finance.database.Category;
 import com.moneydesktop.finance.database.CategoryDao;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.database.QueryProperty;
+import com.moneydesktop.finance.database.Tag;
+import com.moneydesktop.finance.database.TagDao;
+import com.moneydesktop.finance.database.TagInstanceDao;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.shared.FilterViewHolder;
@@ -345,6 +348,29 @@ public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpan
                     
                     FilterViewHolder temp = new FilterViewHolder();
                     temp.mText = cat.getCategoryName().toUpperCase();
+                    temp.mQuery = query;
+                    
+                    sectionData.add(temp);
+                }
+                
+                Collections.sort(sectionData, new FilterComparator());
+                
+                mData.set(section, new Pair<String, List<FilterViewHolder>>(sectionTitle, sectionData));
+                
+                break;
+            }
+            
+            case 3: {
+                
+                TagDao tagDao = ApplicationContext.getDaoSession().getTagDao();
+                List<Tag> tags = tagDao.loadAll();
+                
+                for (Tag tag : tags) {
+
+                    PowerQuery query = PowerQuery.where(false, new QueryProperty(TagInstanceDao.TABLENAME, TagInstanceDao.Properties.TagId), Long.toString(tag.getId()));
+                    
+                    FilterViewHolder temp = new FilterViewHolder();
+                    temp.mText = tag.getTagName().toUpperCase();
                     temp.mQuery = query;
                     
                     sectionData.add(temp);
