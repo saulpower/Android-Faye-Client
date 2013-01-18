@@ -102,7 +102,7 @@ public class DemoData {
 				// processChildrenCategories method.
 				if (category[PARENT_ID].length() <= 2) {
 					
-					Category cat = createCategory(category);
+					Category cat = createCategory(category, null);
 					
 					if (index.containsKey(cat.getCategoryId())) {
 						processChildrenCategories(cat, index.get(cat.getCategoryId()));
@@ -118,26 +118,29 @@ public class DemoData {
 		
 		for (String[] child : children) {
 			
-			Category category = createCategory(child);
+			Category category = createCategory(child, parent);
 			category.setIgnoreWillSave(true);
-			category.setParent(parent);
 			
 			category.acceptChanges();
 		}
 	}
 	
-	private static Category createCategory(String[] row) {
+	private static Category createCategory(String[] row, Category parent) {
 		
 		String guid = row[CATEGORY_ID];
 		
 		Category category = new Category(Long.valueOf(guid.hashCode()));
+		if (parent != null) {
+		    category.setParent(parent);
+		}
 		category.setCategoryId(guid);
 		category.setCategoryName(row[NAME]);
 		
 		CategoryType type = (CategoryType) BusinessObject.getObject(CategoryType.class, row[CATEGORY_TYPE]);
-		if (type != null)
+		if (type != null) {
 			category.setCategoryTypeId(type.getId());
-
+		}
+		
         String imageName = Category.getIconForId(category);
 		category.setImageName(imageName);
 		category.setIsSystem(true);

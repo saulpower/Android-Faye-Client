@@ -20,8 +20,8 @@ public class PowerQuery {
     private String mConnector = "WHERE ";
     private QueryProperty mOrder;
     private boolean mIsDescending = false;
-    private String mOffset = "";
-    private String mLimit = "";
+    private String mOffset;
+    private String mLimit;
     
     private boolean mWhereAdded = false;
     private boolean mConnectorCheck = false;
@@ -188,10 +188,10 @@ public class PowerQuery {
     private String buildQuery() {
         
         StringBuilder builder = new StringBuilder();
-        
+
         for (QueryProperty prop : mJoins) {
             String tableRef = addTable(prop.getTablename());
-            builder.append(" JOIN " + prop.getTablename() + " " + tableRef + " ON T." + prop.getColumnName() + " = " + tableRef + "._ID");
+            builder.append(" LEFT JOIN " + prop.getTablename() + " " + tableRef + " ON T." + prop.getColumnName() + " = " + tableRef + "." + prop.getForeignKey());
         }
         
         builder.append(" WHERE");
@@ -218,9 +218,18 @@ public class PowerQuery {
             builder.append((isEnd ? grouper : "") + field.getConnector(i) + " " + (isEnd ? "" : grouper) + getTableRef(field.getTablename()) + "." + field.getColumnName() + " " + field.getComparator());
         }
         
-        builder.append(" ORDER BY " + getTableRef(mOrder.getTablename()) + "." + mOrder.getColumnName() + (mIsDescending ? " DESC" : ""));
-        builder.append(mLimit);
-        builder.append(mOffset);
+        builder.append(" GROUP BY T._ID");
+        
+        if (mOrder != null) {
+            builder.append(" ORDER BY " + getTableRef(mOrder.getTablename()) + "." + mOrder.getColumnName() + (mIsDescending ? " DESC" : ""));
+        }
+        
+        if (mLimit != null) {
+            builder.append(mLimit);
+        }
+        if (mOffset != null) {
+            builder.append(mOffset);
+        }
         
         return builder.toString();
     }

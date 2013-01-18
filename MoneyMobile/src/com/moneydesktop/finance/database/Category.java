@@ -417,9 +417,11 @@ public class Category extends BusinessObject  {
     
     public static String getIconForId(Category category) {
 
-        while (category.getParent() != null) {
-            category = category.getParent();
-        }
+        try {
+            while (category.getParent() != null) {
+                category = category.getParent();
+            }
+        } catch (DaoException ex) {}
         
         String categoryId = category.getCategoryId();
         
@@ -556,7 +558,6 @@ public class Category extends BusinessObject  {
         
         return ret;
     }
-    
     // KEEP METHODS END
 
 }
