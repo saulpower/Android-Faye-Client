@@ -19,16 +19,18 @@ import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.BarView;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 
 public class TransactionSummaryHandsetFragment extends BaseFragment {
-
+    private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();
     private static TransactionSummaryHandsetFragment sFragment;
 
     public static TransactionSummaryHandsetFragment getInstance(int position) {
@@ -94,15 +96,16 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
 
         TextView uncategorizedTransactionIcon = (TextView) v
                 .findViewById(R.id.uncategorized_transaction_icon);
-        Fonts.applyPrimarySemiBoldFont(uncategorizedTransactionIcon, 44);
+        Fonts.applyPrimarySemiBoldFont(uncategorizedTransactionIcon, 38);
 
         TextView uncategorizedTransactionText = (TextView) v
                 .findViewById(R.id.uncategorized_transaction_text);
         Fonts.applyPrimaryFont(uncategorizedTransactionText, 12);
         setupBarGraphView(v);
 
-        incomeBalance.setText("$" + Transactions.getIncomeTotal().toString());
-        expenseBalance.setText("$" + Transactions.getExpensesTotal().toString());
+        
+        incomeBalance.setText(mFormatter.format(Math.abs(Transactions.getIncomeTotal())));
+        expenseBalance.setText(mFormatter.format(Math.abs(Transactions.getExpensesTotal())));
         newTransactionsNumber.setText(Integer.toString(Transactions.getProcessedTransactions()));
         uncategorizedTransactionText.setText("You have "
                 + Transactions.getUncategorizedTransactions() + " uncategorized transactions.");
@@ -110,8 +113,14 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
     }
 
     private void setupBarGraphView(View v) {
-        HashMap<Date, Double> data = Transactions.get30DayExpenseTotals();
-        double heightscale = Collections.max(data.values());
+        List<Double[]> data = Transactions.get30DayExpenseTotals();
+        double max = 0;
+        for(int i = 0; i < data.size(); i++){
+            if(data.get(i)[1] > max){
+                max = data.get(i)[1];
+            }
+        }
+        
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -122,18 +131,18 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         cal.set(Calendar.MILLISECOND, 0);
         cal.add(Calendar.DAY_OF_YEAR, -30);
         LinearLayout l = (LinearLayout) v.findViewById(R.id.daily_spending_graph);
-        for (int i = 0; i < 30; i++) {
-            if (data.get(cal.getTime()) != null) {
-                BarView b = new BarView(getActivity(), Integer.toString(cal
-                        .get(Calendar.DAY_OF_MONTH)),
-                        data.get(cal.getTime()), heightscale);
-                LayoutParams layout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 1);
-                b.setLayoutParams(layout);
-                l.addView(b);
+        
+        for(int c = 0; c < data.size(); c++){
+                if( data.get(c)[1] > 0){
+                    BarView b = new BarView(getActivity(), Integer.toString(data.get(c)[0].intValue()),
+                            data.get(c)[1], max);
+                    LayoutParams layout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 1);
+                    b.setLayoutParams(layout);
+                    l.addView(b);
+                }
             }
             cal.add(Calendar.DAY_OF_YEAR, 1);
         }
-    }
 
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {

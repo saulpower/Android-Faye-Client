@@ -30,7 +30,7 @@
                <com.moneydesktop.finance.views.LineView
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        app:lineColor="@color/gray3"
+		        app:lineColor="@color/gray2"
 			    app:lineStrokeWidth="3"
 			    app:isVertical="false"/> 
                <LinearLayout 
@@ -72,7 +72,7 @@
                <com.moneydesktop.finance.views.LineView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:lineColor="@color/gray3"
+                    app:lineColor="@color/gray2"
                     app:lineStrokeWidth="3"
                     app:isVertical="false"
                     app:isDashed="true"
@@ -113,7 +113,7 @@
                <com.moneydesktop.finance.views.LineView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:lineColor="@color/gray3"
+                    app:lineColor="@color/gray2"
                     app:lineStrokeWidth="3"
                     app:isVertical="false"
                     app:isDashed="true" 
@@ -142,7 +142,7 @@
                <com.moneydesktop.finance.views.LineView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:lineColor="@color/gray3"
+                    app:lineColor="@color/gray2"
                     app:lineStrokeWidth="3"
                     app:isVertical="false"
                     app:isDashed="true"
@@ -175,7 +175,7 @@
                <com.moneydesktop.finance.views.LineView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    app:lineColor="@color/gray3"
+                    app:lineColor="@color/gray2"
                     app:lineStrokeWidth="3"
                     app:isVertical="true"
                     app:isDashed="true"
@@ -193,7 +193,8 @@
                            android:layout_width="match_parent"
                            android:layout_height="wrap_content"
                            android:text="@string/label_top_category"
-                           android:textColor="@color/gray4"/>
+                           android:textColor="@color/gray4"
+                           android:layout_marginBottom="10dp"/>
                        <TextView
                            android:id="@+id/top_category_icon"
                            android:layout_width="match_parent"
@@ -204,7 +205,7 @@
                <com.moneydesktop.finance.views.LineView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:lineColor="@color/gray3"
+                    app:lineColor="@color/gray2"
                     app:lineStrokeWidth="3"
                     app:isVertical="false"
                     app:isDashed="true"
