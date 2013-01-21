@@ -2,6 +2,7 @@
 package com.moneydesktop.finance.handset.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,7 +102,6 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         Fonts.applyPrimaryFont(uncategorizedTransactionText, 12);
         setupBarGraphView(v);
 
-        
         incomeBalance.setText(mFormatter.format(Math.abs(Transactions.getIncomeTotal())));
         expenseBalance.setText(mFormatter.format(Math.abs(Transactions.getExpensesTotal())));
         newTransactionsNumber.setText(Integer.toString(Transactions.getProcessedTransactions()));
