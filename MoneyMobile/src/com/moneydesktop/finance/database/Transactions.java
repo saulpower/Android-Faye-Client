@@ -770,7 +770,7 @@ public class Transactions extends BusinessObject  {
         return "S";
     }
 
-    public static HashMap<Date, Double> get30DayExpenseTotals() {
+    public static List<Double[]> get30DayExpenseTotals() {
         CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
         Set<Long> catIDs = new HashSet<Long>();
         List<Category> cats = cat.loadAll();
@@ -798,17 +798,12 @@ public class Transactions extends BusinessObject  {
                 Long.toString(start.getTime()), Long.toString(now.getTime())
         });
         cursor.moveToFirst();
-        HashMap<Date, Double> retVal = new HashMap<Date, Double>();
+        List<Double[]> retVal = new ArrayList<Double[]>();
         while (cursor.isAfterLast() == false) {
-            Calendar c = Calendar.getInstance();
-            c.setTimeInMillis(cursor.getLong(0));
-            c.setTimeZone(TimeZone.getTimeZone("UTC"));
-            c.set(Calendar.HOUR_OF_DAY,0);
-            c.set(Calendar.HOUR, 0);
-            c.set(Calendar.MINUTE, 0);
-            c.set(Calendar.SECOND, 0);
-            c.set(Calendar.MILLISECOND, 0);
-            retVal.put(new Date(c.getTimeInMillis()), cursor.getDouble(1));
+            Double[] d = new Double[2];
+            d[0] = (double) cursor.getInt(0);
+            d[1] = cursor.getDouble(1);
+            retVal.add(d);
             cursor.moveToNext();
         }
         return retVal;
