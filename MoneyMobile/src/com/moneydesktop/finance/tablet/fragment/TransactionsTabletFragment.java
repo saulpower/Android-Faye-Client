@@ -7,6 +7,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
@@ -15,9 +16,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -31,16 +32,11 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
 import com.moneydesktop.finance.animation.FlipXAnimation;
 import com.moneydesktop.finance.data.Constant;
-import com.moneydesktop.finance.database.CategoryDao;
-import com.moneydesktop.finance.database.PowerQuery;
-import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.database.Transactions;
-import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.shared.FilterViewHolder;
 import com.moneydesktop.finance.tablet.adapter.FilterTabletAdapter;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment.onBackPressedListener;
-import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.UltimateListView;
 
 import de.greenrobot.event.EventBus;
@@ -53,7 +49,7 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
 	
 	public final String TAG = this.getClass().getSimpleName();
 	
-	private static final int MOVE_DURATION = 300;
+	private static final int MOVE_DURATION = 400;
 	
 	private RelativeLayout mContainer;
 	private FrameLayout mDetail;
@@ -103,7 +99,7 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
         @Override
         public void onAnimationEnd(Animation animation) {
             
-            mFakeCell.setVisibility(View.GONE);
+            mFakeCell.setVisibility(View.INVISIBLE);
             
             mAnimating = false;
         }
@@ -120,7 +116,7 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
         @Override
         public void onAnimationEnd(Animation animation) {
 
-            mDetail.setVisibility(View.GONE);
+            mDetail.setVisibility(View.INVISIBLE);
             
             AnimatorSet set = moveCell(false);
             set.addListener(mHideFinished);
@@ -140,8 +136,8 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
         @Override
         public void onAnimationEnd(Animator animation) {
             
-            mContainer.setVisibility(View.GONE);
-            mFakeCell.setVisibility(View.GONE);
+            mContainer.setVisibility(View.INVISIBLE);
+            mFakeCell.setVisibility(View.INVISIBLE);
             mCellView.setVisibility(View.VISIBLE);
             
             mAnimating = false;
@@ -295,36 +291,27 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
         
         mCenterX = (int) (view.getWidth() / 2.0f);
 	    
-	    createViewImage();
-	    
-	    // Fix for some sort of initialization delay
-	    if (mStartFix) {
-            
-            mStartFix = false;
-            
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                
-                @Override
-                public void run() {
-
-                    configureDetailView();
-                }
-            }, 100);
-            
-        } else {
-	    
-            configureDetailView();
-        }
-	}
-	
-	private void createViewImage() {
-
-        Bitmap b = UiUtils.loadBitmapFromView(mCellView);
+        Bitmap b = Bitmap.createBitmap(mCellView.getWidth(), mCellView.getHeight(), Bitmap.Config.ARGB_8888);                
+        Canvas c = new Canvas(b);
+        mCellView.layout(0, 0, mCellView.getLayoutParams().width, mCellView.getLayoutParams().height);
+        mCellView.draw(c);
         
         mFakeCell.setImageBitmap(b);
+
         mFakeCell.setX(mCellX);
         mFakeCell.setY(mCellY);
+	    
+	    // Fix for some sort of initialization delay
+            
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            
+            @Override
+            public void run() {
+
+                configureDetailView();
+            }
+        }, 100);
 	}
 	
 	public void configureDetailView() {
@@ -340,7 +327,7 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
             final AnimatorSet set = moveCell(true);
             set.addListener(mListenerShow);
             
-            mCellView.setVisibility(View.GONE);
+            mCellView.setVisibility(View.INVISIBLE);
             mFakeCell.setVisibility(View.VISIBLE);
             mContainer.setVisibility(View.VISIBLE);
 
@@ -364,26 +351,28 @@ public class TransactionsTabletFragment extends BaseFragment implements onBackPr
         }
 	}
 	
-	private AnimatorSet moveCell(boolean out) {
+	private AnimatorSet moveCell(final boolean out) {
 	    
-	    float startY = out ? mCellY : mDetail.getY() - mHeight;
-	    float endY = out ? mDetail.getY() - mHeight : mCellY;
+	    final float startY = out ? mCellY : mDetail.getY() - mHeight;
+	    final float endY = out ? mDetail.getY() - mHeight : mCellY;
         
-        float startX = out ? mCellX : mDetail.getX();
-        float endX = out ? mDetail.getX() : mCellX;
+        final float startX = out ? mCellX : mDetail.getX();
+        final float endX = out ? mDetail.getX() : mCellX;
         
-        float startAlpha = out ? 0 : 1;
-        float endAlpha = out ? 1 : 0;
+        final float startAlpha = out ? 0 : 1;
+        final float endAlpha = out ? 1 : 0;
         
-	    ObjectAnimator moveY = ObjectAnimator.ofFloat(mFakeCell, "y", startY, endY);
-        moveY.setInterpolator(new AccelerateDecelerateInterpolator());
-        ObjectAnimator moveX = ObjectAnimator.ofFloat(mFakeCell, "x", startX, endX);
-        moveX.setInterpolator(new AccelerateDecelerateInterpolator());
-        ObjectAnimator fade = ObjectAnimator.ofFloat(mContainer, "alpha", startAlpha, endAlpha);
+        final ObjectAnimator moveY = ObjectAnimator.ofFloat(mFakeCell, "y", startY, endY);
+        moveY.setInterpolator(new DecelerateInterpolator(3));
+        moveY.setDuration(MOVE_DURATION);
+        final ObjectAnimator moveX = ObjectAnimator.ofFloat(mFakeCell, "x", startX, endX);
+        moveX.setInterpolator(new DecelerateInterpolator(3));
+        moveY.setDuration(MOVE_DURATION);
+        final ObjectAnimator fade = ObjectAnimator.ofFloat(mContainer, "alpha", startAlpha, endAlpha);
+        fade.setDuration(out ? 300 : 400);
         
-        AnimatorSet set = new AnimatorSet();
+        final AnimatorSet set = new AnimatorSet();
         set.play(moveX).with(moveY).with(fade);
-        set.setDuration(MOVE_DURATION);
         
         return set;
 	}

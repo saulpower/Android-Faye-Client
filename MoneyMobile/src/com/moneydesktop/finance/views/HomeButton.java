@@ -20,6 +20,7 @@ import android.view.animation.OvershootInterpolator;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
+import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.util.Enums.NavDirection;
 
 import de.greenrobot.event.EventBus;
@@ -311,7 +312,7 @@ public class HomeButton extends View {
 	    mPaint.setAntiAlias(true);
 		
 		mStroke = new Paint(Paint.ANTI_ALIAS_FLAG);
-		mStroke.setStrokeWidth(4);
+		mStroke.setStrokeWidth(UiUtils.getDynamicPixels(getContext(), 4));
 		mStroke.setColor(Color.WHITE);
 	    mPaint.setAlpha(alpha);   
 		mStroke.setStyle(Paint.Style.STROKE);
@@ -331,7 +332,7 @@ public class HomeButton extends View {
 		mPaintSlider.setAntiAlias(true);
 		
 		mStrokeSlider = new Paint(Paint.ANTI_ALIAS_FLAG);
-		mStrokeSlider.setStrokeWidth(6);
+		mStrokeSlider.setStrokeWidth(UiUtils.getDynamicPixels(getContext(), 6));
 		mStrokeSlider.setColor(Color.WHITE);
 		mStrokeSlider.setStyle(Paint.Style.STROKE);
 		mStrokeSlider.setAntiAlias(true);
