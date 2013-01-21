@@ -226,7 +226,7 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 		
 		if (res == null) {
 		    
-			res = mActivity.getLayoutInflater().inflate(R.layout.tablet_transaction_item, null);
+			res = mActivity.getLayoutInflater().inflate(R.layout.tablet_transaction_item, parent, false);
 			fixDottedLine(res);
 
 			viewHolder = new TransactionViewHolder();
@@ -237,7 +237,7 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	        viewHolder.category = (TextView) res.findViewById(R.id.category);
 	        viewHolder.amount = (TextView) res.findViewById(R.id.amount);
 	        viewHolder.type = (ImageView) res.findViewById(R.id.type);
-	        viewHolder.caret = (CaretView) res.findViewById(R.id.caret);
+	        viewHolder.caret = (CaretView) res.findViewById(R.id.caret); 
 	        
 	        res.setTag(viewHolder);
 	        

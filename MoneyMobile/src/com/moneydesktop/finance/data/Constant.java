@@ -1,10 +1,6 @@
 
 package com.moneydesktop.finance.data;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.BankAccount;

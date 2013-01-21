@@ -96,7 +96,7 @@ public class DateRangeItem extends Drawable {
         
         Resources resources = mContext.getResources();
         
-        mDefaultColor = resources.getColor(R.color.gray7);
+        mDefaultColor = resources.getColor(R.color.gray5);
         mDefaultBorderColor = resources.getColor(R.color.primaryColor);
         
         mPaintMonth = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -116,15 +116,17 @@ public class DateRangeItem extends Drawable {
         mPaintBorderTop = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaintBorderTop.setStyle(Paint.Style.STROKE);
         mPaintBorderTop.setColor(mDefaultBorderColor);
-        mPaintBorderTop.setStrokeWidth(2.0f);
+        mPaintBorderTop.setStrokeWidth(UiUtils.getDynamicPixels(mContext, 1.0f));
         
         mPaintBorder = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaintBorder.setStyle(Paint.Style.STROKE);
         mPaintBorder.setColor(mDefaultBorderColor);
-        mPaintBorder.setStrokeWidth(mDate.getMonth() != 0 ? 1.0f : 2.0f);
+        mPaintBorder.setStrokeWidth(UiUtils.getDynamicPixels(mContext, 1.0f));
         
         if (mDate.getMonth() != 0) {
-            DashPathEffect dashPath = new DashPathEffect(new float[] {3.0f, 3.0f}, 1.0f);
+            float intervalOn = UiUtils.getDynamicPixels(mContext, 1);
+            float intervalOff = UiUtils.getDynamicPixels(mContext, 3);
+            DashPathEffect dashPath = new DashPathEffect(new float[] {intervalOn, intervalOff}, 1.0f);
             mPaintBorder.setPathEffect(dashPath);
         }
     }
