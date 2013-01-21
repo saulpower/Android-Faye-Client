@@ -53,6 +53,6 @@ public class BarView extends View {
         mPaint.setColor(getContext().getResources().getColor(color.gray7));
         mBPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBPaint.setStyle(Paint.Style.FILL);        
-        mBPaint.setColor(getContext().getResources().getColor(color.gray3));        
+        mBPaint.setColor(getContext().getResources().getColor(color.gray1));        
     }
 }
