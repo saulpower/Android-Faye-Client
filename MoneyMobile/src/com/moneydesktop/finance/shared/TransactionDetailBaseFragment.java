@@ -4,9 +4,12 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -32,10 +35,13 @@ public class TransactionDetailBaseFragment extends BaseFragment {
     protected TransactionsDao mDao;
     protected Transactions mTransaction;
 
+    protected RelativeLayout mAmountContainer, mDateContainer, mCategoryContainer, mStmtContainer;
     protected TextView mAccountName, mBankName, mCategory, mTags;
     protected EditText mPayee, mAmount, mDate, mMemo, mStatement;
     protected ImageView mBankIcon;
     protected ToggleButton mBusiness, mPersonal, mCleared, mFlagged;
+    
+    protected Animation mShake;
     
     @Override
     public void onAttach(Activity activity) {
@@ -44,7 +50,17 @@ public class TransactionDetailBaseFragment extends BaseFragment {
         this.mActivity.onFragmentAttached(this);
     }
     
+    protected void initializeView() {
+        setupAnimations();
+        setupViews();
+    }
+    
     protected void setupViews() {
+        
+        mAmountContainer = (RelativeLayout) mRoot.findViewById(R.id.amount_container);
+        mDateContainer = (RelativeLayout) mRoot.findViewById(R.id.date_container);
+        mCategoryContainer = (RelativeLayout) mRoot.findViewById(R.id.category_container);
+        mStmtContainer = (RelativeLayout) mRoot.findViewById(R.id.stmt_container);
         
         mAccountName = (TextView) mRoot.findViewById(R.id.account_name);
         mBankName = (TextView) mRoot.findViewById(R.id.bank_name);
@@ -65,11 +81,10 @@ public class TransactionDetailBaseFragment extends BaseFragment {
         mFlagged = (ToggleButton) mRoot.findViewById(R.id.flag);
         
         // Currently we are read-only, disable all input fields
-        mPayee.setEnabled(false);
-        mAmount.setEnabled(false);
+        mAmount.setFocusable(false);
         mDate.setEnabled(false);
-        mMemo.setEnabled(false);
         mStatement.setEnabled(false);
+        mMemo.setEnabled(false);
         
         mBusiness.setEnabled(false);
         mPersonal.setEnabled(false);
@@ -79,6 +94,10 @@ public class TransactionDetailBaseFragment extends BaseFragment {
         fixDottedLine();
         applyFonts();
         configureListeners();
+    }
+    
+    protected void setupAnimations() {
+        mShake = AnimationUtils.loadAnimation(mActivity, R.anim.shake);
     }
     
     @TargetApi(11)
@@ -126,6 +145,30 @@ public class TransactionDetailBaseFragment extends BaseFragment {
     }
     
     private void configureListeners() {
+        
+        mAmountContainer.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                mAmountContainer.startAnimation(mShake);
+            }
+        });
+        
+        mDateContainer.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                mDateContainer.startAnimation(mShake);
+            }
+        });
+        
+        mStmtContainer.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                mStmtContainer.startAnimation(mShake);
+            }
+        });
         
         mBusiness.setOnClickListener(new OnClickListener() {
             

@@ -41,6 +41,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity {
         mPager.setPageMargin(20);
         mAdapter = new FragmentAdapter(mFm);
         mPager.setAdapter(mAdapter);
+        mPager.setOffscreenPageLimit(5);
 
         if (savedInstanceState != null) {
             mPager.setCurrentItem(savedInstanceState.getInt(KEY_PAGER));

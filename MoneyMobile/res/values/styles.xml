@@ -108,7 +108,7 @@
 
     <style name="transaction_label">
         <item name="android:textColor">@color/gray3</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">12sp</item>"
     </style>
 
     <style name="transaction_field">

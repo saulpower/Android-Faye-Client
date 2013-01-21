@@ -76,6 +76,7 @@
             android:orientation="horizontal">
             
             <RelativeLayout
+                android:id="@+id/amount_container"
                 android:layout_width="0dp"
                 android:layout_weight="50"
                 android:layout_height="match_parent"
@@ -88,6 +89,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
+                    android:layout_alignParentTop="true"
 		            android:text="@string/label_amount"
 		            style="@style/transaction_label" />
 	        
@@ -266,6 +268,7 @@
             android:orientation="horizontal">
             
             <RelativeLayout
+                android:id="@+id/date_container"
                 android:layout_width="0dp"
                 android:layout_weight="50"
                 android:layout_height="match_parent"
@@ -275,7 +278,7 @@
 	        
 		        <TextView
 		            android:id="@+id/date_label"
-		            android:layout_width="wrap_content"
+		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content"
 		            android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -310,7 +313,7 @@
 	        
 		        <TextView
 		            android:id="@+id/tags_label"
-		            android:layout_width="wrap_content"
+		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content"
 		            android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -344,6 +347,7 @@
             android:orientation="horizontal">
             
             <RelativeLayout
+                android:id="@+id/category_container"
                 android:layout_width="0dp"
                 android:layout_weight="50"
                 android:layout_height="match_parent"
@@ -378,6 +382,7 @@
 	            app:isVertical="true" />
             
             <RelativeLayout
+                android:id="@+id/stmt_container"
                 android:layout_width="0dp"
                 android:layout_weight="50"
                 android:layout_height="match_parent"

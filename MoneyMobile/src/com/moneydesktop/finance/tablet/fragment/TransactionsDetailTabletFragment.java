@@ -58,7 +58,7 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
         super.onCreateView(inflater, container, savedInstanceState);
         
         mRoot = inflater.inflate(R.layout.tablet_transaction_detail_view, null);
-        setupViews();
+        initializeView();
         
         mTagInstanceDao = ApplicationContext.getDaoSession().getTagInstanceDao();
         mTagDao = ApplicationContext.getDaoSession().getTagDao();

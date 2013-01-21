@@ -36,7 +36,7 @@ public class TransactionDetailHandsetFragment extends TransactionDetailBaseFragm
 		super.onCreateView(inflater, container, savedInstanceState);
 		
 		mRoot = inflater.inflate(R.layout.handset_transaction_detail_view, null);
-		setupViews();
+        initializeView();
 		
 		getTransaction();
 		loadTransaction();
