@@ -100,7 +100,7 @@ public class FinanceDaoGenerator {
     	tagInstance = schema.addEntity("TagInstance");
     	tagInstance.addIdProperty();
     	Property tagInstance_tagId = tagInstance.addLongProperty("tagId").notNull().getProperty();
-    	Property tagInstance_businessObjectId = tagInstance.addLongProperty("buinessObjectId").notNull().getProperty();
+    	Property tagInstance_businessObjectId = tagInstance.addLongProperty("baseObjectId").notNull().getProperty();
     	
     	businessObject.addToMany(tagInstance, tagInstance_businessObjectId).setName("tagInstances");
     	

@@ -8,16 +8,16 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PixelFormat;
-import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.view.animation.DecelerateInterpolator;
 
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.model.PointEvaluator;
 import com.moneydesktop.finance.util.UiUtils;
 
 @SuppressLint("NewApi")
 public class AnchorView extends Drawable {
+    
+    public final String TAG = this.getClass().getSimpleName();
 
     private final int PADDING = 30;
     private final int WIDTH = 15;
@@ -25,7 +25,7 @@ public class AnchorView extends Drawable {
     private Context mContext;
     private Paint mPaint;
     private Path mPath;
-    private PointF mPosition;
+    private float mPosition;
     private float mPadding;
     private float mWidth;
     private float mHeight;
@@ -38,8 +38,8 @@ public class AnchorView extends Drawable {
         return mContext;
     }
     
-    public void setPosition(PointF position) {
-        mPosition = position;
+    public void setPosition(float positionX) {
+        mPosition = positionX;
         
         updateBounds();
         createPath();
@@ -51,13 +51,13 @@ public class AnchorView extends Drawable {
         invalidateSelf();
     }
     
-    public PointF getPosition() {
+    public float getPosition() {
         return mPosition;
     }
     
-    public void animateToPosition(PointF position) {
+    public void animateToPosition(float position) {
         
-        ObjectAnimator move = ObjectAnimator.ofObject(this, "position", new PointEvaluator(), position);
+        ObjectAnimator move = ObjectAnimator.ofFloat(this, "position", position);
         move.setInterpolator(new DecelerateInterpolator());
         move.setDuration(300);
         move.start();
@@ -67,7 +67,7 @@ public class AnchorView extends Drawable {
         mListener = listener;
     }
     
-    public AnchorView(Context context, PointF position, float height, boolean isLeft) {
+    public AnchorView(Context context, float positionX, float height, boolean isLeft) {
         
         mContext = context;
         mPadding = UiUtils.getDynamicPixels(context, PADDING);
@@ -76,7 +76,7 @@ public class AnchorView extends Drawable {
         mIsLeft = isLeft;
         
         initPaint();
-        setPosition(position);
+        setPosition(positionX);
     }
     
     private void initPaint() {
@@ -93,30 +93,30 @@ public class AnchorView extends Drawable {
             mPath.setFillType(Path.FillType.EVEN_ODD);
         }
         
-        float leftX = mPosition.x - mWidth / 2;
-        float rightX = mPosition.x + mWidth / 2;
-        float topY = mPosition.y + mHeight / 3.25f;
-        float pointY = mPosition.y + mHeight / 5;
+        float leftX = mPosition - mWidth / 2;
+        float rightX = mPosition + mWidth / 2;
+        float topY = mHeight / 3.25f;
+        float pointY = mHeight / 5;
         
         mPath.reset();
-        mPath.moveTo(leftX, (mPosition.y + mHeight));
+        mPath.moveTo(leftX, mHeight);
         mPath.lineTo(leftX, topY);
-        mPath.lineTo(mPosition.x, pointY);
+        mPath.lineTo(mPosition, pointY);
         mPath.lineTo(rightX, topY);
-        mPath.lineTo(rightX, (mPosition.y + mHeight));
-        mPath.lineTo(leftX, (mPosition.y + mHeight));
+        mPath.lineTo(rightX, mHeight);
+        mPath.lineTo(leftX, mHeight);
         mPath.close();
     }
     
     private void updateBounds() {
 
-        int left = (int) (mPosition.x - mWidth / 2.0f);
-        int top = (int) mPosition.y;
+        int left = (int) (mPosition - mWidth / 2.0f);
+        int top = 0;
         int right = (int) (left + mWidth + mPadding);
         int bottom = (int) (top + mHeight);
         
         if (mIsLeft) {
-            right = (int) (mPosition.x + mWidth / 2.0f);
+            right = (int) (mPosition + mWidth / 2.0f);
             left = (int) (right - mWidth - mPadding);
         }
         
@@ -135,9 +135,7 @@ public class AnchorView extends Drawable {
     }
 
     @Override
-    public void setAlpha(int alpha) {
-        
-    }
+    public void setAlpha(int alpha) {}
 
     @Override
     public void setColorFilter(ColorFilter cf) {}

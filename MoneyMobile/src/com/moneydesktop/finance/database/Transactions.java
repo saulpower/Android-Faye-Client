@@ -99,6 +99,9 @@ public class Transactions extends BusinessObject  {
     private List<Transactions> children;
 
     // KEEP FIELDS - put your custom fields here
+    private QueryProperty mTagInstance = new QueryProperty(TagInstanceDao.TABLENAME, TagDao.Properties.Id, TagInstanceDao.Properties.TagId);
+    private QueryProperty mBaseObjectId = new QueryProperty(TagInstanceDao.TABLENAME, TagInstanceDao.Properties.BaseObjectId);
+    
     // KEEP FIELDS END
 
     public Transactions() {
@@ -936,7 +939,6 @@ public class Transactions extends BusinessObject  {
     	return list;
     }
     
-    
     public static Pair<Boolean, List<Transactions>> getRows(int page, String search, Date start, Date end, String orderBy, String direction) {
         
         int offset = (page - 1) * Constant.QUERY_LIMIT;
@@ -959,7 +961,9 @@ public class Transactions extends BusinessObject  {
         
         TransactionsDao dao = (TransactionsDao) DataController.getDao(Transactions.class);
         
-        List<Transactions>transactions = dao.queryRaw(query.toString(), query.getSelectionArgs());
+        String queryString = query.toString();
+        
+        List<Transactions>transactions = dao.queryRaw(queryString, query.getSelectionArgs());
         
         boolean more = (transactions.size() == Constant.QUERY_LIMIT);
         
@@ -1151,6 +1155,32 @@ public class Transactions extends BusinessObject  {
     	return false;
     }
     
+    public List<Tag> getTags() {
+        
+        TagDao tagDao = ApplicationContext.getDaoSession().getTagDao();
+
+        PowerQuery query = new PowerQuery(tagDao);
+        query.join(mTagInstance)
+            .where(mBaseObjectId, Long.toString(getBusinessObjectId()));
+        
+        return tagDao.queryRaw(query.toString(), query.getSelectionArgs());
+        
+    }
+    
+    public String buildTagString() {
+        
+        StringBuilder builder = new StringBuilder();
+        
+        for (Tag tag : getTags()) {
+            builder.append(tag.getTagName() + ", ");
+        }
+        
+        if (builder.length() == 0) {
+            return "";
+        }
+        
+        return builder.toString().substring(0, builder.length() - 2);
+    }
     // KEEP METHODS END
 
 }

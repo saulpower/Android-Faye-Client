@@ -110,7 +110,7 @@ public class TransactionDetailBaseFragment extends BaseFragment {
         Fonts.applyPrimaryBoldFont(mAmount, 48);
         Fonts.applyPrimarySemiBoldFont(mDate, 24);
         Fonts.applyPrimarySemiBoldFont(mCategory, 24);
-        Fonts.applyPrimarySemiBoldFont(mTags, 24);
+        Fonts.applyPrimarySemiBoldFont(mTags, 12);
         Fonts.applyPrimarySemiBoldFont(mMemo, 24);
         Fonts.applyPrimaryBoldFont(mStatement, 12);
         
@@ -170,7 +170,7 @@ public class TransactionDetailBaseFragment extends BaseFragment {
         mAccountName.setText(mTransaction.getBankAccount().getAccountName());
         mBankName.setText(mTransaction.getBankAccount().getBank().getBankName());
         mCategory.setText(mTransaction.getCategory().getCategoryName());
-        mTags.setText(mTransaction.getTagString());
+        mTags.setText(mTransaction.buildTagString());
         
         double value = mTransaction.getRawAmount();
         

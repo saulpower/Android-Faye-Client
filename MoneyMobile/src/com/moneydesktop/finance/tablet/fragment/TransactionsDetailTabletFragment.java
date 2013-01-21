@@ -1,14 +1,22 @@
 package com.moneydesktop.finance.tablet.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.database.Tag;
+import com.moneydesktop.finance.database.TagDao;
+import com.moneydesktop.finance.database.TagInstance;
+import com.moneydesktop.finance.database.TagInstanceDao;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.shared.TransactionDetailBaseFragment;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
@@ -19,6 +27,8 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
     public final String TAG = this.getClass().getSimpleName();
     
     private onBackPressedListener mListener;
+    private TagInstanceDao mTagInstanceDao;
+    private TagDao mTagDao;
     
     public void setListener(onBackPressedListener mListener) {
         this.mListener = mListener;
@@ -50,6 +60,9 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
         mRoot = inflater.inflate(R.layout.tablet_transaction_detail_view, null);
         setupViews();
         
+        mTagInstanceDao = ApplicationContext.getDaoSession().getTagInstanceDao();
+        mTagDao = ApplicationContext.getDaoSession().getTagDao();
+        
         mRoot.setOnClickListener(new OnClickListener() {
             
             @Override
@@ -58,7 +71,52 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
             }
         });
         
+        mTags.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                
+                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+
+                alert.setTitle("Title");
+                alert.setMessage("Message");
+
+                // Set an EditText view to get user input
+                final EditText input = new EditText(getActivity());
+                alert.setView(input);
+
+                alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String value = input.getText().toString();
+                        createTag(value);
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // Canceled.
+                    }
+                });
+
+                alert.show();
+            }
+        });
+        
         return mRoot;
+    }
+    
+    private void createTag(String tagName) {
+        Tag tag = new Tag();
+        tag.setTagName(tagName);
+        tag.setTagId(tagName);
+        mTagDao.insert(tag);
+        
+        TagInstance ti = new TagInstance();
+        ti.setBaseObjectId(mTransaction.getBusinessObjectId());
+        ti.setTag(tag);
+        mTagInstanceDao.insert(ti);
+        
+        mTags.setText(mTransaction.buildTagString());
     }
     
     public void updateTransaction(Transactions transaction) {
@@ -76,7 +134,7 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
         Fonts.applyPrimaryBoldFont(mAmount, 34);
         Fonts.applyPrimaryBoldFont(mDate, 20);
         Fonts.applyPrimaryBoldFont(mCategory, 20);
-        Fonts.applyPrimaryBoldFont(mTags, 20);
+        Fonts.applyPrimaryBoldFont(mTags, 10);
         Fonts.applyPrimaryBoldFont(mMemo, 20);
         Fonts.applyPrimaryBoldFont(mStatement, 10);
         

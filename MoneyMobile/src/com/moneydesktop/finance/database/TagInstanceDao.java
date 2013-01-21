@@ -30,7 +30,7 @@ public class TagInstanceDao extends AbstractDao<TagInstance, Long> {
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property TagId = new Property(1, long.class, "tagId", false, "TAG_ID");
-        public final static Property BuinessObjectId = new Property(2, long.class, "buinessObjectId", false, "BUINESS_OBJECT_ID");
+        public final static Property BaseObjectId = new Property(2, long.class, "baseObjectId", false, "BASE_OBJECT_ID");
         public final static Property BusinessObjectId = new Property(3, long.class, "businessObjectId", false, "BUSINESS_OBJECT_ID");
     };
 
@@ -54,7 +54,7 @@ public class TagInstanceDao extends AbstractDao<TagInstance, Long> {
         db.execSQL("CREATE TABLE " + constraint + "'TAG_INSTANCE' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'TAG_ID' INTEGER NOT NULL ," + // 1: tagId
-                "'BUINESS_OBJECT_ID' INTEGER NOT NULL ," + // 2: buinessObjectId
+                "'BASE_OBJECT_ID' INTEGER NOT NULL ," + // 2: baseObjectId
                 "'BUSINESS_OBJECT_ID' INTEGER NOT NULL );"); // 3: businessObjectId
     }
 
@@ -74,7 +74,7 @@ public class TagInstanceDao extends AbstractDao<TagInstance, Long> {
             stmt.bindLong(1, id);
         }
         stmt.bindLong(2, entity.getTagId());
-        stmt.bindLong(3, entity.getBuinessObjectId());
+        stmt.bindLong(3, entity.getBaseObjectId());
         stmt.bindLong(4, entity.getBusinessObjectId());
     }
 
@@ -96,7 +96,7 @@ public class TagInstanceDao extends AbstractDao<TagInstance, Long> {
         TagInstance entity = new TagInstance( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.getLong(offset + 1), // tagId
-            cursor.getLong(offset + 2), // buinessObjectId
+            cursor.getLong(offset + 2), // baseObjectId
             cursor.getLong(offset + 3) // businessObjectId
         );
         return entity;
@@ -107,7 +107,7 @@ public class TagInstanceDao extends AbstractDao<TagInstance, Long> {
     public void readEntity(Cursor cursor, TagInstance entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setTagId(cursor.getLong(offset + 1));
-        entity.setBuinessObjectId(cursor.getLong(offset + 2));
+        entity.setBaseObjectId(cursor.getLong(offset + 2));
         entity.setBusinessObjectId(cursor.getLong(offset + 3));
      }
     
@@ -135,13 +135,13 @@ public class TagInstanceDao extends AbstractDao<TagInstance, Long> {
     }
     
     /** Internal query to resolve the "tagInstances" to-many relationship of BusinessObjectBase. */
-    public synchronized List<TagInstance> _queryBusinessObjectBase_TagInstances(long buinessObjectId) {
+    public synchronized List<TagInstance> _queryBusinessObjectBase_TagInstances(long baseObjectId) {
         if (businessObjectBase_TagInstancesQuery == null) {
             QueryBuilder<TagInstance> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.BuinessObjectId.eq(buinessObjectId));
+            queryBuilder.where(Properties.BaseObjectId.eq(baseObjectId));
             businessObjectBase_TagInstancesQuery = queryBuilder.build();
         } else {
-            businessObjectBase_TagInstancesQuery.setParameter(0, buinessObjectId);
+            businessObjectBase_TagInstancesQuery.setParameter(0, baseObjectId);
         }
         return businessObjectBase_TagInstancesQuery.list();
     }
@@ -172,7 +172,7 @@ public class TagInstanceDao extends AbstractDao<TagInstance, Long> {
             SqlUtils.appendColumns(builder, "T2", daoSession.getBusinessObjectBaseDao().getAllColumns());
             builder.append(" FROM TAG_INSTANCE T");
             builder.append(" LEFT JOIN TAG T0 ON T.'TAG_ID'=T0.'_id'");
-            builder.append(" LEFT JOIN BUSINESS_OBJECT_BASE T1 ON T.'BUINESS_OBJECT_ID'=T1.'_id'");
+            builder.append(" LEFT JOIN BUSINESS_OBJECT_BASE T1 ON T.'BASE_OBJECT_ID'=T1.'_id'");
             builder.append(" LEFT JOIN BUSINESS_OBJECT_BASE T2 ON T.'BUSINESS_OBJECT_ID'=T2.'_id'");
             builder.append(' ');
             selectDeep = builder.toString();

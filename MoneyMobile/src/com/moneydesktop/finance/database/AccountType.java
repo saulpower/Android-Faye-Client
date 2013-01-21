@@ -1,7 +1,6 @@
 package com.moneydesktop.finance.database;
 
 import java.util.List;
-
 import com.moneydesktop.finance.database.DaoSession;
 import de.greenrobot.dao.DaoException;
 
@@ -15,7 +14,6 @@ import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.database.AccountTypeDao.Properties;
 
 import de.greenrobot.dao.AbstractDao;
-
 // KEEP INCLUDES END
 /**
  * Entity mapped to table ACCOUNT_TYPE.
@@ -307,7 +305,6 @@ public class AccountType extends BusinessObject  {
     public JSONObject getJson() {
     	return null;
     }
-    
     // KEEP METHODS END
 
 }
