@@ -100,10 +100,10 @@ public class AccountBalanceItemView extends LinearLayout {
     }
 
     private void initFonts() {
-        Fonts.applyGlyphFont(mTextIcon, 24);
-        Fonts.applyPrimarySemiBoldFont(mAccountType, 16);
-        Fonts.applyPrimaryBoldFont(mAccountAmount, 16);
-        Fonts.applySecondaryItalicFont(mAccountStatus, 14);
+        Fonts.applyGlyphFont(mTextIcon, 20);
+        Fonts.applyPrimarySemiBoldFont(mAccountType, 12);
+        Fonts.applyPrimaryBoldFont(mAccountAmount, 12);
+        Fonts.applySecondaryItalicFont(mAccountStatus, 10);
     }
 
 }

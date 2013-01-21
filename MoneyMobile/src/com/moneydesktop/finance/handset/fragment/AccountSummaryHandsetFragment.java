@@ -59,7 +59,7 @@ public class AccountSummaryHandsetFragment extends BaseFragment {
         mAccountInfo = getAccountValues(bankList);
         TextView label = (TextView) v.findViewById(R.id.label_balance_view);
         label.setText(getResources().getString(R.string.label_balances));
-        Fonts.applySecondaryItalicFont(label, 16);
+        Fonts.applySecondaryItalicFont(label, 12);
         AccountBalanceItemView cashAccounts = (AccountBalanceItemView) v
                 .findViewById(R.id.account_balance_cash);
         cashAccounts.setAccountStatus(makeAccountsString((Integer) mAccountInfo

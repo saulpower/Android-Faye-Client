@@ -1,13 +1,13 @@
 package com.moneydesktop.finance.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.graphics.Typeface;
 import android.util.Log;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.ApplicationContext;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class Fonts {
 	
