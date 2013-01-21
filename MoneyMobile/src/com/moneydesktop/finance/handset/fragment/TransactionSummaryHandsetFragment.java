@@ -53,16 +53,14 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         TransactionsDao transactions = ApplicationContext.getDaoSession().getTransactionsDao();
-        CategoryDao categories = ApplicationContext.getDaoSession().getCategoryDao();
-        List<Category> catList = categories.loadAll();
         List<Transactions> transList = transactions.loadAll();
         mRoot = inflater.inflate(R.layout.handset_transaction_summary_view, null);
-        setupView(transList, catList, mRoot);
+        setupView(transList, mRoot);
 
         return mRoot;
     }
 
-    private void setupView(List<Transactions> transList, List<Category> catList, View v) {
+    private void setupView(List<Transactions> transList, View v) {
         TextView mainLabel = (TextView) v.findViewById(R.id.label_transactions_view);
         Fonts.applySecondaryItalicFont(mainLabel, 12);
 
@@ -107,8 +105,8 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         incomeBalance.setText(mFormatter.format(Math.abs(Transactions.getIncomeTotal())));
         expenseBalance.setText(mFormatter.format(Math.abs(Transactions.getExpensesTotal())));
         newTransactionsNumber.setText(Integer.toString(Transactions.getProcessedTransactions()));
-        uncategorizedTransactionText.setText("You have "
-                + Transactions.getUncategorizedTransactions() + " uncategorized transactions.");
+        uncategorizedTransactionText.setText(getResources().getString(R.string.text_you_have) + " " +
+                + Transactions.getUncategorizedTransactions() + " " + getResources().getString(R.string.text_uncat_trans));
 
     }
 

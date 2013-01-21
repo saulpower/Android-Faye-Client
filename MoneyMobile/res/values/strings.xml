@@ -202,6 +202,8 @@
     <string name="text_login">Learn More.</string>
     <string name="text_new">NEW</string>
     <string name="text_signup">Need an account?</string>
+    <string name="text_uncat_trans">uncategorized transactions.</string>
+    <string name="text_you_have">You have</string>
     <string name="thank_you">Thank you for your interest in MoneyDesktop.</string>
     <string name="try_demo">Your request has been submitted. Try out demo mode to see what MoneyDesktop has to offer.</string>
     <string name="text_syncing">Syncing Data&#8230;</string>
@@ -217,5 +219,4 @@
     <string name="title_activity_transactions">Transactions</string>
     <string name="unlink_title">Unlink?</string>
     <string name="unlink_message">Unlinking will remove this device from your list of approved devices. you can re-link it at any time. Would you like to continue?</string>
-
 </resources>
