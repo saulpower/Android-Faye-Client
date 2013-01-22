@@ -16,6 +16,7 @@ import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
 import com.moneydesktop.finance.handset.fragment.DashboardHandsetFragmentFactory;
 import com.moneydesktop.finance.handset.fragment.SettingsHandsetFragment;
+import com.moneydesktop.finance.handset.fragment.TransactionsHandsetFragment;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.shared.DashboardBaseActivity;
 import com.moneydesktop.finance.shared.LockFragment;
@@ -150,7 +151,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity {
         	frag = SettingsHandsetFragment.getInstance(position);
         	break;
         case 3:
-        	//frag = TransactionsFragment.newInstance();
+        	frag = TransactionsHandsetFragment.newInstance("1");
         	break;
         case 4:
         	frag = LockFragment.newInstance(false);

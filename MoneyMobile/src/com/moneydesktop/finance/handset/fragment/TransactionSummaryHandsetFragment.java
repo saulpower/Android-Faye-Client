@@ -57,7 +57,14 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         List<Transactions> transList = transactions.loadAll();
         mRoot = inflater.inflate(R.layout.handset_transaction_summary_view, null);
         setupView(transList, mRoot);
-
+        mRoot.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                 mActivity.showFragment(3);
+                
+            }
+            
+        });
         return mRoot;
     }
 
