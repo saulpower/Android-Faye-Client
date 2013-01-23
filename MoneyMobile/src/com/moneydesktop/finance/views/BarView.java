@@ -3,6 +3,7 @@ package com.moneydesktop.finance.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.View;
@@ -11,38 +12,81 @@ import com.moneydesktop.finance.R.color;
 import com.moneydesktop.finance.util.Fonts;
 
 public class BarView extends View {
-    private final String mText;
+    private String mLabelText;
     private Paint mPaint;
     private Paint mBPaint;
-    private final double mAmount;
-    private final double mScaleAmount;
+    private double mAmount;
+    private double mScaleAmount;
     private Rect mRect;
-
+    private boolean mShowLabel;
+    private boolean mAnimate;
     public BarView(Context context, String day, double amount, double scale_amount) {
         super(context);
         makePaint();
-        mText = day;
+        mLabelText = day;
+        mShowLabel = true;
+        mAnimate = false;
         mAmount = amount;
         mScaleAmount = scale_amount;
     }
-
+    public BarView(Context context, double amount, double scale_amount){
+        super(context);
+        makePaint();
+        mShowLabel = false;
+        mAnimate = false;
+        mAmount = amount;
+        mScaleAmount = scale_amount;
+    }
+    public void setLabelText(String s){
+        mLabelText = s;
+    }
+    public void showLabel(boolean s){
+        mShowLabel = s;
+        invalidate();
+    }
+    public void setAnimation(boolean b){
+        mAnimate = b;
+    }
+    public void setBarColor(int color){
+        if(mBPaint == null){
+            makePaint();
+        }
+        mBPaint.setColor(color);
+        invalidate();
+    }
+    public void setLabelColor(int color){
+        if(mPaint == null){
+            makePaint();
+        }
+        mPaint.setColor(color);
+        invalidate();
+    }
     @Override
     public void onDraw(Canvas c) {
         super.onDraw(c);
-        c.drawText(mText, (getWidth() / 2) - 4, getHeight(), mPaint);
+        if(mShowLabel){
+            c.drawText(mLabelText, (getWidth() / 2) - 4, getHeight(), mPaint);
+        }
         c.drawRect(mRect, mBPaint);
     }
     @Override
     public void onLayout(boolean b, int i, int j, int k, int l){
         super.onLayout(b, i, j, k, l);
         double scalePercentage = mAmount / mScaleAmount;
-
         if(mRect == null){
-            mRect = new Rect(
-                1,
-                (int) ((getHeight() - (.90 * (getHeight() * scalePercentage)) - (getHeight() * .10))),
-                getWidth() - 1, (int) (getHeight() * .90));
-    }
+                if(mShowLabel){
+                    mRect = new Rect(
+                        1,
+                        (int) ((getHeight() - (.90 * (getHeight() * scalePercentage)) - (getHeight() * .10))),
+                        getWidth() - 1, (int) (getHeight() * .90));
+                }
+                else{
+                   mRect = new Rect(
+                        1,
+                        (int) ((getHeight() - ((getHeight() * scalePercentage)))),
+                        getWidth() - 1, getHeight());
+                }       
+        }
     }
 
     public void makePaint() {
