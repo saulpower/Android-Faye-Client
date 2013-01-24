@@ -106,20 +106,9 @@ public class BarView extends View {
         }
         double scalePercentage = mAmount / mScaleAmount;
             if(mRect == null){    
-            if(mShowLabel){
-                mRect = new Rect(
-                        1,
-                        (int) ((getHeight() - (.90 * (getHeight() * scalePercentage)) - (getHeight() * .10))),
-                        getWidth() - 1, (int) (getHeight() * .90));
-                }
-                else{
-                   mRect = new Rect(
-                        1,
-                        (int) ((getHeight() - ((getHeight() * scalePercentage)))),
-                        getWidth() - 1, getHeight());
-                }   
+                   mRect = new Rect();   
             }
-            else{
+            
                 if(mShowLabel){
                     mRect.set(1,
                         (int) ((getHeight() - (.90 * (getHeight() * scalePercentage)) - (getHeight() * .10))),
@@ -130,7 +119,6 @@ public class BarView extends View {
                         (int) ((getHeight() - ((getHeight() * scalePercentage)))),
                         getWidth() - 1, getHeight());
                 }
-            }
         c.drawRect(mRect, mBPaint);
         
     }
