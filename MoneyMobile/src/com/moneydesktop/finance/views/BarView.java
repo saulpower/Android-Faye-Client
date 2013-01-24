@@ -7,10 +7,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.View;
+import android.view.ViewPropertyAnimator;
+import android.view.animation.DecelerateInterpolator;
 
 import com.moneydesktop.finance.R.color;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
+import com.nineoldandroids.animation.ObjectAnimator;
 
 public class BarView extends View {
     private String mLabelText;
@@ -21,14 +24,12 @@ public class BarView extends View {
     private double mScaleAmount;
     private Rect mRect;
     private boolean mShowLabel;
-    private boolean mAnimate;
     public BarView(Context context, String day, double amount, double scale_amount) {
         super(context);
         mTextSize = UiUtils.getDynamicPixels(getContext(), 11);
         makePaint();
         mLabelText = day;
         mShowLabel = true;
-        mAnimate = false;
         mAmount = amount;
         mScaleAmount = scale_amount;
     }
@@ -37,18 +38,13 @@ public class BarView extends View {
         makePaint();
         mLabelText = "Test Bar";
         mShowLabel = true;
-        mAnimate = false;
         mAmount = 125;
         mScaleAmount = 250;
     }
     public BarView(Context context, double amount, double scale_amount){
-        super(context);
-        
-        
-        
+        super(context);     
         makePaint();
         mShowLabel = false;
-        mAnimate = false;
         mAmount = amount;
         mScaleAmount = scale_amount;
     }
@@ -63,9 +59,28 @@ public class BarView extends View {
         mShowLabel = s;
         invalidate();
     }
-    public void setAnimation(boolean b){
-        mAnimate = b;
+    public double getScaleAmount(){
+        return mScaleAmount;
     }
+    public double getAmount(){
+        return (float)mAmount;
+    }
+    public void setScaleAmount(float a){
+        mScaleAmount = a;
+        invalidate();
+    }
+    public void setAmount(float a){
+        mAmount = a;
+        invalidate();
+    }
+    public void setAmountAnimated(float a){
+        final float start = (float) mAmount;
+        ObjectAnimator v = ObjectAnimator.ofFloat(this, "amount", start,(float)a);
+        v.setDuration(500);
+        //v.setInterpolator(new DecelerateInterpolator());
+        v.start();        
+    }
+
     public void setBarColor(int color){
         if(mBPaint == null){
             makePaint();
@@ -89,15 +104,10 @@ public class BarView extends View {
             
             c.drawText(mLabelText, (getWidth() / 2)-(bounds.width()/2), (float) (getHeight()*.95)+(bounds.height()/2), mPaint);
         }
-        c.drawRect(mRect, mBPaint);
-    }
-    @Override
-    public void onLayout(boolean b, int i, int j, int k, int l){
-        super.onLayout(b, i, j, k, l);
         double scalePercentage = mAmount / mScaleAmount;
-        if(mRect == null){
-                if(mShowLabel){
-                    mRect = new Rect(
+            if(mRect == null){    
+            if(mShowLabel){
+                mRect = new Rect(
                         1,
                         (int) ((getHeight() - (.90 * (getHeight() * scalePercentage)) - (getHeight() * .10))),
                         getWidth() - 1, (int) (getHeight() * .90));
@@ -107,8 +117,22 @@ public class BarView extends View {
                         1,
                         (int) ((getHeight() - ((getHeight() * scalePercentage)))),
                         getWidth() - 1, getHeight());
-                }       
-        }
+                }   
+            }
+            else{
+                if(mShowLabel){
+                    mRect.set(1,
+                        (int) ((getHeight() - (.90 * (getHeight() * scalePercentage)) - (getHeight() * .10))),
+                        getWidth() - 1, (int) (getHeight() * .90));
+                }
+                else{
+                    mRect.set(1,
+                        (int) ((getHeight() - ((getHeight() * scalePercentage)))),
+                        getWidth() - 1, getHeight());
+                }
+            }
+        c.drawRect(mRect, mBPaint);
+        
     }
 
     public void makePaint() {
