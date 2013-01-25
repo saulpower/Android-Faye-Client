@@ -3,12 +3,6 @@ package com.moneydesktop.finance.tablet.fragment;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -19,15 +13,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.HeaderViewListAdapter;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +32,7 @@ import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.model.EventMessage.BankStatusUpdateEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.shared.Services.SyncService;
@@ -176,13 +168,18 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         onClickListeners.add(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(activity, "refresh", Toast.LENGTH_LONG).show();
-                //start the sync
-                Intent intent = new Intent(getActivity(), SyncService.class);
-                getActivity().startService(intent);
-                
-                setAllBanksToUpdate();
-                setAccountsBannerUpdate(true);
+                if (getActivity() != null) {
+                    if (User.getCurrentUser().getCanSync()){
+                        //start the sync
+                        Intent intent = new Intent(getActivity(), SyncService.class);
+                        getActivity().startService(intent);
+                        
+                        setAllBanksToUpdate();
+                        setAccountsBannerUpdate(true);
+                    } else {
+                       //Dialog....cant update data 
+                    }
+                }
             }
 
         });
@@ -212,8 +209,9 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
             //create the view to be attached to Drawer
             mPanelLayoutHolder.addView(populateDrawerView(bank));
         }
-        
-        updateBankStatus();      
+        if (User.getCurrentUser().getCanSync()) {
+            updateAllBankStatus();
+        }
     }
 
 	/**
@@ -256,7 +254,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
             }
             
             Log.d("Bank Status", "NOW UPDATING");
-            updateBankStatus();
+            updateAllBankStatus();
         }
     }
     
@@ -293,10 +291,20 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         
     }
     
-    private void updateBankStatus() {
+    /**
+     * Updates status for all banks.
+     */
+    private void updateAllBankStatus() {
         for (Bank bank : mBankList) {
             SyncEngine.sharedInstance().beginBankStatusUpdate(bank);
         }        
+    }
+    
+    /**
+     * Updates status for given bank.
+     */
+    private void updateBankStatus(Bank bank) {
+        SyncEngine.sharedInstance().beginBankStatusUpdate(bank);  
     }
     
     @Override
@@ -329,36 +337,77 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                         ViewGroup innerContainer = (ViewGroup)accountTypeChildView.getChildAt(0);
                         View view = innerContainer.getChildAt(iterator);
 
-                        if (forceBanner){
-                            ImageView image = (ImageView)view.findViewById(R.id.account_type_child_banner);
-                            image.setVisibility(View.VISIBLE);
-                            image.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
-                        } else {
-                            
-                            ImageView image = (ImageView)view.findViewById(R.id.account_type_child_banner);
-                            image.setVisibility(View.VISIBLE);
-                            if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_SUCCEEDED.index()) { //3
-                                image.setVisibility(View.GONE);
-                                
-                            } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_PENDING.index()) { //1
+                        if (getActivity() != null){
+                            if (forceBanner){
+                                ImageView image = (ImageView)view.findViewById(R.id.account_type_child_banner);
+                                image.setVisibility(View.VISIBLE);
                                 image.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
-                                
-                            } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_LOGIN_FAILED.index()) { //5
-                                image.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
-                                
-                            } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_EXCEPTION.index()) { //4
-                                image.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
-                                
-                            } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_PROCESSING.index()) { //2
-                                image.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
-                                
                             } else {
-                                image.setVisibility(View.GONE);
-                            }             
-                    }
+                                
+                                ImageView image = (ImageView)view.findViewById(R.id.account_type_child_banner);
+                                image.setVisibility(View.VISIBLE);
+                                if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_SUCCEEDED.index()) { //3
+                                    image.setVisibility(View.GONE);
+                                    
+                                } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_PENDING.index()) { //1
+                                    image.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+                                    
+                                } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_LOGIN_FAILED.index()) { //5
+                                    image.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
+                                    
+                                } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_EXCEPTION.index()) { //4
+                                    image.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
+                                    
+                                } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_PROCESSING.index()) { //2
+                                    image.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+                                    
+                                } else {
+                                    image.setVisibility(View.GONE);
+                                }             
+                            }
+                        }
                     iterator++;
                 }
                 
+            }     
+       }
+        
+    }
+    
+    
+    private void setAccountsSpecificToBankBannerUpdate(Bank bank) {
+        int listCount = 0;
+        
+        listCount = mListView.getCount() - 1;
+
+        for (int i = 0; i < listCount; i++) {
+            
+            if (!(mListView.getChildAt(i) instanceof LinearLayout)){ // this is the footer....we want to skip it.
+                
+                if (mListView.getChildCount() > i) {
+                
+                    ViewGroup group = (ViewGroup)mListView.getChildAt(i);
+                    ViewGroup container = (ViewGroup)group.getChildAt(0);            
+                    
+                    HorizontalScrollView horizontalScrollView = (HorizontalScrollView) container.getChildAt(1);
+                        int iterator = 0;
+                        for (final BankAccount account : mAccountTypesFiltered.get(i).getBankAccounts()) {
+                            
+                            if (account.getBank().getBankName().equals(bank.getBankName())) {
+                                
+                                AccountTypeChildView accountTypeChildView = (AccountTypeChildView) horizontalScrollView.getChildAt(0);
+                                ViewGroup innerContainer = (ViewGroup)accountTypeChildView.getChildAt(0);
+                                View view = innerContainer.getChildAt(iterator);
+        
+                                if (getActivity() != null){
+                                        ImageView image = (ImageView)view.findViewById(R.id.account_type_child_banner);
+                                        image.setVisibility(View.VISIBLE);
+                                        image.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner)); 
+                                }
+                            }
+                        iterator++;
+                    }
+                }
             }     
        }
         
@@ -382,6 +431,24 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
             }
         }
         
+    }
+    
+    public void setBankToUpdate(Bank bank) {
+        
+        int i = 0;
+        for (Bank bankIterator : mBankList) {
+
+            i++;
+            if (bankIterator.getBankName().equals(bank.getBankName())) {
+
+                View bankView = mPanelLayoutHolder.getChildAt(i); 
+            
+                ImageView status = (ImageView) bankView.findViewById(R.id.bank_status);
+                
+                status.setVisibility(View.VISIBLE);
+                status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+            }
+        }
     }
     
     
@@ -422,15 +489,23 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 				onClickListeners.add(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						Toast.makeText(getActivity(), "REFRESH DATA", Toast.LENGTH_SHORT).show();
+					    if (User.getCurrentUser().getCanSync()){
+					        refreshAccount(bank);
+					    }
+				        mPopup.fadeOutTransparency();
 					}
+
 				});
 				
 				onClickListeners.add(new OnClickListener() { 	
 
                     @Override
 					public void onClick(View v) {
-						deleteAccount(bankAccountView, mPanelLayoutHolder, bank);
+                        if (User.getCurrentUser().getCanSync()){
+                            deleteAccount(bankAccountView, mPanelLayoutHolder, bank);
+                        } else {
+                            //Popup dialog saying you cant delete demo data
+                        }
 					}
 
 				});
@@ -449,7 +524,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 				        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
 				        int topOffset = dm.heightPixels - mRoot.getMeasuredHeight();
 				        
-				        int[] location = new int[2];;
+				        int[] location = new int[2];
                         bankTypeAccountView.getLocationOnScreen(location);
 				        
 				        mPopup = new PopupWindowAtLocation(getActivity(), 
@@ -472,39 +547,39 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         status.setVisibility(View.VISIBLE);
         if (getActivity() != null) {
             if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_SUCCEEDED.index()) {
-                Toast.makeText(getActivity(), bank.getBankName() + " STATUS_SUCCEEDED", Toast.LENGTH_SHORT).show();
                 status.setVisibility(View.GONE);
                 
             } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_PENDING.index()) {
-                Toast.makeText(getActivity(), bank.getBankName() + " STATUS_PENDING", Toast.LENGTH_SHORT).show();
                 status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
                 
             } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_MFA.index()) {
-                Toast.makeText(getActivity(), bank.getBankName() + " STATUS_MFA", Toast.LENGTH_SHORT).show();
                 status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_more_info_banner));
                 
             } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_LOGIN_FAILED.index()) {
-                Toast.makeText(getActivity(), bank.getBankName() + " STATUS_LOGIN_FAILED", Toast.LENGTH_SHORT).show();
                 status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
                 
             } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_UPDATE_REQUIRED.index()) {
-                Toast.makeText(getActivity(), bank.getBankName() + " STATUS_UPDATE_REQUIRED", Toast.LENGTH_SHORT).show();
                 status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_more_info_banner));
                 
             } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_EXCEPTION.index()) {
-                Toast.makeText(getActivity(), bank.getBankName() + " STATUS_EXCEPTION", Toast.LENGTH_SHORT).show();
                 status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
                 
             } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_PROCESSING.index()) {
                 status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
-                Toast.makeText(getActivity(), bank.getBankName() + " STATUS_PROCESSING", Toast.LENGTH_SHORT).show();
             }
         }
     }
 		
-	
+
+    private void refreshAccount(Bank bank) {
+        updateBankStatus(bank); 
+        
+        setBankToUpdate(bank);
+        setAccountsSpecificToBankBannerUpdate(bank);
+        
+    }
+    
     private void deleteAccount(final View v, final LinearLayout panelView, final Bank bank) {
-        Toast.makeText(getActivity(), "REMOVE", Toast.LENGTH_SHORT).show();
             
         DialogUtils.alertDialog(String.format(getString(R.string.delete_bank_title), bank.getBankName()), 
                 getString(R.string.delete_bank_message), 

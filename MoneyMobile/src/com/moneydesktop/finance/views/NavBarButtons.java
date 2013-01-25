@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -40,7 +42,7 @@ public class NavBarButtons extends LinearLayout  {
         
         for (int i = 0; i < mButtonTexts.length; i++) {
             
-            TextView icon = new TextView(mContext);
+            final TextView icon = new TextView(mContext);
 
             icon.setPadding(0, 0, 25, 0);
             
@@ -67,6 +69,23 @@ public class NavBarButtons extends LinearLayout  {
                         LayoutParams.WRAP_CONTENT));
             }
             
+            
+            icon.setOnTouchListener(new OnTouchListener() {
+                
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == (MotionEvent.ACTION_DOWN)) {
+                        icon.setTextColor(Color.GRAY);
+                    }
+                    
+                    
+                    if (event.getAction() == (MotionEvent.ACTION_UP)) {
+                        icon.setTextColor(Color.WHITE);
+                    }
+                    
+                    return false;
+                }
+            });
             
             icon.setOnClickListener(mOnClickListeners.get(i));
             

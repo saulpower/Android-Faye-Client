@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
 import com.moneydesktop.finance.util.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.views.AccountTypeChildView;
@@ -152,7 +153,9 @@ public abstract class AbstractSlideExpandableListAdapter implements ListAdapter 
         AccountTypeChildView accountTypeChildView = new AccountTypeChildView(mContext, mAccountTypesFiltered.get(position).getBankAccounts(), parent);
         itemToolbar.addView(accountTypeChildView);
         
-        setupBanner((ViewGroup)accountTypeChildView, mAccountTypesFiltered.get(position).getBankAccounts());
+        if (User.getCurrentUser().getCanSync()) {
+            setupBanner((ViewGroup)accountTypeChildView, mAccountTypesFiltered.get(position).getBankAccounts());
+        }
         
 		enableFor(more, itemToolbar, position);
 	}
