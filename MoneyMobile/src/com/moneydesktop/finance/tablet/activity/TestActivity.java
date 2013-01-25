@@ -21,7 +21,6 @@ public class TestActivity extends Activity {
         l.addView(b);
         LayoutParams layout2 = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT,4);
         b.setLayoutParams(layout2);
-        b.setBarColor(Color.RED);
         b.showLabel(true);
         Button button1 = new Button(this);
         l.addView(button1);
@@ -31,7 +30,8 @@ public class TestActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-               b.setAmountAnimated(0);
+               b.setAmountAnimated(25);
+               b.setColorAnimated(Color.GREEN);
             }
         });
         LayoutParams layout1 = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT,1);
@@ -46,6 +46,7 @@ public class TestActivity extends Activity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                b.setAmountAnimated(250);
+               b.setColorAnimated(Color.RED);
             }
         });
         button2.setLayoutParams(layout1);
@@ -59,6 +60,7 @@ public class TestActivity extends Activity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                b.setAmountAnimated(125);
+               b.setColorAnimated(Color.YELLOW);
             }
         });
         button3.setLayoutParams(layout1);

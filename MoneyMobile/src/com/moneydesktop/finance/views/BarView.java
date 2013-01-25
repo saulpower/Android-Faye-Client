@@ -20,6 +20,10 @@ public class BarView extends View {
     private float mTextSize;
     private Paint mPaint;
     private Paint mBPaint;
+    private int mRed;
+    private int mBlue;
+    private int mGreen;
+    private int mAlpha;
     private double mAmount;
     private double mScaleAmount;
     private Rect mRect;
@@ -30,21 +34,24 @@ public class BarView extends View {
         makePaint();
         mLabelText = day;
         mShowLabel = true;
+        int defColor = getResources().getColor(color.gray3);
+        mRed = Color.red(defColor);
+        mGreen = Color.green(defColor);
+        mBlue = Color.blue(defColor);
+        mAlpha = Color.alpha(defColor);
         mAmount = amount;
         mScaleAmount = scale_amount;
     }
-    public BarView (Context context){
-        super(context);
-        makePaint();
-        mLabelText = "Test Bar";
-        mShowLabel = true;
-        mAmount = 125;
-        mScaleAmount = 250;
-    }
+
     public BarView(Context context, double amount, double scale_amount){
         super(context);     
         makePaint();
         mShowLabel = false;
+        int defColor = getResources().getColor(color.gray3);
+        mRed = Color.red(defColor);
+        mGreen = Color.green(defColor);
+        mBlue = Color.blue(defColor);
+        mAlpha = Color.alpha(defColor);
         mAmount = amount;
         mScaleAmount = scale_amount;
     }
@@ -73,12 +80,41 @@ public class BarView extends View {
         mAmount = a;
         invalidate();
     }
+    private void setRed(int r){
+        mRed = r;
+    }
+    private void setBlue(int b){
+        mBlue = b;
+    }
+    private void setGreen(int g){
+        mGreen = g;
+    }
+    private void setAlpha(int a){
+        mAlpha = a;
+    }
     public void setAmountAnimated(float a){
         final float start = (float) mAmount;
         ObjectAnimator v = ObjectAnimator.ofFloat(this, "amount", start,(float)a);
         v.setDuration(500);
-        //v.setInterpolator(new DecelerateInterpolator());
         v.start();        
+    }
+    public void setColorAnimated(int color){
+        final int startR = mRed;
+        final int startG = mGreen;
+        final int startB = mBlue;
+        final int startA = mAlpha;
+        ObjectAnimator vR = ObjectAnimator.ofInt(this, "red", startR,Color.red(color));
+        ObjectAnimator vG = ObjectAnimator.ofInt(this, "green", startG,Color.green(color));
+        ObjectAnimator vB = ObjectAnimator.ofInt(this, "blue", startB,Color.blue(color));
+        ObjectAnimator vA = ObjectAnimator.ofInt(this, "alpha", startA,Color.alpha(color));
+        vR.setDuration(500);
+        vG.setDuration(500);
+        vB.setDuration(500);
+        vA.setDuration(500);
+        vR.start();
+        vG.start();
+        vB.start();
+        vA.start();
     }
 
     public void setBarColor(int color){
@@ -86,6 +122,10 @@ public class BarView extends View {
             makePaint();
         }
         mBPaint.setColor(color);
+        mRed = Color.red(color);
+        mGreen = Color.green(color);
+        mBlue = Color.blue(color);
+        mAlpha = Color.alpha(color);
         invalidate();
     }
     public void setLabelColor(int color){
@@ -119,7 +159,8 @@ public class BarView extends View {
                         (int) ((getHeight() - ((getHeight() * scalePercentage)))),
                         getWidth() - 1, getHeight());
                 }
-        c.drawRect(mRect, mBPaint);
+                mBPaint.setColor(Color.argb(mAlpha, mRed, mGreen, mBlue));           
+                c.drawRect(mRect, mBPaint);
         
     }
 
@@ -130,7 +171,7 @@ public class BarView extends View {
         mPaint.setTextSize(mTextSize);
         mPaint.setColor(getContext().getResources().getColor(color.gray7));
         mBPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBPaint.setStyle(Paint.Style.FILL);        
-        mBPaint.setColor(getContext().getResources().getColor(color.gray1));        
+        mBPaint.setStyle(Paint.Style.FILL);
+        mBPaint.setColor(Color.argb(mAlpha, mRed, mGreen, mBlue));        
     }
 }
