@@ -23,8 +23,25 @@ public class BarGraphView extends RelativeLayout {
         LayoutParams l = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
         mBarContainer.setLayoutParams(l);
         mBarContainer.setOrientation(LinearLayout.HORIZONTAL);
-        
         // TODO Auto-generated constructor stub
+    }
+
+    public void changeBarValue(int b, double v, boolean animate){
+        if(animate){
+        mViews.get(b).setAmountAnimated((float)v);
+        }
+        else{
+            mViews.get(b).setAmount((float)v);
+        }
+    }
+    //only works temporarily, color is eliminated when items are added or main colors are changed.
+    public void changeBarColor(int b, int c, boolean animate){
+        if(animate){
+        mViews.get(b).setColorAnimated(c);
+        }
+        else{
+            mViews.get(b).setBarColor(c);
+        }
     }
     public void add(BarView b){
         mViews.add(b);
