@@ -152,12 +152,12 @@ public class NavItemDrawable extends Drawable {
 		fade.setDuration(150);
 		
 		ObjectAnimator translate = ObjectAnimator.ofObject(this, "position", new PointEvaluator(), mCenter, mTargetPosition);
-		translate.setDuration(500);
-		translate.setInterpolator(new OvershootInterpolator(2.0f));
-		
+		translate.setDuration(300);
+		translate.setInterpolator(new OvershootInterpolator());
+
 		mIntroSet = new AnimatorSet();
 		mIntroSet.play(translate).with(fade);
-		mIntroSet.setStartDelay(100 + 40 * mIndex);
+		mIntroSet.setStartDelay(100 + 50 * mIndex);
 		mIntroSet.start();
 	}
 	

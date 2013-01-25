@@ -17,6 +17,7 @@ import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
 import com.moneydesktop.finance.handset.fragment.AccountTypesHandsetFragment;
 import com.moneydesktop.finance.handset.fragment.DashboardHandsetFragmentFactory;
 import com.moneydesktop.finance.handset.fragment.SettingsHandsetFragment;
+import com.moneydesktop.finance.handset.fragment.TransactionsHandsetFragment;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.shared.DashboardBaseActivity;
 import com.moneydesktop.finance.shared.LockFragment;
@@ -42,6 +43,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity {
         mPager.setPageMargin(20);
         mAdapter = new FragmentAdapter(mFm);
         mPager.setAdapter(mAdapter);
+        mPager.setOffscreenPageLimit(5);
 
         if (savedInstanceState != null) {
             mPager.setCurrentItem(savedInstanceState.getInt(KEY_PAGER));
@@ -150,7 +152,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity {
         	frag = SettingsHandsetFragment.getInstance(position);
         	break;
         case 3:
-        	//frag = TransactionsFragment.newInstance();
+        	frag = TransactionsHandsetFragment.newInstance("1");
         	break;
         case 4:
         	frag = LockFragment.newInstance(false);

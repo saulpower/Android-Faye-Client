@@ -68,14 +68,15 @@ public class PointerDrawable extends NavItemDrawable {
 		indicator.setColor(mContext.getResources().getColor(R.color.primaryColor));
 		indicator.setStyle(Paint.Style.STROKE);
 		indicator.setAntiAlias(true);
-		indicator.setStrokeWidth(8);
+		indicator.setStrokeWidth(UiUtils.getDynamicPixels(mContext, 8));
 
-		DashPathEffect dashPath = new DashPathEffect(new float[] {4, 4}, (float) 1.0);
+		float interval = UiUtils.getDynamicPixels(mContext, 4);
+		DashPathEffect dashPath = new DashPathEffect(new float[] {interval, interval}, (float) 1.0);
 		
 		circle = new Paint(Paint.ANTI_ALIAS_FLAG);
 		circle.setColor(Color.WHITE);
 		circle.setStyle(Paint.Style.STROKE);
-		circle.setStrokeWidth(3);
+		circle.setStrokeWidth(UiUtils.getDynamicPixels(mContext, 3));
 		circle.setPathEffect(dashPath);
 	}
 	

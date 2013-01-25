@@ -3,11 +3,8 @@ package com.moneydesktop.finance.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.view.View;
 import android.view.WindowManager;
 
 import com.moneydesktop.finance.ApplicationContext;
@@ -39,16 +36,6 @@ public class UiUtils {
     public static float getDensityRatio (final Activity context) {
         final DisplayMetrics metrics = getDisplayMetrics(context);
         return (metrics.densityDpi / Constant.STANDARD_DPI);
-    }
-    
-    public static Bitmap loadBitmapFromView(View v) {
-        
-        Bitmap b = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);                
-        Canvas c = new Canvas(b);
-        v.layout(0, 0, v.getLayoutParams().width, v.getLayoutParams().height);
-        v.draw(c);
-        
-        return b;
     }
     
     /**

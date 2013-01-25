@@ -94,8 +94,8 @@ public class DateRangeView extends View implements AnchorMoveListener {
         
         mTopBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTopBorderPaint.setStyle(Paint.Style.STROKE);
-        mTopBorderPaint.setColor(resources.getColor(R.color.gray7));
-        mTopBorderPaint.setStrokeWidth(1.0f);
+        mTopBorderPaint.setColor(resources.getColor(R.color.gray3));
+        mTopBorderPaint.setStrokeWidth(UiUtils.getDynamicPixels(getContext(), 1.0f));
         
         mHighlightPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mHighlightPaint.setColor(resources.getColor(R.color.primaryColor));
