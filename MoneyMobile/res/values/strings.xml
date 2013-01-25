@@ -13,6 +13,11 @@
         <item>UPDATE USERNAME AND PASSWORD</item>
     </string-array> 
     
+   <string-array name="account_types_bank_options">
+        <item>@string/icon_lock</item>
+        <item>@string/icon_trash</item>
+    </string-array>
+    
     <string-array name="account_types_title_bar_icons">
         <item>@string/icon_add</item>
         <item>@string/icon_refresh</item>
@@ -55,6 +60,8 @@
     <string name="atg_ccd">Credit Card Debt</string>
     <string name="atg_od">Other Debt</string>
     <string name="at_cash">Cash</string>
+    <string name="bank_options_credentials">Credentials</string>
+    <string name="bank_options_delete">Delete This Institution</string>
     <string name="button_cancel">CANCEL</string>
     <string name="button_demo">DEMO MODE</string>
     <string name="button_login">LOGIN</string>
@@ -125,6 +132,7 @@
     <string name="icon_inv">I</string>
     <string name="icon_prop">M</string>
     <string name="icon_saving">O</string>
+    <string name="icon_trash">G</string>
     <string name="icon_cc">F</string>
     <string name="icon_loc">J</string>
     <string name="icon_loans">H</string>

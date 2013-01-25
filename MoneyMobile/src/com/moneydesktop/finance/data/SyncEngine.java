@@ -1,6 +1,7 @@
 package com.moneydesktop.finance.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -158,17 +159,21 @@ public class SyncEngine {
 					
 					List<Bank> updatingCopy = new ArrayList<Bank>();
 					
+					updatingCopy = Arrays.asList(new Bank[banksUpdating.size()]);  
+					
 					Collections.copy(updatingCopy, banksUpdating);
 					
-					for (int i = 0; i < banksUpdating.size(); i++) {
+					for (int i = updatingCopy.size() -1; i >= 0; i--) {
 						
 						Bank bank = updatingCopy.get(i);
 						
 						JSONObject json = DataBridge.sharedInstance().getBankStatus(bank.getBankId());
 						bank.updateStatus(json);
 						
-						if (bank.getProcessStatus() >= 3)
+						if (bank.getProcessStatus().intValue()  >= 3)
 							banksUpdating.remove(i);
+						    eventBus.post(new EventMessage().new BankStatusUpdateEvent(bank));
+						    Log.d("bank Removed", bank.getBankName());
 					}
 					
 					if (banksUpdating.size() == 0) {
@@ -179,7 +184,8 @@ public class SyncEngine {
 							public void run() {
 
 								endBankStatusTimer();
-								beginSync();
+								//Kent: I commented this out because it was causing a eternal loop in the AccountTypesTabletFragment
+								//beginSync();
 							}
 						});
 					}

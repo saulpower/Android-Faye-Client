@@ -1,5 +1,6 @@
 package com.moneydesktop.finance.model;
 
+import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.util.Enums.LockType;
 import com.moneydesktop.finance.util.Enums.NavDirection;
@@ -133,6 +134,20 @@ public class EventMessage {
 			this.mFinished = finished;
 		}
 	}
+	
+   public class BankStatusUpdateEvent extends EventMessage {
+        
+        protected Bank mBank;
+
+        public BankStatusUpdateEvent(Bank bank) {
+            this.mBank = bank;
+        }
+        
+        public Bank getUpdatedBank() {
+            return mBank;
+        }
+
+    }
 	
 	protected HashMap<String, Object> mInfo;
 	protected String mMessage;

@@ -18,6 +18,7 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
+import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
 import com.moneydesktop.finance.util.Enums.TxFilter;
 import com.moneydesktop.finance.util.Enums.TxType;
 import com.moneydesktop.finance.util.UiUtils;
@@ -63,6 +64,7 @@ public class AccountTypeChildView extends FrameLayout {
         	accountName.setText(account.getAccountName() == null ? "" : account.getAccountName());
         	accountSum.setText(account.getBalance() == null ? "" : mFormatter.format(account.getBalance()));
         	BankLogoManager.getBankImage(bankLogo, account.getInstitutionId());
+
         	
         	
         	view.setOnClickListener(new OnClickListener() {

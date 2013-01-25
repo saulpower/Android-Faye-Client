@@ -1,7 +1,9 @@
 package com.moneydesktop.finance.views.AnimatedListView;
 
 import android.R;
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.DataSetObserver;
 import android.util.Log;
 import android.view.View;
@@ -11,11 +13,15 @@ import android.view.animation.Transformation;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.database.AccountType;
+import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
+import com.moneydesktop.finance.util.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.views.AccountTypeChildView;
 
 import java.util.List;
@@ -31,8 +37,7 @@ import java.util.List;
 public abstract class AbstractSlideExpandableListAdapter implements ListAdapter {
 	private ListAdapter wrapped;
 	private static Context mContext;
-	private static List<AccountType> mAccountTypesFiltered;
-	
+	private static List<AccountType> mAccountTypesFiltered;	
 
 	public AbstractSlideExpandableListAdapter(ListAdapter wrapped, Context context, List<AccountType> accountTypesFiltered) {
 		this.wrapped = wrapped;
@@ -121,7 +126,8 @@ public abstract class AbstractSlideExpandableListAdapter implements ListAdapter 
 	 * @return a child of parent which is a button
 	 */
 	public abstract View getExpandToggleButton(View parent);
-
+	
+	
 	/**
 	 * This method is used to get the view that will be hidden
 	 * initially and expands or collapse when the ExpandToggleButton
@@ -146,6 +152,8 @@ public abstract class AbstractSlideExpandableListAdapter implements ListAdapter 
         AccountTypeChildView accountTypeChildView = new AccountTypeChildView(mContext, mAccountTypesFiltered.get(position).getBankAccounts(), parent);
         itemToolbar.addView(accountTypeChildView);
         
+        setupBanner((ViewGroup)accountTypeChildView, mAccountTypesFiltered.get(position).getBankAccounts());
+        
 		enableFor(more, itemToolbar, position);
 	}
 
@@ -158,17 +166,54 @@ public abstract class AbstractSlideExpandableListAdapter implements ListAdapter 
 				int type = target.getVisibility() == View.VISIBLE ? ExpandCollapseAnimation.COLLAPSE : ExpandCollapseAnimation.EXPAND;
 				Animation anim = new ExpandCollapseAnimation(target, 330, type);
 				((TextView)view.findViewById(com.moneydesktop.finance.R.id.account_type_group_indicator)).setText(mContext.getResources().getString(com.moneydesktop.finance.R.string.account_types_indicator_show));
-				if(type == ExpandCollapseAnimation.EXPAND) {				    
-					lastOpen = target;
+				if(type == ExpandCollapseAnimation.EXPAND) {	
 					((TextView)view.findViewById(com.moneydesktop.finance.R.id.account_type_group_indicator)).setText(mContext.getResources().getString(com.moneydesktop.finance.R.string.account_types_indicator_hide));
-				} else if(lastOpen == view) {
-					lastOpen = null;
 				}
 				view.startAnimation(anim);
 			}
+
 		});
 		// ensure the target is currently not visible
 		target.setVisibility(View.GONE);
 	}
+	
+	
+    /**
+     * Sets up the banner for the account listed in Account types (the child bank)
+     * @param view
+     * @param bankAccounts
+     */
+    private static void setupBanner(ViewGroup view, List<BankAccount> bankAccounts) {  
+        ViewGroup layout = (ViewGroup)view.getChildAt(0);
+        
+        
+        for (int i = 0; i< bankAccounts.size(); i++) {
+            View layout2 = (ViewGroup) layout.getChildAt(i);
+            
+            ImageView image = (ImageView)layout2.findViewById(com.moneydesktop.finance.R.id.account_type_child_banner);
+            
+            image.setVisibility(View.VISIBLE);
+            
+            if (bankAccounts.get(i).getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_SUCCEEDED.index()) {
+                image.setVisibility(View.GONE);
+                
+            } else if (bankAccounts.get(i).getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_PENDING.index()) {
+                image.setImageDrawable(((Activity)mContext).getResources().getDrawable(com.moneydesktop.finance.R.drawable.tablet_accounts_updating_banner));
+                
+            } else if (bankAccounts.get(i).getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_LOGIN_FAILED.index()) {
+                image.setImageDrawable(((Activity)mContext).getResources().getDrawable(com.moneydesktop.finance.R.drawable.tablet_accounts_error_banner));
+                
+            } else if (bankAccounts.get(i).getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_EXCEPTION.index()) {
+                image.setImageDrawable(((Activity)mContext).getResources().getDrawable(com.moneydesktop.finance.R.drawable.tablet_accounts_error_banner));
+                
+            } else if (bankAccounts.get(i).getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_PROCESSING.index()) {
+                image.setImageDrawable(((Activity)mContext).getResources().getDrawable(com.moneydesktop.finance.R.drawable.tablet_accounts_updating_banner));
+                
+            } else {
+                image.setVisibility(View.GONE);
+            }        
+            
+        }
+    } 
 
 }

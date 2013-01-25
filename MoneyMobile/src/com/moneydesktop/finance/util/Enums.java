@@ -36,6 +36,53 @@ public class Enums {
         
     };
     
+    
+    public enum BankRefreshStatus {
+        
+        STATUS_PENDING (1),
+        STATUS_PROCESSING (2),
+        STATUS_SUCCEEDED (3),
+        STATUS_EXCEPTION (4),
+        STATUS_LOGIN_FAILED (5),
+        STATUS_MFA (6),
+        STATUS_UPDATE_REQUIRED (7);
+                
+        
+        private int index;
+        
+        BankRefreshStatus(int index) {
+            this.index = index;
+        }
+        
+        public static BankRefreshStatus fromInteger(Integer value) {
+            
+            switch(value) {
+            case 1:
+                return STATUS_PENDING;
+            case 2:
+                return STATUS_PROCESSING;
+            case 3:
+                return STATUS_SUCCEEDED;
+            case 4:
+                return STATUS_EXCEPTION;
+            case 5:
+                return STATUS_LOGIN_FAILED;
+            case 6:
+                return STATUS_MFA;
+            case 7:
+                return STATUS_UPDATE_REQUIRED;
+            }
+            
+            
+            return null;
+        }
+        
+        public int index() {
+            return index;
+        }
+        
+    };
+    
     public enum HandsetFragments {
         
     }
@@ -143,4 +190,11 @@ public class Enums {
 	    	return index;
 	    }
 	};
+	
+	public enum SlideFrom {
+	    RIGHT,
+	    LEFT,
+	    TOP,
+	    BOTTOM
+	}
 }

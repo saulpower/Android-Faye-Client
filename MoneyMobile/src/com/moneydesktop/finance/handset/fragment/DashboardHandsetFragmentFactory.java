@@ -17,6 +17,8 @@ public class DashboardHandsetFragmentFactory {
                 return TransactionSummaryHandsetFragment.getInstance(3);
             case 4:
                 return SettingsHandsetFragment.getInstance(4);
+            case 5:
+                return AccountTypesHandsetFragment.getInstance(5);
         }
         
         return null;

@@ -10,8 +10,8 @@ import com.moneydesktop.finance.data.SyncEngine;
 //This method automatically runs/creates on a separate thread. Unlike extending "Service" 
 public class SyncService extends IntentService{
     
-    public SyncService(String name) {
-        super(name);
+    public SyncService() {
+        super("SyncService");
     }
 
     @Override

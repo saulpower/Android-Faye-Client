@@ -45,15 +45,13 @@ public class NavBarButtons extends LinearLayout  {
             icon.setPadding(0, 0, 25, 0);
             
             if (mButtonTexts[i].equals(getResources().getString(R.string.icon_print))) {
-                icon.setBackgroundDrawable(getResources().getDrawable(R.drawable.tablet_button_print));                
-                //icon.setTextSize(30);
+                icon.setBackgroundDrawable(getResources().getDrawable(R.drawable.tablet_button_print));    
                 icon.setLayoutParams(new LayoutParams(
                         LayoutParams.FILL_PARENT,
                         LayoutParams.FILL_PARENT));
                 
             } else if (mButtonTexts[i].equals(getResources().getString(R.string.icon_email))){
                 icon.setBackgroundDrawable(getResources().getDrawable(R.drawable.tablet_button_email));
-                //icon.setTextSize(30);
                 
                 icon.setLayoutParams(new LayoutParams(
                         LayoutParams.FILL_PARENT,
