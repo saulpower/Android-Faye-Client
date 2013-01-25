@@ -106,7 +106,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         
         
         for (AccountType type : accountTypes) {  //This  could be optimized by throwing a "where" in the query builder
-        	if (!type.getBankAccounts().isEmpty()) {
+        	if (!type.getBankAccounts().isEmpty() && !type.getAccountTypeName().equals("Unknown")) {
         	    mAccountTypesFiltered.add(type);
         	}
         }
