@@ -828,7 +828,7 @@ public class PropertyValuesHolder implements Cloneable {
                 return;
             }
             if (mProperty != null) {
-                mProperty.set(target, mIntAnimatedValue);
+                mProperty.set(target, (float)mIntAnimatedValue);
                 return;
             }
             //if (mJniSetter != 0) {
