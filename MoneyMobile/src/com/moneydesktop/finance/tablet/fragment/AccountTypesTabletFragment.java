@@ -162,7 +162,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                 if (User.getCurrentUser().getCanSync()){
                     Toast.makeText(activity, "add", Toast.LENGTH_LONG).show();
                 } else {
-                   //Dialog....cant update data 
+                   //Dialog....can't update data 
                     DialogUtils.alertDialog(getResources().getString(R.string.feature_not_available), getResources().getString(R.string.feature_not_available_message), getActivity());
                 }
             }
@@ -179,7 +179,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                         
                         setAllBanksToUpdate();
                     } else {
-                       //Dialog....cant update data 
+                       //Dialog....can't update data 
                         DialogUtils.alertDialog(getResources().getString(R.string.feature_not_available), getResources().getString(R.string.feature_not_available_message), getActivity());
                     }
                 }
@@ -367,12 +367,10 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         
         BankLogoManager.getBankImage(bankImage, bank.getBankAccounts().get(0).getInstitutionId());
         
-        
         ImageView status = (ImageView) bankTypeAccountView.findViewById(R.id.bank_status);
         
         status.setVisibility(View.VISIBLE);
         setBanner(bank, status);
-        
         
         TextView bankName = (TextView)bankTypeAccountView.findViewById(R.id.account_bank_name);
         
@@ -392,6 +390,8 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 					public void onClick(View v) {
 					    if (User.getCurrentUser().getCanSync()){
 					        refreshAccount(bank);
+					    } else {
+					        DialogUtils.alertDialog(getResources().getString(R.string.feature_not_available), getResources().getString(R.string.feature_not_available_message), getActivity());
 					    }
 				        mPopup.fadeOutTransparency();
 					}
@@ -405,8 +405,10 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                         if (User.getCurrentUser().getCanSync()){
                             deleteAccount(bankAccountView, mPanelLayoutHolder, bank);
                         } else {
-                            //Popup dialog saying you cant delete demo data
+                            //Popup dialog saying you can't delete demo data
+                            DialogUtils.alertDialog(String.format(getString(R.string.feature_not_available_delete_title), bank.getBankName()), getResources().getString(R.string.feature_not_available_delete_message), getActivity());
                         }
+                        mPopup.fadeOutTransparency();
 					}
 
 				});
@@ -414,7 +416,12 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 				onClickListeners.add(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						Toast.makeText(getActivity(), "UPDATE USERNAME AND PASSWORD", Toast.LENGTH_SHORT).show();
+						if (User.getCurrentUser().getCanSync()) {
+						    Toast.makeText(getActivity(), "UPDATE USERNAME AND PASSWORD", Toast.LENGTH_SHORT).show();
+						} else {
+						    DialogUtils.alertDialog(getResources().getString(R.string.feature_not_available), getResources().getString(R.string.feature_not_available_message), getActivity());
+						}
+                        mPopup.fadeOutTransparency();
 					}
 				});
 				

@@ -98,7 +98,9 @@
     <string name="error_login_invalid">Did you know you need to setup\nyour mobile account before you\ncan use this app?</string>
     <string name="error_title">Error</string>
     <string name="feature_not_available">Feature Not Available</string>
-    <string name="feature_not_available_message">This feature is not available in demo mode.</string>
+    <string name="feature_not_available_message">This feature is not available in demo mode</string>
+    <string name="feature_not_available_delete_title">Primary Institution: %1$s</string>
+    <string name="feature_not_available_delete_message">This account cannot be removed</string>
     <string name="feedback_email">mobile.support@moneydesktop.com</string>
     <string name="feedback_subject">MoneyMobile Feedback</string>
     <string name="feedback_title">Send Email</string>
