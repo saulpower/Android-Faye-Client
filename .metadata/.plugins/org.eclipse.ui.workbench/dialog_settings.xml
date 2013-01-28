@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.internal.QuickAccess">
-		<item value="1600" key="dialogWidth"/>
-		<item value="900" key="dialogHeight"/>
+		<item value="900" key="dialogWidth"/>
+		<item value="563" key="dialogHeight"/>
 		<list key="orderedProviders">
 		</list>
 		<list key="textArray">
@@ -13,29 +13,34 @@
 		</list>
 	</section>
 	<section name="WorkbenchPreferenceDialogSettings">
-		<item value="315" key="DIALOG_Y_ORIGIN"/>
-		<item value="395" key="DIALOG_X_ORIGIN"/>
+		<item value="376" key="DIALOG_Y_ORIGIN"/>
+		<item value="868" key="DIALOG_X_ORIGIN"/>
+	</section>
+	<section name="NewWizardAction">
 	</section>
 	<section name="InstallationDialogSettings">
 		<item value="702" key="DIALOG_WIDTH"/>
 		<item value="-279" key="DIALOG_Y_ORIGIN"/>
-		<item value="652" key="DIALOG_HEIGHT"/>
 		<item value="-86" key="DIALOG_X_ORIGIN"/>
+		<item value="652" key="DIALOG_HEIGHT"/>
 		<item value="1|Lucida Grande|11.0|0|COCOA|1|LucidaGrande" key="DIALOG_FONT_NAME"/>
-	</section>
-	<section name="NewWizardAction">
 	</section>
 	<section name="ShowViewDialog">
 		<item value="308" key="DIALOG_WIDTH"/>
 		<item value="org.eclipse.debug.ui.DebugView" key="ShowViewDialog.STORE_SELECTED_VIEW_ID"/>
 		<item value="194" key="DIALOG_Y_ORIGIN"/>
-		<item value="686" key="DIALOG_X_ORIGIN"/>
 		<item value="415" key="DIALOG_HEIGHT"/>
+		<item value="686" key="DIALOG_X_ORIGIN"/>
 		<item value="1|Lucida Grande|11.0|0|COCOA|1|LucidaGrande" key="DIALOG_FONT_NAME"/>
 		<list key="ShowViewDialog.STORE_EXPANDED_CATEGORIES_ID">
 			<item value="org.eclipse.ui"/>
 			<item value="org.eclipse.debug.ui"/>
 		</list>
+	</section>
+	<section name="org.eclipse.ui.preferences.keysPreferencePage">
+		<item value="true" key="uncategorizedFilter"/>
+		<item value="true" key="internalFilter"/>
+		<item value="true" key="actionSetFilter"/>
 	</section>
 	<section name="ImportExportAction">
 		<item value="com.android.ide.eclipse.adt.project.ImportProjectWizard" key="ImportExportPage.STORE_SELECTED_IMPORT_WIZARD_ID"/>

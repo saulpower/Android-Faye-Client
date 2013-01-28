@@ -13,7 +13,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -31,7 +30,7 @@ import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.model.EventMessage.BankStatusUpdateEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
@@ -39,7 +38,6 @@ import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.views.AccountTypeChildView;
 import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.PopupWindowAtLocation;
 import com.moneydesktop.finance.views.SlidingDrawerRightSide;
@@ -175,7 +173,6 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                         getActivity().startService(intent);
                         
                         setAllBanksToUpdate();
-                        setAccountsBannerUpdate(true);
                     } else {
                        //Dialog....cant update data 
                     }
@@ -248,7 +245,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                     ImageView status = (ImageView) bankView.findViewById(R.id.bank_status);
                     
                     setBanner(bank, status);
-                    setAccountsBannerUpdate(false);
+             //       setAccountsBannerUpdate(false);
                     Log.d("Bank sync done", "Just set the Banners for " + bank.getBankName());
                 }
             }
@@ -281,14 +278,12 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                         
                         if (status != null) {
                             setBanner(bank, status);
-                            setAccountsBannerUpdate(false);
                         }
                     }
                 }
                 
             }
         });
-        
     }
     
     /**
@@ -311,106 +306,6 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
     public void onResume() {
         super.onResume();
         setupTitleBar(getActivity());
-    }
-
-    private void setAccountsBannerUpdate(Boolean forceBanner) {
-        int listCount = 0;
-        
-        if (mListView.getChildCount() < mListView.getCount()) {
-            listCount = mListView.getChildCount();
-        } else {
-            listCount =mListView.getCount() - 1;
-        }
-        
-        for (int i = 0; i < listCount; i++) {
-            
-            if (!(mListView.getChildAt(i) instanceof LinearLayout)){ // this is the footer....we want to skip it.
-                
-                ViewGroup group = (ViewGroup)mListView.getChildAt(i);
-                ViewGroup container = (ViewGroup)group.getChildAt(0);            
-                
-                HorizontalScrollView horizontalScrollView = (HorizontalScrollView) container.getChildAt(1);
-                    int iterator = 0;
-                    for (final BankAccount account : mAccountTypesFiltered.get(i).getBankAccounts()) {
-                        
-                        AccountTypeChildView accountTypeChildView = (AccountTypeChildView) horizontalScrollView.getChildAt(0);
-                        ViewGroup innerContainer = (ViewGroup)accountTypeChildView.getChildAt(0);
-                        View view = innerContainer.getChildAt(iterator);
-
-                        if (getActivity() != null){
-                            if (forceBanner){
-                                ImageView image = (ImageView)view.findViewById(R.id.account_type_child_banner);
-                                image.setVisibility(View.VISIBLE);
-                                image.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
-                            } else {
-                                
-                                ImageView image = (ImageView)view.findViewById(R.id.account_type_child_banner);
-                                image.setVisibility(View.VISIBLE);
-                                if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_SUCCEEDED.index()) { //3
-                                    image.setVisibility(View.GONE);
-                                    
-                                } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_PENDING.index()) { //1
-                                    image.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
-                                    
-                                } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_LOGIN_FAILED.index()) { //5
-                                    image.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
-                                    
-                                } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_EXCEPTION.index()) { //4
-                                    image.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
-                                    
-                                } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_PROCESSING.index()) { //2
-                                    image.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
-                                    
-                                } else {
-                                    image.setVisibility(View.GONE);
-                                }             
-                            }
-                        }
-                    iterator++;
-                }
-                
-            }     
-       }
-        
-    }
-    
-    
-    private void setAccountsSpecificToBankBannerUpdate(Bank bank) {
-        int listCount = 0;
-        
-        listCount = mListView.getCount() - 1;
-
-        for (int i = 0; i < listCount; i++) {
-            
-            if (!(mListView.getChildAt(i) instanceof LinearLayout)){ // this is the footer....we want to skip it.
-                
-                if (mListView.getChildCount() > i) {
-                
-                    ViewGroup group = (ViewGroup)mListView.getChildAt(i);
-                    ViewGroup container = (ViewGroup)group.getChildAt(0);            
-                    
-                    HorizontalScrollView horizontalScrollView = (HorizontalScrollView) container.getChildAt(1);
-                        int iterator = 0;
-                        for (final BankAccount account : mAccountTypesFiltered.get(i).getBankAccounts()) {
-                            
-                            if (account.getBank().getBankName().equals(bank.getBankName())) {
-                                
-                                AccountTypeChildView accountTypeChildView = (AccountTypeChildView) horizontalScrollView.getChildAt(0);
-                                ViewGroup innerContainer = (ViewGroup)accountTypeChildView.getChildAt(0);
-                                View view = innerContainer.getChildAt(iterator);
-        
-                                if (getActivity() != null){
-                                        ImageView image = (ImageView)view.findViewById(R.id.account_type_child_banner);
-                                        image.setVisibility(View.VISIBLE);
-                                        image.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner)); 
-                                }
-                            }
-                        iterator++;
-                    }
-                }
-            }     
-       }
-        
     }
     
     public void setAllBanksToUpdate() {
@@ -572,11 +467,9 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 		
 
     private void refreshAccount(Bank bank) {
-        updateBankStatus(bank); 
-        
         setBankToUpdate(bank);
-        setAccountsSpecificToBankBannerUpdate(bank);
-        
+        updateBankStatus(bank); 
+        EventBus.getDefault().post(new EventMessage().new RefreshAccountEvent(bank));
     }
     
     private void deleteAccount(final View v, final LinearLayout panelView, final Bank bank) {

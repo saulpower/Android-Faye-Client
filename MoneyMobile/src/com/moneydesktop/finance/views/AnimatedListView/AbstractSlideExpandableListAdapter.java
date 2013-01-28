@@ -20,10 +20,14 @@ import android.widget.TextView;
 
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
+import com.moneydesktop.finance.model.EventMessage.RefreshAccountEvent;
 import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
 import com.moneydesktop.finance.util.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.views.AccountTypeChildView;
+
+import de.greenrobot.event.EventBus;
 
 import java.util.List;
 
@@ -154,12 +158,11 @@ public abstract class AbstractSlideExpandableListAdapter implements ListAdapter 
         itemToolbar.addView(accountTypeChildView);
         
         if (User.getCurrentUser().getCanSync()) {
-            setupBanner((ViewGroup)accountTypeChildView, mAccountTypesFiltered.get(position).getBankAccounts());
+            EventBus.getDefault().post(new EventMessage().new ReloadBannersEvent());
         }
         
 		enableFor(more, itemToolbar, position);
 	}
-
 	
 	public static void enableFor(View button, final View target, final int position) {
 	    button.setOnClickListener(new View.OnClickListener() {
@@ -179,44 +182,5 @@ public abstract class AbstractSlideExpandableListAdapter implements ListAdapter 
 		// ensure the target is currently not visible
 		target.setVisibility(View.GONE);
 	}
-	
-	
-    /**
-     * Sets up the banner for the account listed in Account types (the child bank)
-     * @param view
-     * @param bankAccounts
-     */
-    private static void setupBanner(ViewGroup view, List<BankAccount> bankAccounts) {  
-        ViewGroup layout = (ViewGroup)view.getChildAt(0);
-        
-        
-        for (int i = 0; i< bankAccounts.size(); i++) {
-            View layout2 = (ViewGroup) layout.getChildAt(i);
-            
-            ImageView image = (ImageView)layout2.findViewById(com.moneydesktop.finance.R.id.account_type_child_banner);
-            
-            image.setVisibility(View.VISIBLE);
-            
-            if (bankAccounts.get(i).getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_SUCCEEDED.index()) {
-                image.setVisibility(View.GONE);
-                
-            } else if (bankAccounts.get(i).getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_PENDING.index()) {
-                image.setImageDrawable(((Activity)mContext).getResources().getDrawable(com.moneydesktop.finance.R.drawable.tablet_accounts_updating_banner));
-                
-            } else if (bankAccounts.get(i).getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_LOGIN_FAILED.index()) {
-                image.setImageDrawable(((Activity)mContext).getResources().getDrawable(com.moneydesktop.finance.R.drawable.tablet_accounts_error_banner));
-                
-            } else if (bankAccounts.get(i).getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_EXCEPTION.index()) {
-                image.setImageDrawable(((Activity)mContext).getResources().getDrawable(com.moneydesktop.finance.R.drawable.tablet_accounts_error_banner));
-                
-            } else if (bankAccounts.get(i).getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_PROCESSING.index()) {
-                image.setImageDrawable(((Activity)mContext).getResources().getDrawable(com.moneydesktop.finance.R.drawable.tablet_accounts_updating_banner));
-                
-            } else {
-                image.setVisibility(View.GONE);
-            }        
-            
-        }
-    } 
 
 }

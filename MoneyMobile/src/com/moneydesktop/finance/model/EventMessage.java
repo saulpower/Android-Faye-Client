@@ -148,6 +148,26 @@ public class EventMessage {
         }
 
     }
+   
+   public class RefreshAccountEvent extends EventMessage {
+       
+       protected Bank mBank;
+
+       public RefreshAccountEvent(Bank bank) {
+           this.mBank = bank;
+       }
+       
+       public Bank getRefreshedBank() {
+           return mBank;
+       }
+
+   }
+   
+   public class ReloadBannersEvent extends EventMessage {
+       public ReloadBannersEvent() {
+           super();
+       }
+   }
 	
 	protected HashMap<String, Object> mInfo;
 	protected String mMessage;
