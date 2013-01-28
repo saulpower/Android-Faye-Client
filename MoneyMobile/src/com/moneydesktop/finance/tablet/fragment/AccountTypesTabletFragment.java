@@ -159,7 +159,12 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	    onClickListeners.add(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(activity, "add", Toast.LENGTH_LONG).show();
+                if (User.getCurrentUser().getCanSync()){
+                    Toast.makeText(activity, "add", Toast.LENGTH_LONG).show();
+                } else {
+                   //Dialog....cant update data 
+                    DialogUtils.alertDialog(getResources().getString(R.string.feature_not_available), getResources().getString(R.string.feature_not_available_message), getActivity());
+                }
             }
         });
 	    
@@ -175,6 +180,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                         setAllBanksToUpdate();
                     } else {
                        //Dialog....cant update data 
+                        DialogUtils.alertDialog(getResources().getString(R.string.feature_not_available), getResources().getString(R.string.feature_not_available_message), getActivity());
                     }
                 }
             }

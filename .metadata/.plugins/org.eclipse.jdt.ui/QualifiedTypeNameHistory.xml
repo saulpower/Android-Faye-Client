@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="com.moneydesktop.finance.BaseActivity"/>
-<fullyQualifiedTypeName name="com.moneydesktop.finance.views.UltimateListView"/>
-<fullyQualifiedTypeName name="android.widget.ExpandableListView.OnGroupClickListener"/>
-<fullyQualifiedTypeName name="android.widget.ExpandableListView.OnGroupCollapseListener"/>
-<fullyQualifiedTypeName name="android.view.View.OnClickListener"/>
-<fullyQualifiedTypeName name="android.widget.Toast"/>
 <fullyQualifiedTypeName name="android.widget.FrameLayout"/>
 <fullyQualifiedTypeName name="android.view.animation.TranslateAnimation"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.R.layout"/>
@@ -37,7 +31,6 @@
 <fullyQualifiedTypeName name="android.os.AsyncTask"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.util.SyncLooperUtil"/>
 <fullyQualifiedTypeName name="android.content.Context"/>
-<fullyQualifiedTypeName name="java.lang.Boolean"/>
 <fullyQualifiedTypeName name="java.lang.Thread"/>
 <fullyQualifiedTypeName name="java.util.Arrays"/>
 <fullyQualifiedTypeName name="com.moneydesktop.finance.database.Bank"/>
@@ -60,4 +53,11 @@
 <fullyQualifiedTypeName name="com.moneydesktop.finance.model.User"/>
 <fullyQualifiedTypeName name="android.view.View.OnTouchListener"/>
 <fullyQualifiedTypeName name="android.view.MotionEvent"/>
+<fullyQualifiedTypeName name="android.widget.Toast"/>
+<fullyQualifiedTypeName name="com.moneydesktop.finance.database.BankAccount"/>
+<fullyQualifiedTypeName name="java.lang.Boolean"/>
+<fullyQualifiedTypeName name="de.greenrobot.event.EventBus"/>
+<fullyQualifiedTypeName name="com.moneydesktop.finance.model.EventMessage"/>
+<fullyQualifiedTypeName name="com.moneydesktop.finance.model.EventMessage.RefreshAccountEvent"/>
+<fullyQualifiedTypeName name="com.moneydesktop.finance.model.EventMessage.ReloadBannersEvent"/>
 </qualifiedTypeNameHistroy>

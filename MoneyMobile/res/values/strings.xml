@@ -97,6 +97,8 @@
     <string name="error_email_invalid">Please ensure your email address is valid.</string>
     <string name="error_login_invalid">Did you know you need to setup\nyour mobile account before you\ncan use this app?</string>
     <string name="error_title">Error</string>
+    <string name="feature_not_available">Feature Not Available</string>
+    <string name="feature_not_available_message">This feature is not available in demo mode.</string>
     <string name="feedback_email">mobile.support@moneydesktop.com</string>
     <string name="feedback_subject">MoneyMobile Feedback</string>
     <string name="feedback_title">Send Email</string>
@@ -142,8 +144,8 @@
     <string name="icon_qmark">\?</string>
  	<string name="icon_help">v</string>
     <string name="icon_add">A</string>
-    <string name="icon_print">print</string>
-    <string name="icon_email">email</string>
+    <string name="icon_print">®</string>
+    <string name="icon_email">(</string>
     <string name="icon_refresh">N</string>
     <string name="intro_title_1">DID YOU KNOW?</string>
     <string name="intro_title_2">PRINT OR EMAIL</string>

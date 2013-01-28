@@ -46,30 +46,14 @@ public class NavBarButtons extends LinearLayout  {
 
             icon.setPadding(0, 0, 25, 0);
             
-            if (mButtonTexts[i].equals(getResources().getString(R.string.icon_print))) {
-                icon.setBackgroundDrawable(getResources().getDrawable(R.drawable.tablet_button_print));    
-                icon.setLayoutParams(new LayoutParams(
-                        LayoutParams.FILL_PARENT,
-                        LayoutParams.FILL_PARENT));
-                
-            } else if (mButtonTexts[i].equals(getResources().getString(R.string.icon_email))){
-                icon.setBackgroundDrawable(getResources().getDrawable(R.drawable.tablet_button_email));
-                
-                icon.setLayoutParams(new LayoutParams(
-                        LayoutParams.FILL_PARENT,
-                        LayoutParams.FILL_PARENT));
-                
-            } else {
-                icon.setText(mButtonTexts[i]);
-                icon.setTextColor(Color.WHITE);
-                Fonts.applyGlyphFont(icon, 18);
-                
-                icon.setLayoutParams(new LayoutParams(
-                        LayoutParams.WRAP_CONTENT,
-                        LayoutParams.WRAP_CONTENT));
-            }
+            icon.setText(mButtonTexts[i]);
+            icon.setTextColor(Color.WHITE);
+            Fonts.applyGlyphFont(icon, 18);
             
-            
+            icon.setLayoutParams(new LayoutParams(
+                    LayoutParams.WRAP_CONTENT,
+                    LayoutParams.WRAP_CONTENT));
+                       
             icon.setOnTouchListener(new OnTouchListener() {
                 
                 @Override
