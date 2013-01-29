@@ -30,7 +30,7 @@ public class TestActivity extends Activity {
         l.add(new BarViewModel(" ",50,100));
         l.add(new BarViewModel(" ",75,100));
         l.add(new BarViewModel(" ",90,100));
-        BasicBarChartAdapter adapter = new BasicBarChartAdapter(l);
+        final BasicBarChartAdapter adapter = new BasicBarChartAdapter(l);
         final BarGraphView b = new BarGraphView(this,100,adapter);
         LinearLayout layout = (LinearLayout) findViewById(R.id.test_view);
         layout.addView(b);
@@ -40,15 +40,14 @@ public class TestActivity extends Activity {
         b.setMargin(5);
         Button button1 = new Button(this);
         layout.addView(button1);
-        button1.setText("MOVE RANDOM BAR TO RANDOM VALUE");
+        button1.setText("Set list to one bar");
         button1.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View v) {
-               Random generator = new Random(System.nanoTime());
-               int selectBar = generator.nextInt(7);
-               int amount = generator.nextInt(100);
-               b.changeBarValue(selectBar,amount,true);
+               ArrayList<BarViewModel> oneBar = new ArrayList<BarViewModel>();
+               oneBar.add(new BarViewModel(" ",75,100));
+               adapter.setNewList(oneBar);               
             }
         });
         LayoutParams layout1 = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT,1);
