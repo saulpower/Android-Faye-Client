@@ -28,6 +28,20 @@ public class BarView extends View {
     private double mScaleAmount;
     private Rect mRect;
     private boolean mShowLabel;
+    public BarView(Context context){
+        super(context);
+        mTextSize = UiUtils.getDynamicPixels(getContext(), 11);
+        makePaint();
+        mLabelText = "text";
+        mShowLabel = false;
+        int defColor = getResources().getColor(color.gray3);
+        mRed = Color.red(defColor);
+        mGreen = Color.green(defColor);
+        mBlue = Color.blue(defColor);
+        mAlpha = Color.alpha(defColor);
+        mAmount = 50;
+        mScaleAmount = 100;
+    }
     public BarView(Context context, String day, double amount, double scale_amount) {
         super(context);
         mTextSize = UiUtils.getDynamicPixels(getContext(), 11);

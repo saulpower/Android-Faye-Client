@@ -10,31 +10,36 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.model.BarViewModel;
 import com.moneydesktop.finance.views.BarGraphView;
 import com.moneydesktop.finance.views.BarView;
+import com.moneydesktop.finance.views.BasicBarChartAdapter;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class TestActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_layout);
-        final BarGraphView b = new BarGraphView(this,100);
-        LinearLayout l = (LinearLayout) findViewById(R.id.test_view);
-        l.addView(b);
+        ArrayList<BarViewModel> l = new ArrayList<BarViewModel>();
+        l.add(new BarViewModel(" ",10,100));
+        l.add(new BarViewModel(" ",20,100));
+        l.add(new BarViewModel(" ",30,100));
+        l.add(new BarViewModel(" ",40,100));
+        l.add(new BarViewModel(" ",50,100));
+        l.add(new BarViewModel(" ",75,100));
+        l.add(new BarViewModel(" ",90,100));
+        BasicBarChartAdapter adapter = new BasicBarChartAdapter(l);
+        final BarGraphView b = new BarGraphView(this,100,adapter);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.test_view);
+        layout.addView(b);
         LayoutParams layout2 = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT,4);
         b.setLayoutParams(layout2);
         b.setLabel(false);
         b.setMargin(5);
-        b.add(10);
-        b.add(20);
-        b.add(30);
-        b.add(40);
-        b.add(50);
-        b.add(75);
-        b.add(90);
         Button button1 = new Button(this);
-        l.addView(button1);
+        layout.addView(button1);
         button1.setText("MOVE RANDOM BAR TO RANDOM VALUE");
         button1.setOnClickListener(new OnClickListener() {
             
@@ -50,7 +55,7 @@ public class TestActivity extends Activity {
         button1.setLayoutParams(layout1);
         
         Button button2 = new Button(this);
-        l.addView(button2);
+        layout.addView(button2);
         button2.setText("Randomize");
         button2.setOnClickListener(new OnClickListener() {
             
