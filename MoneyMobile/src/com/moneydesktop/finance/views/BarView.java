@@ -115,13 +115,13 @@ public class BarView extends View {
         vG.start();
         vB.start();
         vA.start();
+
     }
 
     public void setBarColor(int color){
         if(mBPaint == null){
             makePaint();
         }
-        mBPaint.setColor(color);
         mRed = Color.red(color);
         mGreen = Color.green(color);
         mBlue = Color.blue(color);
@@ -172,6 +172,6 @@ public class BarView extends View {
         mPaint.setColor(getContext().getResources().getColor(color.gray7));
         mBPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBPaint.setStyle(Paint.Style.FILL);
-        mBPaint.setColor(Color.argb(mAlpha, mRed, mGreen, mBlue));        
+        //mBPaint.setColor(Color.argb(mAlpha, mRed, mGreen, mBlue));        
     }
 }
