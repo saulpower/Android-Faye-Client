@@ -1,6 +1,5 @@
 package com.moneydesktop.finance.tablet.adapter;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Pair;
@@ -60,11 +59,11 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	
     private QueryProperty mTransactionDate = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Date, TransactionsDao.Properties.Id);
     private QueryProperty mTransactionTitle = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Title, TransactionsDao.Properties.Id);
+    private QueryProperty mTagInstance = new QueryProperty(TagInstanceDao.TABLENAME, TransactionsDao.Properties.BusinessObjectId, TagInstanceDao.Properties.BaseObjectId);
+
     private QueryProperty mCategoryId = new QueryProperty(CategoryDao.TABLENAME, TransactionsDao.Properties.CategoryId, CategoryDao.Properties.Id);
     private QueryProperty mCategoryName = new QueryProperty(CategoryDao.TABLENAME, CategoryDao.Properties.CategoryName, CategoryDao.Properties.Id);
     private QueryProperty mBankAccountId = new QueryProperty(BankAccountDao.TABLENAME, TransactionsDao.Properties.BankAccountId, BankAccountDao.Properties.Id);
-    private QueryProperty mTagInstance = new QueryProperty(TagInstanceDao.TABLENAME, TransactionsDao.Properties.BusinessObjectId, TagInstanceDao.Properties.BaseObjectId);
-    
     TransactionsDao mDao = ApplicationContext.getDaoSession().getTransactionsDao();
 
 	public TransactionsTabletAdapter(Activity activity, AmazingListView listView) {
@@ -230,7 +229,6 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 		if (res == null) {
 		    
 			res = mActivity.getLayoutInflater().inflate(R.layout.tablet_transaction_item, parent, false);
-			fixDottedLine(res);
 
 			viewHolder = new TransactionViewHolder();
 			
@@ -240,6 +238,7 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	        viewHolder.category = (TextView) res.findViewById(R.id.category);
 	        viewHolder.amount = (TextView) res.findViewById(R.id.amount);
 	        viewHolder.type = (ImageView) res.findViewById(R.id.type);
+            viewHolder.flag = (ImageView) res.findViewById(R.id.flag);
 	        viewHolder.caret = (CaretView) res.findViewById(R.id.caret); 
 	        
 	        res.setTag(viewHolder);
@@ -250,7 +249,7 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 		    
 		    viewHolder = (TransactionViewHolder) res.getTag();
 		}
-
+		
 		Transactions transactions = getItem(position);
 		
 		if (transactions != null) {
@@ -272,29 +271,13 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 			
 			viewHolder.amount.setText(mFormatter.format(value));
 			viewHolder.amount.setGravity(gravity);
-			
-			if (transactions.getIsBusiness()) {
-			    viewHolder.type.setImageResource(R.drawable.ipad_txndetail_icon_business_grey);
-			}
-			
-			if (transactions.getCategory() != null) {
-			    viewHolder.category.setText(transactions.getCategory().getCategoryName());
-			}
+
+			viewHolder.type.setImageResource(transactions.getIsBusiness() ? R.drawable.ipad_txndetail_icon_business_color : R.drawable.ipad_txndetail_icon_personal_grey);
+			viewHolder.flag.setVisibility(transactions.getIsFlagged() ? View.VISIBLE : View.INVISIBLE);
+			viewHolder.category.setText(transactions.getCategory() != null ? transactions.getCategory().getCategoryName() : "");
 		}
 
 		return res;
-	}
-	
-	@TargetApi(11)
-	private void fixDottedLine(View res) {
-		
-		if (android.os.Build.VERSION.SDK_INT >= 11) {
-			
-			res.findViewById(R.id.dotted1).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-			res.findViewById(R.id.dotted2).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-			res.findViewById(R.id.dotted3).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-            res.findViewById(R.id.dotted4).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-		}
 	}
 	
 	private void applyFonts(TransactionViewHolder viewHolder) {

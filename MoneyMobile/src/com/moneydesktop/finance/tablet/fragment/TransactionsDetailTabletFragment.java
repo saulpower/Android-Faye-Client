@@ -1,9 +1,10 @@
 package com.moneydesktop.finance.tablet.fragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,22 +14,22 @@ import android.widget.TextView;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Tag;
-import com.moneydesktop.finance.database.TagDao;
-import com.moneydesktop.finance.database.TagInstance;
-import com.moneydesktop.finance.database.TagInstanceDao;
 import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.shared.DashboardBaseActivity;
 import com.moneydesktop.finance.shared.TransactionDetailBaseFragment;
-import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
+import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
 import com.moneydesktop.finance.util.Fonts;
+
+import java.util.List;
 
 public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragment {
     
     public final String TAG = this.getClass().getSimpleName();
     
     private onBackPressedListener mListener;
-    private TagInstanceDao mTagInstanceDao;
-    private TagDao mTagDao;
     
     public void setListener(onBackPressedListener mListener) {
         this.mListener = mListener;
@@ -48,26 +49,24 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
     public void onResume() {
         super.onResume();
         
-        if (mActivity != null && mActivity instanceof DashboardTabletActivity) {
-            ((DashboardTabletActivity) mActivity).setDetailFragment(this);
+        if (mActivity != null && mActivity instanceof DashboardBaseActivity) {
+            ((DashboardBaseActivity) mActivity).setDetailFragment(this);
         }
     }
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        
+
         mRoot = inflater.inflate(R.layout.tablet_transaction_detail_view, null);
-        initializeView();
+        initialize();
         
-        mTagInstanceDao = ApplicationContext.getDaoSession().getTagInstanceDao();
-        mTagDao = ApplicationContext.getDaoSession().getTagDao();
-        
+        mRoot.setSoundEffectsEnabled(false);
         mRoot.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "Here");
+                // intercepting clicks
             }
         });
         
@@ -94,7 +93,12 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
 
                 alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        // Canceled.
+                        
+                        List<Tag> tags = ApplicationContext.getDaoSession().getTagDao().loadAll();
+                        if (tags.size() > 0) {
+                            Tag tag = tags.get(0);
+                            deleteTag(tag);
+                        }
                     }
                 });
 
@@ -105,24 +109,53 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
         return mRoot;
     }
     
-    private void createTag(String tagName) {
-        Tag tag = new Tag();
-        tag.setTagName(tagName);
-        tag.setTagId(tagName);
-        mTagDao.insert(tag);
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         
-        TagInstance ti = new TagInstance();
-        ti.setBaseObjectId(mTransaction.getBusinessObjectId());
-        ti.setTag(tag);
-        mTagInstanceDao.insert(ti);
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
         
-        mTags.setText(mTransaction.buildTagString());
+        long categoryId = data.getLongExtra(Constant.EXTRA_CATEGORY_ID, -1);
+        
+        if (categoryId != -1) {
+            updateTransactionCategory(categoryId);
+        }
+    }
+    
+    @Override
+    protected void configureListeners() {
+        super.configureListeners();
+        
+        mCategoryContainer.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                showCategoryPopup(v);
+            }
+        });
+    }
+    
+    private void showCategoryPopup(View view) {
+
+        int[] catLocation = new int[2];
+        view.getLocationOnScreen(catLocation);
+        
+        int adjustedX = catLocation[0] + view.getWidth();
+        int adjustedY = catLocation[1] + (view.getHeight() / 2);
+        
+        Intent intent = new Intent(getActivity(), PopupTabletActivity.class);
+        intent.putExtra(Constant.EXTRA_POSITION_X, adjustedX);
+        intent.putExtra(Constant.EXTRA_POSITION_Y, adjustedY);
+        intent.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.POPUP_CATEGORIES);
+        intent.putExtra(Constant.EXTRA_SOURCE_CODE, Constant.CODE_CATEGORY_DETAIL);
+        startActivityForResult(intent, Constant.CODE_CATEGORY_DETAIL);
     }
     
     public void updateTransaction(Transactions transaction) {
         
         mTransaction = transaction;
-        loadTransaction();
+        configureTransactionView();
     }
     
     @Override
@@ -135,7 +168,7 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
         Fonts.applyPrimaryBoldFont(mDate, 20);
         Fonts.applyPrimaryBoldFont(mCategory, 20);
         Fonts.applyPrimaryBoldFont(mTags, 10);
-        Fonts.applyPrimaryBoldFont(mMemo, 20);
+        Fonts.applyPrimaryBoldFont(mMemo, 12);
         Fonts.applyPrimaryBoldFont(mStatement, 10);
         
         // labels

@@ -13,9 +13,9 @@ import com.crittercism.app.Crittercism;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.moneydesktop.finance.data.Enums.LockType;
 import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.data.SyncEngine;
-import com.moneydesktop.finance.database.BusinessObjectBase;
 import com.moneydesktop.finance.database.DaoMaster;
 import com.moneydesktop.finance.database.DaoMaster.DevOpenHelper;
 import com.moneydesktop.finance.database.DaoSession;
@@ -25,7 +25,6 @@ import com.moneydesktop.finance.exception.CustomExceptionHandler;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.AuthEvent;
 import com.moneydesktop.finance.model.EventMessage.LoginEvent;
-import com.moneydesktop.finance.util.Enums.LockType;
 
 import de.greenrobot.event.EventBus;
 
@@ -95,8 +94,6 @@ public class ApplicationContext extends Application {
 		super.onTerminate();
 		
 		EventBus.getDefault().unregister(this);
-		
-		Preferences.saveLong(Preferences.KEY_BOB_ID, BusinessObjectBase.getIdCount());
 		
 		unregisterReceiver(sScreenLock);
 		releaseWakeLock();

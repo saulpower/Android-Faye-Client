@@ -23,6 +23,7 @@ import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.AccountsExpandableListAdapter;
 import com.moneydesktop.finance.data.BankLogoManager;
+import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.Bank;
@@ -41,9 +42,9 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
     private View mFooter;
     private PopupWindowAtLocation mPopup;
 	
-	public static AccountTypesTabletFragment newInstance(int position) {	
+	public static AccountTypesTabletFragment newInstance(FragmentType type) {	
 		AccountTypesTabletFragment frag = new AccountTypesTabletFragment();
-		frag.setPosition(position);
+		frag.setType(type);
 		
         Bundle args = new Bundle();
         frag.setArguments(args);

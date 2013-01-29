@@ -124,6 +124,15 @@
         <item name="android:windowAnimationStyle">@style/MyAnimationWindow</item>
     </style>
 
+    <style name="ActivityDialog" parent="android:Theme.Dialog">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/MyAnimationWindow</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowSoftInputMode">adjustPan|stateHidden</item>
+        <item name="android:screenOrientation">landscape</item>
+    </style>
+
     <style name="MyAnimationWindow" parent="@android:style/Animation.Dialog">
         <item name="android:windowEnterAnimation">@anim/fade_in_fast</item>
         <item name="android:windowExitAnimation">@anim/fade_out_fast</item>

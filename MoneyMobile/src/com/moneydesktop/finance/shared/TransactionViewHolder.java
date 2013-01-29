@@ -14,6 +14,7 @@ public class TransactionViewHolder {
     public TextView category;
     public TextView amount;
     public ImageView type;
+    public ImageView flag;
     public CaretView caret;
     public TextView title;
     public TextView dollar;

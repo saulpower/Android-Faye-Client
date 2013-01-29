@@ -3,7 +3,7 @@ package com.moneydesktop.finance.tablet.fragment;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,36 +18,46 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.data.Enums.TxFilter;
 import com.moneydesktop.finance.database.CategoryDao;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
+import com.moneydesktop.finance.model.EventMessage.DataUpdateEvent;
 import com.moneydesktop.finance.model.EventMessage.FilterEvent;
 import com.moneydesktop.finance.model.EventMessage.ParentAnimationEvent;
+import com.moneydesktop.finance.shared.TransactionController.ParentTransactionInterface;
+import com.moneydesktop.finance.shared.TransactionViewHolder;
+import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.TransactionsTabletAdapter;
 import com.moneydesktop.finance.tablet.adapter.TransactionsTabletAdapter.OnDataLoadedListener;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.AmazingListView;
 import com.moneydesktop.finance.views.DateRangeView;
 import com.moneydesktop.finance.views.DateRangeView.FilterChangeListener;
 import com.moneydesktop.finance.views.HeaderView;
 import com.moneydesktop.finance.views.HorizontalScroller;
+import com.moneydesktop.finance.views.LineView;
 
 import de.greenrobot.event.EventBus;
 
 @TargetApi(11)
-public class TransactionsPageTabletFragment extends BaseFragment implements OnItemClickListener, FilterChangeListener, OnDataLoadedListener {
+public class TransactionsPageTabletFragment extends BaseFragment implements OnItemClickListener, FilterChangeListener, OnDataLoadedListener, OnItemLongClickListener {
     
     public final String TAG = this.getClass().getSimpleName();
 
@@ -55,9 +65,17 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     private TransactionsTabletAdapter mAdapter;
     private DateRangeView mDateRange;
     private HorizontalScroller mScroller;
-    private TransactionsTabletFragment mParent;
-    private int[] mLocation = new int[2];
+    private ParentTransactionInterface mParent;
     
+    private boolean mFixLine = false;
+    private LineView mLine;
+
+    private int[] mLocation = new int[2];
+
+    private String mAccountId;
+    private TxFilter mTxFilter;
+    private QueryProperty mAccountIdProp = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.BankAccountId);
+    private QueryProperty mIsProcessed = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.IsProcessed);
     private QueryProperty mOrderBy = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Date);
     private boolean mDirection = true;
     private String mSearchTitle = "%";
@@ -88,12 +106,45 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         }
     };
     
-    TransactionsDao mDao = ApplicationContext.getDaoSession().getTransactionsDao();
+    public ParentTransactionInterface getParent() {
+        return mParent;
+    }
+
+    public void setParent(ParentTransactionInterface mParent) {
+        this.mParent = mParent;
+    }
     
-    public static TransactionsPageTabletFragment newInstance() {
+    public void setAccountId(String mAccountId) {
+        this.mAccountId = mAccountId;
+    }
+
+    public void setTxFilter(TxFilter mTxFilter) {
+        this.mTxFilter = mTxFilter;
+    }
+    
+    public void setLineFix() {
+        mFixLine = true;
+    }
+
+    public static TransactionsPageTabletFragment newInstance(ParentTransactionInterface parent, Intent intent) {
             
         TransactionsPageTabletFragment fragment = new TransactionsPageTabletFragment();
-    
+        fragment.setParent(parent);
+        fragment.setAccountId(intent.getStringExtra(Constant.EXTRA_ACCOUNT_ID));
+        fragment.setTxFilter((TxFilter) intent.getSerializableExtra(Constant.EXTRA_TXN_TYPE));
+        
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        
+        return fragment;
+    }
+
+    public static TransactionsPageTabletFragment newInstance(ParentTransactionInterface parent) {
+            
+        TransactionsPageTabletFragment fragment = new TransactionsPageTabletFragment();
+        fragment.setParent(parent);
+        fragment.setLineFix();
+        
         Bundle args = new Bundle();
         fragment.setArguments(args);
         
@@ -112,20 +163,26 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         super.onCreateView(inflater, container, savedInstanceState);
         
         mRoot = inflater.inflate(R.layout.tablet_transaction_page_view, null);
-
-        mParent = ((TransactionsTabletFragment) getParentFragment());
         
         setupView();
         setupAnimations();
         
         setupTransactionsList();
         
+        mRoot.post(new Runnable() {
+            
+            @Override
+            public void run() {
+                mRoot.getLocationOnScreen(mLocation);
+            }
+        });
+        
         return mRoot;
     }
     
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroy() {
+        super.onDestroy();
         
         EventBus.getDefault().unregister(this);
         
@@ -140,6 +197,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         mTransactionsList.setLoadingView(mActivity.getLayoutInflater().inflate(R.layout.loading_view, null));
         mTransactionsList.setEmptyView(mActivity.getLayoutInflater().inflate(R.layout.empty_view, null));
         mTransactionsList.setOnItemClickListener(this);
+        mTransactionsList.setOnItemLongClickListener(this);
         
         mScroller = (HorizontalScroller) mRoot.findViewById(R.id.date_scroller);
         
@@ -158,6 +216,15 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         
         mSearch = (EditText) mRoot.findViewById(R.id.search);
         mSearch.addTextChangedListener(mWatcher);
+        
+        // Bug with line not being lined up correctly
+        if (mFixLine) {
+            mLine = (LineView) mRoot.findViewById(R.id.line_bug);
+            LinearLayout.LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+            params.leftMargin = (int) UiUtils.getDynamicPixels(getActivity(), 1);
+            mLine.setLayoutParams(params);
+            mFixLine = false;
+        }
         
         setupListeners();
         applyFonts();
@@ -226,7 +293,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                     hideKeyboard();
+                    UiUtils.hideKeyboard(mActivity, v);
                 }
                 
                 return false;
@@ -234,12 +301,6 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         });
         
         mDate.performClick();
-    }
-
-    private void hideKeyboard() {
-
-        InputMethodManager in = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        in.hideSoftInputFromWindow(mSearch.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
     
     private void applyFonts() {
@@ -275,15 +336,73 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         
         Transactions transaction = (Transactions) parent.getItemAtPosition(position);
         
-        if (transaction != null) {
+        if (transaction != null && mParent != null) {
 
-            mRoot.getLocationOnScreen(mLocation);
             mParent.showTransactionDetails(view, mLocation[1], transaction);
             
-            transaction.setIsProcessed(true);
-            mDao.update(transaction);
-            mAdapter.notifyDataSetChanged();
+            if (!transaction.getIsProcessed()) {
+                transaction.setIsProcessed(true);
+                transaction.updateSingle();
+            }
         }
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        
+        TransactionViewHolder holder = (TransactionViewHolder) view.getTag();
+        
+        int[] catLocation = new int[2];
+        holder.category.getLocationOnScreen(catLocation);
+        
+        int adjustedX = catLocation[0] + holder.category.getWidth();
+        int adjustedY = catLocation[1] + (view.getHeight() / 2);
+        
+        Intent intent = new Intent(getActivity(), PopupTabletActivity.class);
+        intent.putExtra(Constant.EXTRA_POSITION_X, adjustedX);
+        intent.putExtra(Constant.EXTRA_POSITION_Y, adjustedY);
+        intent.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.POPUP_CATEGORIES);
+        intent.putExtra(Constant.EXTRA_POSITION, position);
+        intent.putExtra(Constant.EXTRA_SOURCE_CODE, Constant.CODE_CATEGORY_LIST);
+        startActivityForResult(intent, Constant.CODE_CATEGORY_LIST);
+        
+        return true;
+    }
+    
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        
+        int sourceCode = data.getIntExtra(Constant.EXTRA_SOURCE_CODE, -1);
+        
+        if (sourceCode == Constant.CODE_CATEGORY_LIST) {
+            
+            int position = data.getIntExtra(Constant.EXTRA_POSITION, -1);
+            long categoryId = data.getLongExtra(Constant.EXTRA_CATEGORY_ID, -1);
+            
+            if (position != -1 && categoryId != -1) {
+                updateTransactionCategory(position, categoryId);
+            }
+            
+            return;
+            
+        } else if (sourceCode == Constant.CODE_CATEGORY_DETAIL) {
+        
+            mParent.parentOnActivityResult(requestCode, resultCode, data);
+        }
+    }
+    
+    private void updateTransactionCategory(int position, long categoryId) {
+        
+        Transactions transaction = (Transactions) mTransactionsList.getItemAtPosition(position);
+        transaction.setCategoryId(categoryId);
+        transaction.updateSingle();
+        
+        mAdapter.notifyDataSetChanged();
     }
     
     private void setupTransactionsList() {
@@ -295,6 +414,8 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
             mAdapter.setOnDataLoadedListener(this);
             mTransactionsList.setAdapter(mAdapter);
         }
+
+        addAccountFilter();
         
         mAdapter.setDateRange(mDateRange.getStartDate(), mDateRange.getEndDate());
         mAdapter.setOrder(mOrderBy, mDirection);
@@ -333,6 +454,11 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         mQueries = event.getQueries();
         filterChanged(-1);
     }
+    
+    public void onEvent(DataUpdateEvent event) {
+        
+        mAdapter.notifyDataSetChanged();
+    }
 
     private void configureView() {
         
@@ -354,7 +480,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     
     @Override
     public String getFragmentTitle() {
-        return null;
+        return getString(R.string.title_activity_transactions);
     }
 
     @Override
@@ -370,5 +496,28 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         }
         
         setupTransactionsList();
+    }
+    
+    /**
+     * Add any passed in filters when the fragment
+     * was constructed.
+     */
+    private void addAccountFilter() {
+        
+        if (mAccountId == null && mTxFilter != null) {
+            return;
+        }
+        
+        if (mQueries == null) {
+            mQueries = new PowerQuery(false);
+        }
+        
+        if (mAccountId != null) {
+            mQueries.and().where(mAccountIdProp, mAccountId);
+        }
+        
+        if (mTxFilter != null && mTxFilter == TxFilter.UNCLEARED) {
+            mQueries.and().where(mIsProcessed, "0");
+        }
     }
 }

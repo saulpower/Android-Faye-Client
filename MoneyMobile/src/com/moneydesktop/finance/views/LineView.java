@@ -11,6 +11,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.util.UiUtils;
 
 public class LineView extends View {
     
@@ -20,6 +21,7 @@ public class LineView extends View {
     private boolean mIsDashed = false;
     private float mDashLength = 1.0f;
     private boolean mIsVertical = false;
+    private float mDensity;
     
     public int getColor() {
         return mLinePaint.getColor();
@@ -82,6 +84,8 @@ public class LineView extends View {
     public LineView(Context context, AttributeSet attrs) {
         super(context,attrs);
         
+        mDensity = UiUtils.getDensityRatio(getContext());
+        
         initPaints();
         
         if (attrs != null) {
@@ -90,8 +94,8 @@ public class LineView extends View {
             
             setColor(a.getColor(R.styleable.Line_lineColor, Color.BLACK));
             setIsDashed(a.getBoolean(R.styleable.Line_isDashed, false));
-            setLineWidth(a.getFloat(R.styleable.Line_lineStrokeWidth, 1.0f));
-            setDashLength(a.getFloat(R.styleable.Line_dashLength, mIsDashed ? 1.0f : 0.0f));
+            setLineWidth(a.getDimension(R.styleable.Line_lineStrokeWidth, 1.0f));
+            setDashLength(a.getDimension(R.styleable.Line_dashLength, mIsDashed ? 1.0f : 0.0f));
             setIsVertical(a.getBoolean(R.styleable.Line_isVertical, false));
             
             a.recycle();
@@ -136,9 +140,11 @@ public class LineView extends View {
         
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = (int) mLinePaint.getStrokeWidth();
+        height /= mDensity;
         
         if (mIsVertical) {
             width  = (int) mLinePaint.getStrokeWidth();
+            width /= mDensity;
             height = MeasureSpec.getSize(heightMeasureSpec);
         }
         

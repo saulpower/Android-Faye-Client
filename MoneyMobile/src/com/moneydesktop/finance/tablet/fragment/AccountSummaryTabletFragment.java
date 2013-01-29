@@ -4,14 +4,14 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
+import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.views.NavBarButtons;
 
 import java.util.ArrayList;
@@ -20,10 +20,10 @@ public class AccountSummaryTabletFragment extends BaseFragment {
 
 	Button mLaunchNav;
 	
-	public static AccountSummaryTabletFragment newInstance(int position) {
+	public static AccountSummaryTabletFragment newInstance(FragmentType type) {
 		
 		AccountSummaryTabletFragment frag = new AccountSummaryTabletFragment();
-		frag.setPosition(position);
+		frag.setType(type);
 		
         Bundle args = new Bundle();
         frag.setArguments(args);
@@ -45,9 +45,17 @@ public class AccountSummaryTabletFragment extends BaseFragment {
 		mRoot = inflater.inflate(R.layout.tablet_account_summary, null);
 		mLaunchNav = (Button)mRoot.findViewById(R.id.view_nav_button);
 		
+		setupTitleBar();
+		
 		return mRoot;
 	}
-	
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        this.mActivity.updateNavBar(getFragmentTitle());
+    }
     
     private void setupTitleBar() {
         

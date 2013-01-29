@@ -27,12 +27,12 @@ import android.widget.ViewFlipper;
 import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
 import com.moneydesktop.finance.data.Preferences;
+import com.moneydesktop.finance.data.Enums.LockType;
 import com.moneydesktop.finance.handset.activity.LockCodeHandsetActivity;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.LockEvent;
 import com.moneydesktop.finance.shared.LockCodeFragment;
 import com.moneydesktop.finance.tablet.activity.LockCodeTabletActivity;
-import com.moneydesktop.finance.util.Enums.LockType;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 
@@ -189,8 +189,9 @@ abstract public class BaseActivity extends FragmentActivity {
 		
 		if (mNavBar != null) {
 			
-			if (titleString != null)
+			if (titleString != null) {
 				mTitle.setText(titleString.toUpperCase());
+			}
 			
 			if (mFragmentCount > 1 && !mBackShowing) {
 				
@@ -273,8 +274,9 @@ abstract public class BaseActivity extends FragmentActivity {
 		
 		updateNavBar(mFragmentCount == 0 ? getActivityTitle() : null);
 		
-		if (mFragmentCount == 0)
+		if (mFragmentCount == 0) {
 			mOnFragment = false;
+		}
 	}
 	
 	/**

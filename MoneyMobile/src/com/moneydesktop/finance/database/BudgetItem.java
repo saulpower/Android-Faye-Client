@@ -11,8 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.Enums.DataState;
 import com.moneydesktop.finance.model.User;
-import com.moneydesktop.finance.util.Enums.DataState;
 // KEEP INCLUDES END
 /**
  * Entity mapped to table BUDGET_ITEM.

@@ -2,10 +2,11 @@ package com.moneydesktop.finance.util;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.data.Constant;
@@ -33,7 +34,7 @@ public class UiUtils {
         return getScreenHeight(activity);
     }
 
-    public static float getDensityRatio (final Activity context) {
+    public static float getDensityRatio (final Context context) {
         final DisplayMetrics metrics = getDisplayMetrics(context);
         return (metrics.densityDpi / Constant.STANDARD_DPI);
     }
@@ -46,9 +47,7 @@ public class UiUtils {
      * @return A float value to represent Pixels equivalent to dp according to device
      */
     public static float convertDpToPixel(float dp, Context context){
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        float px = dp * (metrics.densityDpi/160f);
+        float px = dp * getDensityRatio(context);
         return px;
     }
 
@@ -106,6 +105,12 @@ public class UiUtils {
         DisplayMetrics metrics = UiUtils.getDisplayMetrics(context);
         
         return metrics.densityDpi;
+    }
+    
+    public static void hideKeyboard(Context context, View view) {
+        InputMethodManager in = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        in.hideSoftInputFromWindow(view.getApplicationWindowToken(),
+                InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
 }

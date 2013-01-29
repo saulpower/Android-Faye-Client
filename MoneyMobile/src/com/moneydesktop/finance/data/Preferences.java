@@ -16,7 +16,6 @@ public class Preferences {
 	private static final String KEY_TOKEN = "md_token";
 	
 	public static final String KEY_API_HOST = "md_api_host";
-	public static final String KEY_BOB_ID = "md_bob_id";
 	public static final String KEY_FAYE_HOST = "md_faye_host";
 	public static final String KEY_IS_DEMO_MODE = "md_is_demo_mode";
 	public static final String KEY_LAST_INSTITUTION_SYNC = "md_last_institution_sync";

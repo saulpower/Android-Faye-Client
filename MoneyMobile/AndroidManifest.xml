@@ -68,9 +68,12 @@
             android:screenOrientation="landscape" />
         
  		<activity
+			android:name=".tablet.activity.DropDownTabletActivity"
+			android:theme="@style/ActivityDialog" />
+        
+ 		<activity
 			android:name=".tablet.activity.PopupTabletActivity"
-			android:theme="@android:style/Theme.Dialog"
-			android:screenOrientation="landscape" />
+			android:theme="@style/ActivityDialog" />
         
         <activity
             android:name=".tablet.activity.LoginTabletActivity"

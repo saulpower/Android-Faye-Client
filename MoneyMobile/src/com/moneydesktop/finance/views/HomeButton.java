@@ -12,16 +12,17 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.OvershootInterpolator;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Enums.NavDirection;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
 import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.util.Enums.NavDirection;
 
 import de.greenrobot.event.EventBus;
 
@@ -31,6 +32,8 @@ public class HomeButton extends View {
 	public final String TAG = this.getClass().getSimpleName();
 
 	private final float SCROLL_DISTANCE = 17.0f;
+	
+	private float mScrollDistance;
 	
 	// Button
 	private Bitmap mHome;
@@ -259,6 +262,7 @@ public class HomeButton extends View {
 		
 		EventBus.getDefault().register(this);
 		
+		mScrollDistance = UiUtils.getDynamicPixels(getContext(), SCROLL_DISTANCE);
 		mHome = BitmapFactory.decodeResource(getResources(), R.drawable.ipad_button_home);
 		
 		if (attrs != null) {
@@ -381,6 +385,7 @@ public class HomeButton extends View {
     	if (mDistance < (mRadius * 0.5f) && (touchingButton() || touchingSlider())) {
         	
         	mDistance = 0.0f;
+            playSoundEffect(SoundEffectConstants.CLICK);
         	EventBus.getDefault().post(new EventMessage().new NavigationEvent());
     	}
     }
@@ -425,18 +430,20 @@ public class HomeButton extends View {
         	mAbove = mLastTouchY < mCenter;
         	
         	// If we have changed directions reset the movement sum
-        	if (Math.signum(mLastDy) != Math.signum(dy))
+        	if (Math.signum(mLastDy) != Math.signum(dy)) {
         		mScrollY = 0.0f;
+        	}
         	
-        	if (Math.signum(mLastDx) != Math.signum(dx))
+        	if (Math.signum(mLastDx) != Math.signum(dx)) {
         		mScrollX = 0.0f;
+        	}
         	
         	// Sum movement in each direction
         	mScrollX += dx;
         	mScrollY += dy;
         	
         	// If movement was great enough fire off an event to move the navigation wheel
-        	if (Math.abs(mScrollX) >= SCROLL_DISTANCE) {
+        	if (Math.abs(mScrollX) >= mScrollDistance) {
 
         		// X-axis scrolling changes depends on which half the user is touching
         		mScrollX = mAbove ? -mScrollX : mScrollX;
@@ -446,7 +453,7 @@ public class HomeButton extends View {
             	navigate(dir);
         		mScrollX = 0.0f;
         		
-        	} else if (Math.abs(mScrollY) >= SCROLL_DISTANCE) {
+        	} else if (Math.abs(mScrollY) >= mScrollDistance) {
 
             	NavDirection dir = (mScrollY >= 0) ? NavDirection.NEXT : NavDirection.PREVIOUS;
             	

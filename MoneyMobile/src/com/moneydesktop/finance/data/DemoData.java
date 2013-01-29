@@ -12,6 +12,7 @@ import java.util.Map;
 import android.util.Log;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Enums.AccountExclusionFlags;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.BankAccount;
@@ -21,7 +22,6 @@ import com.moneydesktop.finance.database.Category;
 import com.moneydesktop.finance.database.CategoryType;
 import com.moneydesktop.finance.database.DatabaseDefaults;
 import com.moneydesktop.finance.database.Transactions;
-import com.moneydesktop.finance.util.Enums.AccountExclusionFlags;
 import com.moneydesktop.finance.util.FileIO;
 
 public class DemoData {
