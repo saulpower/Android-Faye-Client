@@ -54,7 +54,7 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         mRoot.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                 mActivity.showFragment(3);
+                 mActivity.showFragment(FragmentType.TRANSACTIONS);
                 
             }
             

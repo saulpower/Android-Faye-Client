@@ -196,7 +196,6 @@ public class DataController {
     
     public static void softDelete(Object object) {
 
-        ((BusinessObject) object).setDeleted(true);
         addTransaction(object, TxType.UPDATE);
     }
 	

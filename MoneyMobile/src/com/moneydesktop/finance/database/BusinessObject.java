@@ -242,6 +242,7 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 	
 	public void softDeleteSingle() {
 
+	    setDeleted(true);
         DataController.softDelete(getBusinessObjectBase());
         DataController.save();
 	}

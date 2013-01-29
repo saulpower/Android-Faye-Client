@@ -27,6 +27,7 @@ import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.Bank;
+import com.moneydesktop.finance.model.FragmentVisibilityListener;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.PopupWindowAtLocation;
