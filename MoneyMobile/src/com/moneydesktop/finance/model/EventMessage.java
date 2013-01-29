@@ -1,5 +1,6 @@
 package com.moneydesktop.finance.model;
 
+import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.util.Enums.LockType;
@@ -7,6 +8,7 @@ import com.moneydesktop.finance.util.Enums.NavDirection;
 import com.moneydesktop.finance.views.AnchorView;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class EventMessage {
     
@@ -168,7 +170,31 @@ public class EventMessage {
            super();
        }
    }
+   
+   public class BankDeletedEvent extends EventMessage {
+       protected Bank mBank;
+
+       public BankDeletedEvent(Bank bank) {
+           this.mBank = bank;
+       }
+       
+       public Bank getDeletedBank() {
+           return mBank;
+       }
+   }
 	
+   public class RemoveAccountTypeEvent extends EventMessage {
+       protected AccountType mAccountType;
+
+       public RemoveAccountTypeEvent(AccountType accountToBeRemoved) {
+           this.mAccountType = accountToBeRemoved;
+       }
+       
+       public AccountType getAccountType() {
+           return mAccountType;
+       }
+   }
+   
 	protected HashMap<String, Object> mInfo;
 	protected String mMessage;
 	

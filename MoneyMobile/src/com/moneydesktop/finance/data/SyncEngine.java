@@ -173,7 +173,6 @@ public class SyncEngine {
 						if (bank.getProcessStatus().intValue()  >= 3)
 							banksUpdating.remove(i);
 						    eventBus.post(new EventMessage().new BankStatusUpdateEvent(bank));
-						    Log.d("bank Removed", bank.getBankName());
 					}
 					
 					if (banksUpdating.size() == 0) {

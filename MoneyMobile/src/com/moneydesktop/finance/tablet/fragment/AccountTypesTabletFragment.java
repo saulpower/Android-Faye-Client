@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -31,6 +32,7 @@ import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.model.EventMessage;
+import com.moneydesktop.finance.model.EventMessage.RemoveAccountTypeEvent;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.model.EventMessage.BankStatusUpdateEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
@@ -58,6 +60,8 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
     LinearLayout mPanelLayoutHolder;
     List<AccountType> mAccountTypesFiltered;
     private Handler mHandler;    
+    private SlideExpandableListAdapter mAdapter;
+    private AccountsExpandableListAdapter mAdapter1;
 	
 	public static AccountTypesTabletFragment newInstance(int position) {	
 		AccountTypesTabletFragment frag = new AccountTypesTabletFragment();
@@ -114,20 +118,25 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
             mListView.addFooterView(mFooter);
             
             //This sets the GroupView
-            ListAdapter adapter = new AccountsExpandableListAdapter(getActivity(),  
+            mAdapter1 = new AccountsExpandableListAdapter(getActivity(),  
                     R.layout.account_type_group, 
                     R.id.account_type_group_name, 
                     mAccountTypesFiltered);
+            
+            
          
             
+            mAdapter = new SlideExpandableListAdapter(
+                    mAdapter1, 
+                    R.id.account_type_group_container, 
+                    R.id.expandable,
+                    getActivity(),
+                    mAccountTypesFiltered); 
+            
             //this animates and sets the ChildView
-            mListView.setAdapter(
-                    new SlideExpandableListAdapter(
-                            adapter, 
-                            R.id.account_type_group_container, 
-                            R.id.expandable,
-                            getActivity(),
-                            mAccountTypesFiltered));
+            mListView.setAdapter(mAdapter);
+            
+            
             
         } else {
         	Toast.makeText(mActivity, "No Accounts types that have bank accounts...show empty state", Toast.LENGTH_SHORT).show();
@@ -251,12 +260,9 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                     ImageView status = (ImageView) bankView.findViewById(R.id.bank_status);
                     
                     setBanner(bank, status);
-             //       setAccountsBannerUpdate(false);
-                    Log.d("Bank sync done", "Just set the Banners for " + bank.getBankName());
                 }
             }
             
-            Log.d("Bank Status", "NOW UPDATING");
             updateAllBankStatus();
         }
     }
@@ -275,7 +281,6 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
             public void run() {
                 int i = 0;
                 for (Bank bankIterator : mBankList) {
-
                     i++;
                     View bankView = mPanelLayoutHolder.getChildAt(i);
                     
@@ -286,11 +291,12 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                             setBanner(bank, status);
                         }
                     }
-                }
-                
+                }                
             }
         });
     }
+    
+
     
     /**
      * Updates status for all banks.
@@ -503,12 +509,20 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                                 mBanksForDeletion.add(bank);
                                 mPopup.fadeOutTransparency();
                                 
+                                //so we dont try to update UI elements that are no longer there.
+                                if (mBanksForDeletion.contains(bank)) {
+                                    mBankList.remove(bank);
+                                }
+                                
                                 //start the sync
-                                Intent intent = new Intent(getActivity(), SyncService.class);
-                                getActivity().startService(intent);
+//                                Intent intent = new Intent(getActivity(), SyncService.class);
+//                                getActivity().startService(intent);
                                 
                                 //remove bank from view
                                 panelView.removeView(v);
+                                
+                                updateChildAccountsList(bank);
+                                 
                                 break;
                                 
                             case DialogInterface.BUTTON_NEGATIVE:
@@ -520,8 +534,31 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         });
                 
     }
+   
+    
+    public void onEvent(RemoveAccountTypeEvent event) {
+        
+        final AccountType accountType = event.getAccountType();
+        
+        //mAccountTypesFiltered.clear();
+        
+        //for (AccountType accountType : accountTypeList) {
+            mAccountTypesFiltered.remove(accountType);
+            //mAccountTypesFiltered.add(accountType);
+        //}
+        mAdapter1.notifyDataSetChanged();
+    }
+    
+    
+    
+    
+    
+	protected void updateChildAccountsList(Bank bank) {
+	    EventBus.getDefault().post(new EventMessage().new BankDeletedEvent(bank));
+    }
+	
 
-	/**
+    /**
 	 * Drawer's width is set to a percentage of screen.
 	 * @param layoutParams
 	 * @param activity

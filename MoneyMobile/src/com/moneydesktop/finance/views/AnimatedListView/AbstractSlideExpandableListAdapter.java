@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
@@ -23,6 +24,7 @@ import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.model.EventMessage.RefreshAccountEvent;
+import com.moneydesktop.finance.model.EventMessage.RemoveAccountTypeEvent;
 import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
 import com.moneydesktop.finance.util.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.views.AccountTypeChildView;
@@ -39,7 +41,7 @@ import java.util.List;
  * @author tjerk
  * @date 6/9/12 4:41 PM
  */
-public abstract class AbstractSlideExpandableListAdapter implements ListAdapter {
+public abstract class AbstractSlideExpandableListAdapter extends BaseAdapter{
 	private ListAdapter wrapped;
 	private static Context mContext;
 	private static List<AccountType> mAccountTypesFiltered;	
@@ -183,4 +185,5 @@ public abstract class AbstractSlideExpandableListAdapter implements ListAdapter 
 		target.setVisibility(View.GONE);
 	}
 
+	
 }

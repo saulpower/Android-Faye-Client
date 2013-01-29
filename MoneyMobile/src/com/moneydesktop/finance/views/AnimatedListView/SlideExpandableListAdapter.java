@@ -7,7 +7,10 @@ import android.widget.ListAdapter;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.AccountType;
+import com.moneydesktop.finance.model.EventMessage.RemoveAccountTypeEvent;
 import com.moneydesktop.finance.views.AccountTypeChildView;
+
+import de.greenrobot.event.EventBus;
 
 import java.util.List;
 
@@ -38,5 +41,6 @@ public class SlideExpandableListAdapter extends AbstractSlideExpandableListAdapt
     public View getExpandableView(View parent) {
         return parent.findViewById(expandable_view_id);
     }
+	
 	
 }

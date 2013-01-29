@@ -1,5 +1,6 @@
 package com.moneydesktop.finance.views;
 
+import android.R.bool;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
@@ -15,8 +16,11 @@ import android.widget.Toast;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
+import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.model.EventMessage;
+import com.moneydesktop.finance.model.EventMessage.BankDeletedEvent;
 import com.moneydesktop.finance.model.EventMessage.BankStatusUpdateEvent;
 import com.moneydesktop.finance.model.EventMessage.RefreshAccountEvent;
 import com.moneydesktop.finance.model.EventMessage.ReloadBannersEvent;
@@ -184,41 +188,81 @@ public class AccountTypeChildView extends FrameLayout {
         });        
     }
     
+    public void onEvent(final BankDeletedEvent event) {
+        
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {         
+                removeInstancesOfBank(event.getDeletedBank());
+            }
+        });        
+    }
+    
+    protected void removeInstancesOfBank(Bank deletedBank) {
+        int iterator = 0;
+        boolean updateListDataSet = false;
+        AccountType accountToBeRemoved = new AccountType();
+        for (final BankAccount account : mBankAccounts) {
+            if (account.getBank().getBankName().equals(deletedBank.getBankName())) { 
+                View view = mBankAccountContainer.getChildAt(iterator);
+                mBankAccountContainer.removeView(view);      
+                
+                if (mBankAccountContainer.getChildCount() == 0) {
+                    updateListDataSet = true;
+                    accountToBeRemoved = AccountType.getAccountType(account.getAccountTypeId().toString());
+                }
+            }
+        }
+        if (updateListDataSet) {
+            EventBus.getDefault().post(new EventMessage(). new RemoveAccountTypeEvent(accountToBeRemoved));
+        }
+    }
+
     private void updateChildBanners(Boolean forceBanner) {
         int iterator = 0;
+      //  List<AccountType> accountsToBeRemoved = new ArrayList<AccountType>();
         for (final BankAccount account : mBankAccounts) {
             if (mContext != null){
                 
                 View view = mBankAccountContainer.getChildAt(iterator);
-                mStatus = (ImageView)view.findViewById(R.id.account_type_child_banner);
                 
-                if (forceBanner){
-                    mStatus.setVisibility(View.VISIBLE);
-                    mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
-                } else {
-                    mStatus.setVisibility(View.VISIBLE);
-                    if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_SUCCEEDED.index()) { //3
-                        mStatus.setVisibility(View.GONE);
-                        
-                    } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_PENDING.index()) { //1
+                if (view != null) {
+                
+                    mStatus = (ImageView)view.findViewById(R.id.account_type_child_banner);
+                    
+                    if (forceBanner){
+                        mStatus.setVisibility(View.VISIBLE);
                         mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
-                        
-                    } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_LOGIN_FAILED.index()) { //5
-                        mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
-                        
-                    } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_EXCEPTION.index()) { //4
-                        mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
-                        
-                    } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_PROCESSING.index()) { //2
-                        mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
-                        
                     } else {
-                        mStatus.setVisibility(View.GONE);
-                    }             
+                        mStatus.setVisibility(View.VISIBLE);
+                        if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_SUCCEEDED.index()) { //3
+                            mStatus.setVisibility(View.GONE);
+                            
+                        } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_PENDING.index()) { //1
+                            mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+                            
+                        } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_LOGIN_FAILED.index()) { //5
+                            mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
+                            
+                        } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_EXCEPTION.index()) { //4
+                            mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
+                            
+                        } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_PROCESSING.index()) { //2
+                            mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+                            
+                        } else {
+                            mStatus.setVisibility(View.GONE);
+                        }             
+                    }
+                } else {                 
+                   // accountsToBeRemoved.add(AccountType.getAccountType(account.getAccountTypeId().toString()));  
                 }
             }   
             iterator++;
         }
+//        if (accountsToBeRemoved.size() > 0) {
+//            EventBus.getDefault().post(new EventMessage(). new RemoveAccountTypeEvent(accountsToBeRemoved));
+//        }
     }
     
     private void updateSpecificChildBanner(Bank bank) {
