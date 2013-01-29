@@ -43,7 +43,7 @@
                 android:layout_marginTop="4dp"
                 app:isVertical="false"
                 app:lineColor="@color/white"
-                app:lineStrokeWidth="2" />
+                app:lineStrokeWidth="2dp" />
 
             <TextView
                 android:id="@+id/handset_intro_text_description"

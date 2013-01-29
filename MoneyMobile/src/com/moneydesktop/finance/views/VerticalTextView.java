@@ -3,8 +3,9 @@ package com.moneydesktop.finance.views;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.text.TextPaint;
+import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
@@ -14,9 +15,13 @@ public class VerticalTextView extends TextView {
     public final String TAG = this.getClass().getSimpleName();
 
 	private boolean mTopDown = false;
+	private Rect mBounds = new Rect();
+	private Canvas mDummy;
 
 	public VerticalTextView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		
+		mDummy = new Canvas();
 		
 		if (attrs != null) {
             
@@ -27,33 +32,61 @@ public class VerticalTextView extends TextView {
             a.recycle();
         }
 	}
-
+	
 	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		super.onMeasure(heightMeasureSpec, widthMeasureSpec);
-		setMeasuredDimension(getMeasuredHeight(), getMeasuredWidth());
+	public void setTextSize(float size) {
+	    super.setTextSize(size);
+	    
+        getPaint().getTextBounds(getText().toString(), 0, getText().length(), mBounds);
+        invalidate();
+	}
+	
+	private Rect getBounds() {
+	    
+	    if (mBounds.width() == 0 && mBounds.height() == 0) {
+	        getPaint().getTextBounds(getText().toString(), 0, getText().length(), mBounds);
+	    }
+	    
+	    return mBounds;
+	}
+	
+	public void setText(String text) {
+	    super.setText(text);
+	    
+        getPaint().getTextBounds(getText().toString(), 0, getText().length(), mBounds);
+        invalidate();
+	}
+	
+	private int getGravityAdjustment() {
+	    
+	    if ((getGravity() & Gravity.LEFT) > 1 ) {
+	        return -Math.abs(getHeight()/2 - getBounds().width()/2);
+	    }
+	    
+	    if ((getGravity() & Gravity.RIGHT) > 1) {
+	        return Math.abs(getHeight()/2 - getBounds().width()/2);
+	    }
+	    
+	    return 0;
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-	    
-		TextPaint textPaint = getPaint();
-		textPaint.setColor(getCurrentTextColor());
-		textPaint.drawableState = getDrawableState();
+        
+        super.onDraw(mDummy);
 
 		canvas.save();
 
 		if (mTopDown) {
-			canvas.translate(getWidth(), 0);
-			canvas.rotate(90);
+			canvas.rotate(90, getWidth()/2, getHeight()/2);
 		} else {
-		    canvas.translate(0, getHeight());
-			canvas.rotate(-90);
+			canvas.rotate(-90, getWidth()/2, getHeight()/2);
 		}
-
-		canvas.translate(getCompoundPaddingLeft(), getExtendedPaddingTop());
-		getLayout().draw(canvas);
 		
+        canvas.translate(getGravityAdjustment(), 0);
+        
+        canvas.drawText(getText().toString(), getWidth()/2 - getBounds().width()/2, getHeight()/2 + getBounds().height()/2, getPaint());
+        
 		canvas.restore();
 	}
 }

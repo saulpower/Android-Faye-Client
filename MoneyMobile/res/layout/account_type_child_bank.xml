@@ -59,11 +59,11 @@
                 android:layout_height="55dip"
                 android:layout_marginLeft="20dip"
                 android:gravity="center_vertical"
-                app:dashLength="4"
+                app:dashLength="4dp"
                 app:isDashed="true"
                 app:isVertical="true"
                 app:lineColor="@color/primaryColor"
-                app:lineStrokeWidth="3" />
+                app:lineStrokeWidth="3dp" />
 
             <TextView
                 android:id="@+id/tablet_account_type_bank_sum"

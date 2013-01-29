@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
@@ -13,6 +12,7 @@ import com.moneydesktop.finance.handset.activity.LoginHandsetActivity;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.tablet.activity.LoginTabletActivity;
+import com.moneydesktop.finance.util.UiUtils;
 
 public class SplashActivity extends BaseActivity {
     
@@ -35,7 +35,8 @@ public class SplashActivity extends BaseActivity {
 
         setContentView(R.layout.splash_view);
 
-        Log.i(TAG, "onCreate");
+        // Make sure the keyboard isn't showing on startup
+        UiUtils.hideKeyboard(this, findViewById(R.id.splash_screen));
         
         ApplicationContext.setIsTablet(isTablet(this));
         

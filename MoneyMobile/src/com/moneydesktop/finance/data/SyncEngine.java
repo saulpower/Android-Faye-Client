@@ -1,25 +1,11 @@
 package com.moneydesktop.finance.data;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
 import com.moneydesktop.finance.ApplicationContext;
+import com.moneydesktop.finance.data.Enums.DataState;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BusinessObject;
@@ -29,10 +15,20 @@ import com.moneydesktop.finance.database.Institution;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.util.Comparators;
-import com.moneydesktop.finance.util.DialogUtils;
-import com.moneydesktop.finance.util.Enums.DataState;
 
 import de.greenrobot.event.EventBus;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class SyncEngine {
 	
@@ -201,7 +197,7 @@ public class SyncEngine {
 		}
 		
 		if (!isRunning) {
-			
+		    
 			isRunning = true;
 			
 			eventBus.post(new EventMessage().new SyncEvent(false));
@@ -234,6 +230,8 @@ public class SyncEngine {
 	
 	private void performSync() throws JSONException {
 		
+	    Log.i(TAG, "Sync Started");
+	    
 		JSONObject data = null;
 		
 		if (needsFullSync()) {
@@ -284,7 +282,9 @@ public class SyncEngine {
 		Map<String, Map<String, Object>> keyedRecords = null;
 		Map<Class<?>, Map<String, Map<String, Object>>> allChanges = new HashMap<Class<?>, Map<String, Map<String, Object>>>();
 		
-		for (Class<?> objectType : Constant.OBJECT_TYPES.keySet()) {
+		for (Map.Entry<String, Class<?>> entry : Constant.OBJECT_TYPES.entrySet()) {
+		    String key = entry.getKey();
+		    Class<?> value = entry.getValue();
 			
 			keyedRecords = new HashMap<String, Map<String, Object>>();
 			
@@ -292,20 +292,20 @@ public class SyncEngine {
 				
 				DataState state = Constant.OPERATIONS.get(operation);
 				
-				temp = mapOfChangedObjects(objectType, Constant.OPERATIONS.get(operation));
+				temp = mapOfChangedObjects(value, Constant.OPERATIONS.get(operation));
 				JSONArray json = (JSONArray) temp.get(Constant.KEY_JSON);
 				
 				if (json != null && json.length() > 0) {
 					
 					switch (state) {
 					case DATA_STATE_NEW:
-						created.put(Constant.OBJECT_TYPES.get(objectType), json);
+						created.put(key, json);
 						break;
 					case DATA_STATE_MODIFIED:
-						updated.put(Constant.OBJECT_TYPES.get(objectType), json);
+						updated.put(key, json);
 						break;
 					case DATA_STATE_DELETED:
-						deleted.put(Constant.OBJECT_TYPES.get(objectType), json);
+						deleted.put(key, json);
 						break;
 					default:
 						break;
@@ -315,18 +315,21 @@ public class SyncEngine {
 				}
 			}
 			
-			allChanges.put(objectType, keyedRecords);
+			allChanges.put(value, keyedRecords);
 		}
 		
 		// Create JSON structure to sync up data with server
 		JSONObject records = new JSONObject();
-		
-		if (created.length() > 0)
+
+        if (deleted.length() > 0) {
+            deleted.put(Constant.KEY_DELETED, deleted);
+        }
+        if (updated.length() > 0) {
+            records.put(Constant.KEY_UPDATED, updated);
+        }
+		if (created.length() > 0) {
 			records.put(Constant.KEY_CREATED, created);
-		if (updated.length() > 0)
-			records.put(Constant.KEY_UPDATED, updated);
-		if (deleted.length() > 0)
-			deleted.put(Constant.KEY_DELETED, deleted);
+		}
 		
 		if (records.length() > 0) {
 			
@@ -337,6 +340,7 @@ public class SyncEngine {
 			deviceData.put(Constant.KEY_RECORDS, records);
 			uploadData.put(Constant.KEY_DEVICE, deviceData);
 			
+			// Send data to server
 			JSONObject savePackage = db.uploadSync(uploadData);
 			
 			// User server response and update local objects (DataState)
@@ -358,11 +362,7 @@ public class SyncEngine {
 						
 						String objectType = (String) objIterator.next();
 						
-						Class<?> mappedType = null;
-						Set<Class<?>> mappedTypes = Constant.OBJECT_TYPES.keySet();
-						
-						if (mappedTypes.size() > 0)
-							mappedType = (Class<?>) mappedTypes.toArray()[0];
+						Class<?> mappedType = Constant.OBJECT_TYPES.get(objectType);
 						
 						if (objectType.equals(Constant.KEY_TAGS) ||
 							objectType.equals(Constant.KEY_MEMBERS) ||
@@ -390,8 +390,9 @@ public class SyncEngine {
 	 */
 	public static Map<String, Object> mapOfChangedObjects(Class<?> key, DataState dataState) throws IllegalArgumentException, JSONException {
 		
-		if (key.equals(BusinessObjectBase.class))
+		if (key.equals(BusinessObjectBase.class)) {
 			throw new IllegalArgumentException("Cannot query BusinessObjectBase class");
+		}
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		JSONArray json = new JSONArray();
@@ -402,8 +403,9 @@ public class SyncEngine {
 			
 			for (Object object : objects) {
 				
-				if (object instanceof BusinessObject) 
+				if (object instanceof BusinessObject) {
 					json.put(((BusinessObject) object).getJson());
+				}
 			}
 			
 			map.put(Constant.KEY_OBJECTS, objects);

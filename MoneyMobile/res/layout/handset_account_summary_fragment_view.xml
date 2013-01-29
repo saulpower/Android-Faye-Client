@@ -27,7 +27,7 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3"
+			    app:lineStrokeWidth="3dp"
 			    app:isVertical="false" />
 		    <com.moneydesktop.finance.views.AccountBalanceItemView
 		        android:id="@+id/account_balance_cash"
@@ -42,7 +42,7 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3"
+			    app:lineStrokeWidth="3dp"
 			    app:isVertical="false" />    
 		     <com.moneydesktop.finance.views.AccountBalanceItemView
 		        android:id="@+id/account_balance_checking"
@@ -57,7 +57,7 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3"
+			    app:lineStrokeWidth="3dp"
 			    app:isVertical="false" />     
 		     <com.moneydesktop.finance.views.AccountBalanceItemView
 		        android:id="@+id/account_balance_inv"
@@ -72,7 +72,7 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3"
+			    app:lineStrokeWidth="3dp"
 			    app:isVertical="false" />     
 		     <com.moneydesktop.finance.views.AccountBalanceItemView
 		        android:id="@+id/account_balance_prop"
@@ -87,7 +87,7 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3"
+			    app:lineStrokeWidth="3dp"
 			    app:isVertical="false" />          
 		    <com.moneydesktop.finance.views.AccountBalanceItemView
 		        android:id="@+id/account_balance_saving"
@@ -102,7 +102,7 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3"
+			    app:lineStrokeWidth="3dp"
 			    app:isVertical="false" />          
 		    <com.moneydesktop.finance.views.AccountBalanceItemView
 		        android:id="@+id/account_balance_cc"
@@ -117,7 +117,7 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3"
+			    app:lineStrokeWidth="3dp"
 			    app:isVertical="false" />
 		     <com.moneydesktop.finance.views.AccountBalanceItemView
 		        android:id="@+id/account_balance_loc"
@@ -132,7 +132,7 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3"
+			    app:lineStrokeWidth="3dp"
 			    app:isVertical="false" />
 		     <com.moneydesktop.finance.views.AccountBalanceItemView
 		        android:id="@+id/account_balance_loans"
@@ -147,7 +147,7 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3"
+			    app:lineStrokeWidth="3dp"
 			    app:isVertical="false" />
 		      <com.moneydesktop.finance.views.AccountBalanceItemView
 		        android:id="@+id/account_balance_mort"
@@ -162,7 +162,7 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3"
+			    app:lineStrokeWidth="3dp"
 			    app:isVertical="false" />
 		      </LinearLayout>
       </RelativeLayout>

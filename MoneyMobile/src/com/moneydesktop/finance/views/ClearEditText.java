@@ -18,9 +18,12 @@ public class ClearEditText extends EditText {
     
     public final String TAG = this.getClass().getSimpleName();
     
-    private final int PADDING_RIGHT = 40;
+    private final int PADDING_RIGHT = 25;
+    private float mPaddingRight;
     private String mClear, mIcon;
     private Paint mClearPaint, mIconPaint;
+    private int mIconColor;
+
     private Rect mClearBounds = new Rect(), mIconBounds = new Rect();
 
     public String getClear() {
@@ -52,6 +55,15 @@ public class ClearEditText extends EditText {
         
         invalidate();
     }
+    
+    public int getIconColor() {
+        return mIconColor;
+    }
+
+    public void setIconColor(int mIconColor) {
+        this.mIconColor = mIconColor;
+        invalidate();
+    }
 
     public ClearEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -61,14 +73,15 @@ public class ClearEditText extends EditText {
 
     private void init(AttributeSet attrs) {
         
+        mPaddingRight = UiUtils.getDynamicPixels(getContext(), PADDING_RIGHT);
+        
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.ClearEditText);
         
         setClear(a.getString(R.styleable.ClearEditText_clearText));
         setIcon(a.getString(R.styleable.ClearEditText_iconText));
+        setIconColor(a.getColor(R.styleable.ClearEditText_iconTextColor, getCurrentTextColor()));
         
         a.recycle();
-        
-        setPadding(getPaddingLeft(), getPaddingTop(), (int) (PADDING_RIGHT * 1.3), getPaddingBottom());
         
         setupPaints();
     }
@@ -79,13 +92,13 @@ public class ClearEditText extends EditText {
         mClearPaint.setStyle(Paint.Style.FILL);
         mClearPaint.setTypeface(Fonts.getFont(Fonts.GLYPH));
         mClearPaint.setTextSize(UiUtils.getScaledPixels(getContext(), 18));
-        mClearPaint.setColor(getCurrentTextColor());
+        mClearPaint.setColor(getIconColor());
 
         mIconPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mIconPaint.setStyle(Paint.Style.FILL);
         mIconPaint.setTypeface(Fonts.getFont(Fonts.GLYPH));
         mIconPaint.setTextSize(UiUtils.getScaledPixels(getContext(), 18));
-        mIconPaint.setColor(getCurrentTextColor());
+        mIconPaint.setColor(getIconColor());
 
         mClearPaint.getTextBounds(mClear, 0, mClear.length(), mClearBounds);
         mIconPaint.getTextBounds(mIcon, 0, mIcon.length(), mIconBounds);
@@ -134,9 +147,9 @@ public class ClearEditText extends EditText {
         super.onDraw(c);
         
         if (!getText().toString().equals("")) {
-            c.drawText(mClear, getWidth() - PADDING_RIGHT + getScrollX(), ((getHeight() / 2) + (mClearBounds.height() / 2) + 5), mClearPaint);
+            c.drawText(mClear, getWidth() - mPaddingRight + getScrollX(), ((getHeight() / 2) + (mClearBounds.height() / 2) + 5), mClearPaint);
         } else {
-            c.drawText(mIcon, getWidth() - PADDING_RIGHT + getScrollX(), ((getHeight() / 2) + (mIconBounds.height() / 2)), mIconPaint);
+            c.drawText(mIcon, getWidth() - mPaddingRight + getScrollX(), ((getHeight() / 2) + (mIconBounds.height() / 2)), mIconPaint);
         }
     }
 

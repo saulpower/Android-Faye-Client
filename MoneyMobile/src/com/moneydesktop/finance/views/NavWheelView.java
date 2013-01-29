@@ -14,12 +14,13 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.SoundEffectConstants;
 import android.view.View;
 
+import com.moneydesktop.finance.data.Enums.NavDirection;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
 import com.moneydesktop.finance.model.PointEvaluator;
-import com.moneydesktop.finance.util.Enums.NavDirection;
 import com.moneydesktop.finance.util.UiUtils;
 
 import de.greenrobot.event.EventBus;
@@ -99,8 +100,9 @@ public class NavWheelView extends View {
 	 */
 	public void setCurrentIndex(int currentIndex) {
 		
-		if (mRotating || this.mCurrentIndex == currentIndex)
+		if (mRotating || this.mCurrentIndex == currentIndex) {
 			return;
+		}
 		
 		this.mCurrentIndex = currentIndex;
 		rotatePointer();
@@ -208,14 +210,16 @@ public class NavWheelView extends View {
 			public void onAnimationEnd(Animator animation) {
 				
 				// Adjustment for irregular movement
-				if (change)
+				if (change) {
 					mPointer.fixRotation((float) (mCurrentIndex * mDegreeChange));
+				}
 				
 				mRotating = false;
 				
 				if (mShouldHide) {
 				    mShouldHide = false;
 				    hideNav();
+                    playSoundEffect(SoundEffectConstants.CLICK);
 				}
 			}
 			

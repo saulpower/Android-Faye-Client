@@ -8,7 +8,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -16,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.util.Fonts;
 
 public class LockCodeView extends RelativeLayout {
@@ -121,7 +121,7 @@ public class LockCodeView extends RelativeLayout {
         inflater.inflate(R.layout.lock_code_view, this, true);
         setupViews();
         
-        mShake = AnimationUtils.loadAnimation(mContext, R.anim.shake);
+        mShake = AnimationFactory.createShakeAnimation(getContext(), 30);
 	}
 	
 	private void setupViews() {

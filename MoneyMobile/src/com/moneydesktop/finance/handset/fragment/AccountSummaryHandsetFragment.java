@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BankAccountDao;
 import com.moneydesktop.finance.util.Fonts;
@@ -22,10 +23,10 @@ import java.util.List;
 public class AccountSummaryHandsetFragment extends BaseFragment {
     private HashMap<String, Object> mAccountInfo;
 
-    public static AccountSummaryHandsetFragment getInstance(int position) {
+    public static AccountSummaryHandsetFragment getInstance(FragmentType type) {
 
         AccountSummaryHandsetFragment fragment = new AccountSummaryHandsetFragment();
-        fragment.setPosition(position);
+        fragment.setType(type);
         fragment.setRetainInstance(true);
 
         Bundle args = new Bundle();

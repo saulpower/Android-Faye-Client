@@ -1,6 +1,7 @@
 package com.moneydesktop.finance.handset.fragment;
 
 import com.moneydesktop.finance.BaseFragment;
+import com.moneydesktop.finance.data.Enums.FragmentType;
 
 public class DashboardHandsetFragmentFactory {
 
@@ -8,17 +9,15 @@ public class DashboardHandsetFragmentFactory {
         
         switch (position) {
             case 0:
-                return AccountSummaryHandsetFragment.getInstance(0);
+                return AccountSummaryHandsetFragment.getInstance(FragmentType.ACCOUNT_SUMMARY);
             case 1:
-                return SpendingSummaryFragment.getInstance(1);
+                return SpendingSummaryFragment.getInstance(FragmentType.SPENDING_SUMMARY);
             case 2:
-                return BudgetSummaryHandsetFragment.getInstance(2);
+                return BudgetSummaryHandsetFragment.getInstance(FragmentType.ACCOUNT_SUMMARY);
             case 3:
-                return TransactionSummaryHandsetFragment.getInstance(3);
+                return TransactionSummaryHandsetFragment.getInstance(FragmentType.BUDGET_SUMMARY);
             case 4:
-                return SettingsHandsetFragment.getInstance(4);
-            case 5:
-                return AccountTypesHandsetFragment.getInstance(5);
+                return SettingsHandsetFragment.getInstance(FragmentType.SETTINGS);
         }
         
         return null;

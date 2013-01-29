@@ -2,9 +2,9 @@ package com.moneydesktop.finance.database;
 
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataController;
+import com.moneydesktop.finance.data.Enums.AccountExclusionFlags;
+import com.moneydesktop.finance.data.Enums.DataState;
 import com.moneydesktop.finance.model.User;
-import com.moneydesktop.finance.util.Enums.AccountExclusionFlags;
-import com.moneydesktop.finance.util.Enums.DataState;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;

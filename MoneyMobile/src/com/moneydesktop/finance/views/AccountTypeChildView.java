@@ -18,6 +18,9 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.Bank;
+import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.data.Enums.TxFilter;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.BankDeletedEvent;
@@ -26,6 +29,7 @@ import com.moneydesktop.finance.model.EventMessage.RefreshAccountEvent;
 import com.moneydesktop.finance.model.EventMessage.ReloadBannersEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.util.Enums.BankRefreshStatus;
+import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.UiUtils;
 
 import de.greenrobot.event.EventBus;
@@ -83,26 +87,22 @@ public class AccountTypeChildView extends FrameLayout {
 					onClickListeners.add(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							Toast.makeText(mContext, "VIEW ALL TXNS", Toast.LENGTH_SHORT).show();
-//						    Intent i = new Intent(mActivity, PopupTabletActivity.class);
-//					        i.putExtra("fragment", 1);
-//					        i.putExtra("accountNumber", account.getAccountId());
-//					        i.putExtra("txnType", TxFilter.ALL);
-//					        mContext.startActivity(i);
-//					        mActivity.overridePendingTransition(R.anim.in_down, R.anim.none);
+						    Intent i = new Intent(mActivity, DropDownTabletActivity.class);
+					        i.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.TRANSACTIONS_PAGE);
+					        i.putExtra(Constant.EXTRA_ACCOUNT_ID, Long.toString(account.getId()));
+					        i.putExtra(Constant.EXTRA_TXN_TYPE, TxFilter.ALL);
+					        mContext.startActivity(i);
 						}
 					});
 					
 					onClickListeners.add(new OnClickListener() { 	
 						@Override
 						public void onClick(View v) {
-							Toast.makeText(mContext, "VIEW UNCLEARED TXNS", Toast.LENGTH_SHORT).show();
-//	                        Intent i = new Intent(mActivity, PopupTabletActivity.class);
-//	                        i.putExtra("fragment", 1);
-//	                        i.putExtra("accountNumber", account.getAccountId());
-//	                        i.putExtra("txnType", TxFilter.UNCLEARED);
-//	                        mContext.startActivity(i);
-//	                        mActivity.overridePendingTransition(R.anim.in_down, R.anim.none);
+	                        Intent i = new Intent(mActivity, DropDownTabletActivity.class);
+                            i.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.TRANSACTIONS_PAGE);
+                            i.putExtra(Constant.EXTRA_ACCOUNT_ID, Long.toString(account.getId()));
+                            i.putExtra(Constant.EXTRA_TXN_TYPE, TxFilter.UNCLEARED);
+	                        mContext.startActivity(i);
 						}
 					});
 					

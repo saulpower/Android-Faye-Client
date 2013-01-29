@@ -1,6 +1,7 @@
 package com.moneydesktop.finance.shared;
 
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.database.PowerQuery;
@@ -10,6 +11,7 @@ import java.util.List;
 
 public class FilterViewHolder {
     
+    public RelativeLayout mRoot;
     public LinearLayout mInfo;
     
     public TextView mTitle;

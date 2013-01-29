@@ -1,19 +1,19 @@
 package com.moneydesktop.finance.database;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONObject;
-
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataController;
+import com.moneydesktop.finance.data.Enums.DataState;
 import com.moneydesktop.finance.database.CategoryDao.Properties;
-import com.moneydesktop.finance.util.Enums.DataState;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.Query;
+
+import org.json.JSONObject;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 // TODO: Track when an object is changed and mark it's DataState so it is processed
 // 		 during a sync.
@@ -32,6 +32,7 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 	protected boolean mIgnoreWillSave = false;
 	protected boolean mSuspendChangeTracking = false;
 	protected boolean mIsDeleted = false;
+	protected boolean mChangesAccepted = false;
 	
 	/********************************************************************************
 	 * Property Access Methods
@@ -39,9 +40,11 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 	
 	public DataState getDataStateEnum() {
 		
-		if (mDataStateEnum == null && getBusinessObjectBase() != null) {
-			mDataStateEnum = DataState.fromInteger(getBusinessObjectBase().getDataState());
-		}
+	    try {
+    		if (mDataStateEnum == null && getBusinessObjectBase() != null) {
+    			mDataStateEnum = DataState.fromInteger(getBusinessObjectBase().getDataState());
+    		}
+	    } catch (DaoException ex) {}
 		
 		return mDataStateEnum;
 	}
@@ -50,7 +53,9 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 		
 		this.mDataStateEnum = dataStateEnum;
 		
-		getBusinessObjectBase().setDataState(dataStateEnum.index());
+		if (!(this instanceof BusinessObjectBase)) {
+		    getBusinessObjectBase().setDataState(dataStateEnum.index());
+		}
 	}
 
 	public boolean isNew() {
@@ -71,6 +76,7 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 
 	public void setDeleted(boolean isDeleted) {
 		this.mIsDeleted = isDeleted;
+        setDataStateEnum(DataState.DATA_STATE_DELETED);
 	}
 	
 	/********************************************************************************
@@ -82,15 +88,18 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 	 */
 	public void acceptChanges() {
 		
-		if (this instanceof BusinessObjectBase)
+		if (this instanceof BusinessObjectBase) {
 			return;
+		}
 		
+		mChangesAccepted = true;
 		mPreviousDataStateEnum = getDataStateEnum();
 		
 		try {
 			
-			for (TagInstance ti : getBusinessObjectBase().getTagInstances())
+			for (TagInstance ti : getBusinessObjectBase().getTagInstances()) {
 				ti.acceptChanges();
+			}
 			
 		} catch (DaoException ex) {}
 		
@@ -107,10 +116,13 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 	 * @param isDeleted
 	 */
 	public void willSave(boolean isDeleted) {
-		
-		if (mIgnoreWillSave)
-			return;
 
+        mChangesAccepted = false;
+        
+		if (mIgnoreWillSave) {
+			return;
+		}
+		
 		this.mIsDeleted = isDeleted;
 		
 		if (isDeleted) {
@@ -119,8 +131,13 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 		
 		if (!mSuspendChangeTracking) {
 			
-			if (getBusinessObjectBase() != null)
-				getBusinessObjectBase().setDateModified(new Date());
+		    try {
+    			if (getBusinessObjectBase() != null) {
+    				getBusinessObjectBase().setDateModified(new Date());
+    			}
+		    } catch (DaoException ex) {
+		        // catching and doing nothing
+		    }
 			
 			if (getDataStateEnum() != DataState.DATA_STATE_UNCHANGED) {
 				// TODO: notification of data state change
@@ -128,10 +145,11 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 		}
 	}
 	
-	public void updateDataState() {
+	public void setModified() {
 		
-		if (getDataStateEnum() == DataState.DATA_STATE_UNCHANGED)
+		if (getDataStateEnum() == DataState.DATA_STATE_UNCHANGED && !mChangesAccepted) {
 			setDataStateEnum(DataState.DATA_STATE_MODIFIED);
+		}
 	}
 	
 	public void suspendDataState() {
@@ -153,20 +171,36 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 		return false;
 	}
 	
+	public void save() {
+	    DataController.save();
+	}
+	
 	public BusinessObject insertBatch() {
 		
 		return insertBatch(null);
+	}
+	
+	public BusinessObject insertSingle() {
+	    
+	    BusinessObject bo = insertBatch(null);
+	    DataController.save();
+	    
+	    return bo;
 	}
 	
 	public BusinessObject insertBatch(String guid) {
 		
 		BusinessObjectBase bob = addBusinessObjectBase();
 		
-		if (guid == null)
-			guid = getExternalId();
+	    try {
+    		if (guid == null) {
+    			guid = getExternalId();
+    		}
+	    } catch (DaoException ex) {}
 		
-		if (bob != null)
+		if (bob != null) {
 			bob.insertBatch(guid);
+		}
 		
 		DataController.insert(this, guid);
 		
@@ -174,8 +208,18 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 	}
 	
 	public void updateBatch() {
+	    
+	    setModified();
 		DataController.update(this);
 		DataController.update(getBusinessObjectBase());
+	}
+	
+	public void updateSingle() {
+
+	    setModified();
+        DataController.update(this);
+        DataController.update(getBusinessObjectBase());
+        DataController.save();
 	}
 	
 	public void deleteBatch() {
@@ -184,13 +228,32 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 		DataController.delete(this);
 	}
 	
+	public void deleteSingle() {
+
+        DataController.delete(getBusinessObjectBase());
+        DataController.delete(this);
+        DataController.save();
+	}
+    
+    public void softDeleteBatch() {
+
+        DataController.softDelete(getBusinessObjectBase());
+    }
+	
+	public void softDeleteSingle() {
+
+        DataController.softDelete(getBusinessObjectBase());
+        DataController.save();
+	}
+	
 	/**
 	 * Adds a BusinessObjectBase object to the current object
 	 */
 	protected BusinessObjectBase addBusinessObjectBase() {
 
-		if (this instanceof BusinessObjectBase)
+		if (this instanceof BusinessObjectBase) {
 			return null;
+		}
 		
 		BusinessObjectBase bob = new BusinessObjectBase(BusinessObjectBase.nextId());
 		setBusinessObjectBase(bob);
@@ -223,8 +286,9 @@ public abstract class BusinessObject implements BusinessObjectInterface {
     	BusinessObject object = (BusinessObject) getObject(key, guid);
     	
     	// Object does not exist return null, no action required
-    	if (object == null && delete)
+    	if (object == null && delete) {
     		return null;
+    	}
     	
     	// Object exists, delete it
     	else if (object != null && delete) {
@@ -245,8 +309,9 @@ public abstract class BusinessObject implements BusinessObjectInterface {
     	
     	object.setNew(inserting);
     	
-    	if (!inserting)
+    	if (!inserting) {
     		object.updateBatch();
+    	}
     	
     	return object;
 	}

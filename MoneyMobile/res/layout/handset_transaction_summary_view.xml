@@ -31,7 +31,7 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        app:lineColor="@color/gray2"
-			    app:lineStrokeWidth="3"
+			    app:lineStrokeWidth="3dp"
 			    app:isVertical="false"/> 
                <LinearLayout 
                    android:id="@+id/income_balance_summary_view"
@@ -73,10 +73,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:lineColor="@color/gray2"
-                    app:lineStrokeWidth="3"
+                    app:lineStrokeWidth="3dp"
                     app:isVertical="false"
                     app:isDashed="true"
-                    app:dashLength="4" />
+                    app:dashLength="4dp" />
                <LinearLayout 
                    android:id="@+id/expense_balance_summary_view"
                    android:layout_width="wrap_content"
@@ -114,10 +114,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:lineColor="@color/gray2"
-                    app:lineStrokeWidth="3"
+                    app:lineStrokeWidth="3dp"
                     app:isVertical="false"
                     app:isDashed="true" 
-                    app:dashLength="4"/>
+                    app:dashLength="4dp"/>
                <LinearLayout
                    android:id="@+id/daily_spending_summary"
                    android:orientation="vertical"
@@ -144,10 +144,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:lineColor="@color/gray2"
-                    app:lineStrokeWidth="3"
+                    app:lineStrokeWidth="3dp"
                     app:isVertical="false"
                     app:isDashed="true"
-                    app:dashLength="4" />
+                    app:dashLength="4dp" />
                <LinearLayout 
                    android:id="@+id/transactions_category_view"
                    android:orientation="horizontal"
@@ -177,10 +177,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     app:lineColor="@color/gray2"
-                    app:lineStrokeWidth="3"
+                    app:lineStrokeWidth="3dp"
                     app:isVertical="true"
                     app:isDashed="true"
-                    app:dashLength="4" />
+                    app:dashLength="4dp" />
                     <LinearLayout
                        android:id="@+id/top_category_view"
                        android:orientation="vertical"
@@ -207,10 +207,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:lineColor="@color/gray2"
-                    app:lineStrokeWidth="3"
+                    app:lineStrokeWidth="3dp"
                     app:isVertical="false"
                     app:isDashed="true"
-                    app:dashLength="4" />
+                    app:dashLength="4dp" />
                <LinearLayout
                    android:id="@+id/uncategorized_transaction_view"
                    android:orientation="horizontal"

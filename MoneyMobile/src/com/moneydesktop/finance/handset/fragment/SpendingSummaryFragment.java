@@ -7,19 +7,20 @@ import android.view.ViewGroup;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Enums.FragmentType;
 
 public class SpendingSummaryFragment extends BaseFragment {
 
     private static SpendingSummaryFragment sFragment;
     
-	public static SpendingSummaryFragment getInstance(int position) {
+	public static SpendingSummaryFragment getInstance(FragmentType type) {
 		
 	    if (sFragment != null) {
 	        return sFragment;
 	    }
 	    
 	    sFragment = new SpendingSummaryFragment();
-	    sFragment.setPosition(position);
+	    sFragment.setType(type);
         sFragment.setRetainInstance(true);
 		
         Bundle args = new Bundle();

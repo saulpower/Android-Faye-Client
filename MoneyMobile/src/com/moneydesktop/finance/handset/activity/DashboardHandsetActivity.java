@@ -14,7 +14,7 @@ import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
-import com.moneydesktop.finance.handset.fragment.AccountTypesHandsetFragment;
+import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.handset.fragment.DashboardHandsetFragmentFactory;
 import com.moneydesktop.finance.handset.fragment.SettingsHandsetFragment;
 import com.moneydesktop.finance.handset.fragment.TransactionsHandsetFragment;
@@ -82,11 +82,11 @@ public class DashboardHandsetActivity extends DashboardBaseActivity {
 	}
   	
 	@Override
-    public void showFragment(int position) {
+    public void showFragment(FragmentType type) {
     	
     	mOnFragment = true;
     	
-    	BaseFragment fragment = getFragment(position);
+    	BaseFragment fragment = getFragment(type);
     	
         FragmentTransaction ft = mFm.beginTransaction();
         ft.replace(R.id.fragment, fragment);
@@ -137,29 +137,19 @@ public class DashboardHandsetActivity extends DashboardBaseActivity {
         mPager = (ViewPager) findViewById(R.id.pager);
 	}
     
-	private BaseFragment getFragment(int position) {
+	private BaseFragment getFragment(FragmentType type) {
 
     	BaseFragment frag = null;
     	
-        switch (position) {
-        case 0:
-        	frag = SettingsHandsetFragment.getInstance(position);
-        	break;
-        case 1:
-        	frag = SettingsHandsetFragment.getInstance(position);
-        	break;
-        case 2:
-        	frag = SettingsHandsetFragment.getInstance(position);
-        	break;
-        case 3:
-        	frag = TransactionsHandsetFragment.newInstance("1");
-        	break;
-        case 4:
-        	frag = LockFragment.newInstance(false);
-        	break;
-        case 5:
-            frag = AccountTypesHandsetFragment.getInstance(position);
-            break;
+        switch (type) {
+            case SETTINGS:
+            	frag = SettingsHandsetFragment.getInstance(type);
+            	break;
+            case LOCK_SCREEN:
+            	frag = LockFragment.newInstance(false);
+            	break;
+        	default:
+        	    break;
         }
         
         return frag;

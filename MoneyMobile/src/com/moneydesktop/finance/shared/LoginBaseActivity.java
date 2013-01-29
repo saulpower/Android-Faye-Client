@@ -155,8 +155,11 @@ public abstract class LoginBaseActivity extends BaseActivity {
         Fonts.applyPrimaryFont(mCancelText, 12);
         Fonts.applyPrimaryBoldFont(mThankYou, 14);
         Fonts.applyPrimaryFont(mTryDemo, 14);
-        Fonts.applyPrimarySemiBoldFont(mUsername, 22);
-        Fonts.applyPrimarySemiBoldFont(mPassword, 22);
+        Fonts.applyPrimarySemiBoldFont(mUsername, 16);
+        Fonts.applyPrimarySemiBoldFont(mPassword, 16);
+        Fonts.applyPrimarySemiBoldFont(mSignupName, 16);
+        Fonts.applyPrimarySemiBoldFont(mSignupBank, 16);
+        Fonts.applyPrimarySemiBoldFont(mPassword, 16);
         Fonts.applyPrimaryBoldFont(mNeedAccount, 14);
         Fonts.applySecondaryItalicFont(mNagBank, 12);
         Fonts.applyPrimaryBoldFont(mSubmitButton, 12);
@@ -238,8 +241,8 @@ public abstract class LoginBaseActivity extends BaseActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
 
-                mUsername.setTextColor(getResources().getColor(
-                        hasFocus ? R.color.white : R.color.light_gray1));
+                mUsername.setSelection(hasFocus ? mUsername.getText().length() : 0);
+                mUsername.setTextColor(getResources().getColor(hasFocus ? R.color.white : R.color.light_gray1));
             }
         });
 
@@ -248,6 +251,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
 
+                mPassword.setSelection(hasFocus ? mPassword.getText().length() : 0);
                 mPassword.setTextColor(getResources().getColor(
                         hasFocus ? R.color.white : R.color.light_gray1));
             }
@@ -259,7 +263,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
                 
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                      mCredentialView.requestFocus();
-                     hideKeyboard();
+                     UiUtils.hideKeyboard(LoginBaseActivity.this, mViewFlipper);
                      login();
                 }
                 
@@ -280,6 +284,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
 
+                mSignupName.setSelection(hasFocus ? mSignupName.getText().length() : 0);
                 mSignupName.setTextColor(getResources().getColor(
                         hasFocus ? R.color.white : R.color.light_gray1));
             }
@@ -289,6 +294,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
 
+                mSignupEmail.setSelection(hasFocus ? mSignupEmail.getText().length() : 0);
                 mSignupEmail.setTextColor(getResources().getColor(
                         hasFocus ? R.color.white : R.color.light_gray1));
             }
@@ -298,6 +304,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
 
+                mSignupBank.setSelection(hasFocus ? mSignupBank.getText().length() : 0);
                 mSignupBank.setTextColor(getResources().getColor(
                         hasFocus ? R.color.white : R.color.light_gray1));
             }
@@ -309,7 +316,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
                 
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     mSignupView.requestFocus();
-                    hideKeyboard();
+                    UiUtils.hideKeyboard(LoginBaseActivity.this, mViewFlipper);
                     signup();
                 }
                 
@@ -504,7 +511,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mViewFlipper.setOutAnimation(mInLeft);
         mViewFlipper.setInAnimation(mOutRight);
         mViewFlipper.setDisplayedChild(3);
-        hideKeyboard();
+        UiUtils.hideKeyboard(this, mViewFlipper);
     }
 
     private void login() {
@@ -668,17 +675,10 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mSignupName.setText("");
         mSignupEmail.setText("");
         mSignupBank.setText("");
-        hideKeyboard();
+        UiUtils.hideKeyboard(this, mViewFlipper);
         mViewFlipper.setOutAnimation(out);
         mViewFlipper.setInAnimation(in);
         mViewFlipper.setDisplayedChild(0);
-    }
-
-    private void hideKeyboard() {
-
-        InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        in.hideSoftInputFromWindow(mViewFlipper.getApplicationWindowToken(),
-                InputMethodManager.HIDE_NOT_ALWAYS);
     }
     
     private void showKeyboard(View view) {

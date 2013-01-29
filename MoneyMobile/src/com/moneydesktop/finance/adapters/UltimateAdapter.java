@@ -14,7 +14,7 @@ public abstract class UltimateAdapter extends BaseExpandableListAdapter implemen
 	
 	private boolean mAutomaticSectionLoading = false;
     
-	private boolean[] mVisible;
+	private boolean[] mExpanded;
     private boolean[] mLoaded;
     private boolean[] mLoading;
     
@@ -95,7 +95,7 @@ public abstract class UltimateAdapter extends BaseExpandableListAdapter implemen
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 		if (view instanceof UltimateListView) {
-			((UltimateListView) view).configureHeaderView(firstVisibleItem);
+			((UltimateListView) view).configureHeaderView();
 		}
 	}
 
@@ -111,7 +111,7 @@ public abstract class UltimateAdapter extends BaseExpandableListAdapter implemen
             mLoading = new boolean[getGroupCount()];
             
             for (int i = 0; i < getGroupCount(); i++) {
-                mLoaded[i] = getChildrenCount(i) != 0;
+                mLoaded[i] = (getChildrenCount(i) != 0) || !isSectionLoadable(i);
             }
             
             mInitialized = true;
@@ -150,36 +150,36 @@ public abstract class UltimateAdapter extends BaseExpandableListAdapter implemen
 	@Override
 	public void onGroupExpanded(int groupPosition) {
 	    
-	    if (mVisible == null) {
-	        mVisible = new boolean[getGroupCount()];
+	    if (mExpanded == null) {
+	        mExpanded = new boolean[getGroupCount()];
 	    }
 	    
 	    initializeLoaded();
 	    
         if (mAutomaticSectionLoading && !mLoaded[groupPosition] && !mLoading[groupPosition]) {
             mLoading[groupPosition] = true;
-            onSectionRequested(groupPosition);
+            loadSection(groupPosition);
         }
 	    
-	    mVisible[groupPosition] = true;
+	    mExpanded[groupPosition] = true;
 	}
     
     @Override
     public void onGroupCollapsed(int groupPosition) {
         
-        if (mVisible == null) {
-            mVisible = new boolean[getGroupCount()];
+        if (mExpanded == null) {
+            mExpanded = new boolean[getGroupCount()];
         }
 
-        mVisible[groupPosition] = false;
+        mExpanded[groupPosition] = false;
     }
     
-    public boolean isSectionVisible(int groupPosition) {
+    public boolean isSectionExpanded(int groupPosition) {
         
         boolean result = false;
         
-        if (mVisible != null && mVisible.length > groupPosition) {
-            result = mVisible[groupPosition];
+        if (mExpanded != null && mExpanded.length > groupPosition) {
+            result = mExpanded[groupPosition];
         }
         
         return result;
@@ -192,13 +192,24 @@ public abstract class UltimateAdapter extends BaseExpandableListAdapter implemen
 	    notifyDataSetChanged();
 	}
 	
+	public void reloadSections() {
+	    
+	    for (int i = 0; i < getGroupCount(); i++) {
+	        
+	        if (isSectionLoadable(i) && mLoaded[i]) {
+	            loadSection(i);
+	        }
+	    }
+	}
+	
 	/**
 	 * The section is requested to be seen, so do the request 
 	 * and call {@link UltimateListView#tellNoMoreData()} if there is no more pages.
 	 * 
 	 * @param section the section number to load.
 	 */
-	protected abstract void onSectionRequested(int section);
+	protected abstract void loadSection(int section);
+    protected abstract boolean isSectionLoadable(int section);
 	
 	/**
 	 * read: get view too
@@ -229,7 +240,7 @@ public abstract class UltimateAdapter extends BaseExpandableListAdapter implemen
                 return count;
             }
 
-            if (isSectionVisible(i)) {
+            if (isSectionExpanded(i)) {
                 count += getChildrenCount(i);
             }
             count++;
@@ -246,7 +257,7 @@ public abstract class UltimateAdapter extends BaseExpandableListAdapter implemen
 
             int top = count + 1;
             
-            if (isSectionVisible(i)) {
+            if (isSectionExpanded(i)) {
                 top += getChildrenCount(i);
             }
             
@@ -254,7 +265,7 @@ public abstract class UltimateAdapter extends BaseExpandableListAdapter implemen
                 return i;
             }
             
-            if (isSectionVisible(i)) {
+            if (isSectionExpanded(i)) {
                 count += getChildrenCount(i);
             }
             count++;

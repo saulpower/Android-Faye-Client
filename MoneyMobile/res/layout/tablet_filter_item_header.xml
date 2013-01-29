@@ -43,8 +43,7 @@
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@id/header_cell"
-	    android:layout_marginTop="-2dp"
 	    app:lineColor="@color/white"
-	    app:lineStrokeWidth="1.5" />
+	    app:lineStrokeWidth="2dp" />
 	
 </RelativeLayout>

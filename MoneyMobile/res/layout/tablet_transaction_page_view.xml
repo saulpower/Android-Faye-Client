@@ -7,6 +7,12 @@
     android:background="@color/white" >
 
     <View
+        android:layout_width="42dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:background="@color/gray1" />
+
+    <View
         android:layout_width="10dp"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
@@ -53,13 +59,15 @@
                 app:clearText="X"
                 android:hint="@string/hint_search_transactions"
                 android:imeOptions="actionSearch"/>
-
-            <View
-                android:layout_width="@dimen/tablet_header_1"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="-20dp"
-                android:layout_marginRight="-6dp"
-                android:background="@drawable/line_vertical" />
+	        
+	        <com.moneydesktop.finance.views.LineView
+	            android:id="@+id/line_bug"
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:layout_marginLeft="2dp"
+	            app:lineColor="@color/gray3"
+	            app:lineStrokeWidth="2dp"
+	            app:isVertical="true" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -68,21 +76,15 @@
                 android:layout_weight="51"
                 android:background="@color/white"
                 android:gravity="center_vertical|right" />
-
-            <View
-                android:layout_width="@dimen/tablet_header_2"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/tablet_header_1_half"
-                android:layout_marginRight="@dimen/tablet_header_1_half"
-                android:background="@color/transparent" />
             
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
+	        
+        <com.moneydesktop.finance.views.LineView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginBottom="-1dp"
-            android:background="@color/gray3" />
+            app:lineColor="@color/gray3"
+            app:lineStrokeWidth="2dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -105,13 +107,13 @@
                 android:textColor="@drawable/gray2_to_white_text"
                 android:background="@drawable/transparent_to_primary"
                 android:clickable="true" />
-
-            <View
-                android:layout_width="@dimen/tablet_header_2"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/tablet_header_2l_half"
-                android:layout_marginRight="@dimen/tablet_header_2r_half"
-                android:background="@drawable/line_vertical" />
+	        
+	        <com.moneydesktop.finance.views.LineView
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            app:lineColor="@color/gray3"
+	            app:lineStrokeWidth="2dp"
+	            app:isVertical="true" />
 
             <com.moneydesktop.finance.views.HeaderView
                 android:id="@+id/payee_header"
@@ -124,13 +126,13 @@
                 android:textColor="@drawable/gray2_to_white_text"
                 android:background="@drawable/transparent_to_primary"
                 android:clickable="true" />
-
-            <View
-                android:layout_width="@dimen/tablet_header_2"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/tablet_header_2r_half"
-                android:layout_marginRight="@dimen/tablet_header_2r_half"
-                android:background="@drawable/line_vertical" />
+	        
+	        <com.moneydesktop.finance.views.LineView
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            app:lineColor="@color/gray3"
+	            app:lineStrokeWidth="2dp"
+	            app:isVertical="true" />
 
             <com.moneydesktop.finance.views.HeaderView
                 android:id="@+id/category_header"
@@ -143,13 +145,13 @@
                 android:textColor="@drawable/gray2_to_white_text"
                 android:background="@drawable/transparent_to_primary"
                 android:clickable="true" />
-
-            <View
-                android:layout_width="@dimen/tablet_header_2"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/tablet_header_2l_half"
-                android:layout_marginRight="@dimen/tablet_header_2l_half"
-                android:background="@drawable/line_vertical" />
+	        
+	        <com.moneydesktop.finance.views.LineView
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            app:lineColor="@color/gray3"
+	            app:lineStrokeWidth="2dp"
+	            app:isVertical="true" />
 
             <com.moneydesktop.finance.views.HeaderView
                 android:id="@+id/amount_header"
@@ -162,13 +164,13 @@
                 android:textColor="@drawable/gray2_to_white_text"
                 android:background="@drawable/transparent_to_primary"
                 android:clickable="true" />
-
-            <View
-                android:layout_width="@dimen/tablet_header_2"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/tablet_header_2l_half"
-                android:layout_marginRight="@dimen/tablet_header_2r_half"
-                android:background="@drawable/line_vertical" />
+	        
+	        <com.moneydesktop.finance.views.LineView
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            app:lineColor="@color/gray3"
+	            app:lineStrokeWidth="2dp"
+	            app:isVertical="true" />
 
             <View
                 android:layout_width="0dp"

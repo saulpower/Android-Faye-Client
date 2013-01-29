@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.util.Fonts;
@@ -24,14 +25,14 @@ public class SettingsHandsetFragment extends BaseFragment {
 	private TextView mLockIcon, mFeedbackIcon, mLogoutIcon, mLogoutLabel;
 	private LinearLayout mLock, mFeedback, mLogout;
 	
-	public static SettingsHandsetFragment getInstance(int position) {
+	public static SettingsHandsetFragment getInstance(FragmentType type) {
 		
 	    if (sFragment != null) {
 	        return sFragment;
 	    }
 	    
 	    sFragment = new SettingsHandsetFragment();
-	    sFragment.setPosition(position);
+	    sFragment.setType(type);
         sFragment.setRetainInstance(true);
 		
         Bundle args = new Bundle();
@@ -93,7 +94,7 @@ public class SettingsHandsetFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 				
-				mActivity.showFragment(getPosition());
+				mActivity.showFragment(getType());
 			}
 		});
 		

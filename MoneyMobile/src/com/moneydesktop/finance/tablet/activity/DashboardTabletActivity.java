@@ -23,8 +23,13 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 import android.widget.ViewSwitcher.ViewFactory;
 
+import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.data.SyncEngine;
+import com.moneydesktop.finance.database.Tag;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
 import com.moneydesktop.finance.shared.DashboardBaseActivity;
@@ -32,7 +37,6 @@ import com.moneydesktop.finance.tablet.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.FragmentVisibilityListener;
 import com.moneydesktop.finance.tablet.fragment.SettingsTabletFragment;
-import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.FixedSpeedScroller;
@@ -57,7 +61,6 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	private NavWheelView mNavigation;
 	private ImageView mHomeButton;
 	private TextSwitcher mNavTitle;
-	private int mCurrentFragment;
 	
 	private Handler mHandler = new Handler();
 	private Runnable mTask = new Runnable() {
@@ -70,9 +73,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	
 	private Animation mIn, mOut;
 	
-	private int mCurrentIndex = 0;
-	
-	private BaseFragment mFragment;
+	private FragmentType mCurrentIndex = FragmentType.DASHBOARD;
 
 	public GrowPagerAdapter getPagerAdapter() {
 	    return mAdapter;
@@ -124,12 +125,28 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
     }
     
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        
+        Fragment frag = mFm.findFragmentById(R.id.fragment);
+        
+        if (frag != null) {
+            frag.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+    
+    @Override
     protected void onResume() {
         super.onResume();
         
-        updateNavBar(getActivityTitle());
-        if (getActivityTitle().equals(getResources().getString(R.string.title_activity_dashboard))) {
-            setupTitleBar();
+        // Only run if there are no fragments currently showing
+        if (mFragmentCount == 0) {
+            
+            updateNavBar(getActivityTitle());
+            
+            if (getActivityTitle().equals(getResources().getString(R.string.title_activity_dashboard))) {
+                setupTitleBar();
+            }
         }
     }
 	
@@ -138,20 +155,6 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 		super.onSaveInstanceState(outState);
 		
 		outState.putInt("pager", mPager.getCurrentItem());
-	}
-	
-	@Override
-	public void onFragmentAttached(BaseFragment fragment) {
-
-	    mFragment = fragment;
-	    
-	    if (mOnFragment) {
-            mFragmentCount = 1;
-        }
-		
-		if (mFragmentCount == 1 && mOnHome) {
-			configureView(false);
-		}
 	}
     
     @Override
@@ -163,7 +166,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         
     	if (home) {
     		
-    		mCurrentIndex = 0;
+    		mCurrentIndex = FragmentType.DASHBOARD;
     		mNavigation.setCurrentIndex(0);
 	        
 			mFlipper.setInAnimation(this, R.anim.in_down);
@@ -201,7 +204,6 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
             
             mNavTitle.setText(titleString.toUpperCase());
         }
-       
     }
     
 	
@@ -299,12 +301,11 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 		}
 	}
 	
-	public void showPopupFragment(Fragment fragment) {
+	public void showDropdownFragment(FragmentType fragment) {
 
-	    Intent i = new Intent(this, PopupTabletActivity.class);
-	    i.putExtra("fragment", 0);
+	    Intent i = new Intent(this, DropDownTabletActivity.class);
+	    i.putExtra(Constant.EXTRA_FRAGMENT, fragment);
 	    startActivity(i);
-	    overridePendingTransition(R.anim.in_down, R.anim.none);
 	}
 
     private void setupTitleBar() {
@@ -323,6 +324,12 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         onClickListeners.add(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                List<Tag> tags = ApplicationContext.getDaoSession().getTagDao().loadAll();
+                for (Tag tag : tags) {
+                    if (tag.getTagInstances().size() == 0) {
+                        Tag.deleteTag(tag);
+                    }
+                }
                 Toast.makeText(DashboardTabletActivity.this, "email", Toast.LENGTH_LONG).show();
             }
         });
@@ -331,6 +338,8 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
             @Override
             public void onClick(View v) {
                 Toast.makeText(DashboardTabletActivity.this, "help", Toast.LENGTH_LONG).show();
+                
+                SyncEngine.sharedInstance().beginSync();
             }
         });
         
@@ -338,15 +347,15 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
      }
 	
 	@Override
-    public void showFragment(int index) {
+    public void showFragment(FragmentType fragmentType) {
     	
     	mOnFragment = true;
     	
-    	BaseFragment fragment = getFragment(index);
+    	BaseFragment fragment = getFragment(fragmentType);
     	
-    	if (fragment != null) {    		
-    	    mCurrentFragment = fragment.getPosition();
-    		mCurrentIndex = index;
+    	if (fragment != null) {
+    	    
+    		mCurrentIndex = fragmentType;
     		
 	        FragmentTransaction ft = mFm.beginTransaction();
 	        
@@ -365,18 +374,20 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
     	}
     }
 
-    private BaseFragment getFragment(int index) {
+    private BaseFragment getFragment(FragmentType type) {
 
-        switch (index) {
-        case 0:
-			configureView(true);
-        	return null;
-        case 1:
-        	return AccountTypesTabletFragment.newInstance(index);
-        case 2:
-            return TransactionsTabletFragment.newInstance();
-        case 3:
-            return SettingsTabletFragment.newInstance(index);
+        switch (type) {
+            case DASHBOARD:
+    			configureView(true);
+            	return null;
+            case ACCOUNT_TYPES:
+            	return AccountTypesTabletFragment.newInstance(type);
+            case TRANSACTIONS:
+                return TransactionsTabletFragment.newInstance();
+            case SETTINGS:
+                return SettingsTabletFragment.newInstance(type);
+            default:
+                break;
         }
         
         return null;
@@ -395,10 +406,10 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	@Override
 	public void onNavigationChanged(int index) {
 		
-		if (mCurrentIndex == index)
+		if (mCurrentIndex.index() == index)
 			return;
 		
-		showFragment(index);
+		showFragment(FragmentType.fromInteger(index));
 	}
 
     @Override
@@ -415,12 +426,5 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         Fonts.applyPrimaryBoldFont(t, 14);
         
         return t;
-    }
-    
-    public void setDetailFragment(TransactionsDetailTabletFragment fragment) {
-        
-        if (mFragment instanceof TransactionsTabletFragment) {
-            ((TransactionsTabletFragment) mFragment).setDetailFragment(fragment);
-        }
     }
 }
