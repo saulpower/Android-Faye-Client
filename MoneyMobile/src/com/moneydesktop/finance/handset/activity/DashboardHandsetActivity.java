@@ -17,6 +17,7 @@ import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.handset.fragment.DashboardHandsetFragmentFactory;
 import com.moneydesktop.finance.handset.fragment.SettingsHandsetFragment;
+import com.moneydesktop.finance.handset.fragment.TransactionsHandsetFragment;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.shared.DashboardBaseActivity;
 import com.moneydesktop.finance.shared.LockFragment;
