@@ -512,14 +512,16 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                                 mBanksForDeletion.add(bank);
                                 mPopup.fadeOutTransparency();
                                 
-                                //so we dont try to update UI elements that are no longer there.
+                                //so we don't try to update UI elements that are no longer there.
                                 if (mBanksForDeletion.contains(bank)) {
                                     mBankList.remove(bank);
                                 }
                                 
+                                bank.softDeleteSingle();
+                                
                                 //start the sync
-                                Intent intent = new Intent(getActivity(), SyncService.class);
-                                getActivity().startService(intent);
+//                                Intent intent = new Intent(getActivity(), SyncService.class);
+//                                getActivity().startService(intent);
                                 
                                 //remove bank from view
                                 panelView.removeView(v);

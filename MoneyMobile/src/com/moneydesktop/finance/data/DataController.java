@@ -2,6 +2,7 @@ package com.moneydesktop.finance.data;
 
 import android.database.sqlite.SQLiteConstraintException;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.data.Enums.DataState;
@@ -140,6 +141,8 @@ public class DataController {
 			    sCount += entities.size();
 		    }
 		}
+		int i = 0;
+				i = i + 1;
 	}
 	
 	/**
@@ -195,8 +198,6 @@ public class DataController {
 	}
     
     public static void softDelete(Object object) {
-
-        ((BusinessObject) object).setDeleted(true);
         addTransaction(object, TxType.UPDATE);
     }
 	
