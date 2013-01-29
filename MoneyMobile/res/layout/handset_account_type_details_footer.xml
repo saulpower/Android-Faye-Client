@@ -21,7 +21,7 @@
         app:isDashed="false"
         app:isVertical="true"
         app:lineColor="@color/gray1"
-        app:lineStrokeWidth="3" />
+        app:lineStrokeWidth="3dp" />
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -54,7 +54,7 @@
 		        app:isDashed="false"
 		        app:isVertical="true"
 		        app:lineColor="@color/gray1"
-		        app:lineStrokeWidth="3" 
+		        app:lineStrokeWidth="3dp" 
 		        android:layout_weight=".01"/>
             
             <TextView
@@ -73,11 +73,11 @@
             android:layout_height="wrap_content"
             android:layout_weight=".01"
             android:background="@color/white"
-            app:dashLength="3"
+            app:dashLength="3dp"
             app:isDashed="true"
             app:isVertical="false"
             app:lineColor="@color/gray1"
-            app:lineStrokeWidth="3" />
+            app:lineStrokeWidth="3dp" />
 
         <!-- Line Bar View -->
         <LinearLayout
@@ -96,6 +96,6 @@
         app:isDashed="false"
         app:isVertical="false"
         app:lineColor="@color/gray2"
-        app:lineStrokeWidth="3" />
+        app:lineStrokeWidth="3dp" />
 
 </RelativeLayout>

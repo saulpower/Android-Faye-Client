@@ -81,10 +81,6 @@ public class AccountTypesHandsetAdapter extends UltimateAdapter implements OnGro
         return true;
     }
 
-    @Override
-    protected void onSectionRequested(int section) {
-        
-    }
 
     @Override
     public View getSectionView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
@@ -177,5 +173,17 @@ public class AccountTypesHandsetAdapter extends UltimateAdapter implements OnGro
     public void onGroupCollapse(int groupPosition) {
         mAccountListView.expandGroup(groupPosition);   
     }
+
+	@Override
+	protected void loadSection(int section) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected boolean isSectionLoadable(int section) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

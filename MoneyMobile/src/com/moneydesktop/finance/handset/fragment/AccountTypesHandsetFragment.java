@@ -22,6 +22,8 @@ import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
+import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.data.Enums.SlideFrom;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.Bank;
@@ -30,7 +32,6 @@ import com.moneydesktop.finance.handset.adapter.AccountTypesHandsetAdapter;
 import com.moneydesktop.finance.handset.adapter.BankOptionsAdapter;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.util.Enums.SlideFrom;
 import com.moneydesktop.finance.views.SlidingView;
 import com.moneydesktop.finance.views.UltimateListView;
 
@@ -45,10 +46,10 @@ public class AccountTypesHandsetFragment extends BaseFragment {
     private View mBankOptionsView;
     private SlidingView mSliderView;
     
-    public static AccountTypesHandsetFragment getInstance(int position) {
+    public static AccountTypesHandsetFragment getInstance(FragmentType type) {
 
         AccountTypesHandsetFragment fragment = new AccountTypesHandsetFragment();
-        fragment.setPosition(position);
+        fragment.setType(type);
         fragment.setRetainInstance(true);
 
         Bundle args = new Bundle();

@@ -1,8 +1,8 @@
 package com.moneydesktop.finance.views;
 
-import android.R.bool;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -19,6 +19,7 @@ import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.TxFilter;
 import com.moneydesktop.finance.database.BankAccount;
@@ -28,7 +29,6 @@ import com.moneydesktop.finance.model.EventMessage.BankStatusUpdateEvent;
 import com.moneydesktop.finance.model.EventMessage.RefreshAccountEvent;
 import com.moneydesktop.finance.model.EventMessage.ReloadBannersEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
-import com.moneydesktop.finance.util.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.UiUtils;
 
@@ -49,12 +49,15 @@ public class AccountTypeChildView extends FrameLayout {
     private View mParent;
     private Handler mHandler; 
     private ImageView mStatus;
+    private Activity mActivity;
     
     public AccountTypeChildView (Context context, List<BankAccount> bankAccounts, View parent) {
         super(context);
         mContext = context;
         mBankAccounts = bankAccounts;
         mParent = parent;
+        
+        mActivity = (Activity)mContext;
         
         mHandler = new Handler();
         EventBus.getDefault().register(this);
@@ -220,7 +223,6 @@ public class AccountTypeChildView extends FrameLayout {
 
     private void updateChildBanners(Boolean forceBanner) {
         int iterator = 0;
-      //  List<AccountType> accountsToBeRemoved = new ArrayList<AccountType>();
         for (final BankAccount account : mBankAccounts) {
             if (mContext != null){
                 
@@ -254,15 +256,10 @@ public class AccountTypeChildView extends FrameLayout {
                             mStatus.setVisibility(View.GONE);
                         }             
                     }
-                } else {                 
-                   // accountsToBeRemoved.add(AccountType.getAccountType(account.getAccountTypeId().toString()));  
                 }
             }   
             iterator++;
         }
-//        if (accountsToBeRemoved.size() > 0) {
-//            EventBus.getDefault().post(new EventMessage(). new RemoveAccountTypeEvent(accountsToBeRemoved));
-//        }
     }
     
     private void updateSpecificChildBanner(Bank bank) {

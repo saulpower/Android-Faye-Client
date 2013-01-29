@@ -18,7 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.util.Enums.SlideFrom;
+import com.moneydesktop.finance.data.Enums.SlideFrom;
 import com.moneydesktop.finance.util.UiUtils;
 
 import java.util.List;

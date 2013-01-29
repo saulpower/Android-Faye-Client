@@ -7,16 +7,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -27,6 +24,7 @@ import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.AccountsExpandableListAdapter;
 import com.moneydesktop.finance.data.BankLogoManager;
+import com.moneydesktop.finance.data.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.AccountType;
@@ -39,7 +37,6 @@ import com.moneydesktop.finance.model.EventMessage.BankStatusUpdateEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.util.DialogUtils;
-import com.moneydesktop.finance.util.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.PopupWindowAtLocation;
@@ -152,7 +149,12 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 		});
 
         
-        final ViewGroup.LayoutParams layoutParams = mPanelLayoutHolder.getLayoutParams();
+        prepPanel();
+	}
+
+	private void prepPanel() {
+		mPanelLayoutHolder.removeAllViews();
+		final ViewGroup.LayoutParams layoutParams = mPanelLayoutHolder.getLayoutParams();
         layoutParams.width = UiUtils.getMinimumPanalWidth(mActivity);
         mPanelLayoutHolder.setLayoutParams(layoutParams);
 
@@ -516,8 +518,8 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                                 }
                                 
                                 //start the sync
-//                                Intent intent = new Intent(getActivity(), SyncService.class);
-//                                getActivity().startService(intent);
+                                Intent intent = new Intent(getActivity(), SyncService.class);
+                                getActivity().startService(intent);
                                 
                                 //remove bank from view
                                 panelView.removeView(v);
@@ -536,28 +538,15 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                 
     }
    
-    
-    public void onEvent(RemoveAccountTypeEvent event) {
-        
+    public void onEvent(RemoveAccountTypeEvent event) {        
         final AccountType accountType = event.getAccountType();
-        
-        //mAccountTypesFiltered.clear();
-        
-        //for (AccountType accountType : accountTypeList) {
-            mAccountTypesFiltered.remove(accountType);
-            //mAccountTypesFiltered.add(accountType);
-        //}
+        mAccountTypesFiltered.remove(accountType);
         mAdapter1.notifyDataSetChanged();
     }
-    
-    
-    
-    
     
 	protected void updateChildAccountsList(Bank bank) {
 	    EventBus.getDefault().post(new EventMessage().new BankDeletedEvent(bank));
     }
-	
 
     /**
 	 * Drawer's width is set to a percentage of screen.

@@ -1,32 +1,18 @@
 package com.moneydesktop.finance.views.AnimatedListView;
 
-import android.R;
-import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.DataSetObserver;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.database.AccountType;
-import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
-import com.moneydesktop.finance.model.EventMessage.RefreshAccountEvent;
-import com.moneydesktop.finance.model.EventMessage.RemoveAccountTypeEvent;
-import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
-import com.moneydesktop.finance.util.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.views.AccountTypeChildView;
 
 import de.greenrobot.event.EventBus;

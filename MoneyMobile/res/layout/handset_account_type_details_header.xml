@@ -35,7 +35,7 @@
             app:isDashed="false"
             app:isVertical="true"
             app:lineColor="@color/gray1"
-            app:lineStrokeWidth="3" />
+            app:lineStrokeWidth="3dp" />
 
         <TextView
             android:id="@+id/handset_account_type_sum"
