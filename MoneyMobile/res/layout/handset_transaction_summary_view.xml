@@ -133,7 +133,7 @@
 		                   android:textColor="@color/gray4"
 		                   android:layout_marginBottom="10dp"
 		                   />
-		              <LinearLayout
+		              <com.moneydesktop.finance.views.BarGraphView
 		                  android:id="@+id/daily_spending_graph"
 		                  android:orientation="horizontal"
 		                  android:layout_height="0dp"

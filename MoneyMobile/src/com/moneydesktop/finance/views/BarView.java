@@ -71,6 +71,7 @@ public class BarView extends View {
     }
     public void setTextSize(float s){
         mTextSize = s;
+        mPaint.setTextSize(mTextSize);
         invalidate();
     }
     public void setLabelText(String s){

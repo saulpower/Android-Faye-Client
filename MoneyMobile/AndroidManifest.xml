@@ -44,7 +44,7 @@
             android:windowSoftInputMode="adjustPan" />
                 
         <activity
-            android:name=".tablet.activity.TestActivity"
+            android:name=".SplashActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop" >
             <intent-filter>

@@ -1,38 +1,39 @@
 package com.moneydesktop.finance.views;
 
 import android.content.Context;
+import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.views.BaseBarChartAdapter.DataSetChangeListener;
-
-import java.util.ArrayList;
 public class BarGraphView extends RelativeLayout implements DataSetChangeListener {
     LinearLayout mBarContainer;
     int mMargin;
     int mBColor;
     BaseBarChartAdapter mAdapter;
     boolean mLabel;
+    float mFontSize;
     double mGraphMax;
-    
-    public BarGraphView(Context context, double max, BaseBarChartAdapter adapter) {
-        super(context);
+    public BarGraphView(Context context, AttributeSet attrs) {
+        super(context,attrs);
         mBarContainer = new LinearLayout(getContext());
         mMargin = 1;
-        mGraphMax = max;
         mBColor = getResources().getColor(R.color.gray3);
         mLabel = false;
         LayoutParams l = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
         mBarContainer.setLayoutParams(l);
         mBarContainer.setOrientation(LinearLayout.HORIZONTAL);
         this.addView(mBarContainer);
+    }
+    public void setAdapter(BaseBarChartAdapter adapter){
         mAdapter = adapter;
         mAdapter.setDataSetChangeListener(this);
         dataSetDidChange();
-        // TODO Auto-generated constructor stub
     }
-
+    public void setMax(double max){
+        mGraphMax = max;
+    }
     public void changeBarValue(int b, double v, boolean animate){
         if(animate){
         ((BarView) mBarContainer.getChildAt(b)).setAmountAnimated((float)v);
@@ -68,6 +69,13 @@ public class BarGraphView extends RelativeLayout implements DataSetChangeListene
     }
     public void setLabel(boolean label){
         mLabel = label;
+        layoutBars();
+    }
+    public void setLabelFontSize(float fontSize){
+        mFontSize = fontSize;
+        for(int i = 0; i < mBarContainer.getChildCount(); i++){
+            ((BarView) mBarContainer.getChildAt(i)).setTextSize(mFontSize);
+        }
         layoutBars();
     }
     public void setMargin(int m){

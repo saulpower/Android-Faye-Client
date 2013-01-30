@@ -31,7 +31,7 @@ public class TestActivity extends Activity {
         l.add(new BarViewModel(" ",75,100));
         l.add(new BarViewModel(" ",90,100));
         final BasicBarChartAdapter adapter = new BasicBarChartAdapter(l);
-        final BarGraphView b = new BarGraphView(this,100,adapter);
+        final BarGraphView b = new BarGraphView(this,null);
         LinearLayout layout = (LinearLayout) findViewById(R.id.test_view);
         layout.addView(b);
         LayoutParams layout2 = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT,4);
