@@ -16,7 +16,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:textColor="@color/primaryColor"/>
-    <TextView android:id="@+id/popup_amount"
+    <TextView android:id="@+id/popup_tap_to_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
