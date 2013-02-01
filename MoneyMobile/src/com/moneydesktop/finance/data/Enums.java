@@ -69,7 +69,8 @@ public class Enums {
         ACCOUNT_SUMMARY(14),
         SPENDING_SUMMARY(15),
         BUDGET_SUMMARY(16),
-        TRANSACTION_SUMMARY(17);
+        TRANSACTION_SUMMARY(17),
+        TRANSACTIONS_SUMMARY_TABLET (18);
         
         private final int index;
         
@@ -104,6 +105,8 @@ public class Enums {
                 return BUDGET_SUMMARY;
             case 17:
                 return TRANSACTION_SUMMARY;
+            case 18:
+                return TRANSACTIONS_SUMMARY_TABLET;
             }
             
             return null;

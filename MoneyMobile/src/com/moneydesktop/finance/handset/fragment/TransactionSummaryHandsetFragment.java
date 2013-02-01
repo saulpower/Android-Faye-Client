@@ -22,6 +22,7 @@ import com.moneydesktop.finance.views.BarView;
 import com.moneydesktop.finance.views.BasicBarChartAdapter;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -53,15 +54,16 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         TransactionsDao transactions = ApplicationContext.getDaoSession().getTransactionsDao();
         List<Transactions> transList = transactions.loadAll();
         mRoot = inflater.inflate(R.layout.handset_transaction_summary_view, null);
-        setupView(transList, mRoot);/*
+        setupView(transList, mRoot);
         mRoot.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                 mActivity.showFragment(3);
+                
+                 mActivity.showFragment(FragmentType.TRANSACTIONS);
                 
             }
             
-        });*/
+        });
         return mRoot;
     }
 

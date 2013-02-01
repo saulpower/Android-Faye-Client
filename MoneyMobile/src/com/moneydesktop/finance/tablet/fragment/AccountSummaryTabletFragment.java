@@ -20,12 +20,13 @@ public class AccountSummaryTabletFragment extends BaseFragment {
 
 	Button mLaunchNav;
 	
-	public static AccountSummaryTabletFragment newInstance(FragmentType type) {
+	public static AccountSummaryTabletFragment newInstance(int position) {
 		
 		AccountSummaryTabletFragment frag = new AccountSummaryTabletFragment();
-		frag.setType(type);
+		//frag.setType(type);
 		
         Bundle args = new Bundle();
+        args.putInt("position",position);
         frag.setArguments(args);
         
         return frag;

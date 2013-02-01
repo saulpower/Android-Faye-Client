@@ -37,6 +37,7 @@ import com.moneydesktop.finance.tablet.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.FragmentVisibilityListener;
 import com.moneydesktop.finance.tablet.fragment.SettingsTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.TransactionsSummaryTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.FixedSpeedScroller;
@@ -380,6 +381,8 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
             case DASHBOARD:
     			configureView(true);
             	return null;
+            case TRANSACTION_SUMMARY:
+                return TransactionsSummaryTabletFragment.newInstance(1);
             case ACCOUNT_TYPES:
             	return AccountTypesTabletFragment.newInstance(type);
             case TRANSACTIONS:

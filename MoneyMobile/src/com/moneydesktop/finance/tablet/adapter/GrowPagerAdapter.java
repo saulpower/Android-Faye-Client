@@ -5,7 +5,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 
+import com.moneydesktop.finance.tablet.fragment.AccountSummaryTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.SummaryTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.TransactionsSummaryTabletFragment;
 import com.moneydesktop.finance.views.GrowViewPager.OnScrollChangedListener;
 
 import java.util.ArrayList;
@@ -23,21 +25,22 @@ public class GrowPagerAdapter extends FragmentPagerAdapter implements OnPageChan
     private int mCurrentPage = 0;
     private boolean mScrollingLeft;
     
-    private List<SummaryTabletFragment> mFragments;
+    private SummaryTabletFragment[] mFragments;
     
     public int getCurrentPage() {
         return mCurrentPage;
     }
     
     public void addFragment(SummaryTabletFragment fragment) {
-        mFragments.add(fragment.getPosition(), fragment);
+        mFragments[fragment.getPosition()] = fragment;
   }
     
     public GrowPagerAdapter(FragmentManager fm) {
         super(fm);
 
-        mFragments = new ArrayList<SummaryTabletFragment>();
-    }
+        mFragments = new SummaryTabletFragment[COUNT]; 
+        
+        }
 
     @Override
     public int getCount() {
@@ -46,7 +49,16 @@ public class GrowPagerAdapter extends FragmentPagerAdapter implements OnPageChan
 
     @Override
     public Fragment getItem(int position) {
-        return SummaryTabletFragment.newInstance(position);
+        Fragment f;
+        switch(position){
+        case 1:
+            f = TransactionsSummaryTabletFragment.newInstance(position);
+            break;
+        default:
+            f = AccountSummaryTabletFragment.newInstance(position);
+            break;
+        }
+        return f;
     }
 
     @Override
@@ -91,9 +103,9 @@ public class GrowPagerAdapter extends FragmentPagerAdapter implements OnPageChan
             scaleDown = BASE_SIZE;
         
         // Adjust the fragments that are, or will be, on screen
-        SummaryTabletFragment current = (position < mFragments.size()) ? mFragments.get(position) : null;
-        SummaryTabletFragment next = (secondary < mFragments.size() && secondary > -1) ? mFragments.get(secondary) : null;
-        SummaryTabletFragment afterNext = (tertiary < mFragments.size() && tertiary > -1) ? mFragments.get(tertiary) : null;
+        SummaryTabletFragment current = (position < mFragments.length) ? mFragments[position] : null;
+        SummaryTabletFragment next = (secondary < mFragments.length && secondary > -1) ? mFragments[secondary] : null;
+        SummaryTabletFragment afterNext = (tertiary < mFragments.length && tertiary > -1) ? mFragments[tertiary] : null;
         
         if (current != null && next != null) {
             

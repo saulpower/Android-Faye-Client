@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.util.Fonts;
@@ -24,7 +25,7 @@ import com.moneydesktop.finance.views.VerticalTextView;
 import java.util.Random;
 
 @TargetApi(11)
-public class SummaryTabletFragment extends BaseFragment {
+public abstract class SummaryTabletFragment extends BaseFragment {
 
     public final String TAG = this.getClass().getSimpleName();
 
@@ -32,9 +33,7 @@ public class SummaryTabletFragment extends BaseFragment {
 
     private RelativeLayout mBackground, mCover;
     private LinearLayout mLeft, mRight;
-    private TextView mTitle;
     private VerticalTextView mLeftText, mRightText;
-    private ImageView mImage;
 
     private String mTitleText;
     private Integer mColor;
@@ -46,38 +45,7 @@ public class SummaryTabletFragment extends BaseFragment {
     private GrowPagerAdapter mAdapter;
     private int mCurrentPosition = 0;
 
-    public String getTitleText() {
-        return mTitleText;
-    }
-
-    public void setTitleText(String titleText) {
-        this.mTitleText = titleText;
-    }
-
-    public static SummaryTabletFragment newInstance(int position) {
-        
-        SummaryTabletFragment fragment = new SummaryTabletFragment();
-        fragment.setRetainInstance(true);
-
-        Bundle args = new Bundle();
-        args.putInt("position", position);
-        fragment.setArguments(args);
-        
-        return fragment;
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        
-        mRoot = inflater.inflate(R.layout.tablet_summary_view, null);
-        
-        setupViews();
-        configureView();
-
-        return mRoot;
-    }
-    
+    public abstract String getTitleText();
     
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
@@ -127,7 +95,7 @@ public class SummaryTabletFragment extends BaseFragment {
         }
     }
 
-    private void setupViews() {
+    protected void setupViews() {
 
         mCover = (RelativeLayout) mRoot.findViewById(R.id.cover);
         mLeft = (LinearLayout) mRoot.findViewById(R.id.left);
@@ -135,13 +103,12 @@ public class SummaryTabletFragment extends BaseFragment {
         mLeftText = (VerticalTextView) mRoot.findViewById(R.id.title_left);
         mRightText = (VerticalTextView) mRoot.findViewById(R.id.title_right);
         mBackground = (RelativeLayout) mRoot.findViewById(R.id.root);
-        mTitle = (TextView) mRoot.findViewById(R.id.title);
-        mImage = (ImageView) mRoot.findViewById(R.id.image);
+
         
         applyFonts();
     }
     
-    private void configureView() {
+   protected void configureView() {
 
         float[] size = UiUtils.getScreenMeasurements(mActivity);
         int width = (int) (size[0] * SCALE_SIZE);
@@ -152,21 +119,6 @@ public class SummaryTabletFragment extends BaseFragment {
 
         if (mScale != null) {
             transitionFragment(mPercent, mScale);
-        }
-
-        switch (getPosition()) {
-            case 0:
-                mImage.setImageResource(R.drawable.accounts);
-                setTitleText("Account Balances");
-                break;
-            case 1:
-                mImage.setImageResource(R.drawable.transactions);
-                setTitleText("Spending By Month");
-                break;
-            default:
-                mTitle.setText(getTitleText().toUpperCase());
-                setRandomBackground();
-                break;
         }
         
         mLeftText.setText(getTitleText().toUpperCase());

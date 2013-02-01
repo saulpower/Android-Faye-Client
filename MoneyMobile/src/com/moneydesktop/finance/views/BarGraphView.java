@@ -37,6 +37,7 @@ public class BarGraphView extends RelativeLayout implements DataSetChangeListene
         LayoutParams l = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
         mBarContainer.setLayoutParams(l);
         mBarContainer.setOrientation(LinearLayout.HORIZONTAL);
+        
         this.setOnTouchListener(new OnTouchListener() {
             final Animation bounce = AnimationUtils.loadAnimation(getContext(), R.anim.scale_bounce);
             @Override
