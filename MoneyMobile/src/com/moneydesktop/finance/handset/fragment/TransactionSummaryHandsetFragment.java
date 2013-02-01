@@ -59,7 +59,7 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         TransactionsDao transactions = ApplicationContext.getDaoSession().getTransactionsDao();
         List<Transactions> transList = transactions.loadAll();
         mRoot = inflater.inflate(R.layout.handset_transaction_summary_view, null);
-        setupView(transList, mRoot);
+        setupView(transList, mRoot);/*
         mRoot.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -67,7 +67,7 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
                 
             }
             
-        });
+        });*/
         return mRoot;
     }
 

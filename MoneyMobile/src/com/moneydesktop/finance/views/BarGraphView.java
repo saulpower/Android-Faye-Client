@@ -1,35 +1,73 @@
 package com.moneydesktop.finance.views;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
+import com.moneydesktop.finance.tablet.activity.IntroTabletActivity;
 import com.moneydesktop.finance.views.BaseBarChartAdapter.DataSetChangeListener;
 public class BarGraphView extends RelativeLayout implements DataSetChangeListener {
     LinearLayout mBarContainer;
     int mMargin;
     int mBColor;
+    int mSelectedColor;
+    int mSelectedBar;
     BaseBarChartAdapter mAdapter;
     boolean mLabel;
     float mFontSize;
     double mGraphMax;
     public BarGraphView(Context context, AttributeSet attrs) {
         super(context,attrs);
+        mSelectedBar = -1;
         mBarContainer = new LinearLayout(getContext());
         mMargin = 1;
         mBColor = getResources().getColor(R.color.gray3);
+        mSelectedColor = getResources().getColor(R.color.primaryColor);
         mLabel = false;
         LayoutParams l = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
         mBarContainer.setLayoutParams(l);
         mBarContainer.setOrientation(LinearLayout.HORIZONTAL);
+        this.setOnTouchListener(new OnTouchListener() {
+            final Animation bounce = AnimationUtils.loadAnimation(getContext(), R.anim.scale_bounce);
+            @Override
+            public boolean onTouch(View v, MotionEvent m) {
+                int xSize = v.getWidth();
+                double xIndex = xSize/((BarGraphView)v).getGraphChildCount();
+                int barChosen = (int) (m.getX()/xIndex);
+                if(mSelectedBar != -1){
+                    BarView oldBar = (BarView) mBarContainer.getChildAt(mSelectedBar);
+                    oldBar.setBarColor(mBColor);
+                }
+                mSelectedBar = barChosen;
+                BarView manip = (BarView) mBarContainer.getChildAt(mSelectedBar);
+                manip.setBarColor(mSelectedColor);
+                manip.startAnimation(bounce);
+                return true;
+            }
+
+        });
         this.addView(mBarContainer);
+    }
+    public int getGraphChildCount(){
+        return mBarContainer.getChildCount();
     }
     public void setAdapter(BaseBarChartAdapter adapter){
         mAdapter = adapter;
         mAdapter.setDataSetChangeListener(this);
         dataSetDidChange();
+    }
+    public int getBarColor(){
+        return mBColor;
     }
     public void setMax(double max){
         mGraphMax = max;
@@ -77,6 +115,9 @@ public class BarGraphView extends RelativeLayout implements DataSetChangeListene
             ((BarView) mBarContainer.getChildAt(i)).setTextSize(mFontSize);
         }
         layoutBars();
+    }
+    public void setIndividualBarColor(int b, int c){
+        ((BarView) mBarContainer.getChildAt(b)).setBarColor(c);
     }
     public void setMargin(int m){
         mMargin = m;
