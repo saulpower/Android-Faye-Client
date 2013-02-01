@@ -1,7 +1,5 @@
 package com.moneydesktop.finance.shared;
 
-import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,15 +9,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Enums.LockType;
 import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.model.EventMessage;
-import com.moneydesktop.finance.util.Enums.LockType;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.WheelToggle;
 
@@ -44,6 +45,20 @@ public class LockFragment extends BaseFragment {
 	
 	private WheelToggle mToggle;
 	private Button mChange;
+	private Animation mFadeOut, mFadeIn;
+	private AnimationListener mOut = new AnimationListener() {
+        
+        @Override
+        public void onAnimationStart(Animation animation) {}
+        
+        @Override
+        public void onAnimationRepeat(Animation animation) {}
+        
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            mChange.setVisibility(View.GONE);
+        }
+    };
 	
 	@Override
     public void onAttach(Activity activity) {
@@ -73,6 +88,10 @@ public class LockFragment extends BaseFragment {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
 		mRoot = inflater.inflate(R.layout.handset_lock_view, null);
+		
+		mFadeOut = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out_fast);
+		mFadeOut.setAnimationListener(mOut);
+        mFadeIn = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in_fast);
 		
 		mToggle = (WheelToggle) mRoot.findViewById(R.id.toggle);
 		mToggle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -109,7 +128,12 @@ public class LockFragment extends BaseFragment {
 	
 	private void toggleLock(boolean on) {
 
-		animate(mChange).setDuration(500).alpha(on ? 1.0f : 0.0f).start();
+	    if (on) {
+	        mChange.setVisibility(View.VISIBLE);
+	        mChange.startAnimation(mFadeIn);
+	    } else {
+	        mChange.startAnimation(mFadeOut);
+	    }
 		
 		if (on) {
 		    

@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/accounts_title_bar"
     android:layout_width="fill_parent"
-    android:layout_height="50dp"
+    android:layout_height="@dimen/tablet_navbar_height"
     android:background="@drawable/top_nav_wood" >
 
     <ImageView

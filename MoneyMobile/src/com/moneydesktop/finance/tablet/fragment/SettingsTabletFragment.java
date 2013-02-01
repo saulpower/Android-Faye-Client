@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,8 +11,8 @@ import android.view.ViewGroup;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.model.EventMessage;
-import com.moneydesktop.finance.shared.LockFragment;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.views.SettingButton;
 
@@ -26,10 +25,10 @@ public class SettingsTabletFragment extends BaseFragment {
     
 	private SettingButton mLock, mFeedback, mLogout;
 	
-	public static SettingsTabletFragment newInstance(int position) {
+	public static SettingsTabletFragment newInstance(FragmentType type) {
 
 	    SettingsTabletFragment fragment = new SettingsTabletFragment();
-	    fragment.setPosition(position);
+	    fragment.setType(type);
 		
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -92,8 +91,7 @@ public class SettingsTabletFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 
-	            Fragment frag = LockFragment.newInstance(true);
-	            ((DashboardTabletActivity) mActivity).showPopupFragment(frag);
+	            ((DashboardTabletActivity) mActivity).showDropdownFragment(FragmentType.LOCK_SCREEN);
 			}
 		});
 		

@@ -2,7 +2,6 @@
 package com.moneydesktop.finance.handset.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +12,7 @@ import android.widget.TextView;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.database.Category;
-import com.moneydesktop.finance.database.CategoryDao;
+import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.model.BarViewModel;
@@ -24,12 +22,8 @@ import com.moneydesktop.finance.views.BarView;
 import com.moneydesktop.finance.views.BasicBarChartAdapter;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -37,14 +31,14 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
     private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();
     private static TransactionSummaryHandsetFragment sFragment;
 
-    public static TransactionSummaryHandsetFragment getInstance(int position) {
+    public static TransactionSummaryHandsetFragment getInstance(FragmentType type) {
 
         if (sFragment != null) {
             return sFragment;
         }
 
         sFragment = new TransactionSummaryHandsetFragment();
-        sFragment.setPosition(position);
+        sFragment.setType(type);
         sFragment.setRetainInstance(true);
 
         Bundle args = new Bundle();

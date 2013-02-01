@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,8 +31,9 @@ public class SummaryTabletFragment extends BaseFragment {
     private final float SCALE_SIZE = 0.8f;
 
     private RelativeLayout mBackground, mCover;
+    private LinearLayout mLeft, mRight;
     private TextView mTitle;
-    private VerticalTextView mLeft, mRight;
+    private VerticalTextView mLeftText, mRightText;
     private ImageView mImage;
 
     private String mTitleText;
@@ -68,7 +70,7 @@ public class SummaryTabletFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         
-        mRoot = inflater.inflate(R.layout.tablet_dummy_view, null);
+        mRoot = inflater.inflate(R.layout.tablet_summary_view, null);
         
         setupViews();
         configureView();
@@ -98,12 +100,10 @@ public class SummaryTabletFragment extends BaseFragment {
         super.onSaveInstanceState(outState);
     }
     
-    @Override
     public int getPosition() {
         return getArguments().getInt("position", -1);
     }
     
-    @Override
     public void setPosition(int position) {
         getArguments().putInt("position", position);
     }
@@ -130,17 +130,18 @@ public class SummaryTabletFragment extends BaseFragment {
     private void setupViews() {
 
         mCover = (RelativeLayout) mRoot.findViewById(R.id.cover);
-        mLeft = (VerticalTextView) mRoot.findViewById(R.id.title_left);
-        mRight = (VerticalTextView) mRoot.findViewById(R.id.title_right);
+        mLeft = (LinearLayout) mRoot.findViewById(R.id.left);
+        mRight = (LinearLayout) mRoot.findViewById(R.id.right);
+        mLeftText = (VerticalTextView) mRoot.findViewById(R.id.title_left);
+        mRightText = (VerticalTextView) mRoot.findViewById(R.id.title_right);
         mBackground = (RelativeLayout) mRoot.findViewById(R.id.root);
         mTitle = (TextView) mRoot.findViewById(R.id.title);
         mImage = (ImageView) mRoot.findViewById(R.id.image);
+        
+        applyFonts();
     }
     
     private void configureView() {
-
-        Fonts.applyPrimaryBoldFont(mLeft, 12);
-        Fonts.applyPrimaryBoldFont(mRight, 12);
 
         float[] size = UiUtils.getScreenMeasurements(mActivity);
         int width = (int) (size[0] * SCALE_SIZE);
@@ -168,8 +169,8 @@ public class SummaryTabletFragment extends BaseFragment {
                 break;
         }
         
-        mLeft.setText(getTitleText().toUpperCase());
-        mRight.setText(getTitleText().toUpperCase());
+        mLeftText.setText(getTitleText().toUpperCase());
+        mRightText.setText(getTitleText().toUpperCase());
 
         mLeft.setOnClickListener(new OnClickListener() {
 
@@ -188,6 +189,11 @@ public class SummaryTabletFragment extends BaseFragment {
                 ((DashboardTabletActivity) mActivity).showPrevPage();
             }
         });
+    }
+    
+    private void applyFonts() {
+        Fonts.applyPrimaryBoldFont(mLeftText, 12);
+        Fonts.applyPrimaryBoldFont(mRightText, 12);
     }
 
     private void setRandomBackground() {

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical">
+    
+	<LinearLayout
+	    android:id="@+id/header_cell"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@drawable/white_to_primary"
+	    android:orientation="vertical">
+	    
+		<TextView 
+		    android:id="@+id/icon"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:textColor="@drawable/primary_to_white_text"
+		    android:paddingTop="5dp"
+		    android:paddingRight="5dp"
+	    	android:paddingLeft="15dp"
+		    android:text="@string/default_header" />
+	    
+		<TextView 
+		    android:id="@+id/title"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:paddingTop="5dp"
+		    android:paddingRight="5dp"
+		    android:paddingBottom="5dp"
+	    	android:paddingLeft="15dp"
+		    android:textColor="@drawable/gray9_to_white_text"
+		    android:text="@string/default_header" />
+		
+	</LinearLayout>
+		        
+    <com.moneydesktop.finance.views.LineView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+    	android:background="@drawable/white_to_primary"
+        app:lineColor="@color/gray3"
+        app:lineStrokeWidth="2dp" />
+		        
+    <com.moneydesktop.finance.views.LineView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+    	android:layout_below="@id/header_cell"
+    	android:background="@drawable/white_to_primary"
+        app:lineColor="@color/primaryColor"
+        app:lineStrokeWidth="3dp"
+        app:dashLength="3dp" />
+
+</RelativeLayout>

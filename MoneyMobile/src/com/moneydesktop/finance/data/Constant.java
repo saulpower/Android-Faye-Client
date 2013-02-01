@@ -2,6 +2,7 @@
 package com.moneydesktop.finance.data;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Enums.DataState;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BudgetItem;
@@ -11,13 +12,28 @@ import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.database.Tag;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
-import com.moneydesktop.finance.util.Enums.DataState;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Constant {
+    
+    /*******************************************************************
+     * INTENT
+     *******************************************************************/
+
+    public static final String EXTRA_ACCOUNT_ID = "account_id";
+    public static final String EXTRA_CATEGORY_ID = "category_id";
+    public static final String EXTRA_FRAGMENT = "fragment";
+    public static final String EXTRA_POSITION = "position";
+    public static final String EXTRA_POSITION_X = "position_x";
+    public static final String EXTRA_POSITION_Y = "position_y";
+    public static final String EXTRA_SOURCE_CODE = "source_code";
+    public static final String EXTRA_TXN_TYPE = "txn_type";
+    
+    public static final int CODE_CATEGORY_LIST = 1;
+    public static final int CODE_CATEGORY_DETAIL = 2;
     
 	/*******************************************************************
 	 * FLAGS
@@ -136,6 +152,7 @@ public class Constant {
     public static final String FIELD_AMOUNT = "T.AMOUNT";
 	
     public static final String QUERY_SUMMED_TRANSACTIONS = "SELECT DATE, sum(RAW_AMOUNT) FROM TRANSACTIONS WHERE BANK_ACCOUNT_ID = ? GROUP BY DATE ORDER BY DATE ASC";
+    public static final String QUERY_BOB_ID = "SELECT MAX(_ID) FROM BUSINESS_OBJECT_BASE";
     public static final String QUERY_BUSINESS_BASE_JOIN = ", BUSINESS_OBJECT_BASE B WHERE T.BUSINESS_OBJECT_ID = B._ID AND B.DATA_STATE = ?";
     public static final String QUERY_TRANSACTIONS = " ORDER BY %s %s LIMIT ? OFFSET ?";
     public static final String QUERY_DATE_TRANSACTIONS = ", CATEGORY C WHERE T.CATEGORY_ID = C._ID AND ("
@@ -208,19 +225,19 @@ public class Constant {
         Map<String, DataState> aMap = new HashMap<String, DataState>();
         aMap.put(KEY_CREATED, DataState.DATA_STATE_NEW);
         aMap.put(KEY_UPDATED, DataState.DATA_STATE_MODIFIED);
-        aMap.put(KEY_UPDATED, DataState.DATA_STATE_DELETED);
+        aMap.put(KEY_DELETED, DataState.DATA_STATE_DELETED);
         OPERATIONS = Collections.unmodifiableMap(aMap);
     }
     
-	public static final Map<Class<?>, String> OBJECT_TYPES;
+	public static final Map<String, Class<?>> OBJECT_TYPES;
     static {
-        Map<Class<?>, String> aMap = new HashMap<Class<?>, String>();
-        aMap.put(Transactions.class, KEY_TRANSACTIONS);
-        aMap.put(BudgetItem.class, KEY_BUDGETS);
-        aMap.put(BankAccount.class, KEY_ACCOUNTS);
-        aMap.put(Category.class, KEY_CATEGORIES);
-        aMap.put(Tag.class, KEY_TAGS);
-        aMap.put(Bank.class, KEY_MEMBERS);
+        Map<String, Class<?>> aMap = new HashMap<String, Class<?>>();
+        aMap.put(KEY_TRANSACTIONS, Transactions.class);
+        aMap.put(KEY_BUDGETS, BudgetItem.class);
+        aMap.put(KEY_ACCOUNTS, BankAccount.class);
+        aMap.put(KEY_CATEGORIES, Category.class);
+        aMap.put(KEY_TAGS, Tag.class);
+        aMap.put(KEY_MEMBERS, Bank.class);
         OBJECT_TYPES = Collections.unmodifiableMap(aMap);
     }
 }

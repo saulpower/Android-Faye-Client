@@ -34,7 +34,7 @@
 	            android:layout_width="wrap_content"
 	            android:layout_height="match_parent"
 	            app:lineColor="@color/primaryColor"
-	            app:lineStrokeWidth="2"
+	            app:lineStrokeWidth="2dp"
 	            app:isVertical="true" />
         
 	        <LinearLayout
@@ -67,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:lineColor="@color/gray2"
-            app:lineStrokeWidth="1" />
+            app:lineStrokeWidth="2dp" />
         
         <LinearLayout
             android:layout_width="match_parent"
@@ -76,18 +76,19 @@
             android:orientation="horizontal">
             
             <RelativeLayout
+                android:id="@+id/amount_container"
                 android:layout_width="0dp"
                 android:layout_weight="50"
                 android:layout_height="match_parent"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-            	android:gravity="center_vertical">
+                android:paddingRight="10dp">
                 
                 <TextView
                     android:id="@+id/amount_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
+                    android:layout_alignParentTop="true"
 		            android:text="@string/label_amount"
 		            style="@style/transaction_label" />
 	        
@@ -107,7 +108,7 @@
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            app:lineColor="@color/gray2"
-	            app:lineStrokeWidth="2"
+	            app:lineStrokeWidth="2dp"
 	            app:isVertical="true" />
             
             <RelativeLayout
@@ -116,24 +117,12 @@
                 android:layout_height="match_parent"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:paddingBottom="10dp"
-            	android:gravity="center_vertical">
-	        
-		        <TextView
-		            android:id="@+id/markers_label"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:layout_alignParentTop="true"
-		            android:layout_marginBottom="10dp"
-		            android:text="@string/label_other"
-		            style="@style/transaction_label"
-		            android:visibility="invisible" />
+                android:gravity="center_vertical">
                 
                 <ToggleButton 
 		            android:id="@+id/flag_b"
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
-		            android:layout_below="@id/markers_label"
 		            android:layout_alignParentLeft="true"
 		            android:textColor="@color/transparent"
 		            android:background="@drawable/business_selector" />
@@ -142,7 +131,6 @@
 		            android:id="@+id/flag_p"
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
-		            android:layout_below="@id/markers_label"
 		            android:layout_toRightOf="@id/flag_b"
 		            android:layout_marginLeft="15dp"
 		            android:textColor="@color/transparent"
@@ -152,7 +140,6 @@
 		            android:id="@+id/flag_c"
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
-		            android:layout_below="@id/markers_label"
 		            android:layout_toRightOf="@id/flag_p"
 		            android:layout_marginLeft="15dp"
 		            android:textColor="@color/transparent"
@@ -162,7 +149,6 @@
 		            android:id="@+id/flag"
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
-		            android:layout_below="@id/markers_label"
 		            android:layout_toRightOf="@id/flag_c"
 		            android:layout_marginLeft="15dp"
 		            android:textColor="@color/transparent"
@@ -176,9 +162,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:lineColor="@color/gray2"
-            app:lineStrokeWidth="1"
+            app:lineStrokeWidth="2dp"
             app:isDashed="true"
-            app:dashLength="2"  />
+            app:dashLength="2dp"  />
         
         <LinearLayout
             android:layout_width="match_parent"
@@ -191,8 +177,7 @@
                 android:layout_weight="50"
                 android:layout_height="match_parent"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-            	android:gravity="center_vertical">
+                android:paddingRight="10dp">
 	        
 		        <TextView
 		            android:id="@+id/payee"
@@ -210,7 +195,8 @@
 		            android:layout_below="@id/payee"
 		            style="@style/transaction_field"
 		            android:textColor="@color/primaryColor"
-		            android:inputType="textCapWords"/>
+		            android:inputType="textCapWords"
+		            android:imeOptions="actionDone" />
                 
             </RelativeLayout>
         
@@ -218,7 +204,7 @@
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            app:lineColor="@color/gray2"
-	            app:lineStrokeWidth="2"
+	            app:lineStrokeWidth="2dp"
 	            app:isVertical="true" />
             
             <RelativeLayout
@@ -226,8 +212,7 @@
                 android:layout_weight="50"
                 android:layout_height="match_parent"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-            	android:gravity="center_vertical">
+                android:paddingRight="10dp">
 	        
 		        <TextView
 		            android:id="@+id/memo_label"
@@ -240,12 +225,13 @@
 		        
 		        <EditText
 		            android:id="@+id/memo"
-		            android:layout_width="wrap_content"
+		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content"
 		            android:layout_below="@id/memo_label"
+                    android:layout_marginTop="5dp"
 		            android:inputType="textCapSentences"
-		            android:textColor="@color/primaryColor"
-		            style="@style/transaction_field" />
+		            style="@style/transaction_field"
+		            android:imeOptions="actionDone" />
                 
             </RelativeLayout>
             
@@ -255,9 +241,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:lineColor="@color/gray2"
-            app:lineStrokeWidth="1"
+            app:lineStrokeWidth="2dp"
             app:isDashed="true"
-            app:dashLength="2"  />
+            app:dashLength="2dp"  />
         
         <LinearLayout
             android:layout_width="match_parent"
@@ -266,16 +252,16 @@
             android:orientation="horizontal">
             
             <RelativeLayout
+                android:id="@+id/date_container"
                 android:layout_width="0dp"
                 android:layout_weight="50"
                 android:layout_height="match_parent"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-            	android:gravity="center_vertical">
+                android:paddingRight="10dp">
 	        
 		        <TextView
 		            android:id="@+id/date_label"
-		            android:layout_width="wrap_content"
+		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content"
 		            android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -297,7 +283,7 @@
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            app:lineColor="@color/gray2"
-	            app:lineStrokeWidth="2"
+	            app:lineStrokeWidth="2dp"
 	            app:isVertical="true" />
             
             <RelativeLayout
@@ -305,12 +291,11 @@
                 android:layout_weight="50"
                 android:layout_height="match_parent"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-            	android:gravity="center_vertical">
+                android:paddingRight="10dp">
 	        
 		        <TextView
 		            android:id="@+id/tags_label"
-		            android:layout_width="wrap_content"
+		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content"
 		            android:layout_alignParentTop="true"
                     android:layout_marginTop="5dp"
@@ -322,6 +307,7 @@
 		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content"
 		            android:layout_below="@id/tags_label"
+                    android:layout_marginTop="5dp"
 		            style="@style/transaction_field"
 		            android:text="@string/label_tags" />
                 
@@ -333,9 +319,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:lineColor="@color/gray2"
-            app:lineStrokeWidth="1"
+            app:lineStrokeWidth="2dp"
             app:isDashed="true"
-            app:dashLength="2" />
+            app:dashLength="2dp" />
         
         <LinearLayout
             android:layout_width="match_parent"
@@ -344,12 +330,12 @@
             android:orientation="horizontal">
             
             <RelativeLayout
+                android:id="@+id/category_container"
                 android:layout_width="0dp"
                 android:layout_weight="50"
                 android:layout_height="match_parent"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-            	android:gravity="center_vertical">
+                android:paddingRight="10dp">
 	        
 		        <TextView
 		            android:id="@+id/category"
@@ -374,16 +360,16 @@
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            app:lineColor="@color/gray2"
-	            app:lineStrokeWidth="2"
+	            app:lineStrokeWidth="2dp"
 	            app:isVertical="true" />
             
             <RelativeLayout
+                android:id="@+id/stmt_container"
                 android:layout_width="0dp"
                 android:layout_weight="50"
                 android:layout_height="match_parent"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-            	android:gravity="center_vertical">
+                android:paddingRight="10dp">
 	        
 		        <TextView
 		            android:id="@+id/stmt_label"
@@ -411,14 +397,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:lineColor="@color/gray2"
-            app:lineStrokeWidth="1" />
+            app:lineStrokeWidth="2dp" />
         
         <com.moneydesktop.finance.views.LineView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             app:lineColor="@color/gray2"
-            app:lineStrokeWidth="1" />
+            app:lineStrokeWidth="2dp" />
         
         <LinearLayout
             android:layout_width="match_parent"

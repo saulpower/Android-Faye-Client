@@ -1,8 +1,8 @@
 package com.moneydesktop.finance.model;
 
+import com.moneydesktop.finance.data.Enums.LockType;
+import com.moneydesktop.finance.data.Enums.NavDirection;
 import com.moneydesktop.finance.database.PowerQuery;
-import com.moneydesktop.finance.util.Enums.LockType;
-import com.moneydesktop.finance.util.Enums.NavDirection;
 import com.moneydesktop.finance.views.AnchorView;
 
 import java.util.HashMap;
@@ -28,6 +28,8 @@ public class EventMessage {
     }
     
 	public class AuthEvent extends EventMessage {}
+    public class DataUpdateEvent extends EventMessage {}
+    public class DatabaseSaveEvent extends EventMessage {}
 	public class DefaultsEvent extends EventMessage {}
 	
 	public class FilterEvent extends EventMessage {

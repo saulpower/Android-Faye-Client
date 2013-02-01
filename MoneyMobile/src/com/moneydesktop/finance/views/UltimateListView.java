@@ -3,13 +3,14 @@ package com.moneydesktop.finance.views;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
-import android.view.SoundEffectConstants;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
 import com.moneydesktop.finance.adapters.UltimateAdapter;
+import com.moneydesktop.finance.util.UiUtils;
 
 /**
  * A ListView that maintains a header pinned at the top of the list. The
@@ -26,13 +27,20 @@ public class UltimateListView extends ExpandableListView {
     private boolean mHeaderViewVisible;
 
     private int mHeaderViewWidth;
-    private int mHeaderViewHeight;
+    private int mHeaderViewHeight = -1;
 
     private UltimateAdapter mAdapter;
     
     private boolean mIsPressed = false;
-    private boolean mHeaderClicked = false;
+    
+    private int mSection = 0;
+    private float mLastTouchY;
+    private float mThreshold = UiUtils.getDynamicPixels(getContext(), 5);
 
+    public View getHeaderView() {
+        return mHeaderView;
+    }
+    
     private void setHeaderView(View view) {
         
         mHeaderView = view;
@@ -46,10 +54,10 @@ public class UltimateListView extends ExpandableListView {
     
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        boolean result = super.onTouchEvent(ev);
+        boolean result = false;
         
-        if (!mHeaderViewVisible) {
-            return result;
+        if (mHeaderView == null || !mHeaderViewVisible) {
+            return super.onTouchEvent(ev);
         }
         
         int action = ev.getAction();
@@ -58,8 +66,13 @@ public class UltimateListView extends ExpandableListView {
 
             case MotionEvent.ACTION_DOWN: {
                 
+                mLastTouchY = ev.getY();
+                
                 if (isPointInsideHeader(ev.getRawX(), ev.getRawY())) {
+                    mHeaderView.setSelected(true);
+                    invalidateViews();
                     mIsPressed = true;
+                    result = true;
                 }
                 
                 break;
@@ -69,39 +82,42 @@ public class UltimateListView extends ExpandableListView {
                 
                 if (mIsPressed && isPointInsideHeader(ev.getRawX(), ev.getRawY())) {
                     
-                    int section = mAdapter.getSectionForPosition(getFirstVisiblePosition());
+                    int position = mAdapter.getPositionForSection(mSection);
                     
-                    if (mAdapter.isSectionVisible(section)) {
-                        collapseGroup(section);
-                    } else {
-                        expandGroup(section);
-                    }
+                    performItemClick(mHeaderView, position, position);
+
+                    mHeaderView.setSelected(false);
+                    invalidateViews();
                     
-                    playSoundEffect(SoundEffectConstants.CLICK);
-                    
-                    mHeaderClicked = true;
-                    result = true;
                     mIsPressed = false;
+                    result = true;
+                }
+                
+                break;
+            }
+            
+            case MotionEvent.ACTION_MOVE: {
+                
+                if (!mIsPressed) {
+                    break;
+                }
+                
+                float y = ev.getY();
+                float dy = mLastTouchY - y;
+                
+                if (Math.abs(dy) > mThreshold || !isPointInsideHeader(ev.getRawX(), ev.getRawY())) {
+                    mHeaderView.setSelected(false);
+                    invalidateViews();
+                    mIsPressed = false;
+                } else {
+                    result = true;
                 }
                 
                 break;
             }
         }
         
-        return result;
-    }
-    
-    @Override
-    public boolean performItemClick(View view, int position, long id) {
-        
-        if (!mHeaderClicked) {
-            
-            return super.performItemClick(view, position, id);
-        }
-
-        mHeaderClicked = false;
-        
-        return true;
+        return (!result ? super.onTouchEvent(ev) : result);
     }
 
     protected boolean isPointInsideHeader(float x, float y) {
@@ -141,6 +157,41 @@ public class UltimateListView extends ExpandableListView {
         }
     }
     
+    /**
+     * Adjustments have been made to account for group views
+     * that are larger in height than the child views.  For
+     * the sticky headers to work properly adjustments must
+     * be made as to the actual first visible position given
+     * the header view is stuck to the top of the listview.
+     */
+    @Override
+    public int getFirstVisiblePosition() {
+        
+        int position = super.getFirstVisiblePosition();
+        
+        if (mHeaderViewHeight == -1) {
+            return position;
+        }
+
+        int i = 0;
+        
+        View v = getChildAt(i);
+        i++;
+        final int top = (v == null) ? 0 : v.getTop();
+        
+        int sum = v.getHeight() + top;
+        
+        while (sum < mHeaderViewHeight) {
+            sum += getChildAt(i).getHeight();
+            i++;
+            position++;
+        }
+        
+        position--;
+        
+        return position;
+    }
+    
     public void configureHeaderView() {
         configureHeaderView(getFirstVisiblePosition());
     }
@@ -151,8 +202,8 @@ public class UltimateListView extends ExpandableListView {
             return;
         }
         
-        int section = mAdapter.getSectionForPosition(position);
-        int state = mAdapter.getPinnedHeaderState(position, section);
+        mSection = mAdapter.getSectionForPosition(position);
+        int state = mAdapter.getPinnedHeaderState(position, mSection);
         
         switch (state) {
             
@@ -165,7 +216,7 @@ public class UltimateListView extends ExpandableListView {
 
             case UltimateAdapter.PINNED_HEADER_VISIBLE: {
                 
-            	mAdapter.configureHeader(mHeaderView, section);
+            	mAdapter.configureHeader(mHeaderView, mSection);
             	
                 if (mHeaderView.getTop() != 0) {
                     mHeaderView.layout(0, 0, mHeaderViewWidth, mHeaderViewHeight);
@@ -178,21 +229,27 @@ public class UltimateListView extends ExpandableListView {
 
             case UltimateAdapter.PINNED_HEADER_PUSHED_UP: {
                 
-                View firstView = getChildAt(0);
+                int i = 1;
+                int headerHeight = mHeaderView.getHeight();
+                
+                while (getChildAt(i) != null && getChildAt(i).getHeight() != headerHeight) {
+                    i++;
+                }
+                
+                final View firstView = getChildAt(i);
                 
                 if (firstView != null) {
                     
-	                int bottom = firstView.getBottom();
-	                int headerHeight = mHeaderView.getHeight();
+	                int top = firstView.getTop();
 	                int y;
 	                
-	                if (bottom < headerHeight) {
-	                    y = (bottom - headerHeight);
+	                if (top < headerHeight) {
+	                    y = (top - headerHeight);
 	                } else {
-	                    y = 0;
+	                    y = -headerHeight;
 	                }
 	                
-	                mAdapter.configureHeader(mHeaderView, section);
+	                mAdapter.configureHeader(mHeaderView, mSection);
 	                
 	                if (mHeaderView.getTop() != y) {
 	                    mHeaderView.layout(0, y, mHeaderViewWidth, mHeaderViewHeight + y);
@@ -262,5 +319,12 @@ public class UltimateListView extends ExpandableListView {
         }
         
         return true;
+    }
+    
+    public void expandAll() {
+        
+        for (int i = 0; i < mAdapter.getGroupCount(); i++) {
+            expandGroup(i);
+        }
     }
 }

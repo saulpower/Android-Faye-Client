@@ -2,19 +2,28 @@ package com.moneydesktop.finance.shared;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.inputmethod.EditorInfo;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.ToggleButton;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataController;
+import com.moneydesktop.finance.database.Tag;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.util.Fonts;
@@ -25,18 +34,31 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 public class TransactionDetailBaseFragment extends BaseFragment {
+    
+    public final String TAG = this.getClass().getSimpleName();
 
     private DecimalFormat mFormatter = new DecimalFormat("$#,##0.00;-$#,##0.00");
     protected SimpleDateFormat mDateFormatter = new SimpleDateFormat("MM.dd.yyyy");
-    
+
     protected TransactionsDao mDao;
     protected Transactions mTransaction;
 
+    protected RelativeLayout mAmountContainer, mDateContainer, mCategoryContainer, mStmtContainer;
     protected TextView mAccountName, mBankName, mCategory, mTags;
     protected EditText mPayee, mAmount, mDate, mMemo, mStatement;
     protected ImageView mBankIcon;
     protected ToggleButton mBusiness, mPersonal, mCleared, mFlagged;
     
+    protected Animation mShake;
+    
+    public Transactions getTransaction() {
+        return mTransaction;
+    }
+
+    public void setTransaction(Transactions mTransaction) {
+        this.mTransaction = mTransaction;
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -44,7 +66,18 @@ public class TransactionDetailBaseFragment extends BaseFragment {
         this.mActivity.onFragmentAttached(this);
     }
     
+    protected void initialize() {
+        
+        setupAnimations();
+        setupViews();
+    }
+    
     protected void setupViews() {
+        
+        mAmountContainer = (RelativeLayout) mRoot.findViewById(R.id.amount_container);
+        mDateContainer = (RelativeLayout) mRoot.findViewById(R.id.date_container);
+        mCategoryContainer = (RelativeLayout) mRoot.findViewById(R.id.category_container);
+        mStmtContainer = (RelativeLayout) mRoot.findViewById(R.id.stmt_container);
         
         mAccountName = (TextView) mRoot.findViewById(R.id.account_name);
         mBankName = (TextView) mRoot.findViewById(R.id.bank_name);
@@ -65,20 +98,19 @@ public class TransactionDetailBaseFragment extends BaseFragment {
         mFlagged = (ToggleButton) mRoot.findViewById(R.id.flag);
         
         // Currently we are read-only, disable all input fields
-        mPayee.setEnabled(false);
-        mAmount.setEnabled(false);
-        mDate.setEnabled(false);
-        mMemo.setEnabled(false);
-        mStatement.setEnabled(false);
+        mAmount.setFocusable(false);
+        mDate.setFocusable(false);
+        mStatement.setFocusable(false);
         
-        mBusiness.setEnabled(false);
-        mPersonal.setEnabled(false);
         mCleared.setEnabled(false);
-        mFlagged.setEnabled(false);
         
         fixDottedLine();
         applyFonts();
         configureListeners();
+    }
+    
+    protected void setupAnimations() {
+        mShake = AnimationFactory.createShakeAnimation(mActivity);
     }
     
     @TargetApi(11)
@@ -125,26 +157,97 @@ public class TransactionDetailBaseFragment extends BaseFragment {
         Fonts.applySecondaryItalicFont((TextView) mRoot.findViewById(R.id.stmt_label), 12);
     }
     
-    private void configureListeners() {
+    protected void configureListeners() {
         
-        mBusiness.setOnClickListener(new OnClickListener() {
+        mAmount.setOnClickListener(new OnClickListener() {
             
+            @Override
             public void onClick(View v) {
-                
-                mPersonal.setChecked(!mBusiness.isChecked());
+                mAmountContainer.startAnimation(mShake);
             }
         });
         
-        mPersonal.setOnClickListener(new OnClickListener() {
+        mDate.setOnClickListener(new OnClickListener() {
             
+            @Override
             public void onClick(View v) {
+                mDateContainer.startAnimation(mShake);
+            }
+        });
+        
+        mStatement.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                mStmtContainer.startAnimation(mShake);
+            }
+        });
+        
+        mBusiness.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mPersonal.setChecked(!isChecked);
+                mTransaction.setIsBusiness(isChecked);
+                mTransaction.updateSingle();
+            }
+        });
+        
+        mPersonal.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mBusiness.setChecked(!isChecked);
+                mTransaction.setIsBusiness(!isChecked);
+                mTransaction.updateSingle();
+            }
+        });
+        
+        mFlagged.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mTransaction.setIsFlagged(isChecked);
+                mTransaction.updateSingle();
+            }
+        });
+        
+        mPayee.setOnEditorActionListener(new OnEditorActionListener() {
+            
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 
-                mBusiness.setChecked(!mPersonal.isChecked());
+                if (actionId == EditorInfo.IME_ACTION_DONE && mTransaction != null && (mTransaction.getTitle() == null || !mTransaction.getTitle().equals(mPayee.getText().toString()))) {
+                    
+                    mTransaction.setTitle(mPayee.getText().toString());
+                    mTransaction.updateSingle();
+                    
+                    return true;
+                }
+                
+                return false;
+            }
+        });
+        
+        mMemo.setOnEditorActionListener(new OnEditorActionListener() {
+            
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                
+                if (actionId == EditorInfo.IME_ACTION_DONE && mTransaction != null && (mTransaction.getMemo() == null || !mTransaction.getMemo().equals(mMemo.getText().toString()))) {
+                    
+                    mTransaction.setMemo(mMemo.getText().toString());
+                    mTransaction.updateSingle();
+                    
+                    return true;
+                }
+                
+                return false;
             }
         });
     }
     
-    protected void getTransaction() {
+    protected void loadTransaction() {
         
         long guid = getArguments().getLong(Constant.KEY_GUID);
         
@@ -157,7 +260,7 @@ public class TransactionDetailBaseFragment extends BaseFragment {
         mTransaction = mDao.load(guid);
     }
 
-    protected void loadTransaction() {
+    public void configureTransactionView() {
         
         if (mTransaction == null) {
             return;
@@ -198,6 +301,30 @@ public class TransactionDetailBaseFragment extends BaseFragment {
     @Override
     public boolean onBackPressed() {
         return false;
+    }
+    
+    protected void createTag(String tagName) {
+        
+        Tag.createTag(tagName, mTransaction);
+        
+        mTags.setText(mTransaction.buildTagString());
+    }
+    
+    public void updateTransactionCategory(long categoryId) {
+        
+        if (mTransaction == null) {
+            return;
+        }
+
+        mTransaction.setCategoryId(categoryId);
+        mTransaction.updateSingle();
+        
+        configureTransactionView();
+    }
+    
+    protected void deleteTag(Tag tag) {
+        
+        Tag.deleteTag(tag);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.moneydesktop.finance.shared;
 
+import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -8,8 +9,10 @@ import android.os.Bundle;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.BaseActivity;
+import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.DataController;
+import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.handset.activity.LoginHandsetActivity;
@@ -17,15 +20,19 @@ import com.moneydesktop.finance.model.EventMessage.LogoutEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.tablet.activity.LoginTabletActivity;
+import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.TransactionsTabletFragment;
 import com.moneydesktop.finance.util.DialogUtils;
 
+@TargetApi(11)
 public abstract class DashboardBaseActivity extends BaseActivity {
 
 	protected final String KEY_PAGER = "pager";
 	
 	protected boolean mLoggingOut = false;
 	protected boolean mOnHome = true;
-//	public static TabletFragments mCurrentFragment;
+    
+    protected BaseFragment mFragment;
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,6 +41,27 @@ public abstract class DashboardBaseActivity extends BaseActivity {
         
         if (SyncEngine.sharedInstance().isSyncing()) {
         	DialogUtils.showProgress(this, getString(R.string.text_syncing));
+        }
+    }
+    
+    @Override
+    public void onFragmentAttached(BaseFragment fragment) {
+
+        mFragment = fragment;
+        
+        if (mOnFragment) {
+            mFragmentCount = 1;
+        }
+        
+        if (mFragmentCount == 1 && mOnHome) {
+            configureView(false);
+        }
+    }
+    
+    public void setDetailFragment(TransactionsDetailTabletFragment fragment) {
+        
+        if (mFragment instanceof TransactionsTabletFragment) {
+            ((TransactionsTabletFragment) mFragment).setDetailFragment(fragment);
         }
     }
 
@@ -124,7 +152,7 @@ public abstract class DashboardBaseActivity extends BaseActivity {
     			
     	    	Intent i = new Intent(getApplicationContext(), isTablet ? LoginTabletActivity.class : LoginHandsetActivity.class);
     	    	startActivity(i);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                overridePendingTransition(R.anim.in_up, R.anim.none);
     	    	finish();
     		}
 			
@@ -136,9 +164,5 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 		return getString(R.string.title_activity_dashboard);
 	}
 	
-	public abstract void showFragment(int index);
-
-//    public void setCurrentFragment(TabletFragments accountTypesTablet) {
-//        mCurrentFragment = accountTypesTablet;        
-//    }
+	public abstract void showFragment(FragmentType fragment);
 }

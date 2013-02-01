@@ -1,7 +1,7 @@
 package com.moneydesktop.finance.database;
 
 import com.moneydesktop.finance.data.Constant;
-import com.moneydesktop.finance.util.Enums.DataState;
+import com.moneydesktop.finance.data.Enums.DataState;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
@@ -199,7 +199,7 @@ public class TagInstance extends BusinessObject  {
     	
     	TagInstance tagInstance = new TagInstance();
     	tagInstance.setTag(tag);
-    	tagInstance.setBusinessObjectBase(bob);
+    	tagInstance.setBaseObjectId(bob.getId());
     	
     	tagInstance.insertBatch();
     	
@@ -210,13 +210,16 @@ public class TagInstance extends BusinessObject  {
     	
     	JSONObject json = new JSONObject();
     	
-		json.put(Constant.KEY_GUID, getTagId());
+		json.put(Constant.KEY_GUID, getTag().getTagId());
+        json.put(Constant.KEY_EXTERNAL_ID, getTagId());
 		
-		if (getExternalId() != null)
+		if (getExternalId() != null) {
 			json.put(Constant.KEY_EXTERNAL_ID, getExternalId());
-    	
-    	if (getBusinessObject().getDataStateEnum() == DataState.DATA_STATE_DELETED)
+		}
+		
+    	if (getBusinessObject().getDataStateEnum() == DataState.DATA_STATE_DELETED) {
     		json.put(Constant.KEY_ASSOCIATION_DESTROYED, 1);
+    	}
     	
     	return json;
     }

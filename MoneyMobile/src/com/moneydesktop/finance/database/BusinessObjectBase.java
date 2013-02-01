@@ -1,6 +1,10 @@
 package com.moneydesktop.finance.database;
 
-import com.moneydesktop.finance.data.Preferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.moneydesktop.finance.ApplicationContext;
+import com.moneydesktop.finance.data.Constant;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
@@ -195,18 +199,16 @@ public class BusinessObjectBase extends BusinessObject  {
 	
 	public static synchronized Long nextId() {
 		
-		if (idCount == null)
-			idCount = Preferences.getLong(Preferences.KEY_BOB_ID, 0L);
+		if (idCount == null) {
+		    
+		    SQLiteDatabase db = ApplicationContext.getDb();
+		    Cursor cursor = db.rawQuery(Constant.QUERY_BOB_ID, new String[] {});
+	        
+	        cursor.moveToFirst();
+	        idCount = cursor.getLong(0) + 1;
+		}
 		
 		return idCount++;
-	}
-	
-	public static synchronized Long getIdCount() {
-		
-		if (idCount == null)
-			idCount = Preferences.getLong(Preferences.KEY_BOB_ID, 0L);
-		
-		return idCount;
 	}
     
     public JSONObject getJson() {

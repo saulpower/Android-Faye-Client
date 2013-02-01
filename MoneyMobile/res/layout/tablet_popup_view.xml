@@ -1,49 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="450dp"
-    android:layout_height="500dp"
-    android:background="@color/gray7">
-
-    <FrameLayout
-        android:id="@+id/fragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="50dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="20dp" />
+    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="invisible" >
+		    
+    <com.moneydesktop.finance.views.CaretView
+        android:id="@+id/caret"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:color="@color/gray2"
+        app:width="80dp"
+        app:height="80dp"
+        app:rotation="90" />
     
-    <LinearLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="20dp"
-        android:orientation="horizontal">
-    
-	    <TextView
-	        android:id="@+id/arrow"
+	<RelativeLayout
+	    android:id="@+id/popup"
+	    android:layout_width="300dp"
+	    android:layout_height="500dp"
+	    android:background="@color/gray2">
+	
+	    <FrameLayout
+	        android:id="@+id/fragment"
 	        android:layout_width="wrap_content"
-	        android:layout_height="match_parent"
-	        android:gravity="center_vertical"
-	        android:text="@string/icon_left_arrow"
-	        android:textColor="@color/white"
-	        android:shadowColor="@color/black"
-	        android:shadowDx="1"
-	        android:shadowDy="1"
-	        android:shadowRadius="3" />
-        
-	    <TextView
-	        android:id="@+id/label"
-	        android:layout_width="wrap_content"
-	        android:layout_height="match_parent"
-	        android:padding="10dp"
-	        android:gravity="center_vertical"
-	        android:textColor="@color/white"
-	        android:shadowColor="@color/black"
-	        android:shadowDx="1"
-	        android:shadowDy="1"
-	        android:shadowRadius="3" />
-    
-    </LinearLayout>
-
+	        android:layout_height="wrap_content"
+	        android:layout_margin="10dp" />
+	    
+	</RelativeLayout>
+	
 </RelativeLayout>

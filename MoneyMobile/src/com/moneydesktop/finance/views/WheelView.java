@@ -14,6 +14,7 @@ import android.view.View;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.util.UiUtils;
 
 public class WheelView extends View {
 
@@ -63,7 +64,7 @@ public class WheelView extends View {
 	    paint.setAntiAlias(true);
 	    
 		stroke = new Paint(Paint.ANTI_ALIAS_FLAG);
-		stroke.setStrokeWidth(6);
+		stroke.setStrokeWidth(UiUtils.getDynamicPixels(getContext(), 3));
 		stroke.setColor(Color.WHITE);
 		stroke.setStyle(Paint.Style.STROKE);
 		stroke.setAntiAlias(true);

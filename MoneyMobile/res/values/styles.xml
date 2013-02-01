@@ -108,7 +108,7 @@
 
     <style name="transaction_label">
         <item name="android:textColor">@color/gray3</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">12sp</item>"
     </style>
 
     <style name="transaction_field">
@@ -122,6 +122,15 @@
     <style name="MyDialog" parent="android:Theme.Dialog">
         <item name="android:windowBackground">@color/transparent</item>
         <item name="android:windowAnimationStyle">@style/MyAnimationWindow</item>
+    </style>
+
+    <style name="ActivityDialog" parent="android:Theme.Dialog">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/MyAnimationWindow</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowSoftInputMode">adjustPan|stateHidden</item>
+        <item name="android:screenOrientation">landscape</item>
     </style>
 
     <style name="MyAnimationWindow" parent="@android:style/Animation.Dialog">

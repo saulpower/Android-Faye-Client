@@ -21,6 +21,7 @@
  */
 package com.moneydesktop.finance.animation;  
 
+import android.content.Context;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
@@ -31,6 +32,8 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.ViewAnimator;
+
+import com.moneydesktop.finance.util.UiUtils;
 
 /**
  * This class contains methods for creating {@link Animation} objects for some of the most common animation, including a 3D flip animation, {@link FlipAnimation}.
@@ -456,6 +459,43 @@ public class AnimationFactory {
 	    });
 	    
 	    v.startAnimation(animation); 
+	}
+    
+    public static Animation createShakeAnimation(Context context) {
+        return createShakeAnimation(context, 15, 2);
+    }
+	
+    public static Animation createShakeAnimation(Context context, int shakeDistance) {
+        return createShakeAnimation(context, shakeDistance, 2);
+    }
+	
+	public static Animation createShakeAnimation(Context context, int shakeDistance, int bounces) {
+	    
+	    float distance = UiUtils.getDynamicPixels(context, shakeDistance);
+	    
+	    AnimationSet set = new AnimationSet(true);
+	    
+	    TranslateAnimation translate = new TranslateAnimation(0, (-1 * distance / 2), 0, 0);
+        translate.setDuration(100);
+        translate.setStartOffset(0);
+        set.addAnimation(translate);
+	    
+	    for (int i = 1; i < (bounces + 1); i++) {
+	        
+	        int direction = (i % 2 == 0) ? -1 : 1;
+	        
+	        translate = new TranslateAnimation(0, direction * distance, 0, 0);
+	        translate.setDuration(100);
+	        translate.setStartOffset(100 * i);
+	        set.addAnimation(translate);
+	    }
+	    
+	    translate = new TranslateAnimation(0, (distance / 2), 0, 0);
+        translate.setDuration(100);
+        translate.setStartOffset((bounces + 1) * 100);
+        set.addAnimation(translate);
+	    
+	    return set;
 	}
 
 }

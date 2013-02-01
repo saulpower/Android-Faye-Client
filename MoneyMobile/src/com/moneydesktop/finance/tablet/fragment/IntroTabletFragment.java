@@ -34,8 +34,8 @@ public class IntroTabletFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        
         View view = inflater.inflate(R.layout.tablet_intro_fragment, container, false);
         ImageView introImage = (ImageView) view.findViewById(R.id.introImage);
         introImage.setImageDrawable(getResources().getDrawable(mIntroImageResourceId));

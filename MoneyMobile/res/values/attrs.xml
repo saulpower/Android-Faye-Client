@@ -10,6 +10,7 @@
     <declare-styleable name="ClearEditText">
         <attr name="clearText" format="string" />
         <attr name="iconText" format="string" />
+        <attr name="iconTextColor" format="color" />
     </declare-styleable>
     
     <declare-styleable name="Caret">
@@ -33,8 +34,8 @@
         <attr name="lineColor" format="color" />
         <attr name="isDashed" format="boolean" />
         <attr name="isVertical" format="boolean" />
-        <attr name="dashLength" format="float" />
-        <attr name="lineStrokeWidth" format="float" />
+        <attr name="dashLength" format="dimension" />
+        <attr name="lineStrokeWidth" format="dimension" />
     </declare-styleable>
     
     <declare-styleable name="AccountBalanceItemView">

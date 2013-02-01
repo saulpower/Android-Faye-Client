@@ -2,18 +2,18 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
-    android:orientation="vertical" >
+    android:layout_height="wrap_content"
+   	android:background="@drawable/gray4_to_primary" >
     
 	<LinearLayout
 	    android:id="@+id/info"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    android:paddingLeft="30dp"
-	    android:paddingTop="8dp"
-	    android:paddingBottom="8dp"
-    	android:background="@drawable/gray4_to_primary"
+	    android:paddingTop="13dp"
+	    android:paddingBottom="13dp"
 	    android:orientation="vertical" >
 	
 	    <TextView
@@ -36,37 +36,33 @@
 	
     <TextView
         android:id="@+id/single_title"
-        style="@style/tablet_filter_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_centerVertical="true"
 	    android:paddingLeft="30dp"
-	    android:paddingTop="8dp"
-	    android:paddingBottom="8dp"
-        android:gravity="center_vertical"
-    	android:background="@drawable/gray4_to_primary"
-        android:visibility="gone" />
+    	android:textColor="@color/white"
+        android:visibility="invisible" />
 			    
-	    <com.moneydesktop.finance.views.CaretView
-	        android:id="@+id/caret"
-		    android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_marginLeft="10dp"
-	        android:layout_centerVertical="true"
-	        android:visibility="invisible"
-	        app:color="@color/white"
-	        app:width="10dp"
-	        app:height="10dp"
-	        app:rotation="90" />
+    <com.moneydesktop.finance.views.CaretView
+        android:id="@+id/caret"
+	    android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_centerVertical="true"
+        android:visibility="invisible"
+        app:color="@color/white"
+        app:width="10dp"
+        app:height="10dp"
+        app:rotation="90" />
 	
 	<com.moneydesktop.finance.views.LineView
 	    android:id="@+id/item_divider"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@id/info"
-	    android:layout_marginTop="-2dp"
 	    app:lineColor="@color/white"
 	    app:isDashed="true"
-	    app:dashLength="3.0"
-	    app:lineStrokeWidth="1.5" />
+	    app:dashLength="3dp"
+	    app:lineStrokeWidth="2dp" />
 
 </RelativeLayout>

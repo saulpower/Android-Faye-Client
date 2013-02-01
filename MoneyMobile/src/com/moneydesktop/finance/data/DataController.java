@@ -1,17 +1,11 @@
 package com.moneydesktop.finance.data;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import android.database.sqlite.SQLiteConstraintException;
 import android.util.Log;
 
 import com.moneydesktop.finance.ApplicationContext;
+import com.moneydesktop.finance.data.Enums.DataState;
+import com.moneydesktop.finance.data.Enums.TxType;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeGroup;
 import com.moneydesktop.finance.database.Bank;
@@ -29,22 +23,49 @@ import com.moneydesktop.finance.database.Location;
 import com.moneydesktop.finance.database.Tag;
 import com.moneydesktop.finance.database.TagInstance;
 import com.moneydesktop.finance.database.Transactions;
-import com.moneydesktop.finance.util.Enums.DataState;
-import com.moneydesktop.finance.util.Enums.TxType;
+import com.moneydesktop.finance.model.EventMessage;
 
 import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.DaoException;
+import de.greenrobot.event.EventBus;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DataController {
 	
 	public static final String TAG = "DatabaseDefaults";
 
-	private static Map<Class<?>, List<Object>> pendingInsertTx = new HashMap<Class<?>, List<Object>>();
-	private static Map<Class<?>, List<Object>> pendingUpdateTx = new HashMap<Class<?>, List<Object>>();
-	private static Map<Class<?>, List<Object>> pendingDeleteTx = new HashMap<Class<?>, List<Object>>();
+	private static Map<Class<?>, List<Object>> sPendingInsertTx = new HashMap<Class<?>, List<Object>>();
+	private static Map<Class<?>, List<Object>> sPendingUpdateTx = new HashMap<Class<?>, List<Object>>();
+	private static Map<Class<?>, List<Object>> sPendingDeleteTx = new HashMap<Class<?>, List<Object>>();
 	
-	private static Map<String, Object> pendingCache = new HashMap<String, Object>();
+	private static Map<String, Object> sPendingCache = new HashMap<String, Object>();
 	
-	private static int count = 0;
+	private static int sCount = 0;
+	
+	private static Class<?>[] sObjectOrder = new Class<?>[] {
+        AccountType.class,
+        AccountTypeGroup.class,
+        Bank.class,
+        BankAccount.class,
+        BankAccountBalance.class,
+        BudgetItem.class,
+        Category.class,
+        CategoryType.class,
+        Institution.class,
+        Location.class,
+        Tag.class,
+        TagInstance.class,
+        Transactions.class,
+        BusinessObjectBase.class
+    };
 	
 	/**
 	 * Saves all the pending transactions in a batch fashion
@@ -52,21 +73,20 @@ public class DataController {
 	public static synchronized void save() {
 
 		long start = System.currentTimeMillis();
-		count = 0;
+		sCount = 0;
 		
-		processTx(pendingInsertTx, TxType.INSERT);
-		processTx(pendingUpdateTx, TxType.UPDATE);
-		processTx(pendingDeleteTx, TxType.DELETE);
-
-		Preferences.saveLong(Preferences.KEY_BOB_ID, BusinessObjectBase.getIdCount());
+		processTx(sPendingInsertTx, TxType.INSERT);
+		processTx(sPendingUpdateTx, TxType.UPDATE);
+		processTx(sPendingDeleteTx, TxType.DELETE);
 		
 		// Reset pending transaction list
-		pendingInsertTx.clear();
-		pendingUpdateTx.clear();
-		pendingDeleteTx.clear();
-		pendingCache.clear();
+		sPendingInsertTx.clear();
+		sPendingUpdateTx.clear();
+		sPendingDeleteTx.clear();
+		sPendingCache.clear();
 		
-		Log.i(TAG, "Processed " + count + " records in " + (System.currentTimeMillis() - start) + " ms");
+		EventBus.getDefault().post(new EventMessage().new DatabaseSaveEvent());
+		Log.i(TAG, "Processed " + sCount + " records in " + (System.currentTimeMillis() - start) + " ms");
 	}
 	
 	/**
@@ -81,27 +101,11 @@ public class DataController {
 	@SuppressWarnings("unchecked")
 	private static synchronized void processTx(Map<Class<?>, List<Object>> pendingTx, TxType type) {
 		
-		if (pendingTx.keySet().size() == 0)
+		if (pendingTx.keySet().size() == 0) {
 			return;
+		}
 		
-		Class<?>[] objectOrder = new Class<?>[] {
-			AccountType.class,
-			AccountTypeGroup.class,
-			Bank.class,
-			BankAccount.class,
-			BankAccountBalance.class,
-			BudgetItem.class,
-			Category.class,
-			CategoryType.class,
-			Institution.class,
-			Location.class,
-			Tag.class,
-			TagInstance.class,
-			Transactions.class,
-			BusinessObjectBase.class
-		};
-		
-		for (Class<?> key : objectOrder) {
+		for (Class<?> key : sObjectOrder) {
 			
 		    List<Object> entities = pendingTx.get(key);
 		    
@@ -109,8 +113,9 @@ public class DataController {
 			    
 			    AbstractDao<Object, Long> dao = (AbstractDao<Object, Long>) getDao(key);
 			    
-			    for (Object object : entities)
+			    for (Object object : entities) {
 			    	((BusinessObject) object).willSave(type == TxType.DELETE);
+			    }
 			    
 			    try {
 			    	
@@ -126,11 +131,13 @@ public class DataController {
 						break;
 				    }
 				    
-			    } catch (Exception ex) {
+			    } catch (DaoException ex) {
 			    	Log.e(TAG, "Error processing transaction", ex);
-			    }
+			    } catch (SQLiteConstraintException ex) {
+                    Log.e(TAG, "Error processing transaction", ex);
+                }
 			    
-			    count += entities.size();
+			    sCount += entities.size();
 		    }
 		}
 	}
@@ -183,9 +190,15 @@ public class DataController {
 	}
 	
 	public static void update(Object object) {
-		
+
 		addTransaction(object, TxType.UPDATE);
 	}
+    
+    public static void softDelete(Object object) {
+
+        ((BusinessObject) object).setDeleted(true);
+        addTransaction(object, TxType.UPDATE);
+    }
 	
 	public static void delete(Object object) {
 		
@@ -207,41 +220,44 @@ public class DataController {
 	 */
 	private static void addTransaction(Object object, String guid, TxType type) {
 		
-		if (object == null)
+		if (object == null) {
 			return;
+		}
 		
 		Class<?> key = object.getClass();
 		
 		if (!object.getClass().equals(BusinessObjectBase.class)) {
 
-			if (guid == null)
+			if (guid == null) {
 				guid = ((BusinessObject) object).getExternalId();
+			}
 			
 			String keyId = key.getName() + guid;
-			pendingCache.put(keyId, object);
+			sPendingCache.put(keyId, object);
 		}
 		
 		List<Object> list = null;
 		Map<Class<?>, List<Object>> pendingTx = null;
 		
 		switch (type) {
-		case INSERT:
-			pendingTx = pendingInsertTx;
-			break;
-		case UPDATE:
-			pendingTx = pendingUpdateTx;
-			break;
-		case DELETE:
-			pendingTx = pendingDeleteTx;
-			break;
+    		case INSERT:
+    			pendingTx = sPendingInsertTx;
+    			break;
+    		case UPDATE:
+    			pendingTx = sPendingUpdateTx;
+    			break;
+    		case DELETE:
+    			pendingTx = sPendingDeleteTx;
+    			break;
 		}
 		
 		if (pendingTx != null) {
 			
 			list = getList(key, pendingTx);
 			
-			if (!list.contains(object))
+			if (!list.contains(object)) {
 				list.add(object);
+			}
 		}
 	}
 	
@@ -275,7 +291,7 @@ public class DataController {
 	 */
 	public static Object checkCache(String id) {
 		
-		return pendingCache.get(id);
+		return sPendingCache.get(id);
 	}
 	
 	/**

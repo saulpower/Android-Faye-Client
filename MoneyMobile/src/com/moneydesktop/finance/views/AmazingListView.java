@@ -64,6 +64,7 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        
         boolean result = super.onTouchEvent(ev);
         
         if (!mHeaderViewVisible) {
