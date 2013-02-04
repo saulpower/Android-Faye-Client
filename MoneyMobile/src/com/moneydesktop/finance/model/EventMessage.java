@@ -197,6 +197,18 @@ public class EventMessage {
        }
    }
    
+	public class CheckRemoveBankEvent extends EventMessage {
+		protected Bank mBank;
+		
+		public CheckRemoveBankEvent(Bank bank) {
+			this.mBank = bank;
+		}
+			       
+        public Bank getBank() {
+            return mBank;
+        }
+	}
+   
 	protected HashMap<String, Object> mInfo;
 	protected String mMessage;
 	

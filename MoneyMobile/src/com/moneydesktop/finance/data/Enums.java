@@ -116,7 +116,8 @@ public class Enums {
         ACCOUNT_SUMMARY(14),
         SPENDING_SUMMARY(15),
         BUDGET_SUMMARY(16),
-        TRANSACTION_SUMMARY(17);
+        TRANSACTION_SUMMARY(17),
+        ACCOUNT_SETTINGS(18);
         
         private final int index;
         

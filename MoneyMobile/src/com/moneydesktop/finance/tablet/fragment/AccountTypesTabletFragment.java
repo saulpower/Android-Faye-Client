@@ -30,7 +30,14 @@ import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.Bank;
+import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.database.BankAccountDao;
+import com.moneydesktop.finance.database.BankDao;
+import com.moneydesktop.finance.database.BusinessObjectBaseDao;
+import com.moneydesktop.finance.database.QueryProperty;
+import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.model.EventMessage;
+import com.moneydesktop.finance.model.EventMessage.CheckRemoveBankEvent;
 import com.moneydesktop.finance.model.EventMessage.RemoveAccountTypeEvent;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.model.EventMessage.BankStatusUpdateEvent;
@@ -46,9 +53,17 @@ import com.moneydesktop.finance.views.AnimatedListView.SlideExpandableListAdapte
 import de.greenrobot.event.EventBus;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AccountTypesTabletFragment extends BaseFragment implements FragmentVisibilityListener{
+	
+	private QueryProperty mBusinessObjectBaseTable = new QueryProperty(BusinessObjectBaseDao.TABLENAME, BankDao.Properties.BusinessObjectId, BusinessObjectBaseDao.Properties.Id);
+	private QueryProperty mBankAccountTable = new QueryProperty(BankAccountDao.TABLENAME, AccountTypeDao.Properties.BusinessObjectId, BankAccountDao.Properties.BusinessObjectId);
+	
+	private QueryProperty mWhereDataState = new QueryProperty(BusinessObjectBaseDao.TABLENAME, BusinessObjectBaseDao.Properties.DataState, "!= ?");
+	
     private ListView mListView;
     private static SlidingDrawerRightSide sRightDrawer;
     private View mFooter;
@@ -98,20 +113,33 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	    mActivity.updateNavBar(getResources().getString(R.string.title_activity_accounts));
 	    
 	    mPanelLayoutHolder = (LinearLayout)mRoot.findViewById(R.id.panel_layout_holder);
-        
-		AccountTypeDao accountDAO = ApplicationContext.getDaoSession().getAccountTypeDao();
-		
-        List<AccountType> accountTypes = accountDAO.loadAll();
+        	    
+	    AccountTypeDao accountTypeDAO = ApplicationContext.getDaoSession().getAccountTypeDao();
+		BankAccountDao bankAccountDAO = ApplicationContext.getDaoSession().getBankAccountDao();
+			    
+	    List<AccountType> allAccountTypes = accountTypeDAO.loadAll();
+	    
         mAccountTypesFiltered = new ArrayList<AccountType>();
         
+        List<BankAccount> bankAccountList = bankAccountDAO.loadAll();
+        Set<AccountType> set = new HashSet<AccountType>();
         
-        for (AccountType type : accountTypes) {  //This  could be optimized by throwing a "where" in the query builder
+	    if (bankAccountList.isEmpty()) {
+	    	allAccountTypes = new ArrayList<AccountType>() ;
+	    } else {
+	    	for (BankAccount bankAccount : bankAccountList) {
+	    		if (bankAccount.getAccountType() != null) {
+	    			set.add(bankAccount.getAccountType());
+	    		}
+	    	}
+	    }
+        
+        for (AccountType type : set) {  //This  could be optimized by throwing a "where" in the query builder
         	if (!type.getBankAccounts().isEmpty() && !type.getAccountTypeName().equals("Unknown")) {
         	    mAccountTypesFiltered.add(type);
         	}
         }
-
-        
+            
         if (!mAccountTypesFiltered.isEmpty()) {        	
             mListView.addFooterView(mFooter);
             
@@ -122,8 +150,6 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                     mAccountTypesFiltered);
             
             
-         
-            
             mAdapter = new SlideExpandableListAdapter(
                     mAdapter1, 
                     R.id.account_type_group_container, 
@@ -133,13 +159,10 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
             
             //this animates and sets the ChildView
             mListView.setAdapter(mAdapter);
-            
-            
-            
         } else {
         	Toast.makeText(mActivity, "No Accounts types that have bank accounts...show empty state", Toast.LENGTH_SHORT).show();
         }
-
+           
         
         //This allows you to grab the panel and close it by touching and dragging on any part of the panel instead of just the handle
         mPanelLayoutHolder.setOnTouchListener(new View.OnTouchListener() {			
@@ -147,7 +170,6 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 				return true;
 			}
 		});
-
         
         prepPanel();
 	}
@@ -214,20 +236,41 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	 * @param panelLayoutHolder -- the panel container
 	 */
 	private void initializeDrawer () {
-	    mBankList = ApplicationContext.getDaoSession().getBankDao().loadAll();
-	    mBanksForDeletion = new ArrayList<Bank>();
 	    
+	    getAllBanks(); 
+	    
+	    mBanksForDeletion = new ArrayList<Bank>();
+	   
 		mPanelLayoutHolder.addView(getPanelHeader());
 
+		List<Bank> bankList = new ArrayList<Bank>(mBankList);
+		
+		for (Bank bank : bankList) {
+			if (bank.getBankAccounts().isEmpty()) {
+				mBankList.remove(bank);
+			}
+		}
+		
         //For every bank that is attached, add it to the Drawer
         for (Bank bank : mBankList) {
             //create the view to be attached to Drawer
-            mPanelLayoutHolder.addView(populateDrawerView(bank));
+        	//if (!bank.getBankAccounts().isEmpty()) {
+        		mPanelLayoutHolder.addView(populateDrawerView(bank));
+        	//} 
         }
         if (User.getCurrentUser().getCanSync()) {
             updateAllBankStatus();
         }
     }
+
+	private void getAllBanks() {
+		BankDao bankDao = ApplicationContext.getDaoSession().getBankDao();
+		PowerQuery query = new PowerQuery(bankDao);
+	    
+	    query.join(mBusinessObjectBaseTable).where(mWhereDataState, "3");
+	    	    
+	    mBankList = bankDao.queryRaw(query.toString(), query.getSelectionArgs());
+	}
 
 	/**
 	 * Adds the header Text to the panel
@@ -245,27 +288,18 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
      * @param event
      */
     public void onEvent(SyncEvent event) {
-        
-        for (Bank bank : mBanksForDeletion) {
-            bank.setDeleted(true);
-        }
-        
+
         if (event.isFinished()) {
             
             int i = 0;
             for (Bank bank : mBankList) {
-
-                if (!bank.isDeleted()) {
-
-                    i++;
-                    View bankView = mPanelLayoutHolder.getChildAt(i); 
-                
-                    ImageView status = (ImageView) bankView.findViewById(R.id.bank_status);
-                    
-                    setBanner(bank, status);
-                }
+                i++;
+                if (!bank.getBankAccounts().isEmpty()) {
+	                View bankView = mPanelLayoutHolder.getChildAt(i); 
+	                ImageView status = (ImageView) bankView.findViewById(R.id.bank_status);
+	                setBanner(bank, status);
+            	}
             }
-            
             updateAllBankStatus();
         }
     }
@@ -287,7 +321,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                     i++;
                     View bankView = mPanelLayoutHolder.getChildAt(i);
                     
-                    if (bankIterator.getBankName().equals(bank.getBankName())) {
+                    if (bankIterator.getBankName().equals(bank.getBankName()) && !bank.getBankAccounts().isEmpty()) {
                         ImageView status = (ImageView) bankView.findViewById(R.id.bank_status);
                         
                         if (status != null) {
@@ -328,7 +362,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         int i = 0;
         for (Bank bank : mBankList) {
 
-            if (!bank.isDeleted()) {
+            if (!bank.isDeleted() && !bank.getBankAccounts().isEmpty()) {
 
                 i++;
                 View bankView = mPanelLayoutHolder.getChildAt(i); 
@@ -520,8 +554,8 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                                 bank.softDeleteSingle();
                                 
                                 //start the sync
-//                                Intent intent = new Intent(getActivity(), SyncService.class);
-//                                getActivity().startService(intent);
+                                Intent intent = new Intent(getActivity(), SyncService.class);
+                                getActivity().startService(intent);
                                 
                                 //remove bank from view
                                 panelView.removeView(v);
@@ -542,8 +576,36 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
    
     public void onEvent(RemoveAccountTypeEvent event) {        
         final AccountType accountType = event.getAccountType();
-        mAccountTypesFiltered.remove(accountType);
+        if (!mAccountTypesFiltered.isEmpty()){
+	        mAccountTypesFiltered.remove(accountType);
+        }
         mAdapter1.notifyDataSetChanged();
+    }
+    
+    public void onEvent(CheckRemoveBankEvent event) {        
+    	Bank bankForRemoval = event.getBank();
+    	int i = 0;
+        for (Bank bank : mBankList) {
+        	i++;
+        	View bankView = mPanelLayoutHolder.getChildAt(i); 
+        	
+        	//check to see if size is 1. this means that there is only 1 account left, and its in the process of being deleted, so remove the bank too.
+        	if (bank.getBankAccounts().size() == 1 && bank.getBankName().equals(bankForRemoval.getBankName())) {
+        		mBanksForDeletion.add(bank);
+        			if (mBanksForDeletion.contains(bank)) {
+	                    mBankList.remove(bank);
+	                }
+	                
+	                bank.softDeleteSingle();
+	       		
+	                //start the sync
+	                Intent intent = new Intent(getActivity(), SyncService.class);
+	                getActivity().startService(intent);
+	                
+	                //remove bank from view
+	                mPanelLayoutHolder.removeView(bankView);
+        	}
+        }
     }
     
 	protected void updateChildAccountsList(Bank bank) {

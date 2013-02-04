@@ -293,7 +293,6 @@ public abstract class BusinessObject implements BusinessObjectInterface {
     	// Object exists, delete it
     	else if (object != null && delete) {
     		
-    		object.getBusinessObjectBase().deleteBatch();
     		object.deleteBatch();
     		
     		return null;

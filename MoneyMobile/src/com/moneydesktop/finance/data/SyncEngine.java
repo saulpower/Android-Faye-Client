@@ -144,6 +144,7 @@ public class SyncEngine {
 			bankStatusTimer.removeCallbacks(bankStatusTask);
 			bankStatusTimer = null;
 		}
+		//DataController.save();
 	}
 	
 	private void bankStatusTimerFired() {
@@ -323,7 +324,7 @@ public class SyncEngine {
 		JSONObject records = new JSONObject();
 
         if (deleted.length() > 0) {
-            deleted.put(Constant.KEY_DELETED, deleted);
+        	records.put(Constant.KEY_DELETED, deleted);
         }
         if (updated.length() > 0) {
             records.put(Constant.KEY_UPDATED, updated);

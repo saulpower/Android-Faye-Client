@@ -158,6 +158,8 @@
     <string name="intro_desc_2">You can print or email any transaction you want. \"Honey, why did you spend $112 at the golf course? Did you lose a bet?\" Sorry boys, now your wife knows everything.</string>
     <string name="intro_desc_3">Keep your side biz separate from your personal stuff by tagging transaction as business expenses (\"B\") or personal expenses (\"P\"). Some call it OCD. We call it organization. You\'re welcome.</string>
     <string name="intro_desc_4">You can email any report to whomeever you like. Want to show your husband how much money he spent at Home Depot this month? Just email him a copy of the Spending by Payee report. Now he\'s got nowhere to hide.</string>
+	<string name="label_account_name">Account Name</string>
+	<string name="label_account_type">Account Type</string>
     <string name="label_amount">Amount</string>
     <string name="label_app_lock">APP LOCK</string>
     <string name="label_category">Category</string>
@@ -193,6 +195,7 @@
     <string name="nag_bank">MoneyDesktop is a free service offered through hundreds of leading financial institutions\' Online Banking. If your institution doesn\'t currently offer MoneyDesktop, please let us know by submitting a request below.</string>
     <string name="need_account">You need a MoneyDesktop account to use MoneyMobile.</string>
     <string name="panel_title">MY INSTITUTIONS</string>
+    <string name="save">Save</string>
     <string name="setup_url">http://embed.moneydesktop.com/setup-instructions.html</string>
     <string name="setting_feedback_title">Feedback</string>
     <string name="setting_feedback_text">Tell us what we\'re doing wrong, or right. Don\'t hold back we can take it.</string>
@@ -220,6 +223,7 @@
     <string name="thank_you">Thank you for your interest in MoneyDesktop.</string>
     <string name="try_demo">Your request has been submitted. Try out demo mode to see what MoneyDesktop has to offer.</string>
     <string name="text_syncing">Syncing Data&#8230;</string>
+    <string name="title_activity_account_settings">Account Settings</string>
     <string name="title_activity_accounts">Accounts</string>
     <string name="title_activity_budget">Budgets</string>
     <string name="title_activity_dashboard">Financial Dashboard</string>

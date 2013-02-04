@@ -120,7 +120,6 @@ public abstract class AbstractSlideExpandableListAdapter extends BaseAdapter{
 	 */
 	public abstract View getExpandToggleButton(View parent);
 	
-	
 	/**
 	 * This method is used to get the view that will be hidden
 	 * initially and expands or collapse when the ExpandToggleButton
@@ -139,26 +138,26 @@ public abstract class AbstractSlideExpandableListAdapter extends BaseAdapter{
 	public abstract View getExpandableView(View parent);
 
 	public void enableFor(View parent, int position) {
-		View more = getExpandToggleButton(parent);
+		View toggleButton = getExpandToggleButton(parent);
 		
-		HorizontalScrollView itemToolbar = (HorizontalScrollView)getExpandableView(parent);
+		HorizontalScrollView horizontalScrollContainer = (HorizontalScrollView)getExpandableView(parent);
         AccountTypeChildView accountTypeChildView = new AccountTypeChildView(mContext, mAccountTypesFiltered.get(position).getBankAccounts(), parent);
-        itemToolbar.addView(accountTypeChildView);
+        horizontalScrollContainer.addView(accountTypeChildView);
         
         if (User.getCurrentUser().getCanSync()) {
             EventBus.getDefault().post(new EventMessage().new ReloadBannersEvent());
         }
         
-		enableFor(more, itemToolbar, position);
+		enableFor(toggleButton, horizontalScrollContainer, position);
 	}
 	
-	public static void enableFor(View button, final View target, final int position) {
+	public static void enableFor(View button, final View horizontalScrollContainer, final int position) {
 	    button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				view.setAnimation(null);
-				int type = target.getVisibility() == View.VISIBLE ? ExpandCollapseAnimation.COLLAPSE : ExpandCollapseAnimation.EXPAND;
-				Animation anim = new ExpandCollapseAnimation(target, 330, type);
+				int type = horizontalScrollContainer.getVisibility() == View.VISIBLE ? ExpandCollapseAnimation.COLLAPSE : ExpandCollapseAnimation.EXPAND;
+				Animation anim = new ExpandCollapseAnimation(horizontalScrollContainer, 330, type);
 				((TextView)view.findViewById(com.moneydesktop.finance.R.id.account_type_group_indicator)).setText(mContext.getResources().getString(com.moneydesktop.finance.R.string.account_types_indicator_show));
 				if(type == ExpandCollapseAnimation.EXPAND) {	
 					((TextView)view.findViewById(com.moneydesktop.finance.R.id.account_type_group_indicator)).setText(mContext.getResources().getString(com.moneydesktop.finance.R.string.account_types_indicator_hide));
@@ -168,8 +167,6 @@ public abstract class AbstractSlideExpandableListAdapter extends BaseAdapter{
 
 		});
 		// ensure the target is currently not visible
-		target.setVisibility(View.GONE);
+	    horizontalScrollContainer.setVisibility(View.GONE);
 	}
-
-	
 }
