@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.tablet.fragment;
+package com.moneydesktop.finance.model;
 
 import android.app.Activity;
 

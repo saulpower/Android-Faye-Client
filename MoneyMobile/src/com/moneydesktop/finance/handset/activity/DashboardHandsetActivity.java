@@ -148,6 +148,9 @@ public class DashboardHandsetActivity extends DashboardBaseActivity {
             case LOCK_SCREEN:
             	frag = LockFragment.newInstance(false);
             	break;
+            case TRANSACTIONS:
+                frag = TransactionsHandsetFragment.newInstance("0");
+                break;
         	default:
         	    break;
         }
@@ -157,7 +160,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity {
 	
 	public class FragmentAdapter extends FragmentStatePagerAdapter {
         
-        private final int COUNT = 5;
+        private final int COUNT = 6;
         
         public FragmentAdapter(FragmentManager fm) {
             super(fm);

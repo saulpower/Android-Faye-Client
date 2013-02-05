@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="120dip"
     android:layout_gravity="center_horizontal"
     android:layout_margin="10dip"
-    android:gravity="center_horizontal"
-    android:orientation="vertical" >
+    android:gravity="center_horizontal" >
 
     <ImageView
         android:id="@+id/bank_account_bankbook"    
@@ -32,5 +31,15 @@
         android:textColor="@color/gray7"
         android:gravity="center_vertical"
         android:maxLines="2" />
+
+    <ImageView
+        android:id="@+id/bank_status"
+        android:layout_width="75dip"
+        android:layout_height="75dip"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="4dip"
+        android:layout_marginRight="-2dip"
+        android:scaleType="fitXY"
+        android:layout_alignRight="@+id/bank_account_bankbook" />
 
 </RelativeLayout>

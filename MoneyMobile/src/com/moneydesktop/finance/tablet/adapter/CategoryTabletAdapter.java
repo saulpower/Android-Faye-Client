@@ -8,6 +8,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.UltimateAdapter;
 import com.moneydesktop.finance.database.Category;
@@ -44,7 +45,13 @@ public class CategoryTabletAdapter extends UltimateAdapter implements Filterable
             return null;
         }
         
-        return mFilteredData.get(groupPosition).second.get(childPosition);
+        Object object = null;
+        
+        if (childPosition < mFilteredData.get(groupPosition).second.size()) {
+            object = mFilteredData.get(groupPosition).second.get(childPosition);
+        }
+                
+        return object;
     }
 
     @Override
@@ -71,7 +78,15 @@ public class CategoryTabletAdapter extends UltimateAdapter implements Filterable
         
         Category category = (Category) getChild(section, position);
         
-        viewHolder.itemTitle.setText(category.getCategoryName());
+        if (category != null) {
+            viewHolder.subCategory.setVisibility(View.GONE);
+            viewHolder.itemTitle.setText(category.getCategoryName());
+            Fonts.applyPrimaryFont(viewHolder.itemTitle, 12);
+        } else {
+            viewHolder.subCategory.setVisibility(View.VISIBLE);
+            viewHolder.itemTitle.setText(ApplicationContext.getContext().getString(R.string.new_sub_category));
+            Fonts.applyPrimaryBoldFont(viewHolder.itemTitle, 12);
+        }
         
         return cell;
     }
@@ -82,6 +97,9 @@ public class CategoryTabletAdapter extends UltimateAdapter implements Filterable
         int size = mFilteredData.get(groupPosition).second.size();
         
         size = getLoadedAdjustment(size, groupPosition);
+        
+        // Add row for new sub categories
+        size++;
         
         return size;
     }
@@ -143,9 +161,8 @@ public class CategoryTabletAdapter extends UltimateAdapter implements Filterable
     
     private void applyFonts(CategoryViewHolder viewHolder) {
 
-        Fonts.applyGlyphFont(viewHolder.icon, 26);
+        Fonts.applyGlyphFont(viewHolder.icon, 34);
         Fonts.applyPrimaryBoldFont(viewHolder.title, 14);
-        Fonts.applyPrimaryFont(viewHolder.itemTitle, 12);
         Fonts.applyPrimarySemiBoldFont(viewHolder.subCategory, 12);
     }
 

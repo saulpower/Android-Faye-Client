@@ -1,22 +1,21 @@
 package com.moneydesktop.finance.views.AnimatedListView;
 
-import android.R;
 import android.content.Context;
 import android.database.DataSetObserver;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.Transformation;
-import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.BaseAdapter;
 import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.database.AccountType;
+import com.moneydesktop.finance.model.EventMessage;
+import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.views.AccountTypeChildView;
+
+import de.greenrobot.event.EventBus;
 
 import java.util.List;
 
@@ -28,11 +27,10 @@ import java.util.List;
  * @author tjerk
  * @date 6/9/12 4:41 PM
  */
-public abstract class AbstractSlideExpandableListAdapter implements ListAdapter {
+public abstract class AbstractSlideExpandableListAdapter extends BaseAdapter{
 	private ListAdapter wrapped;
 	private static Context mContext;
-	private static List<AccountType> mAccountTypesFiltered;
-	
+	private static List<AccountType> mAccountTypesFiltered;	
 
 	public AbstractSlideExpandableListAdapter(ListAdapter wrapped, Context context, List<AccountType> accountTypesFiltered) {
 		this.wrapped = wrapped;
@@ -121,7 +119,7 @@ public abstract class AbstractSlideExpandableListAdapter implements ListAdapter 
 	 * @return a child of parent which is a button
 	 */
 	public abstract View getExpandToggleButton(View parent);
-
+	
 	/**
 	 * This method is used to get the view that will be hidden
 	 * initially and expands or collapse when the ExpandToggleButton
@@ -140,35 +138,35 @@ public abstract class AbstractSlideExpandableListAdapter implements ListAdapter 
 	public abstract View getExpandableView(View parent);
 
 	public void enableFor(View parent, int position) {
-		View more = getExpandToggleButton(parent);
+		View toggleButton = getExpandToggleButton(parent);
 		
-		HorizontalScrollView itemToolbar = (HorizontalScrollView)getExpandableView(parent);
+		HorizontalScrollView horizontalScrollContainer = (HorizontalScrollView)getExpandableView(parent);
         AccountTypeChildView accountTypeChildView = new AccountTypeChildView(mContext, mAccountTypesFiltered.get(position).getBankAccounts(), parent);
-        itemToolbar.addView(accountTypeChildView);
+        horizontalScrollContainer.addView(accountTypeChildView);
         
-		enableFor(more, itemToolbar, position);
+        if (User.getCurrentUser().getCanSync()) {
+            EventBus.getDefault().post(new EventMessage().new ReloadBannersEvent());
+        }
+        
+		enableFor(toggleButton, horizontalScrollContainer, position);
 	}
-
 	
-	public static void enableFor(View button, final View target, final int position) {
+	public static void enableFor(View button, final View horizontalScrollContainer, final int position) {
 	    button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				view.setAnimation(null);
-				int type = target.getVisibility() == View.VISIBLE ? ExpandCollapseAnimation.COLLAPSE : ExpandCollapseAnimation.EXPAND;
-				Animation anim = new ExpandCollapseAnimation(target, 330, type);
+				int type = horizontalScrollContainer.getVisibility() == View.VISIBLE ? ExpandCollapseAnimation.COLLAPSE : ExpandCollapseAnimation.EXPAND;
+				Animation anim = new ExpandCollapseAnimation(horizontalScrollContainer, 330, type);
 				((TextView)view.findViewById(com.moneydesktop.finance.R.id.account_type_group_indicator)).setText(mContext.getResources().getString(com.moneydesktop.finance.R.string.account_types_indicator_show));
-				if(type == ExpandCollapseAnimation.EXPAND) {				    
-					lastOpen = target;
+				if(type == ExpandCollapseAnimation.EXPAND) {	
 					((TextView)view.findViewById(com.moneydesktop.finance.R.id.account_type_group_indicator)).setText(mContext.getResources().getString(com.moneydesktop.finance.R.string.account_types_indicator_hide));
-				} else if(lastOpen == view) {
-					lastOpen = null;
 				}
 				view.startAnimation(anim);
 			}
+
 		});
 		// ensure the target is currently not visible
-		target.setVisibility(View.GONE);
+	    horizontalScrollContainer.setVisibility(View.GONE);
 	}
-
 }

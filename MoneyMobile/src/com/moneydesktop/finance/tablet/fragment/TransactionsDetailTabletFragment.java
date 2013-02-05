@@ -20,6 +20,7 @@ import com.moneydesktop.finance.database.Tag;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.shared.DashboardBaseActivity;
 import com.moneydesktop.finance.shared.TransactionDetailBaseFragment;
+import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
 import com.moneydesktop.finance.util.Fonts;
 
@@ -60,6 +61,10 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
 
         mRoot = inflater.inflate(R.layout.tablet_transaction_detail_view, null);
         initialize();
+        
+        if (mActivity instanceof DropDownTabletActivity) {
+            ((DropDownTabletActivity) mActivity).setEditText(mPayee);
+        }
         
         mRoot.setSoundEffectsEnabled(false);
         mRoot.setOnClickListener(new OnClickListener() {

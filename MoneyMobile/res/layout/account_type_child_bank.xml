@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
     android:id="@+id/account_type_child_bank_container"
-    android:layout_width="200dip"
-    android:layout_height="200dip" >
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dip" >
 
     <ImageView
-        android:layout_width="200dip"
-        android:layout_height="200dip"
+        android:layout_width="182dip"
+        android:layout_height="186dip"
         android:src="@drawable/tablet_accounts_bookbacking" />
+    
 
     <LinearLayout
-        android:layout_width="200dip"
+        android:id="@+id/account_type_child_booklet_reference"
+        android:layout_width="163dip"
         android:layout_height="200dip"
         android:orientation="vertical"
         android:weightSum="1" >
@@ -19,8 +22,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="35dip"
-            android:layout_weight="0.2"
+            android:layout_marginLeft="30dip"
+            android:layout_weight="0.13"
             android:gravity="center_vertical" >
 
             <ImageView
@@ -34,26 +37,27 @@
             android:id="@+id/tablet_account_type_bank_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="35dip"
-            android:layout_marginRight="30dip"
+            android:layout_marginLeft="30dip"
+            android:layout_marginRight="20dip"
             android:layout_weight="0.1"
             android:gravity="center_vertical"
             android:maxLines="1"
             android:textColor="@color/black" />
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="168dp"
+            android:layout_height="49dp"
             android:layout_marginLeft="10dip"
-            android:layout_marginRight="30dip"
-            android:layout_weight="0.25"
+            android:layout_marginRight="20dip"
+            android:layout_marginTop="5dip"
+            android:layout_weight="0.01"
             android:gravity="center_vertical"
             android:orientation="horizontal" >
 
             <com.moneydesktop.finance.views.LineView
                 android:layout_width="wrap_content"
                 android:layout_height="55dip"
-                android:layout_marginLeft="25dip"
+                android:layout_marginLeft="20dip"
                 android:gravity="center_vertical"
                 app:dashLength="4dp"
                 app:isDashed="true"
@@ -68,15 +72,24 @@
                 android:layout_height="fill_parent"
                 android:layout_marginLeft="5dip"
                 android:gravity="center_vertical"
-                android:textSize="22dip" />
+                android:textSize="20dip" />
         </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dip"
+            android:layout_marginLeft="20dip"
             android:layout_marginRight="30dip"
             android:layout_weight="0.35" />
     </LinearLayout>
+    
+    <ImageView
+        android:id="@+id/account_type_child_banner"
+        android:layout_width="100dip"
+        android:layout_height="100dip"
+        android:layout_alignRight="@id/account_type_child_booklet_reference"
+        android:visibility="gone"
+        android:layout_marginRight="-11dip"
+        android:layout_marginTop="-6dip" />
 
-</FrameLayout>
+</RelativeLayout>

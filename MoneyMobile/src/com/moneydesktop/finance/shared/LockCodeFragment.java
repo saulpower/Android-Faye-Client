@@ -8,17 +8,18 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.data.Enums.LockType;
+import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.handset.activity.LockCodeHandsetActivity;
+import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.LockCodeView;
 import com.moneydesktop.finance.views.LockCodeView.ProcessCodeListener;
@@ -76,15 +77,11 @@ public class LockCodeFragment extends BaseFragment implements ProcessCodeListene
         
         setupViews();
         
+        if (mActivity instanceof DropDownTabletActivity) {
+            ((DropDownTabletActivity) mActivity).setEditText(mLockCode1.getCurrentField());
+        }
+        
         return mRoot;
-	}
-	
-	@Override
-	public void onResume() {
-	    super.onResume();
-
-//        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-//        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
 	}
 	
 	@Override

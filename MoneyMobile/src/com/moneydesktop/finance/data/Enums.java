@@ -71,7 +71,7 @@ public class Enums {
         BUDGET_SUMMARY(16),
         TRANSACTION_SUMMARY(17),
         TRANSACTIONS_SUMMARY_TABLET (18);
-        
+        ACCOUNT_SETTINGS(19);
         private final int index;
         
         FragmentType(int index) {
@@ -105,8 +105,6 @@ public class Enums {
                 return BUDGET_SUMMARY;
             case 17:
                 return TRANSACTION_SUMMARY;
-            case 18:
-                return TRANSACTIONS_SUMMARY_TABLET;
             }
             
             return null;

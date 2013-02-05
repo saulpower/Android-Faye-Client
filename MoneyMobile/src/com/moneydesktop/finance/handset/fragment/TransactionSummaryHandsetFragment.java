@@ -15,16 +15,10 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
-import com.moneydesktop.finance.model.BarViewModel;
 import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.views.BarGraphView;
 import com.moneydesktop.finance.views.BarView;
-import com.moneydesktop.finance.views.BasicBarChartAdapter;
 
-import java.text.FieldPosition;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -119,31 +113,35 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
     }
 
     private void setupBarGraphView(View v) {
-        List<Double[]> data = Transactions.get30DayExpenseTotals(new Date());
+        List<Double[]> data = Transactions.get30DayExpenseTotals();
         double max = 0;
         for(int i = 0; i < data.size(); i++){
             if(data.get(i)[1] > max){
                 max = data.get(i)[1];
             }
         }
-
-        BarGraphView l = (BarGraphView) v.findViewById(R.id.daily_spending_graph);
-        ArrayList<BarViewModel> barList = new ArrayList<BarViewModel>();
-        SimpleDateFormat format = new SimpleDateFormat("dd");
+        
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
+        cal.set(Calendar.HOUR_OF_DAY,0);
+        cal.set(Calendar.HOUR, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.add(Calendar.DAY_OF_YEAR, -30);
+        LinearLayout l = (LinearLayout) v.findViewById(R.id.daily_spending_graph);
+        
         for(int c = 0; c < data.size(); c++){
                 if( data.get(c)[1] > 0){
-                    StringBuffer date = new StringBuffer();
-                    date = format.format(data.get(c)[0],date,new FieldPosition(0));
-                    barList.add(new BarViewModel(date.toString(),data.get(c)[1],max));
-                }              
+                    BarView b = new BarView(getActivity(), Integer.toString(data.get(c)[0].intValue()),
+                            data.get(c)[1], max);
+                    LayoutParams layout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 1);
+                    b.setLayoutParams(layout);
+                    l.addView(b);
+                }
             }
-
-            BasicBarChartAdapter adapter = new BasicBarChartAdapter(barList);
-            l.setMax(max);
-            l.setAdapter(adapter);
-            l.setLabel(true);
-            l.setLabelFontSize(8);
-            
+            cal.add(Calendar.DAY_OF_YEAR, 1);
         }
 
     @Override

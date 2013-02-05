@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -143,6 +144,7 @@ public class SyncEngine {
 			bankStatusTimer.removeCallbacks(bankStatusTask);
 			bankStatusTimer = null;
 		}
+		//DataController.save();
 	}
 	
 	private void bankStatusTimerFired() {
@@ -155,17 +157,20 @@ public class SyncEngine {
 					
 					List<Bank> updatingCopy = new ArrayList<Bank>();
 					
+					updatingCopy = Arrays.asList(new Bank[banksUpdating.size()]);  
+					
 					Collections.copy(updatingCopy, banksUpdating);
 					
-					for (int i = 0; i < banksUpdating.size(); i++) {
+					for (int i = updatingCopy.size() -1; i >= 0; i--) {
 						
 						Bank bank = updatingCopy.get(i);
 						
 						JSONObject json = DataBridge.sharedInstance().getBankStatus(bank.getBankId());
 						bank.updateStatus(json);
 						
-						if (bank.getProcessStatus() >= 3)
+						if (bank.getProcessStatus().intValue()  >= 3)
 							banksUpdating.remove(i);
+						    eventBus.post(new EventMessage().new BankStatusUpdateEvent(bank));
 					}
 					
 					if (banksUpdating.size() == 0) {
@@ -176,7 +181,8 @@ public class SyncEngine {
 							public void run() {
 
 								endBankStatusTimer();
-								beginSync();
+								//Kent: I commented this out because it was causing a eternal loop in the AccountTypesTabletFragment
+								//beginSync();
 							}
 						});
 					}
@@ -318,7 +324,7 @@ public class SyncEngine {
 		JSONObject records = new JSONObject();
 
         if (deleted.length() > 0) {
-            deleted.put(Constant.KEY_DELETED, deleted);
+        	records.put(Constant.KEY_DELETED, deleted);
         }
         if (updated.length() > 0) {
             records.put(Constant.KEY_UPDATED, updated);

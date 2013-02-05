@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -25,10 +24,11 @@ import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.EventMessage;
-import com.moneydesktop.finance.shared.DashboardBaseActivity;
 import com.moneydesktop.finance.shared.LockFragment;
 import com.moneydesktop.finance.shared.TransactionController;
 import com.moneydesktop.finance.shared.TransactionController.ParentTransactionInterface;
+import com.moneydesktop.finance.tablet.fragment.AccountSettingsTabletFragment;
+import com.moneydesktop.finance.tablet.activity.DialogActivity.OnKeyboardStateChangeListener;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment.onBackPressedListener;
 import com.moneydesktop.finance.tablet.fragment.TransactionsPageTabletFragment;
@@ -36,19 +36,32 @@ import com.moneydesktop.finance.util.Fonts;
 
 import de.greenrobot.event.EventBus;
 
-public class DropDownTabletActivity extends DashboardBaseActivity implements onBackPressedListener, ParentTransactionInterface {
+public class DropDownTabletActivity extends DialogActivity implements onBackPressedListener, ParentTransactionInterface, OnKeyboardStateChangeListener {
     
     public final String TAG = this.getClass().getSimpleName();
     
     private FragmentType mIndex = FragmentType.LOCK_SCREEN;
     
     private TextView mLabel, mArrow;
-    private RelativeLayout mRoot, mDropdown;
+    private RelativeLayout mRoot, mDropdown, mDetailContainer;
     private LinearLayout mContainer;
     private Animation mIn, mOut;
     private TransactionController mBase;
     private int mOffset = 0;
+    private View mEditText;
     
+    public View getEditText() {
+        return mEditText;
+    }
+
+    public void setEditText(View mEditText) {
+        this.mEditText = mEditText;
+        
+        if (isKeyboardShowing()) {
+            adjustViewForKeyboard();
+        }
+    }
+
     @Override
     public void onFragmentAttached(BaseFragment fragment) {
         super.onFragmentAttached(fragment);
@@ -72,6 +85,8 @@ public class DropDownTabletActivity extends DashboardBaseActivity implements onB
         super.onCreate(savedInstanceState);
         
         setContentView(R.layout.tablet_dropdown_view);
+        
+        setKeyboardStateChangeListener(this);
         
         // Set dialog window to fill entire screen
         LayoutParams params = getWindow().getAttributes();
@@ -145,7 +160,6 @@ public class DropDownTabletActivity extends DashboardBaseActivity implements onB
             
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "root clicked");
                 dismissDropdown();
             }
         });
@@ -171,7 +185,6 @@ public class DropDownTabletActivity extends DashboardBaseActivity implements onB
             
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "container clicked");
                 dismissDropdown();
             }
         });
@@ -180,10 +193,10 @@ public class DropDownTabletActivity extends DashboardBaseActivity implements onB
     private void setupTransactionDetail() {
         
         ImageView fakeCell = (ImageView) mRoot.findViewById(R.id.cell);
-        RelativeLayout container = (RelativeLayout) mRoot.findViewById(R.id.detail_container);
+        mDetailContainer = (RelativeLayout) mRoot.findViewById(R.id.detail_container);
         FrameLayout detail = (FrameLayout) mRoot.findViewById(R.id.detail_fragment);
         
-        mBase = new TransactionController(container, fakeCell, detail, mRoot.getPaddingTop());
+        mBase = new TransactionController(mDetailContainer, fakeCell, detail, mRoot.getPaddingTop());
         mBase.setDetailFragment(TransactionsDetailTabletFragment.newInstance());
         mBase.getDetailFragment().setListener(this);
 
@@ -234,6 +247,8 @@ public class DropDownTabletActivity extends DashboardBaseActivity implements onB
                 return LockFragment.newInstance(true);
             case TRANSACTIONS_PAGE:
                 return TransactionsPageTabletFragment.newInstance(this, getIntent());
+            case ACCOUNT_SETTINGS:
+            	return AccountSettingsTabletFragment.newInstance(getIntent());
             default:
                 finish();
         }
@@ -261,6 +276,10 @@ public class DropDownTabletActivity extends DashboardBaseActivity implements onB
                 mArrow.setVisibility(View.INVISIBLE);
                 setupTransactionDetail();
                 break;
+            case ACCOUNT_SETTINGS:
+            	configureSize(0.6f, 0.7f);
+                mLabel.setVisibility(View.VISIBLE);
+                mArrow.setVisibility(View.INVISIBLE);
             default:
                 break;
         }
@@ -291,4 +310,15 @@ public class DropDownTabletActivity extends DashboardBaseActivity implements onB
         mBase.parentOnActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    public void keyboardStateDidChange(boolean isShowing) {
+        
+        if (isShowing && mEditText != null) {
+            adjustViewForKeyboard();
+        }
+    }
+    
+    private void adjustViewForKeyboard() {
+        makeViewVisible(mEditText, (mBase != null && mBase.isShowing()) ? mDetailContainer : mDropdown);
+    }
 }

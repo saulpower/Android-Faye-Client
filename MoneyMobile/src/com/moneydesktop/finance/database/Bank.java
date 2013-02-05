@@ -446,7 +446,7 @@ public class Bank extends BusinessObject  {
     	
     	JSONObject json = new JSONObject();
     	
-    	if (getBusinessObjectBase().getDataStateEnum() == DataState.DATA_STATE_DELETED) {
+    	if (getDataStateEnum() == DataState.DATA_STATE_DELETED) {
     		
     		json.put(Constant.KEY_GUID, getBankId());
     		

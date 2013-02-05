@@ -16,6 +16,7 @@ public class DatabaseDefaults {
 		SQLiteDatabase db = ApplicationContext.getDb();
 		
 		DaoMaster.dropAllTables(db, true);
+		ApplicationContext.startNewDatabaseSession();
 		DaoMaster.createAllTables(db, true);
 	}
 	

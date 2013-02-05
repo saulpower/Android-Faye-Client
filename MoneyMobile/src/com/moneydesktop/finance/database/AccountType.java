@@ -286,7 +286,7 @@ public class AccountType extends BusinessObject  {
     	
     	AccountTypeDao atDao = ApplicationContext.getDaoSession().getAccountTypeDao();
     	
-    	List<AccountType> accountTypes = atDao.queryBuilder().where(Properties.AccountTypeId.eq(accountTypeId)).list();
+    	List<AccountType> accountTypes = atDao.queryBuilder().where(Properties.Id.eq(accountTypeId)).list();
     	
     	if (accountTypes.size() > 0)
     		accountType = accountTypes.get(0);
