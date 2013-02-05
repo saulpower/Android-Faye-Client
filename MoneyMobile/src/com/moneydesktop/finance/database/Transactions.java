@@ -773,7 +773,7 @@ public class Transactions extends BusinessObject  {
         return "S";
     }
 
-    public static List<Double[]> get30DayExpenseTotals() {
+    public static List<Double[]> get30DayExpenseTotals(Date end) {
         CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
         Set<Long> catIDs = new HashSet<Long>();
         List<Category> cats = cat.loadAll();
@@ -795,10 +795,9 @@ public class Transactions extends BusinessObject  {
         cal.setTime(new Date());
         cal.add(Calendar.DAY_OF_YEAR, -30);
         Date start = cal.getTime();
-        Date now = new Date();
         Cursor cursor = db.rawQuery(query, new String[] {
 
-                Long.toString(start.getTime()), Long.toString(now.getTime())
+                Long.toString(start.getTime()), Long.toString(end.getTime())
         });
         cursor.moveToFirst();
         List<Double[]> retVal = new ArrayList<Double[]>();
@@ -811,7 +810,83 @@ public class Transactions extends BusinessObject  {
         }
         return retVal;
     }
+    public static List<Double[]> getMonthlyExpenseTotals(Date end) {
+        CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
+        Set<Long> catIDs = new HashSet<Long>();
+        List<Category> cats = cat.loadAll();
+        for (int i = 0; i < cats.size(); i++) {
+            if (isCategoryIncome(cats.get(i))) {
+                catIDs.add(cats.get(i).getId());
+            }
+        }
+        String SQLQuery = new String();
+        Iterator<Long> iter = catIDs.iterator();
+        while (iter.hasNext()) {
 
+            SQLQuery = SQLQuery.toString() + "CATEGORY_ID != " + iter.next() + " AND ";
+        }
+        SQLQuery = SQLQuery.substring(0, (SQLQuery.length() - 4));
+        String query = String.format(Constant.QUERY_MONTHLY_TRANSACTIONS, SQLQuery);
+        SQLiteDatabase db = ApplicationContext.getDb();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.YEAR, -1);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        Date start = cal.getTime();
+        Cursor cursor = db.rawQuery(query, new String[] {
+
+                Long.toString(start.getTime()), Long.toString(end.getTime())
+        });
+        cursor.moveToFirst();
+        List<Double[]> retVal = new ArrayList<Double[]>();
+        while (cursor.isAfterLast() == false) {
+            Double[] d = new Double[2];
+            d[0] = cursor.getDouble(0);
+            d[1] = cursor.getDouble(1);
+            retVal.add(d);
+            cursor.moveToNext();
+        }
+        return retVal;
+    }
+    public static List<Double[]> getYearlyExpenseTotals(Date end) {
+        CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
+        Set<Long> catIDs = new HashSet<Long>();
+        List<Category> cats = cat.loadAll();
+        for (int i = 0; i < cats.size(); i++) {
+            if (isCategoryIncome(cats.get(i))) {
+                catIDs.add(cats.get(i).getId());
+            }
+        }
+        String SQLQuery = new String();
+        Iterator<Long> iter = catIDs.iterator();
+        while (iter.hasNext()) {
+
+            SQLQuery = SQLQuery.toString() + "CATEGORY_ID != " + iter.next() + " AND ";
+        }
+        SQLQuery = SQLQuery.substring(0, (SQLQuery.length() - 4));
+        String query = String.format(Constant.QUERY_YEARLY_TRANSACTIONS, SQLQuery);
+        SQLiteDatabase db = ApplicationContext.getDb();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.YEAR, -2);
+        cal.set(Calendar.MONTH,1);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        Date start = cal.getTime();
+        Cursor cursor = db.rawQuery(query, new String[] {
+
+                Long.toString(start.getTime()), Long.toString(end.getTime())
+        });
+        cursor.moveToFirst();
+        List<Double[]> retVal = new ArrayList<Double[]>();
+        while (cursor.isAfterLast() == false) {
+            Double[] d = new Double[2];
+            d[0] = cursor.getDouble(0);
+            d[1] = cursor.getDouble(1);
+            retVal.add(d);
+            cursor.moveToNext();
+        }
+        return retVal;
+    }
     public static Double getExpensesTotal() {
         double retVal = 0;
         SQLiteDatabase db = ApplicationContext.getDb();

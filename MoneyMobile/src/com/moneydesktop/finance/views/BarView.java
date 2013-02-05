@@ -1,6 +1,7 @@
 
 package com.moneydesktop.finance.views;
 
+import android.R.interpolator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -126,7 +127,7 @@ public class BarView extends View {
     public void setAmountAnimated(float a){
         final float start = (float) mAmount;
         ObjectAnimator v = ObjectAnimator.ofFloat(this, "amount", start,(float)a);
-        v.setDuration(100);
+        v.setDuration(500);
         v.start();
         invalidate();
     }

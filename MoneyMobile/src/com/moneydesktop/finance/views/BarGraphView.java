@@ -157,9 +157,12 @@ public class BarGraphView extends RelativeLayout implements DataSetChangeListene
                 mBarContainer.removeViews(0, (mBarContainer.getChildCount()-mAdapter.getCount()));
         }
         else if(mAdapter.getCount() > mBarContainer.getChildCount()){
-            for(int i = 0; i < (mAdapter.getCount() - mBarContainer.getChildCount()); i++){
+            while(!(mBarContainer.getChildCount() == mAdapter.getCount())){
                 mBarContainer.addView(new BarView(getContext()));
             }
+        }
+        for(int i = 0; i< mBarContainer.getChildCount(); i++){
+            ((BarView) mBarContainer.getChildAt(i)).setAmount(0);
         }
         for(int i = 0; i < mAdapter.getCount(); i++){
             mAdapter.getView(i,(BarView)mBarContainer.getChildAt(i));

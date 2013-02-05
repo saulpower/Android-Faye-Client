@@ -21,7 +21,9 @@ import com.moneydesktop.finance.views.BarGraphView;
 import com.moneydesktop.finance.views.BarView;
 import com.moneydesktop.finance.views.BasicBarChartAdapter;
 
+import java.text.FieldPosition;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -117,31 +119,25 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
     }
 
     private void setupBarGraphView(View v) {
-        List<Double[]> data = Transactions.get30DayExpenseTotals();
+        List<Double[]> data = Transactions.get30DayExpenseTotals(new Date());
         double max = 0;
         for(int i = 0; i < data.size(); i++){
             if(data.get(i)[1] > max){
                 max = data.get(i)[1];
             }
         }
-        
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
-        cal.set(Calendar.HOUR_OF_DAY,0);
-        cal.set(Calendar.HOUR, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        cal.add(Calendar.DAY_OF_YEAR, -30);
+
         BarGraphView l = (BarGraphView) v.findViewById(R.id.daily_spending_graph);
         ArrayList<BarViewModel> barList = new ArrayList<BarViewModel>();
+        SimpleDateFormat format = new SimpleDateFormat("dd");
         for(int c = 0; c < data.size(); c++){
                 if( data.get(c)[1] > 0){
-                    barList.add(new BarViewModel(Integer.toString(data.get(c)[0].intValue()),data.get(c)[1],max));
+                    StringBuffer date = new StringBuffer();
+                    date = format.format(data.get(c)[0],date,new FieldPosition(0));
+                    barList.add(new BarViewModel(date.toString(),data.get(c)[1],max));
                 }              
             }
-            cal.add(Calendar.DAY_OF_YEAR, 1);
+
             BasicBarChartAdapter adapter = new BasicBarChartAdapter(barList);
             l.setMax(max);
             l.setAdapter(adapter);

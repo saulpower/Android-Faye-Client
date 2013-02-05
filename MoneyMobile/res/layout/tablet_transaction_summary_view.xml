@@ -41,7 +41,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight=".16"
-                android:orientation="horizontal" />
+                android:orientation="horizontal">
+	                
+	            <Button
+	                android:id="@+id/tablet_transaction_daily_button"
+	                style="@style/button"
+	                android:layout_width="wrap_content"
+	                android:layout_height="50dp"
+	                android:layout_margin="5dp"
+	                android:text="@string/button_daily"
+	                android:layout_gravity="center_vertical"
+	                android:gravity="center" />
+	             <Button
+	                android:id="@+id/tablet_transaction_monthly_button"
+	                style="@style/button"
+	                android:layout_width="wrap_content"
+	                android:layout_height="50dp"
+	                android:layout_margin="5dp"
+	                android:text="@string/button_monthly"
+	                android:layout_gravity="center_vertical"
+	                android:gravity="center" />
+	              <Button
+	                android:id="@+id/tablet_transaction_yearly_button"
+	                style="@style/button"
+	                android:layout_width="wrap_content"
+	                android:layout_height="50dp"
+	                android:layout_margin="5dp"
+	                android:text="@string/button_yearly"
+	                android:layout_gravity="center_vertical"
+	                android:gravity="center" />
+                </LinearLayout>
+            
         </LinearLayout>
 
         <RelativeLayout

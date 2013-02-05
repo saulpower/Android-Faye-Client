@@ -4,18 +4,28 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.BarViewModel;
 import com.moneydesktop.finance.views.BarGraphView;
 import com.moneydesktop.finance.views.BaseBarChartAdapter;
 import com.moneydesktop.finance.views.BasicBarChartAdapter;
 
+import java.text.FieldPosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.Random;
+import java.util.TimeZone;
 
 public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
-    
+   BarGraphView mGraph;
+   BasicBarChartAdapter mAdapter;
     public static TransactionsSummaryTabletFragment newInstance(int position) {
         
         TransactionsSummaryTabletFragment frag = new TransactionsSummaryTabletFragment();
@@ -36,22 +46,106 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
         setupViews();
         configureView();
         
-        BarGraphView v = (BarGraphView) mRoot.findViewById(R.id.tablet_transaction_summary_graph);
-        
-        ArrayList<BarViewModel> l = new ArrayList<BarViewModel>();
-        Random r = new Random();
-        
-        for (int i = 0; i < 30; i++) {
-            l.add(new BarViewModel("",r.nextInt(100)+1,100));
-        }
-        
-        BaseBarChartAdapter adapter = new BasicBarChartAdapter(l);
-        v.setAdapter(adapter);
-        v.setMax(100);
-        v.setLabel(false);
+        mGraph = (BarGraphView) mRoot.findViewById(R.id.tablet_transaction_summary_graph);
+        mAdapter = new BasicBarChartAdapter(new ArrayList());
+        mGraph.setAdapter(mAdapter);
+        setGraphViewMonthly(new Date());
+        View daily = mRoot.findViewById(R.id.tablet_transaction_daily_button);
+        daily.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){                
+                 setGraphViewDaily(new Date());                
+            }
+            
+        });
+        View monthly = mRoot.findViewById(R.id.tablet_transaction_monthly_button);
+        monthly.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){                
+                 setGraphViewMonthly(new Date());                
+            }
+            
+        });
+        View yearly = mRoot.findViewById(R.id.tablet_transaction_yearly_button);
+        yearly.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){                
+                 setGraphViewYearly(new Date());                
+            }
+            
+        });
         
         return mRoot;
     }
+    private void setGraphViewMonthly(Date end){
+        List<Double[]> data = Transactions.getMonthlyExpenseTotals(end);
+        double max = 0;
+        for(int i = 0; i < data.size(); i++){
+            if(data.get(i)[1] > max){
+                max = data.get(i)[1];
+            }
+        }      
+        
+        ArrayList<BarViewModel> barList = new ArrayList<BarViewModel>();
+        SimpleDateFormat format = new SimpleDateFormat("MMM yyyy");
+        for(int c = 0; c < data.size(); c++){
+                if( data.get(c)[1] > 0){
+                    StringBuffer date = new StringBuffer();
+                    date = format.format(data.get(c)[0],date,new FieldPosition(0));
+                    barList.add(new BarViewModel(date.toString(),data.get(c)[1],max));
+                }              
+            }
+            mAdapter.setNewList(barList);
+            mGraph.setMax(max);
+            mGraph.setLabel(true);
+            mGraph.setLabelFontSize(14);    
+    }
+    private void setGraphViewYearly(Date end){
+        List<Double[]> data = Transactions.getYearlyExpenseTotals(end);
+        double max = 0;
+        for(int i = 0; i < data.size(); i++){
+            if(data.get(i)[1] > max){
+                max = data.get(i)[1];
+            }
+        }      
+        
+        ArrayList<BarViewModel> barList = new ArrayList<BarViewModel>();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy");
+        for(int c = 0; c < data.size(); c++){
+                if( data.get(c)[1] > 0){
+                    StringBuffer date = new StringBuffer();
+                    date = format.format(data.get(c)[0],date,new FieldPosition(0));
+                    barList.add(new BarViewModel(date.toString(),data.get(c)[1],max));
+                }              
+            }
+            mAdapter.setNewList(barList);
+            mGraph.setMax(max);
+            mGraph.setLabel(true);
+            mGraph.setLabelFontSize(14);    
+    }
+    private void setGraphViewDaily(Date end) {
+        List<Double[]> data = Transactions.get30DayExpenseTotals(end);
+        double max = 0;
+        for(int i = 0; i < data.size(); i++){
+            if(data.get(i)[1] > max){
+                max = data.get(i)[1];
+            }
+        }      
+        
+        ArrayList<BarViewModel> barList = new ArrayList<BarViewModel>();
+        SimpleDateFormat format = new SimpleDateFormat("dd");
+        for(int c = 0; c < data.size(); c++){
+                if( data.get(c)[1] > 0){
+                    StringBuffer date = new StringBuffer();
+                    date = format.format(data.get(c)[0],date,new FieldPosition(0));
+                    barList.add(new BarViewModel(date.toString(),data.get(c)[1],max));
+                }              
+            }
+            mAdapter.setNewList(barList);
+            mGraph.setMax(max);
+            mGraph.setLabel(true);
+            mGraph.setLabelFontSize(14);         
+        }
     
     @Override
     public String getTitleText() {

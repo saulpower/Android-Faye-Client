@@ -56,13 +56,16 @@
     <string name="atg_od">Other Debt</string>
     <string name="at_cash">Cash</string>
     <string name="button_cancel">CANCEL</string>
+    <string name="button_daily">BY DAY</string>
     <string name="button_demo">DEMO MODE</string>
     <string name="button_login">LOGIN</string>
+    <string name="button_monthly">BY MONTH</string>
     <string name="button_ok">OK</string>
     <string name="button_return_login">RETURN TO LOGIN</string>
     <string name="button_return_home">RETURN TO HOME</string>
     <string name="button_setup">I NEED TO SET UP MY MOBILE ACCOUNT</string>
     <string name="button_submit">SUBMIT</string>
+    <string name="button_yearly">BY YEAR</string>
     <string name="category_search">Start typing to search for a category</string>
     <string name="connecting">Connecting to bank</string>
     <string name="ct_exp">Expense</string>
