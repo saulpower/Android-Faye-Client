@@ -2,6 +2,7 @@ package com.moneydesktop.finance.views;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -33,6 +34,7 @@ import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.fragment.PopupFragment;
+import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.UiUtils;
 
 import de.greenrobot.event.EventBus;
@@ -133,20 +135,18 @@ public class AccountTypeChildView extends FrameLayout {
 								}
 							});
 							
-							onClickListeners.add(new OnClickListener() {
+							onClickListeners.add(new OnClickListener() { // Show and Hide data
 								@Override
 								public void onClick(View v) {
 									mPopup.fadeOutTransparency();
-									Toast.makeText(mContext, "SHOW/HIDE DATA", Toast.LENGTH_SHORT).show();
 								}
 							});
 							
-							onClickListeners.add(new OnClickListener() {
+							onClickListeners.add(new OnClickListener() { //Delete Account
 								@Override
 								public void onClick(View v) {
-									mPopup.fadeOutTransparency();
-									Toast.makeText(mContext, "DELETE THIS ACCOUNT", Toast.LENGTH_SHORT).show();
-									deleteAccount(account, view);
+									mPopup.fadeOutTransparency();									
+									deleteAccountConfirmation(account, view);  									
 								}
 
 							});
@@ -174,11 +174,6 @@ public class AccountTypeChildView extends FrameLayout {
 		mBankAccountContainer.removeView(view);
 		account.softDeleteSingle();
 		removeInstancesOfAccount(account);
-		
-		//start the sync
-        Intent intent = new Intent(mActivity, SyncService.class);
-        mActivity.startService(intent);
-        
         mPopup.fadeOutTransparency();
 	}
     
@@ -269,6 +264,10 @@ public class AccountTypeChildView extends FrameLayout {
         	accountToBeRemoved = AccountType.getAccountType(account.getAccountTypeId().toString());
             EventBus.getDefault().post(new EventMessage(). new RemoveAccountTypeEvent(accountToBeRemoved));
             EventBus.getDefault().post(new EventMessage(). new CheckRemoveBankEvent(account.getBank()));
+        } else {
+    		//start the sync
+            Intent intent = new Intent(mActivity, SyncService.class);
+            mActivity.startService(intent);
         }
     }
     
@@ -288,6 +287,7 @@ public class AccountTypeChildView extends FrameLayout {
                         mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
                     } else {
                         mStatus.setVisibility(View.VISIBLE);
+
                         if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_SUCCEEDED.index()) { //3
                             mStatus.setVisibility(View.GONE);
                             
@@ -328,5 +328,29 @@ public class AccountTypeChildView extends FrameLayout {
             iterator++;
         }
     }
+
+	private void deleteAccountConfirmation(final BankAccount account, final View view) {
+		DialogUtils.alertDialog(String.format(mActivity.getString(R.string.delete_bank_title), account.getAccountName()),
+				mActivity.getString(R.string.delete_account_message), 
+				mActivity.getString(R.string.label_yes).toUpperCase(), 
+				mActivity.getString(R.string.label_no).toUpperCase(),
+				mActivity, 
+		        new DialogInterface.OnClickListener() {
+		            @Override
+		            public void onClick(DialogInterface dialog, int which) {  
+		                
+		                switch (which) {
+		                    case DialogInterface.BUTTON_POSITIVE:
+		                        DialogUtils.dismissAlert();
+		                        deleteAccount(account, view);
+		                        break;                                
+		                    case DialogInterface.BUTTON_NEGATIVE:
+		                        DialogUtils.dismissAlert();
+		                        mPopup.fadeOutTransparency();            
+		                        break;
+		                }
+		        }
+		});
+	}
    
 }

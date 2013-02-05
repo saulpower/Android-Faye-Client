@@ -87,7 +87,9 @@
     <string name="default_header">Header</string>
     <string name="default_price">5.99</string>
     <string name="default_title">Title</string>
+    <string name="delete_account_message">This will delete all data associated with this account. Are you sure?</string>
     <string name="delete_bank_message">All associated accounts will also be removed</string>
+    <string name="delete_bank_with_no_accounts_message">All accounts for this institution have been removed. Continue to remove the institution?</string>
     <string name="delete_bank_title">Remove %1$s?</string>
     <string name="description">description</string>
     <string name="demo_message">Creating Demo Data&#8230;</string>

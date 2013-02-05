@@ -95,7 +95,6 @@ public class AccountSettingsTabletFragment extends BaseFragment{
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				Toast.makeText(getActivity(), "Field 1 touched", Toast.LENGTH_SHORT).show();
-				//v.requestFocus();
 				return false;
 			}
 		});

@@ -32,8 +32,6 @@ public class SlidingView extends FrameLayout{
     View mInflatedView; 
     int mScreenHeight;
     int mScreenWidth;
-   // View mRoot;
-   // LinearLayout mContainer;
     ViewGroup mParentView;
     View mSelectedView;
     
@@ -63,22 +61,28 @@ public class SlidingView extends FrameLayout{
     }
 
     private void animateView() {     
-        if (mFrom == SlideFrom.BOTTOM) {
-            ObjectAnimator animation = ObjectAnimator.ofFloat(mInflatedView, "translationY", mScreenHeight, mY);
-            animation.setDuration(300); 
-            animation.start();
-        } else if (mFrom == SlideFrom.RIGHT) {
-            ObjectAnimator animation = ObjectAnimator.ofFloat(mInflatedView, "translationX", mScreenWidth, mX);
-            animation.setDuration(300); 
-            animation.start();
-        } else if (mFrom == SlideFrom.TOP) {
-            ObjectAnimator animation = ObjectAnimator.ofFloat(mInflatedView, "translationY", 0, mY);
-            animation.setDuration(300); 
-            animation.start();
-        } else if (mFrom == SlideFrom.LEFT) {
-            ObjectAnimator animation = ObjectAnimator.ofFloat(mInflatedView, "translationX", 0, mX);
-            animation.setDuration(300); 
-            animation.start();
+    	   	
+        switch (mFrom) {
+	        case BOTTOM:
+	            ObjectAnimator animationBottom = ObjectAnimator.ofFloat(mInflatedView, "translationY", mScreenHeight, mY);
+	            animationBottom.setDuration(300); 
+	            animationBottom.start();
+                break;
+	        case RIGHT:
+	        	ObjectAnimator animationRight = ObjectAnimator.ofFloat(mInflatedView, "translationX", mScreenWidth, mX);
+	        	animationRight.setDuration(300); 
+	        	animationRight.start();
+                break;
+	        case TOP:
+	            ObjectAnimator animationTop = ObjectAnimator.ofFloat(mInflatedView, "translationY", 0, mY);
+	            animationTop.setDuration(300); 
+	            animationTop.start();
+                break;
+	        case LEFT:
+	            ObjectAnimator animationLeft = ObjectAnimator.ofFloat(mInflatedView, "translationX", 0, mX);
+	            animationLeft.setDuration(300); 
+	            animationLeft.start();
+                break;
         }
           
     }
@@ -109,16 +113,23 @@ public class SlidingView extends FrameLayout{
     
     private TranslateAnimation translate() {
         TranslateAnimation animation = null;
-        if (mFrom == SlideFrom.BOTTOM) {
-            animation = new TranslateAnimation(mX, 0, 0, mScreenHeight);
-        } else if (mFrom == SlideFrom.RIGHT) {
-            animation = new TranslateAnimation(mScreenWidth, mX, 0, 0);
-        } else if (mFrom == SlideFrom.TOP) {
-            animation = new TranslateAnimation(0, 0, mScreenHeight, mY);
-        } else if (mFrom == SlideFrom.LEFT) {
-            animation = new TranslateAnimation(0, mX, 0, 0);
+        
+        switch (mFrom) {
+        case BOTTOM:
+        	animation = new TranslateAnimation(mX, 0, 0, mScreenHeight);
+            break;
+        case RIGHT:
+        	animation = new TranslateAnimation(mScreenWidth, mX, 0, 0);
+            break;
+        case TOP:
+        	animation = new TranslateAnimation(0, 0, mScreenHeight, mY);
+            break;
+        case LEFT:
+        	animation = new TranslateAnimation(0, mX, 0, 0);
+            break;
         }
+        
         return animation;
     }
-    
+        
 }

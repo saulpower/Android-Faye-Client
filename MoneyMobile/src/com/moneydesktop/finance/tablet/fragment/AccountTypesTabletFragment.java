@@ -75,6 +75,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
     private Handler mHandler;    
     private SlideExpandableListAdapter mAdapter;
     private AccountsExpandableListAdapter mAdapter1;
+    private int mAccountCounter = 0;
 	
 	public static AccountTypesTabletFragment newInstance(FragmentType type) {	
 		AccountTypesTabletFragment frag = new AccountTypesTabletFragment();
@@ -446,7 +447,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                     @Override
 					public void onClick(View v) {
                         if (User.getCurrentUser().getCanSync()){
-                            deleteAccount(bankAccountView, mPanelLayoutHolder, bank);
+                        	deleteMemberAccount(bankAccountView, mPanelLayoutHolder, bank);
                         } else {
                             //Popup dialog saying you can't delete demo data
                             DialogUtils.alertDialog(String.format(getString(R.string.feature_not_available_delete_title), bank.getBankName()), getResources().getString(R.string.feature_not_available_delete_message), getActivity());
@@ -528,7 +529,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         EventBus.getDefault().post(new EventMessage().new RefreshAccountEvent(bank));
     }
     
-    private void deleteAccount(final View v, final LinearLayout panelView, final Bank bank) {
+    private void deleteMemberAccount(final View v, final LinearLayout panelView, final Bank bank) {
             
         DialogUtils.alertDialog(String.format(getString(R.string.delete_bank_title), bank.getBankName()), 
                 getString(R.string.delete_bank_message), 
@@ -543,43 +544,44 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                             case DialogInterface.BUTTON_POSITIVE:
                                 DialogUtils.dismissAlert();
                                 //set the bank for deletion
-                                mBanksForDeletion.add(bank);
-                                mPopup.fadeOutTransparency();
-                                
-                                //so we don't try to update UI elements that are no longer there.
-                                if (mBanksForDeletion.contains(bank)) {
-                                    mBankList.remove(bank);
-                                }
-                                
-                                bank.softDeleteSingle();
-                                
-                                //start the sync
-                                Intent intent = new Intent(getActivity(), SyncService.class);
-                                getActivity().startService(intent);
-                                
-                                //remove bank from view
-                                panelView.removeView(v);
-                                
-                                updateChildAccountsList(bank);
-                                 
-                                break;
-                                
+                                removeBank(v, panelView, bank);                                
+                                break;                                
                             case DialogInterface.BUTTON_NEGATIVE:
                                 DialogUtils.dismissAlert();
                                 mPopup.fadeOutTransparency();            
                                 break;
                         }
                 }
-        });
-                
+        });                
     }
+    
+	private void removeBank(final View v, final LinearLayout panelView, final Bank bank) {
+		mBanksForDeletion.add(bank);
+		mPopup.fadeOutTransparency();
+		
+		//so we don't try to update UI elements that are no longer there.
+		if (mBanksForDeletion.contains(bank)) {
+		    mBankList.remove(bank);
+		}
+		
+		bank.softDeleteSingle();
+		
+		//start the sync
+		Intent intent = new Intent(getActivity(), SyncService.class);
+		getActivity().startService(intent);
+		
+		//remove bank from view
+		panelView.removeView(v);
+		
+		updateChildAccountsList(bank);
+	}
    
     public void onEvent(RemoveAccountTypeEvent event) {        
         final AccountType accountType = event.getAccountType();
         if (!mAccountTypesFiltered.isEmpty()){
 	        mAccountTypesFiltered.remove(accountType);
+	        mAdapter1.notifyDataSetChanged();
         }
-        mAdapter1.notifyDataSetChanged();
     }
     
     public void onEvent(CheckRemoveBankEvent event) {        
@@ -589,24 +591,71 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         	i++;
         	View bankView = mPanelLayoutHolder.getChildAt(i); 
         	
-        	//check to see if size is 1. this means that there is only 1 account left, and its in the process of being deleted, so remove the bank too.
-        	if (bank.getBankAccounts().size() == 1 && bank.getBankName().equals(bankForRemoval.getBankName())) {
-        		mBanksForDeletion.add(bank);
-        			if (mBanksForDeletion.contains(bank)) {
-	                    mBankList.remove(bank);
-	                }
-	                
-	                bank.softDeleteSingle();
-	       		
-	                //start the sync
-	                Intent intent = new Intent(getActivity(), SyncService.class);
-	                getActivity().startService(intent);
-	                
-	                //remove bank from view
-	                mPanelLayoutHolder.removeView(bankView);
+        	
+        	for (AccountType accountType : mAccountTypesFiltered) {
+        		for(BankAccount bankAccount : bank.getBankAccounts()) {
+        			if (bank.getBankName().equals(bankForRemoval.getBankName()) && (bankAccount.getAccountType().equals(accountType))) {
+        				mAccountCounter++;
+        			}
+        		}
         	}
+        	
+        	if (mAccountCounter == 0) {
+        		deleteBankWithNoAccountsConfirmation(bank, bankView);
+          	} else {
+        		//start the sync
+        		Intent intent = new Intent(getActivity(), SyncService.class);
+        		getActivity().startService(intent);
+          	}
+        	mAccountCounter = 0;
+        	
         }
     }
+
+	private void deleteBankWithNoAccountsConfirmation(final Bank bank, final View bankView) {
+		
+		
+		
+        DialogUtils.alertDialog(String.format(getString(R.string.delete_bank_title), bank.getBankName()), 
+                getString(R.string.delete_bank_with_no_accounts_message), 
+                getString(R.string.label_yes).toUpperCase(), 
+                getString(R.string.label_no).toUpperCase(), 
+                getActivity(), 
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {  
+                        
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+                                DialogUtils.dismissAlert();
+                                
+                        		mBanksForDeletion.add(bank);
+                        		if (mBanksForDeletion.contains(bank)) {
+                        		    mBankList.remove(bank);
+                        		}
+                        		
+                        		bank.softDeleteSingle();
+                            		
+                        		//start the sync
+                        		Intent intent = new Intent(getActivity(), SyncService.class);
+                        		getActivity().startService(intent);
+                        		
+                        		//remove bank from view
+                        		mPanelLayoutHolder.removeView(bankView);
+                                
+                                break;                                
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                DialogUtils.dismissAlert();
+                                mPopup.fadeOutTransparency();
+                        		//start the sync
+                                Intent i = new Intent(mActivity, SyncService.class);
+                                mActivity.startService(i);
+                                break;
+                        }
+                }
+        }); 
+
+	}
     
 	protected void updateChildAccountsList(Bank bank) {
 	    EventBus.getDefault().post(new EventMessage().new BankDeletedEvent(bank));
