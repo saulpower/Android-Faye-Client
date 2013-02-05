@@ -5,6 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white" >
+    
+	<EditText
+        android:layout_width="0dp"
+    	android:layout_height="0dp"
+    	android:inputType="none" />
 
     <View
         android:layout_width="42dp"
@@ -55,8 +60,8 @@
                 android:singleLine="true"
                 android:textColor="@color/primaryColor"
                 android:textColorHint="@color/gray3"
-                app:iconText="8"
-                app:clearText="X"
+                app:iconText="@string/icon_search"
+                app:clearText="@string/icon_cancel"
                 android:hint="@string/hint_search_transactions"
                 android:imeOptions="actionSearch"/>
 	        

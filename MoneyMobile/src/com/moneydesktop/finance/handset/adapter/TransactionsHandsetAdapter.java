@@ -161,8 +161,8 @@ public class TransactionsHandsetAdapter extends AmazingAdapter {
 		if (transactions != null) {
 		
 		    viewHolder.title.setText(WordUtils.capitalize(transactions.getTitle().toLowerCase()));
-		    viewHolder.amount.setText(mFormatter.format(transactions.getAmount()));
-		    viewHolder.amount.setTextColor(transactions.getRawAmount() < 0 ? mGreenColor : mGrayColor);
+		    viewHolder.amount.setText(mFormatter.format(transactions.normalizedAmount()));
+		    viewHolder.amount.setTextColor(transactions.getTransactionType() == 1 ? mGreenColor : mGrayColor);
 	
 			if (transactions.getCategory() != null) {
 			    viewHolder.category.setText(transactions.getCategory().getCategoryName());

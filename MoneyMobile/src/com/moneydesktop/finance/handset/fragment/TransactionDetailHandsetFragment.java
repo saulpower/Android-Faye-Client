@@ -25,13 +25,6 @@ public class TransactionDetailHandsetFragment extends TransactionDetailBaseFragm
 	}
 	
 	@Override
-	public void onResume() {
-		super.onResume();
-		
-        this.mActivity.updateNavBar(getFragmentTitle());
-	}
-	
-	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		

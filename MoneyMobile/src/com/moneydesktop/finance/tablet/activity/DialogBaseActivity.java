@@ -1,5 +1,6 @@
 package com.moneydesktop.finance.tablet.activity;
 
+import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -9,14 +10,13 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 
 import com.moneydesktop.finance.shared.DashboardBaseActivity;
 import com.moneydesktop.finance.util.UiUtils;
-import com.nineoldandroids.animation.ObjectAnimator;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 @TargetApi(11)
-public abstract class DialogActivity extends DashboardBaseActivity {
+public abstract class DialogBaseActivity extends DashboardBaseActivity {
 
     private final int KEYBOARD_THRESHOLD = 100;
 
@@ -38,6 +38,10 @@ public abstract class DialogActivity extends DashboardBaseActivity {
     protected void setKeyboardStateChangeListener(
             OnKeyboardStateChangeListener mKeyboardStateChangeListener) {
         this.mKeyboardStateChangeListener = mKeyboardStateChangeListener;
+    }
+    
+    public Rect getVisibleBounds() {
+        return mVisibleBounds;
     }
     
     public boolean isKeyboardShowing() {
@@ -110,28 +114,39 @@ public abstract class DialogActivity extends DashboardBaseActivity {
     
     public void makeViewVisible(View v, View parent) {
 
+        if (v == null || parent == null) return;
+        
+        // Get the view's location on screen
         int[] location = new int[2];
         v.getLocationOnScreen(location);
         location[1] -= mLocation[1];
         
-        if (mVisibleBounds.contains(location[0], location[1]) && mVisibleBounds.contains(location[0], (location[1] + v.getHeight()))) {
-            return;
-        }
+        // Determine if it is visible
+        if (mVisibleBounds.contains(location[0], (location[1] + v.getHeight())) && mVisibleBounds.contains(location[0], (location[1] - v.getHeight()))) return;
         
-        long moveDistance = (location[1] + (v.getHeight() / 2)) - (mVisibleBounds.top + (mVisibleBounds.height() / 2));
+        // Calculate distance needed to be moved
+        long moveDistance = (location[1] + (v.getHeight() / 2)) - mVisibleBounds.centerY();
         
         parent.getLocationOnScreen(location);
         location[1] -= mLocation[1];
-        mModifiedViews.put(parent, location);
         
+        // Cache view and original location so we can restore it
+        if (!mModifiedViews.containsKey(parent)) {
+            mModifiedViews.put(parent, location);
+        }
+        
+        // Animate movement of parent view
         ObjectAnimator move = ObjectAnimator.ofFloat(parent, "y", parent.getY(), (parent.getY() - moveDistance));
         move.setDuration(300);
         move.start();
     }
     
+    /**
+     * Restores all moved views to their previous positions
+     */
     private void restoreViews() {
         
-        for(Entry<View, int[]> entry : mModifiedViews.entrySet()) {
+        for (Entry<View, int[]> entry : mModifiedViews.entrySet()) {
             
             View v = entry.getKey();
             int[] location = entry.getValue();

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.moneydesktop.finance.views.DeleteLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/info"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+   	android:background="@color/white"
+    android:paddingTop="8dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="8dp"
+    android:paddingLeft="18dp" >
+
+    <CheckBox
+        android:id="@+id/checkbox"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginRight="10dp"
+        android:duplicateParentState="true"
+        android:button="@null"
+        android:background="@drawable/checkbox_selector"
+        android:gravity="center_vertical" />
+	
+    <TextView
+        android:id="@+id/item_title"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+	    android:text="@string/default_header"
+	    android:textColor="@color/gray3"
+        android:gravity="center_vertical" />
+    
+</com.moneydesktop.finance.views.DeleteLinearLayout>

@@ -11,14 +11,14 @@ import android.widget.RelativeLayout;
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.Transactions;
-import com.moneydesktop.finance.shared.TransactionController;
-import com.moneydesktop.finance.shared.TransactionController.ParentTransactionInterface;
+import com.moneydesktop.finance.shared.TransactionDetailController;
+import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment.onBackPressedListener;
 
 @TargetApi(11)
 public abstract class ParentTransactionFragment extends BaseFragment implements onBackPressedListener, ParentTransactionInterface {
     
-    private TransactionController mBase;
+    private TransactionDetailController mBase;
     
     public void setupView() {
 
@@ -26,7 +26,7 @@ public abstract class ParentTransactionFragment extends BaseFragment implements 
         RelativeLayout container = (RelativeLayout) mRoot.findViewById(R.id.detail_container);
         FrameLayout detail = (FrameLayout) mRoot.findViewById(R.id.detail_fragment);
         
-        mBase = new TransactionController(container, fakeCell, detail, 0);
+        mBase = new TransactionDetailController(fakeCell, detail, 0);
         mBase.setDetailFragment(TransactionsDetailTabletFragment.newInstance());
         mBase.getDetailFragment().setListener(this);
 
@@ -46,6 +46,11 @@ public abstract class ParentTransactionFragment extends BaseFragment implements 
     @Override
     public void setDetailFragment(TransactionsDetailTabletFragment fragment) {
         mBase.setDetailFragment(fragment);
+    }
+
+    @Override
+    public TransactionsDetailTabletFragment getDetailFragment() {
+        return mBase.getDetailFragment();
     }
 
     @Override

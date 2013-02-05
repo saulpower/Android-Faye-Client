@@ -20,13 +20,12 @@ import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.database.TagInstanceDao;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
+import com.moneydesktop.finance.model.StopListFling;
 import com.moneydesktop.finance.shared.TransactionViewHolder;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.AmazingListView;
 import com.moneydesktop.finance.views.CaretView;
 import com.moneydesktop.finance.views.VerticalTextView;
-
-import org.apache.commons.lang.WordUtils;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -120,18 +119,26 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	}
 	
 	public void applyNewData() {
-	    
-	    mAllTransactions.clear();
-	    mAllTransactions.addAll(mNewTransactions);
-        mNewTransactions.clear();
-	    notifyDataSetInvalidated();
-        mListView.requestLayout();
+        
+	    mListView.setSelection(0);
+	    mListView.post( new Runnable() {
+            
+            @Override
+            public void run() {
 
-        if (mHasMore) {
-            notifyMayHaveMorePages();
-        } else {
-            notifyNoMorePages();
-        }
+                mAllTransactions.clear();
+                mAllTransactions.addAll(mNewTransactions);
+                mNewTransactions.clear();
+
+                notifyDataSetInvalidated();
+
+                if (mHasMore) {
+                    notifyMayHaveMorePages();
+                } else {
+                    notifyNoMorePages();
+                }
+            }
+        });
 	}
 	
 	private void loadPage(final int page) {
@@ -142,6 +149,15 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 
         mBackgroundTask = new AsyncTask<Integer, Void, Pair<Boolean, List<Transactions>>>() {
 
+            @Override
+            protected void onPreExecute() {
+
+                /* Stop the listview from flinging as it is causing crashes
+                 * due to accessing data while the data is being changed
+                 */
+                StopListFling.stop(mListView);
+            }
+            
             @Override
             protected Pair<Boolean, List<Transactions>> doInBackground(Integer... params) {
                 
@@ -162,7 +178,7 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
                 if (page == 1) {
                     mHasMore = rows.first;
                     mNewTransactions.addAll(rows.second);
-                    notifyDataLoaded(false);
+                    notifyDataLoaded();
                     return;
                 }
 
@@ -175,17 +191,15 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
                 nextPage();
                 
                 mAllTransactions.addAll(rows.second);
-                notifyDataLoaded(true);
-                
-                mListView.requestLayout();
+                notifyDataSetChanged();
             }
 
         }.execute(page);
 	}
 	
-	private void notifyDataLoaded(boolean isRequest) {
+	private void notifyDataLoaded() {
 	    if (mOnDataLoadedListener != null) {
-            mOnDataLoadedListener.dataLoaded(isRequest);
+            mOnDataLoadedListener.dataLoaded();
         }
 	}
 	
@@ -250,26 +264,24 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 		    viewHolder = (TransactionViewHolder) res.getTag();
 		}
 		
-		Transactions transactions = getItem(position);
+		final Transactions transactions = getItem(position);
 		
 		if (transactions != null) {
 		
 			viewHolder.date.setText(mDateFormatter.format(transactions.getDate()));
-			viewHolder.payee.setText(WordUtils.capitalize(transactions.getTitle().toLowerCase()));
-			viewHolder.caret.setVisibility(transactions.isIncome() ? View.VISIBLE : View.GONE);
+			viewHolder.payee.setText(transactions.getCapitalizedTitle());
+			viewHolder.caret.setVisibility(transactions.isIncome() ? View.VISIBLE : View.INVISIBLE);
 			
 			int gravity = Gravity.CENTER_VERTICAL|Gravity.RIGHT;
-			double value = transactions.getAmount();
 			
-			if (transactions.isIncome()) {
-			    value = Math.abs(value);
+			if (transactions.getTransactionType() == 1) {
 			    gravity = Gravity.CENTER_VERTICAL|Gravity.LEFT;
 			}
 			
 			viewHolder.newText.setText(!transactions.getIsProcessed() ? "NEW" : "");
-			viewHolder.newText.setBackgroundResource(!transactions.getIsProcessed() ? R.drawable.primary_to_white : R.drawable.gray1_to_white);
+			viewHolder.newText.setBackgroundResource(!transactions.getIsProcessed() ? R.drawable.primary_to_white : R.color.gray1);
 			
-			viewHolder.amount.setText(mFormatter.format(value));
+			viewHolder.amount.setText(mFormatter.format(transactions.normalizedAmount()));
 			viewHolder.amount.setGravity(gravity);
 
 			viewHolder.type.setImageResource(transactions.getIsBusiness() ? R.drawable.ipad_txndetail_icon_business_color : R.drawable.ipad_txndetail_icon_personal_grey);
@@ -321,6 +333,6 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
     }
     
     public interface OnDataLoadedListener {
-        public void dataLoaded(boolean isRequest);
+        public void dataLoaded();
     }
 }

@@ -5,6 +5,8 @@
 	<dimen name="navbar_text_slide">54dp</dimen>
 	<dimen name="transaction_padding">5dp</dimen>
 	<dimen name="transaction_padding_left">12dp</dimen>
+	<dimen name="tablet_detail_height">425dp</dimen>
+	<dimen name="tablet_detail_width">550dp</dimen>
 	<dimen name="tablet_transaction_item">40dp</dimen>
 	<dimen name="tablet_transaction_vert">-20dp</dimen>
 	<dimen name="tablet_header_1">40dp</dimen>

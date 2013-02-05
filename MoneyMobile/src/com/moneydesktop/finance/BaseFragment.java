@@ -27,9 +27,19 @@ public abstract class BaseFragment extends Fragment {
         super.onAttach(activity);
         
         if (activity instanceof DashboardBaseActivity){
-            this.mActivity = (DashboardBaseActivity) activity;
+            mActivity = (DashboardBaseActivity) activity;
+            mActivity.onFragmentAttached(this);
         }
 	}
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        
+        if (mActivity != null) {
+            mActivity.updateNavBar(getFragmentTitle());
+        }
+    }
 	
 	public abstract String getFragmentTitle();
 	public abstract boolean onBackPressed();

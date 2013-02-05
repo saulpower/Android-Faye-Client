@@ -25,9 +25,9 @@ import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.shared.LockFragment;
-import com.moneydesktop.finance.shared.TransactionController;
-import com.moneydesktop.finance.shared.TransactionController.ParentTransactionInterface;
-import com.moneydesktop.finance.tablet.activity.DialogActivity.OnKeyboardStateChangeListener;
+import com.moneydesktop.finance.shared.TransactionDetailController;
+import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
+import com.moneydesktop.finance.tablet.activity.DialogBaseActivity.OnKeyboardStateChangeListener;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment.onBackPressedListener;
 import com.moneydesktop.finance.tablet.fragment.TransactionsPageTabletFragment;
@@ -35,7 +35,7 @@ import com.moneydesktop.finance.util.Fonts;
 
 import de.greenrobot.event.EventBus;
 
-public class DropDownTabletActivity extends DialogActivity implements onBackPressedListener, ParentTransactionInterface, OnKeyboardStateChangeListener {
+public class DropDownTabletActivity extends DialogBaseActivity implements onBackPressedListener, ParentTransactionInterface, OnKeyboardStateChangeListener {
     
     public final String TAG = this.getClass().getSimpleName();
     
@@ -45,7 +45,7 @@ public class DropDownTabletActivity extends DialogActivity implements onBackPres
     private RelativeLayout mRoot, mDropdown, mDetailContainer;
     private LinearLayout mContainer;
     private Animation mIn, mOut;
-    private TransactionController mBase;
+    private TransactionDetailController mBase;
     private int mOffset = 0;
     private View mEditText;
     
@@ -195,7 +195,7 @@ public class DropDownTabletActivity extends DialogActivity implements onBackPres
         mDetailContainer = (RelativeLayout) mRoot.findViewById(R.id.detail_container);
         FrameLayout detail = (FrameLayout) mRoot.findViewById(R.id.detail_fragment);
         
-        mBase = new TransactionController(mDetailContainer, fakeCell, detail, mRoot.getPaddingTop());
+        mBase = new TransactionDetailController(fakeCell, detail, mRoot.getPaddingTop());
         mBase.setDetailFragment(TransactionsDetailTabletFragment.newInstance());
         mBase.getDetailFragment().setListener(this);
 
@@ -222,6 +222,11 @@ public class DropDownTabletActivity extends DialogActivity implements onBackPres
     @Override
     public void setDetailFragment(TransactionsDetailTabletFragment fragment) {
         mBase.setDetailFragment(fragment);
+    }
+    
+    @Override
+    public TransactionsDetailTabletFragment getDetailFragment() {
+        return mBase.getDetailFragment();
     }
     
     @Override

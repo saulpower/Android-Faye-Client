@@ -1,7 +1,6 @@
 package com.moneydesktop.finance.tablet.fragment;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -35,13 +34,6 @@ public class SettingsTabletFragment extends BaseFragment {
         
         return fragment;
 	}
-    
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        this.mActivity.onFragmentAttached(this);
-    }
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,13 +45,6 @@ public class SettingsTabletFragment extends BaseFragment {
 		
 		return mRoot;
 	}
-    
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        this.mActivity.updateNavBar(getFragmentTitle());
-    }
     
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {

@@ -421,7 +421,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mViewFlipper.setDisplayedChild(1);
         
         mUsername.requestFocus();
-        showKeyboard(mUsername);
+        UiUtils.showKeyboard(this, mUsername);
     }
 
     private void toSignupView() {
@@ -431,7 +431,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mViewFlipper.setDisplayedChild(2);
 
         mSignupName.requestFocus();
-        showKeyboard(mSignupName);
+        UiUtils.showKeyboard(this, mSignupName);
     }
 
     private void demoMode() {
@@ -679,11 +679,6 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mViewFlipper.setOutAnimation(out);
         mViewFlipper.setInAnimation(in);
         mViewFlipper.setDisplayedChild(0);
-    }
-    
-    private void showKeyboard(View view) {
-        InputMethodManager keyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        keyboard.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
     }
 
     @Override

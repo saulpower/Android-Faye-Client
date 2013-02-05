@@ -24,6 +24,7 @@ public class Constant {
      *******************************************************************/
 
     public static final String EXTRA_ACCOUNT_ID = "account_id";
+    public static final String EXTRA_BOB_ID = "bod_id";
     public static final String EXTRA_CATEGORY_ID = "category_id";
     public static final String EXTRA_FRAGMENT = "fragment";
     public static final String EXTRA_POSITION = "position";
@@ -34,6 +35,7 @@ public class Constant {
     
     public static final int CODE_CATEGORY_LIST = 1;
     public static final int CODE_CATEGORY_DETAIL = 2;
+    public static final int CODE_TAG_DETAIL = 3;
     
 	/*******************************************************************
 	 * FLAGS

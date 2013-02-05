@@ -23,7 +23,6 @@ import com.moneydesktop.finance.database.CategoryDao;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.database.Tag;
-import com.moneydesktop.finance.database.TagDao;
 import com.moneydesktop.finance.database.TagInstanceDao;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
@@ -364,9 +363,9 @@ public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpan
             
             case FILTER_TAGS: {
                 
-                TagDao tagDao = ApplicationContext.getDaoSession().getTagDao();
-                List<Tag> tags = tagDao.loadAll();
+                List<Tag> tags = Tag.loadAll();
                 
+                // Create the filter query for each tag
                 for (Tag tag : tags) {
 
                     PowerQuery query = PowerQuery.where(false, new QueryProperty(TagInstanceDao.TABLENAME, TagInstanceDao.Properties.TagId), Long.toString(tag.getId()));
@@ -375,9 +374,11 @@ public class FilterTabletAdapter extends UltimateAdapter implements OnGroupExpan
                     temp.mText = tag.getTagName().toUpperCase();
                     temp.mQuery = query;
                     
+                    // Add the item to our data list
                     sectionData.add(temp);
                 }
                 
+                // Sort the data alphabetically
                 Collections.sort(sectionData, new FilterComparator());
                 
                 mData.set(section, new Pair<String, List<FilterViewHolder>>(sectionTitle, sectionData));

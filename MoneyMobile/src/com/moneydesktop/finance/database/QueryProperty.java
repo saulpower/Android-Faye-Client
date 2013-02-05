@@ -4,6 +4,10 @@ import de.greenrobot.dao.Property;
 
 public class QueryProperty {
 
+    public static String EQUALS = "= ?";
+    public static String NOT_EQUALS = "!= ?";
+    public static String LIKE = "LIKE ?";
+    
     private String mTablename;
     private Property mField;
     private Property mForeignKey;
@@ -15,6 +19,12 @@ public class QueryProperty {
         mTablename = tablename;
         mField = field;
         mForeignKey = foreignKey;
+    }
+    
+    public QueryProperty(String tablename, Property field, String comparator) {
+        mTablename = tablename;
+        mField = field;
+        mComparator = comparator;
     }
     
     public QueryProperty(String tablename, Property field) {

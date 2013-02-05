@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
+import android.widget.ImageView;
 
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
 import com.moneydesktop.finance.handset.activity.LoginHandsetActivity;
@@ -34,10 +35,13 @@ public class SplashActivity extends BaseActivity {
 
         setContentView(R.layout.splash_view);
         
+        ImageView image = (ImageView) findViewById(R.id.splash_screen);
+        
         ApplicationContext.setIsTablet(isTablet(this));
         
         if (ApplicationContext.isTablet()) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            image.setBackgroundResource(R.drawable.default_landscape_tablet);
         }
 
         // Creates a CountDownTimer object

@@ -59,14 +59,6 @@ public class TransactionsHandsetFragment extends BaseFragment implements OnItemC
         super.onAttach(activity);
 
         EventBus.getDefault().register(this);
-        this.mActivity.onFragmentAttached(this);
-	}
-	
-	@Override
-	public void onResume() {
-		super.onResume();
-		
-        this.mActivity.updateNavBar(getFragmentTitle());
 	}
     
     @Override

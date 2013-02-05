@@ -406,7 +406,7 @@ public class DataController {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<Object> getChangedData(Class<?> key, DataState dataState) {
+	public static List<Object> getByDataState(Class<?> key, DataState dataState) {
 		
 		try {
 		

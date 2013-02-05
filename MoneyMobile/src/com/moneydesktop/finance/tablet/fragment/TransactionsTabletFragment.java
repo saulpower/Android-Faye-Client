@@ -1,7 +1,6 @@
 package com.moneydesktop.finance.tablet.fragment;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -37,7 +36,7 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
 	public static TransactionsTabletFragment newInstance() {
 			
 	    TransactionsTabletFragment fragment = new TransactionsTabletFragment();
-	
+	    
         Bundle args = new Bundle();
         fragment.setArguments(args);
         
@@ -45,23 +44,15 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
 	}
 	
 	@Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        this.mActivity.onFragmentAttached(this);
-	}
-	
-	@Override
-	public void onResume() {
-		super.onResume();
-
+	public void onCreate(Bundle savedInstanceState) {
+	    super.onCreate(savedInstanceState);
+	    
         EventBus.getDefault().register(this);
-        this.mActivity.updateNavBar(getFragmentTitle());
 	}
     
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroy() {
+        super.onDestroy();
 
         EventBus.getDefault().unregister(this);
     }

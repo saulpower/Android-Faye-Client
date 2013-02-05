@@ -6,7 +6,8 @@
     
     <ImageView android:layout_width="fill_parent"
     		android:layout_height="wrap_content"
-    		android:src="@drawable/tablet_accounts_categorywood_bottom"
-    		android:scaleType="fitXY"/>
+    		android:src="@drawable/account_wood_bottom_background"
+    		android:scaleType="fitXY"
+    		android:contentDescription="@string/description"/>
 
 </LinearLayout>

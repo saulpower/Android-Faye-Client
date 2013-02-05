@@ -4,7 +4,7 @@
     android:id="@+id/account_types_container"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/wooddark" >
+    android:background="@drawable/wood_dark_background" >
 
     <com.moneydesktop.finance.views.AnimatedListView.SlideExpandableListView
         android:id="@+id/accounts_expandable_list_view"

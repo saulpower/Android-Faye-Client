@@ -31,7 +31,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
     public final String TAG = this.getClass().getSimpleName();
 
     private final float ITEM_WIDTH = 80.0f;
-    private final float THRESHOLD = 20.0f;
+    private final float THRESHOLD = 2.0f;
     
     private Float mDynamicThreshold;
     private Float mDynamicWidth;
@@ -456,7 +456,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
                 mLastTouchY = y;
                 mLastTouchX = x;
                 
-                if ((mTouchingAnchorLeft || mTouchingAnchorRight || mTouchingSelection) && Math.abs(mDistance.x) < getDynamicThreshold()) {
+                if ((mTouchingAnchorLeft || mTouchingAnchorRight || mTouchingSelection) && (Math.abs(mDistance.x) > getDynamicThreshold() || mAnchorsMoved)) {
 
                     mAnchorsMoved = true;
                     moveAnchors();

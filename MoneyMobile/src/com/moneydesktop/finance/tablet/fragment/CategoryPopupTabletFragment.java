@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnFocusChangeListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -24,9 +25,7 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
-import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.database.Category;
-import com.moneydesktop.finance.database.CategoryDao;
 import com.moneydesktop.finance.tablet.adapter.CategoryTabletAdapter;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
@@ -34,7 +33,6 @@ import com.moneydesktop.finance.views.ClearEditText;
 import com.moneydesktop.finance.views.SpinnerView;
 import com.moneydesktop.finance.views.UltimateListView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryPopupTabletFragment extends PopupFragment implements OnChildClickListener, OnGroupClickListener {
@@ -66,9 +64,14 @@ public class CategoryPopupTabletFragment extends PopupFragment implements OnChil
         
         loadAnimations();
         setupView();
-        setupCategoryList();
         
         return mRoot;
+    }
+    
+    @Override
+    public void popupVisible() {
+
+        setupCategoryList();
     }
     
     private void loadAnimations() {
@@ -99,6 +102,18 @@ public class CategoryPopupTabletFragment extends PopupFragment implements OnChil
         mCategoryList.setOnGroupClickListener(this);
         
         mSearch = (ClearEditText) mRoot.findViewById(R.id.search);
+        
+        mSearch.setOnFocusChangeListener(new OnFocusChangeListener() {
+            
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                
+                if (hasFocus) {
+                    mActivity.setEditText(null);
+                }
+            }
+        });
+        
         mSearch.addTextChangedListener(new TextWatcher() {
             
             @Override
@@ -147,7 +162,7 @@ public class CategoryPopupTabletFragment extends PopupFragment implements OnChil
                     return null;
                 }
                 
-                List<Pair<Category, List<Category>>> data = loadCategoryData();
+                List<Pair<Category, List<Category>>> data = Category.loadCategoryData();
                 
                 return data;
             }
@@ -171,29 +186,6 @@ public class CategoryPopupTabletFragment extends PopupFragment implements OnChil
         }.execute();
     }
     
-    private List<Pair<Category, List<Category>>> loadCategoryData() {
-        
-        List<Pair<Category, List<Category>>> data = new ArrayList<Pair<Category, List<Category>>>();
-        
-        CategoryDao categoryDao = (CategoryDao) DataController.getDao(Category.class);
-        List<Category> sections = categoryDao.queryBuilder()
-            .where(CategoryDao.Properties.ParentCategoryId.isNull())
-            .orderAsc(CategoryDao.Properties.CategoryName)
-            .list();
-        
-        for (Category category : sections) {
-            
-            List<Category> items = categoryDao.queryBuilder()
-                    .where(CategoryDao.Properties.ParentCategoryId.eq(category.getId()))
-                    .orderAsc(CategoryDao.Properties.CategoryName)
-                    .list();
-            
-            data.add(new Pair<Category, List<Category>>(category, items));
-        }
-        
-        return data;
-    }
-    
     @Override
     public String getFragmentTitle() {
         return null;
@@ -207,7 +199,9 @@ public class CategoryPopupTabletFragment extends PopupFragment implements OnChil
     @Override
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
             int childPosition, long id) {
-        dismissPopup((Category) mAdapter.getChild(groupPosition, childPosition));
+        
+        Category category = (Category) mAdapter.getChild(groupPosition, childPosition);
+        dismissPopup(category);
         
         return true;
     }

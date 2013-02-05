@@ -28,6 +28,7 @@
     <color name="primaryColor">#00ACED</color>
     <color name="transparent">#00000000</color>
     <color name="transparent50percent">#BF000000</color>
+    <color name="shader_black">#46000000</color>
     
     <color name="random1">#91b266</color>
     <color name="random2">#eee58a</color>
@@ -52,5 +53,5 @@
     <color name="splitsColor">#F16430</color>
     <color name="white">#FFF</color>
     <color name="white_transparent">#7FFFFFFF</color>
-
+	<color name="account_group_stroke">#717073</color>
 </resources>

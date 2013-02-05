@@ -1,5 +1,8 @@
 package com.moneydesktop.finance.database;
 
+import android.util.Pair;
+
+import java.util.ArrayList;
 import java.util.List;
 import com.moneydesktop.finance.database.DaoSession;
 import de.greenrobot.dao.DaoException;
@@ -12,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Enums.DataState;
 import com.moneydesktop.finance.model.User;
 // KEEP INCLUDES END
@@ -557,6 +561,29 @@ public class Category extends BusinessObject  {
         }
         
         return ret;
+    }
+    
+    public static List<Pair<Category, List<Category>>> loadCategoryData() {
+        
+        List<Pair<Category, List<Category>>> data = new ArrayList<Pair<Category, List<Category>>>();
+        
+        CategoryDao categoryDao = (CategoryDao) DataController.getDao(Category.class);
+        List<Category> sections = categoryDao.queryBuilder()
+            .where(CategoryDao.Properties.ParentCategoryId.isNull())
+            .orderAsc(CategoryDao.Properties.CategoryName)
+            .list();
+        
+        for (Category category : sections) {
+            
+            List<Category> items = categoryDao.queryBuilder()
+                    .where(CategoryDao.Properties.ParentCategoryId.eq(category.getId()))
+                    .orderAsc(CategoryDao.Properties.CategoryName)
+                    .list();
+            
+            data.add(new Pair<Category, List<Category>>(category, items));
+        }
+        
+        return data;
     }
 
     // KEEP METHODS END

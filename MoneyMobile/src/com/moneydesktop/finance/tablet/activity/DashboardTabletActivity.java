@@ -31,8 +31,8 @@ import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.database.Tag;
 import com.moneydesktop.finance.model.EventMessage;
-import com.moneydesktop.finance.model.FragmentVisibilityListener;
 import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
+import com.moneydesktop.finance.model.FragmentVisibilityListener;
 import com.moneydesktop.finance.shared.DashboardBaseActivity;
 import com.moneydesktop.finance.tablet.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
@@ -142,7 +142,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         // Only run if there are no fragments currently showing
         if (mFragmentCount == 0) {
             
-            updateNavBar(getActivityTitle());
+            updateNavBar(getActivityTitle(), false);
             
             if (getActivityTitle().equals(getResources().getString(R.string.title_activity_dashboard))) {
                 setupTitleBar();
@@ -198,6 +198,14 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
     @Override
     public void updateNavBar(String titleString) {
         
+        updateNavBar(titleString, true);
+    }
+    
+    @Override
+    protected void updateNavBar(String titleString, boolean fragmentTitle) {
+
+        if (fragmentTitle && mFragmentCount == 0) return;
+        
         TextView tv = (TextView) mNavTitle.getCurrentView();
         
         if (mNavBar != null && titleString != null && !tv.getText().toString().equalsIgnoreCase(titleString)) {
@@ -206,7 +214,6 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         }
     }
     
-	
 	public void onEvent(NavigationEvent event) {
 		
 		if (event.isShowing() == null && event.getDirection() == null) {
@@ -251,6 +258,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 		mFlipper = (ViewFlipper) findViewById(R.id.flipper);
         mPager = (GrowViewPager) findViewById(R.id.tablet_pager);
         mNavBar = (RelativeLayout) findViewById(R.id.navigation);
+        
         mNavTitle = (TextSwitcher) findViewById(R.id.title_bar_name);
         mHomeButton = (ImageView) findViewById(R.id.home);
         

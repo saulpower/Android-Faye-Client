@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -40,7 +39,7 @@ import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.model.EventMessage.DataUpdateEvent;
 import com.moneydesktop.finance.model.EventMessage.FilterEvent;
 import com.moneydesktop.finance.model.EventMessage.ParentAnimationEvent;
-import com.moneydesktop.finance.shared.TransactionController.ParentTransactionInterface;
+import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
 import com.moneydesktop.finance.shared.TransactionViewHolder;
 import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.TransactionsTabletAdapter;
@@ -425,14 +424,12 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     }
     
     @Override
-    public void dataLoaded(boolean isRequest) {
+    public void dataLoaded() {
         
         mLoaded = true;
 
-        if (mTransactionsList.getVisibility() == View.VISIBLE && !isRequest) {
+        if (mTransactionsList.getVisibility() == View.VISIBLE) {
             mTransactionsList.startAnimation(mFadeOut);
-        } else {
-            configureView();
         }
     }
     
@@ -464,8 +461,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         
         if (mLoaded && !mWaiting && mTransactionsList.getVisibility() != View.VISIBLE) {
 
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
+            mTransactionsList.postDelayed(new Runnable() {
                 
                 @Override
                 public void run() {
@@ -480,11 +476,15 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     
     @Override
     public String getFragmentTitle() {
-        return getString(R.string.title_activity_transactions);
+        return null;
     }
 
     @Override
     public boolean onBackPressed() {
+        if (mParent != null && mParent.getDetailFragment() != null) {
+            return mParent.getDetailFragment().onBackPressed();
+        }
+        
         return false;
     }
 

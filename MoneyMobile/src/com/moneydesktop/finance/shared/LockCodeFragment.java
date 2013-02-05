@@ -55,8 +55,6 @@ public class LockCodeFragment extends BaseFragment implements ProcessCodeListene
 	@Override
 	public void onAttach(Activity activity) {
 	    super.onAttach(activity);
-
-        mActivity.onFragmentAttached(this);
         
 	    if (activity instanceof LockCodeHandsetActivity) {
 	        mLockActivity = (LockCodeHandsetActivity) activity;

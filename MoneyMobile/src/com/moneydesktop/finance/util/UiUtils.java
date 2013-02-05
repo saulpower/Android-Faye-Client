@@ -85,11 +85,11 @@ public class UiUtils {
         return metrics;
     }
     
-    public static float getScreenAdjustment(Context context) {
+    public static float getScreenAdjustment() {
         
         float adjustment = 1.0f;
         
-        int dpi = getDensity(context);
+        int dpi = getDensity(ApplicationContext.getContext());
         
         if (dpi >= DisplayMetrics.DENSITY_XHIGH) {
             adjustment = Constant.XHDPI_SCALE;
@@ -107,10 +107,15 @@ public class UiUtils {
         return metrics.densityDpi;
     }
     
-    public static void hideKeyboard(Context context, View view) {
-        InputMethodManager in = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        in.hideSoftInputFromWindow(view.getApplicationWindowToken(),
-                InputMethodManager.HIDE_NOT_ALWAYS);
+    public static void hideKeyboard(Activity activity, View view) {
+        activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        InputMethodManager in = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        in.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+    
+    public static void showKeyboard(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(view, InputMethodManager.RESULT_UNCHANGED_SHOWN);
     }
 
 }

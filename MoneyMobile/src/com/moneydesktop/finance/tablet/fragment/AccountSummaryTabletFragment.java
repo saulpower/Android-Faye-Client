@@ -1,6 +1,5 @@
 package com.moneydesktop.finance.tablet.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,13 +30,6 @@ public class AccountSummaryTabletFragment extends BaseFragment {
         return frag;
 	}
 	
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.mActivity.onFragmentAttached(this);
-	}
-	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
@@ -49,13 +41,6 @@ public class AccountSummaryTabletFragment extends BaseFragment {
 		
 		return mRoot;
 	}
-    
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        this.mActivity.updateNavBar(getFragmentTitle());
-    }
     
     private void setupTitleBar() {
         

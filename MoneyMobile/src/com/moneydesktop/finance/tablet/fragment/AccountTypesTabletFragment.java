@@ -54,12 +54,6 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	}
 	
 	@Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);        
-        this.mActivity.onFragmentAttached(this);
-	}
-	
-	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
@@ -74,7 +68,6 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	
 	private void setupView() {
 	    setupTitleBar(mActivity);
-	    mActivity.updateNavBar(getResources().getString(R.string.title_activity_accounts));
 	    
 		final LinearLayout panelLayoutHolder = (LinearLayout)mRoot.findViewById(R.id.panel_layout_holder);
         
@@ -174,7 +167,9 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         //For every bank that is attached, add it to the Drawer
         for (Bank bank : banksList) {
             //create the view to be attached to Drawer
-        	panelLayoutHolder.addView(populateDrawerView(bank, panelLayoutHolder));
+            if (!bank.getBankName().toLowerCase().contains("manual")) {
+                panelLayoutHolder.addView(populateDrawerView(bank, panelLayoutHolder));
+            }
         }
     }
 
@@ -201,7 +196,13 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         ImageView bankImage = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_image);  
         final ImageView booklet = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_bankbook);
         
-        BankLogoManager.getBankImage(bankImage, bank.getBankId());
+        String logoId = bank.getBankId();
+        
+        if (bank.getInstitution() != null) {
+            logoId = bank.getInstitution().getInstitutionId();
+        }
+        
+        BankLogoManager.getBankImage(bankImage, logoId);
         
         TextView bankName = (TextView)bankTypeAccountView.findViewById(R.id.account_bank_name);
         
@@ -304,7 +305,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	
 	@Override
 	public String getFragmentTitle() {
-		return null;
+		return getString(R.string.title_activity_accounts);
 	}
 
     @Override
