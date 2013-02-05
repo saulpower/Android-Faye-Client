@@ -4,18 +4,13 @@ package com.moneydesktop.finance.tablet.fragment;
 import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.util.Fonts;
@@ -104,7 +99,6 @@ public abstract class SummaryTabletFragment extends BaseFragment {
         mRightText = (VerticalTextView) mRoot.findViewById(R.id.title_right);
         mBackground = (RelativeLayout) mRoot.findViewById(R.id.root);
 
-        
         applyFonts();
     }
     
@@ -148,7 +142,7 @@ public abstract class SummaryTabletFragment extends BaseFragment {
         Fonts.applyPrimaryBoldFont(mRightText, 12);
     }
 
-    private void setRandomBackground() {
+    protected void setRandomBackground() {
 
         if (mColor == null) {
             Random r = new Random();
@@ -182,5 +176,4 @@ public abstract class SummaryTabletFragment extends BaseFragment {
     public boolean onBackPressed() {
         return false;
     }
-
 }
