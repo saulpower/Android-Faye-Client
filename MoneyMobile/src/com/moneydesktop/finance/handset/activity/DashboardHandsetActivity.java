@@ -148,6 +148,9 @@ public class DashboardHandsetActivity extends DashboardBaseActivity {
             case LOCK_SCREEN:
             	frag = LockFragment.newInstance(false);
             	break;
+            case TRANSACTIONS:
+                frag = TransactionsHandsetFragment.newInstance("0");
+                break;
         	default:
         	    break;
         }

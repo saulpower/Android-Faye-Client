@@ -103,7 +103,6 @@ public class TransactionsHandsetFragment extends BaseFragment implements OnItemC
 				
 				int page = params[0];
 
-				Transactions.summarizedTransactions(Long.valueOf(sAccountNumber));
 				List<Transactions> row1 = Transactions.getRows(page, mOrderBy, mDirection).second;
 				List<Pair<String, List<Transactions>>> initial = Transactions.groupTransactions(row1);
 

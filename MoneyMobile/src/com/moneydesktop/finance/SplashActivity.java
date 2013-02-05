@@ -12,7 +12,6 @@ import com.moneydesktop.finance.handset.activity.LoginHandsetActivity;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.tablet.activity.LoginTabletActivity;
-import com.moneydesktop.finance.util.UiUtils;
 
 public class SplashActivity extends BaseActivity {
     
@@ -34,9 +33,6 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.splash_view);
-
-        // Make sure the keyboard isn't showing on startup
-        UiUtils.hideKeyboard(this, findViewById(R.id.splash_screen));
         
         ApplicationContext.setIsTablet(isTablet(this));
         

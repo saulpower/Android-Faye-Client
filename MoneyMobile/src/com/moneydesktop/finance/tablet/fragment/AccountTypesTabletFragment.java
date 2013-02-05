@@ -39,6 +39,7 @@ import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.CheckRemoveBankEvent;
 import com.moneydesktop.finance.model.EventMessage.RemoveAccountTypeEvent;
+import com.moneydesktop.finance.model.FragmentVisibilityListener;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.model.EventMessage.BankStatusUpdateEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;

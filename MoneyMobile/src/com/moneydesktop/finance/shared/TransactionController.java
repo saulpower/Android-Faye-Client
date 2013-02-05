@@ -49,6 +49,10 @@ public class TransactionController {
     private float mContainerOffset;
     private boolean mShowing = false;
     
+    public boolean isShowing() {
+        return mShowing;
+    }
+
     private AnimatorListener mListenerShow = new AnimatorListener() {
         
         @Override

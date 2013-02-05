@@ -25,9 +25,14 @@ public class LockCodeView extends RelativeLayout {
     private Context mContext;
     private LinearLayout mContainer;
 	private EditText mCurrentField, mNextField, mField1, mField2, mField3, mField4;
-	private TextView mText;
+
+    private TextView mText;
 	private ProcessCodeListener mListener;
 	private Animation mShake;
+	
+    public EditText getCurrentField() {
+        return mCurrentField;
+    }
 
 	public void setListener(ProcessCodeListener listener) {
 		this.mListener = listener;

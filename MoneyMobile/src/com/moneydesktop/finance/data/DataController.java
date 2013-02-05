@@ -255,12 +255,7 @@ public class DataController {
 		if (pendingTx != null) {
 			
 			list = getList(key, pendingTx);
-			
-			if (pendingTx.size() > 5) {
-				int i = 0;
-				i++;
-			}
-			
+		
 			if (!list.contains(object)) {
 				list.add(object);
 			}
