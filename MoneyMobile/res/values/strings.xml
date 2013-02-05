@@ -13,6 +13,11 @@
         <item>UPDATE USERNAME AND PASSWORD</item>
     </string-array> 
     
+   <string-array name="account_types_bank_options">
+        <item>@string/icon_lock</item>
+        <item>@string/icon_trash</item>
+    </string-array>
+    
     <string-array name="account_types_title_bar_icons">
         <item>@string/icon_add</item>
         <item>@string/icon_refresh</item>
@@ -55,6 +60,8 @@
     <string name="atg_ccd">Credit Card Debt</string>
     <string name="atg_od">Other Debt</string>
     <string name="at_cash">Cash</string>
+    <string name="bank_options_credentials">Credentials</string>
+    <string name="bank_options_delete">Delete This Institution</string>
     <string name="button_cancel">CANCEL</string>
     <string name="button_demo">DEMO MODE</string>
     <string name="button_login">LOGIN</string>
@@ -80,7 +87,9 @@
     <string name="default_header">Header</string>
     <string name="default_price">5.99</string>
     <string name="default_title">Title</string>
+    <string name="delete_account_message">This will delete all data associated with this account. Are you sure?</string>
     <string name="delete_bank_message">All associated accounts will also be removed</string>
+    <string name="delete_bank_with_no_accounts_message">All accounts for this institution have been removed. Continue to remove the institution?</string>
     <string name="delete_bank_title">Remove %1$s?</string>
     <string name="description">description</string>
     <string name="demo_message">Creating Demo Data&#8230;</string>
@@ -91,6 +100,10 @@
     <string name="error_email_invalid">Please ensure your email address is valid.</string>
     <string name="error_login_invalid">Did you know you need to setup\nyour mobile account before you\ncan use this app?</string>
     <string name="error_title">Error</string>
+    <string name="feature_not_available">Feature Not Available</string>
+    <string name="feature_not_available_message">This feature is not available in demo mode</string>
+    <string name="feature_not_available_delete_title">Primary Institution: %1$s</string>
+    <string name="feature_not_available_delete_message">This account cannot be removed</string>
     <string name="feedback_email">mobile.support@moneydesktop.com</string>
     <string name="feedback_subject">MoneyMobile Feedback</string>
     <string name="feedback_title">Send Email</string>
@@ -126,6 +139,7 @@
     <string name="icon_inv">I</string>
     <string name="icon_prop">M</string>
     <string name="icon_saving">O</string>
+    <string name="icon_trash">G</string>
     <string name="icon_cc">F</string>
     <string name="icon_loc">J</string>
     <string name="icon_loans">H</string>
@@ -135,8 +149,8 @@
     <string name="icon_qmark">\?</string>
  	<string name="icon_help">v</string>
     <string name="icon_add">A</string>
-    <string name="icon_print">print</string>
-    <string name="icon_email">email</string>
+    <string name="icon_print">®</string>
+    <string name="icon_email">(</string>
     <string name="icon_refresh">N</string>
     <string name="intro_title_1">DID YOU KNOW?</string>
     <string name="intro_title_2">PRINT OR EMAIL</string>
@@ -146,6 +160,8 @@
     <string name="intro_desc_2">You can print or email any transaction you want. \"Honey, why did you spend $112 at the golf course? Did you lose a bet?\" Sorry boys, now your wife knows everything.</string>
     <string name="intro_desc_3">Keep your side biz separate from your personal stuff by tagging transaction as business expenses (\"B\") or personal expenses (\"P\"). Some call it OCD. We call it organization. You\'re welcome.</string>
     <string name="intro_desc_4">You can email any report to whomeever you like. Want to show your husband how much money he spent at Home Depot this month? Just email him a copy of the Spending by Payee report. Now he\'s got nowhere to hide.</string>
+	<string name="label_account_name">Account Name</string>
+	<string name="label_account_type">Account Type</string>
     <string name="label_amount">Amount</string>
     <string name="label_app_lock">APP LOCK</string>
     <string name="label_category">Category</string>
@@ -182,6 +198,7 @@
     <string name="need_account">You need a MoneyDesktop account to use MoneyMobile.</string>
     <string name="new_sub_category">ADD NEW SUBCATEGORY</string>
     <string name="panel_title">MY INSTITUTIONS</string>
+    <string name="save">Save</string>
     <string name="plus">+</string>
     <string name="setup_url">http://embed.moneydesktop.com/setup-instructions.html</string>
     <string name="setting_feedback_title">Feedback</string>
@@ -210,6 +227,7 @@
     <string name="thank_you">Thank you for your interest in MoneyDesktop.</string>
     <string name="try_demo">Your request has been submitted. Try out demo mode to see what MoneyDesktop has to offer.</string>
     <string name="text_syncing">Syncing Data&#8230;</string>
+    <string name="title_activity_account_settings">Account Settings</string>
     <string name="title_activity_accounts">Accounts</string>
     <string name="title_activity_budget">Budgets</string>
     <string name="title_activity_dashboard">Financial Dashboard</string>

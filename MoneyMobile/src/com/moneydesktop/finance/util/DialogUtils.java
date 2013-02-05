@@ -75,7 +75,7 @@ public class DialogUtils {
 				.setCancelable(false)
                 .setPositiveButton(positiveButton, clickListener);
 			
-		if (clickListener != null) {
+		if (negativeButton != null) {
             alertBuilder.setNegativeButton(negativeButton, clickListener);
 		}
 		

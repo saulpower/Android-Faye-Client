@@ -107,6 +107,10 @@ public class ApplicationContext extends Application {
         sDaoSession = sDaoMaster.newSession();
 	}
 	
+	public static void startNewDatabaseSession() {
+		sDaoMaster.newSession();
+	}
+	
 	private void registerScreenLock() {
 
         IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);

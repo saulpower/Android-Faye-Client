@@ -5,13 +5,14 @@ import java.text.NumberFormat;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.moneydesktop.finance.BaseActivity;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.BankAccount;
-
 
 public class AccountTypeGroupView extends FrameLayout {
     
@@ -20,18 +21,17 @@ public class AccountTypeGroupView extends FrameLayout {
     private AccountType mAccountType;
     private TextView mAccountTypeSum;
 
-    
     public AccountTypeGroupView (Context context, AccountType accountType) {
         super(context);
         mContext = context;
         mAccountType = accountType;
+    
+        final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);    
+        View view = inflater.inflate(R.layout.account_type_group, this, true);
 
-        final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View view = inflater.inflate(R.layout.account_type_group, this, true);
         mAccountTypeName = (TextView)view.findViewById(R.id.account_type_group_name);
-        mAccountTypeSum = (TextView)findViewById(R.id.account_type_group_sum);
-
-
+        mAccountTypeSum = (TextView)view.findViewById(R.id.account_type_group_sum);
+        
         populateView();
     }
 
@@ -47,7 +47,6 @@ public class AccountTypeGroupView extends FrameLayout {
         String formatedSum = NumberFormat.getCurrencyInstance().format(accountTypeSum);
         
         mAccountTypeSum.setText(formatedSum);
-
     }
     
     public AccountTypeGroupView (Context context) {
