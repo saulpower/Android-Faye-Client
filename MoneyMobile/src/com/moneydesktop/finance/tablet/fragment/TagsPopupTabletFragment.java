@@ -1,5 +1,8 @@
 package com.moneydesktop.finance.tablet.fragment;
 
+import java.util.List;
+
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -20,13 +23,14 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.Tag;
+import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.tablet.adapter.TagsTabletAdapter;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.ClearEditText;
 import com.moneydesktop.finance.views.SpinnerView;
 
-import java.util.List;
+import de.greenrobot.event.EventBus;
 
 public class TagsPopupTabletFragment extends PopupFragment {
     
@@ -49,6 +53,13 @@ public class TagsPopupTabletFragment extends PopupFragment {
         fragment.setArguments(args);
         
         return fragment;
+    }
+    
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -75,9 +86,23 @@ public class TagsPopupTabletFragment extends PopupFragment {
     }
     
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        
+        EventBus.getDefault().unregister(this);
+    }
+    
+    @Override
     public void popupVisible() {
 
         setupTagList();
+    }
+    
+    public void onEvent(DatabaseSaveEvent event) {
+        
+    	if (mAdapter != null && event.didDatabaseChange() && event.getChangedClassesList().contains(Tag.class)) {
+    		setupTagList();
+    	}
     }
     
     private void loadAnimations() {
@@ -178,8 +203,12 @@ public class TagsPopupTabletFragment extends PopupFragment {
                     return;
                 }
                 
-                mAdapter = new TagsTabletAdapter(mActivity, R.layout.tablet_account_summary, data, mTagsList, mSearch);
-                mTagsList.setAdapter(mAdapter);
+                if (mAdapter == null) {
+	                mAdapter = new TagsTabletAdapter(mActivity, R.layout.tablet_account_summary, data, mTagsList, mSearch);
+	                mTagsList.setAdapter(mAdapter);
+                } else {
+                	mAdapter.updateData(data);
+                }
                 
                 mTagsList.setVisibility(View.VISIBLE);
                 mTagsList.startAnimation(mFadeIn);
