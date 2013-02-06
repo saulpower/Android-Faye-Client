@@ -99,6 +99,7 @@
 	    </LinearLayout>
 		        
         <com.moneydesktop.finance.views.LineView
+            android:id="@+id/delete_line"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             app:lineColor="@color/gray5"

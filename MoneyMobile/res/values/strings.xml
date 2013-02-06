@@ -21,9 +21,12 @@
         <item>@string/icon_refresh</item>
         <item>@string/icon_help</item>
     </string-array>
-    <string-array name="account_summary_title_bar_icons">
-        <item>@string/icon_print</item>
+    <string-array name="dashboard_title_bar_icons">
         <item>@string/icon_email</item>
+        <item>@string/icon_help</item>
+        <item>@string/icon_refresh</item>
+    </string-array>
+    <string-array name="transactions_title_bar_icons">
         <item>@string/icon_help</item>
     </string-array>
 
@@ -91,6 +94,7 @@
     <string name="description">description</string>
     <string name="dollar_sign">$</string>
     <string name="email_title">Send Email</string>
+    <string name="email_dashboard_subject">My Finance Dashboard</string>
     <string name="email_transaction_subject">Check Out This Transaction</string>
     <string name="email_transactions_subject">Check Out These Transactions</string>
     <string name="empty_transactions">No Transactions</string>

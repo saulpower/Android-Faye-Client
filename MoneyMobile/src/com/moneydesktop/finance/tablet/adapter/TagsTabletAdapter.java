@@ -70,7 +70,7 @@ public class TagsTabletAdapter extends DeleteBaseAdapter<Tag> implements Filtera
     
     @Override
     public int getCount() {
-        return mFilteredTags.size() == 0 ? 1 : mFilteredTags.size();
+        return (mFilteredTags.size() == 0 && !mSearch.getText().toString().equals("")) ? 1 : mFilteredTags.size();
     }
     
     @Override

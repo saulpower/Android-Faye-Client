@@ -1,6 +1,9 @@
 package com.moneydesktop.finance.tablet.fragment;
 
+import java.util.ArrayList;
+
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +16,7 @@ import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.util.EmailUtils;
+import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.SettingButton;
 
 import de.greenrobot.event.EventBus;
@@ -47,6 +51,13 @@ public class SettingsTabletFragment extends BaseFragment {
 	}
     
     @Override
+    public void onResume() {
+        super.onResume();
+        
+        setupTitleBar(getActivity());
+    }
+    
+    @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
 
@@ -57,6 +68,15 @@ public class SettingsTabletFragment extends BaseFragment {
     public void onSaveInstanceState(Bundle outState)  {
         super.onSaveInstanceState(outState);
     }
+
+    private void setupTitleBar(final Activity activity) {
+        
+        String[] icons = new String[0];
+        
+        ArrayList<OnClickListener> onClickListeners = new ArrayList<OnClickListener>();
+        
+        new NavBarButtons(activity, icons, onClickListeners);
+     }
 	
 	private void setupViews() {
 		
@@ -101,7 +121,7 @@ public class SettingsTabletFragment extends BaseFragment {
 	
 	@Override
 	public String getFragmentTitle() {
-		return getString(R.string.title_activity_settings);
+		return getString(R.string.title_activity_settings).toUpperCase();
 	}
 
     @Override

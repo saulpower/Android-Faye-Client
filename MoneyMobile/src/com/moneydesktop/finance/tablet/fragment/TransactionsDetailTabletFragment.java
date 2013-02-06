@@ -31,6 +31,7 @@ import com.moneydesktop.finance.util.EmailUtils;
 import com.moneydesktop.finance.util.FileIO;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.LineView;
 
 import de.greenrobot.event.EventBus;
 
@@ -45,6 +46,7 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
     private RelativeLayout mContainer;
     private LinearLayout mMenuContainer, mDeleteItem, mEmailItem;
     private TextView mMenuTitle, mEmailLabel, mEmailIcon, mDeleteLabel, mDeleteIcon;
+    private LineView mDeleteLine;
     
     private float mLeftMove, mRightMove;
     
@@ -201,6 +203,8 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
         mDeleteLabel = (TextView) mRoot.findViewById(R.id.delete_label);
         mDeleteLabel.setText(mDeleteLabel.getText().toString().toUpperCase());
         mDeleteIcon = (TextView) mRoot.findViewById(R.id.delete_icon);
+        
+        mDeleteLine = (LineView) mRoot.findViewById(R.id.delete_line);
     }
     
     private void initializeContainer() {
@@ -358,7 +362,9 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
 
         if (mTransaction == null) return;
         
-        mDeleteItem.setVisibility(mTransaction.getIsManual() ? View.VISIBLE : View.GONE);
+        boolean show = (mTransaction.getIsManual() != null && mTransaction.getIsManual());
+        mDeleteItem.setVisibility(show ? View.VISIBLE : View.GONE);
+        mDeleteLine.setVisibility(show ? View.VISIBLE : View.GONE);
     }
     
     @Override

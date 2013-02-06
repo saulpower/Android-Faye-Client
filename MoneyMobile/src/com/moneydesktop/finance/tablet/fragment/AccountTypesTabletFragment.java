@@ -681,7 +681,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	
 	@Override
 	public String getFragmentTitle() {
-		return getString(R.string.title_activity_accounts);
+		return getString(R.string.title_activity_accounts).toUpperCase();
 	}
 
     @Override
