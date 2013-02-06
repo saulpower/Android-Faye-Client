@@ -241,23 +241,23 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	    getAllBanks(); 
 	    
 	    mBanksForDeletion = new ArrayList<Bank>();
-	   
+
 		mPanelLayoutHolder.addView(getPanelHeader());
 
 		List<Bank> bankList = new ArrayList<Bank>(mBankList);
-		
+
 		for (Bank bank : bankList) {
 			if (bank.getBankAccounts().isEmpty()) {
 				mBankList.remove(bank);
 			}
 		}
-		
+
         //For every bank that is attached, add it to the Drawer
         for (Bank bank : mBankList) {
             //create the view to be attached to Drawer
-            if (!bank.getBankName().toLowerCase().contains("manual")) {
-                panelLayoutHolder.addView(populateDrawerView(bank, panelLayoutHolder));
-            }
+        	//if (!bank.getBankAccounts().isEmpty()) {
+        		mPanelLayoutHolder.addView(populateDrawerView(bank));
+        	//} 
         }
         if (User.getCurrentUser().getCanSync()) {
             updateAllBankStatus();

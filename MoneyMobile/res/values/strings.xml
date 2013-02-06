@@ -12,6 +12,10 @@
         <item>REMOVE</item>
         <item>UPDATE USERNAME AND PASSWORD</item>
     </string-array>
+    <string-array name="account_types_bank_options">
+        <item>@string/icon_lock</item>
+        <item>@string/icon_trash</item>
+    </string-array>
     <string-array name="account_types_title_bar_icons">
         <item>@string/icon_add</item>
         <item>@string/icon_refresh</item>
@@ -79,6 +83,8 @@
     <string name="default_header">Header</string>
     <string name="default_price">5.99</string>
     <string name="default_title">Title</string>
+    <string name="delete_account_message">This will delete all data associated with this account. Are you sure?</string>
+    <string name="delete_bank_with_no_accounts_message">All accounts for this institution have been removed. Continue to remove the institution?</string>
     <string name="delete_bank_message">All associated accounts will also be removed</string>
     <string name="delete_bank_title">Remove %1$s?</string>
     <string name="demo_message">Creating Demo Data&#8230;</string>
@@ -93,6 +99,10 @@
     <string name="error_login_incomplete">Please complete the login fields</string>
     <string name="error_login_invalid">Did you know you need to setup\nyour mobile account before you\ncan use this app?</string>
     <string name="error_title">Error</string>
+    <string name="feature_not_available">Feature Not Available</string>
+    <string name="feature_not_available_message">This feature is not available in demo mode</string>
+    <string name="feature_not_available_delete_title">Primary Institution: %1$s</string>
+    <string name="feature_not_available_delete_message">This account cannot be removed</string>
     <string name="feedback_email">mobile.support@moneydesktop.com</string>
     <string name="feedback_subject">MoneyMobile Feedback</string>
     <string name="filter_accounts">ACCOUNTS</string>
@@ -152,6 +162,8 @@
     <string name="intro_title_2">PRINT OR EMAIL</string>
     <string name="intro_title_3">BIZ/PERSONAL</string>
     <string name="intro_title_4">DID YOU KNOW?</string>
+    <string name="label_account_name">Account Name</string>
+	<string name="label_account_type">Account Type</string>
     <string name="label_amount">Amount</string>
     <string name="label_app_lock">APP LOCK</string>
     <string name="label_average">Average</string>
@@ -195,6 +207,7 @@
     <string name="new_tag">(Select to Add)</string>
     <string name="panel_title">MY INSTITUTIONS</string>
     <string name="plus">+</string>
+    <string name="save">Save</string>
     <string name="setting_feedback_text">Tell us what we\'re doing wrong, or right. Don\'t hold back we can take it.</string>
     <string name="setting_feedback_title">Feedback</string>
     <string name="setting_lock_text">Enter a four-digit code to password protect your data.</string>

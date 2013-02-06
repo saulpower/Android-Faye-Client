@@ -1,14 +1,9 @@
 package com.moneydesktop.finance.views.AnimatedListView;
 
-import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import com.moneydesktop.finance.R;
 
 /**
  * Animation that either expands or collapses a view by sliding it down to make it visible.
@@ -57,7 +52,6 @@ public class ExpandCollapseAnimation extends Animation {
 			} else {
 				mLayoutParams.bottomMargin = - (int) (mEndHeight * interpolatedTime);
 			}
-			Log.d("ExpandCollapseAnimation", "anim height " + mLayoutParams.bottomMargin);
 			mAnimatedView.requestLayout();
 		} else {
 			if(mType == EXPAND) {

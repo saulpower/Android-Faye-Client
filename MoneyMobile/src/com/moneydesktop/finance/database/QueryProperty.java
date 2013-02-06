@@ -32,12 +32,6 @@ public class QueryProperty {
         mField = field;
     }
     
-    public QueryProperty(String tablename, Property field, String comparisonMethod) {
-        mTablename = tablename;
-        mField = field;
-        mComparator = comparisonMethod;
-    }
-    
 
     public String getTablename() {
         return mTablename;
