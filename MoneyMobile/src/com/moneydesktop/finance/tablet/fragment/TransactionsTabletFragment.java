@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
-import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.shared.FilterViewHolder;
@@ -109,7 +108,7 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
 	
 	public void onEvent(DatabaseSaveEvent event) {
 	    
-	    if (mAdapter != null) {
+	    if (mAdapter != null && event.didDatabaseChange()) {
 	        mAdapter.reloadSections();
 	    }
 	}

@@ -1,6 +1,10 @@
 package com.moneydesktop.finance.tablet.fragment;
 
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
@@ -42,7 +46,7 @@ import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
-import com.moneydesktop.finance.model.EventMessage.DataUpdateEvent;
+import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.model.EventMessage.FilterEvent;
 import com.moneydesktop.finance.model.EventMessage.ParentAnimationEvent;
 import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
@@ -64,10 +68,6 @@ import com.moneydesktop.finance.views.HorizontalScroller;
 import com.moneydesktop.finance.views.LineView;
 
 import de.greenrobot.event.EventBus;
-
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 @TargetApi(11)
 public class TransactionsPageTabletFragment extends BaseFragment implements OnItemClickListener, FilterChangeListener, OnDataLoadedListener, OnItemLongClickListener {
@@ -512,9 +512,11 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         filterChanged(-1);
     }
     
-    public void onEvent(DataUpdateEvent event) {
+    public void onEvent(DatabaseSaveEvent event) {
         
-        mAdapter.notifyDataSetChanged();
+    	if (mAdapter != null && event.didDatabaseChange() && event.getChangedClassesList().contains(Transactions.class)) {
+    		mAdapter.notifyDataSetChanged();
+    	}
     }
 
     private void configureView() {

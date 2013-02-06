@@ -26,11 +26,8 @@ import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
 import com.moneydesktop.finance.animation.FlipXAnimation;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.database.Transactions;
-import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
 import com.moneydesktop.finance.util.UiUtils;
-
-import de.greenrobot.event.EventBus;
 
 @TargetApi(11)
 public class TransactionDetailController {
@@ -133,7 +130,6 @@ public class TransactionDetailController {
             
             mAnimating = false;
             mShowing = false;
-            EventBus.getDefault().post(new EventMessage().new DataUpdateEvent());
         }
         
         @Override

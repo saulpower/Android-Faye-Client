@@ -168,8 +168,8 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
     protected void setupAnimations() {
         super.setupAnimations();
         
-        mPushIn = AnimationUtils.loadAnimation(getActivity(), R.anim.in_left);
-        mPushOut = AnimationUtils.loadAnimation(getActivity(), R.anim.out_left);
+        mPushIn = AnimationUtils.loadAnimation(getActivity(), R.anim.in_left_fast);
+        mPushOut = AnimationUtils.loadAnimation(getActivity(), R.anim.out_left_fast);
         mPushOut.setAnimationListener(new AnimationListener() {
             
             @Override

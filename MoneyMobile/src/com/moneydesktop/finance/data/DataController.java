@@ -1,8 +1,16 @@
 package com.moneydesktop.finance.data;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.database.sqlite.SQLiteConstraintException;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.data.Enums.DataState;
@@ -30,15 +38,6 @@ import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.event.EventBus;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class DataController {
 	
 	public static final String TAG = "DatabaseDefaults";
@@ -49,7 +48,7 @@ public class DataController {
 	
 	private static Map<String, Object> sPendingCache = new HashMap<String, Object>();
 	
-	private static int sCount = 0;
+	private static List<Class<?>> sChangedClasses = new ArrayList<Class<?>>();
 	
 	private static Class<?>[] sObjectOrder = new Class<?>[] {
         AccountType.class,
@@ -72,9 +71,6 @@ public class DataController {
 	 * Saves all the pending transactions in a batch fashion
 	 */
 	public static synchronized void save() {
-
-		long start = System.currentTimeMillis();
-		sCount = 0;
 		
 		processTx(sPendingInsertTx, TxType.INSERT);
 		processTx(sPendingUpdateTx, TxType.UPDATE);
@@ -84,12 +80,10 @@ public class DataController {
 			ApplicationContext.startNewDatabaseSession();
 		}
 		
+		EventBus.getDefault().post(new EventMessage().new DatabaseSaveEvent(new ArrayList<Class<?>>(sChangedClasses)));
+		
 		// Reset pending transaction list
 		clearCache();
-		
-		
-		EventBus.getDefault().post(new EventMessage().new DatabaseSaveEvent());
-		Log.i(TAG, "Processed " + sCount + " records in " + (System.currentTimeMillis() - start) + " ms");
 	}
 	
 	/**
@@ -114,6 +108,10 @@ public class DataController {
 		    
 		    if (entities != null && entities.size() > 0) {
 			    
+		    	if (!sChangedClasses.contains(key)) {
+		    		sChangedClasses.add(key);
+		    	}
+		    	
 			    AbstractDao<Object, Long> dao = (AbstractDao<Object, Long>) getDao(key);
 			    
 			    for (Object object : entities) {
@@ -139,8 +137,6 @@ public class DataController {
 			    } catch (SQLiteConstraintException ex) {
                     Log.e(TAG, "Error processing transaction", ex);
                 }
-			    
-			    sCount += entities.size();
 		    }
 		}
 	}
@@ -297,6 +293,7 @@ public class DataController {
 	
 	public static void clearCache() {
 		
+		sChangedClasses.clear();
 		sPendingCache.clear();
 		sPendingInsertTx.clear();
 		sPendingDeleteTx.clear();
