@@ -206,7 +206,7 @@ public class DropDownTabletActivity extends DialogActivity implements onBackPres
         ft.commit();
     }
     
-    private void dismissDropdown() {
+    public void dismissDropdown() {
         
         // Hide keyboard
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);

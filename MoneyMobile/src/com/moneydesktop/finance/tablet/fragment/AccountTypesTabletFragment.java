@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -38,6 +40,7 @@ import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.CheckRemoveBankEvent;
+import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.model.EventMessage.RemoveAccountTypeEvent;
 import com.moneydesktop.finance.model.FragmentVisibilityListener;
 import com.moneydesktop.finance.model.User;
@@ -103,17 +106,28 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 		mFooter = inflater.inflate(R.layout.account_type_list_footer, null);
 		mListView = (ListView) mRoot.findViewById(R.id.accounts_expandable_list_view);
 		sRightDrawer = (SlidingDrawerRightSide) mRoot.findViewById(R.id.account_slider);
-		setupView();
+
+		setupView(false);
 		
 		mHandler = new Handler();
 		
 		return mRoot;
 	}
 
-    private void setupView() {
-	    setupTitleBar(mActivity);
-	    mActivity.updateNavBar(getResources().getString(R.string.title_activity_accounts));
-	    
+    private void setupView(boolean updateListOnly) {
+		setupTitleBar(mActivity);
+		mActivity.updateNavBar(getResources().getString(R.string.title_activity_accounts));
+    	
+    	//clears out any previous adapter it had
+    	mListView.setAdapter(null);
+    	
+    	if (mListView.getFooterViewsCount() > 0) {
+    		mListView.removeFooterView(mFooter);
+    	}
+    	
+    	ApplicationContext.getDaoSession().clear();
+    	
+    	
 	    mPanelLayoutHolder = (LinearLayout)mRoot.findViewById(R.id.panel_layout_holder);
         	    
 	    AccountTypeDao accountTypeDAO = ApplicationContext.getDaoSession().getAccountTypeDao();
@@ -159,8 +173,11 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                     getActivity(),
                     mAccountTypesFiltered); 
             
+            
+            
             //this animates and sets the ChildView
             mListView.setAdapter(mAdapter);
+            mAdapter1.notifyDataSetChanged();
         } else {
         	Toast.makeText(mActivity, "No Accounts types that have bank accounts...show empty state", Toast.LENGTH_SHORT).show();
         }
@@ -173,7 +190,10 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 			}
 		});
         
-        prepPanel();
+        //don't update the panel if we are only trying to update the account types list
+        if (!updateListOnly){
+        	prepPanel();
+        }
 	}
 
 	private void prepPanel() {
@@ -612,11 +632,19 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         	
         }
     }
+    
+    public void onEvent(DatabaseSaveEvent event) {        
+    	Handler refresh = new Handler(Looper.getMainLooper());
+    	refresh.post(new Runnable() {
+    	    public void run()
+    	    {
+    	    	setupView(true);
+    	    }
+    	});
+    }
 
 	private void deleteBankWithNoAccountsConfirmation(final Bank bank, final View bankView) {
-		
-		
-		
+	
         DialogUtils.alertDialog(String.format(getString(R.string.delete_bank_title), bank.getBankName()), 
                 getString(R.string.delete_bank_with_no_accounts_message), 
                 getString(R.string.label_yes).toUpperCase(), 

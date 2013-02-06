@@ -49,7 +49,7 @@ public class SlidingView extends FrameLayout{
         mSelectedView = selectedView;
         
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT);
-        infaltedView.setLayoutParams(params);
+        mInflatedView.setLayoutParams(params);
         
         mScreenHeight = UiUtils.getScreenHeight((Activity)mContext);
         mScreenWidth = UiUtils.getScreenWidth((Activity)mContext);
@@ -119,7 +119,7 @@ public class SlidingView extends FrameLayout{
         	animation = new TranslateAnimation(mX, 0, 0, mScreenHeight);
             break;
         case RIGHT:
-        	animation = new TranslateAnimation(mScreenWidth, mX, 0, 0);
+        	animation = new TranslateAnimation(mParentView.getX(), mParentView.getWidth(), 0, 0);
             break;
         case TOP:
         	animation = new TranslateAnimation(0, 0, mScreenHeight, mY);

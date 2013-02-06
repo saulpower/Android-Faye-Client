@@ -51,8 +51,10 @@ public class Constant {
     public static final String KEY_ACCOUNT_TYPE = "account_type";
     public static final String KEY_ACCOUNTTYPE = "accountType";
     public static final String KEY_ACCOUNT_NAME = "account_name";
+    public static final String KEY_ACCOUNT_TYPE_ID = "account_id";
     public static final String KEY_AMOUNT = "amount";
     public static final String KEY_ASSOCIATION_DESTROYED = "_association_destroyed";
+    public static final String KEY_BANK_ACCOUNT_ID = "bank_account_id";
     public static final String KEY_BUDGETS = "budgets";
     public static final String KEY_CATEGORIES = "categories";
     public static final String KEY_CATEGORY_GUID = "category_guid";

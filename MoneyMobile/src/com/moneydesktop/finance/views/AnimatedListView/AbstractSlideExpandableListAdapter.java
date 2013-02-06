@@ -141,7 +141,9 @@ public abstract class AbstractSlideExpandableListAdapter extends BaseAdapter{
 		View toggleButton = getExpandToggleButton(parent);
 		
 		HorizontalScrollView horizontalScrollContainer = (HorizontalScrollView)getExpandableView(parent);
-        AccountTypeChildView accountTypeChildView = new AccountTypeChildView(mContext, mAccountTypesFiltered.get(position).getBankAccounts(), parent);
+		AccountType accountType = mAccountTypesFiltered.get(position);
+		accountType.resetBankAccounts(); //pulls fresh from the DB
+        AccountTypeChildView accountTypeChildView = new AccountTypeChildView(mContext, accountType.getBankAccounts(), parent);
         horizontalScrollContainer.addView(accountTypeChildView);
         
         if (User.getCurrentUser().getCanSync()) {

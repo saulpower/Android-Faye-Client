@@ -131,6 +131,7 @@ public class AccountTypeChildView extends FrameLayout {
 									intent.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.ACCOUNT_SETTINGS);
 									intent.putExtra(Constant.KEY_ACCOUNT_TYPE, account.getAccountType().getAccountTypeName());
 									intent.putExtra(Constant.KEY_ACCOUNT_NAME, account.getAccountName());
+									intent.putExtra(Constant.KEY_BANK_ACCOUNT_ID, account.getAccountId());
 							        mActivity.startActivity(intent);
 								}
 							});
