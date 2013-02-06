@@ -112,7 +112,6 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 
     private void setupView() {
 	    setupTitleBar(mActivity);
-	    mActivity.updateNavBar(getResources().getString(R.string.title_activity_accounts));
 	    
 	    mPanelLayoutHolder = (LinearLayout)mRoot.findViewById(R.id.panel_layout_holder);
         	    
@@ -242,17 +241,17 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	    getAllBanks(); 
 	    
 	    mBanksForDeletion = new ArrayList<Bank>();
-	   
+
 		mPanelLayoutHolder.addView(getPanelHeader());
 
 		List<Bank> bankList = new ArrayList<Bank>(mBankList);
-		
+
 		for (Bank bank : bankList) {
 			if (bank.getBankAccounts().isEmpty()) {
 				mBankList.remove(bank);
 			}
 		}
-		
+
         //For every bank that is attached, add it to the Drawer
         for (Bank bank : mBankList) {
             //create the view to be attached to Drawer
@@ -410,12 +409,13 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         ImageView bankImage = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_image);  
         final ImageView booklet = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_bankbook);
         
-        BankLogoManager.getBankImage(bankImage, bank.getBankAccounts().get(0).getInstitutionId());
+        String logoId = bank.getBankId();
         
-        ImageView status = (ImageView) bankTypeAccountView.findViewById(R.id.bank_status);
+        if (bank.getInstitution() != null) {
+            logoId = bank.getInstitution().getInstitutionId();
+        }
         
-        status.setVisibility(View.VISIBLE);
-        setBanner(bank, status);
+        BankLogoManager.getBankImage(bankImage, logoId);
         
         TextView bankName = (TextView)bankTypeAccountView.findViewById(R.id.account_bank_name);
         
@@ -681,7 +681,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	
 	@Override
 	public String getFragmentTitle() {
-		return null;
+		return getString(R.string.title_activity_accounts).toUpperCase();
 	}
 
     @Override

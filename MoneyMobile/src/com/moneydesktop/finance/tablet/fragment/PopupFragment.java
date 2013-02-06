@@ -30,4 +30,6 @@ public abstract class PopupFragment extends BaseFragment {
             mActivity.dismissPopup(resultCode, resultIntent);
         }
     }
+    
+    public void popupVisible() {}
 }

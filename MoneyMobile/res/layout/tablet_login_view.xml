@@ -110,10 +110,14 @@
                 android:orientation="vertical"
 			    android:focusable="true" 
 			    android:focusableInTouchMode="true" >
-
-                <com.moneydesktop.finance.views.DottedLineView
-                    android:layout_width="450dp"
-                    android:layout_height="wrap_content" />
+        
+		        <com.moneydesktop.finance.views.LineView
+		            android:layout_width="450dp"
+		            android:layout_height="wrap_content"
+		            app:lineColor="@color/gray2"
+		            app:lineStrokeWidth="2dp"
+		            app:isDashed="true"
+		            app:dashLength="2dp"  />
 
                 <com.moneydesktop.finance.views.LabelEditText
                     android:id="@+id/username_field"
@@ -121,15 +125,18 @@
                     android:layout_width="450dp"
                     android:layout_height="50dp"
                     android:inputType="textEmailAddress"
-                    android:textSize="25sp"
                     android:imeOptions="actionNext"
-                    app:labelColor="@color/light_gray1"
+                    app:labelColor="@drawable/gray2_to_white_text"
                     app:labelSize="12sp"
                     app:labelText="@string/label_email" />
-
-                <com.moneydesktop.finance.views.DottedLineView
-                    android:layout_width="450dp"
-                    android:layout_height="wrap_content" />
+        
+		        <com.moneydesktop.finance.views.LineView
+		            android:layout_width="450dp"
+		            android:layout_height="wrap_content"
+		            app:lineColor="@color/gray2"
+		            app:lineStrokeWidth="2dp"
+		            app:isDashed="true"
+		            app:dashLength="2dp"  />
 
                 <com.moneydesktop.finance.views.LabelEditText
                     android:id="@+id/password_field"
@@ -137,17 +144,21 @@
                     android:layout_width="450dp"
                     android:layout_height="50dp"
                     android:inputType="textPassword"
-                    android:textSize="25sp"
                     android:imeOptions="actionDone"
-                    app:labelColor="@color/light_gray1"
+                    app:labelColor="@drawable/gray2_to_white_text"
                     app:labelSize="12sp"
                     app:labelText="@string/label_password" />
 
                 <requestFocus />
-
-                <com.moneydesktop.finance.views.DottedLineView
-                    android:layout_width="450dp"
-                    android:layout_height="wrap_content" />
+        
+		        <com.moneydesktop.finance.views.LineView
+		            android:layout_width="450dp"
+		            android:layout_height="wrap_content"
+		            app:lineColor="@color/gray2"
+		            app:lineStrokeWidth="2dp"
+		            app:isDashed="true"
+		            app:dashLength="2dp"  />
+		        
             </LinearLayout>
 
             <LinearLayout
@@ -228,11 +239,14 @@
                 android:orientation="vertical"
 			    android:focusable="true" 
 			    android:focusableInTouchMode="true" >
-
-                <com.moneydesktop.finance.views.DottedLineView
-                    android:id="@+id/logindotted4"
-                    android:layout_width="550dp"
-                    android:layout_height="1dp" />
+        
+		        <com.moneydesktop.finance.views.LineView
+		            android:layout_width="550dp"
+		            android:layout_height="wrap_content"
+		            app:lineColor="@color/gray2"
+		            app:lineStrokeWidth="2dp"
+		            app:isDashed="true"
+		            app:dashLength="2dp"  />
 
                 <com.moneydesktop.finance.views.LabelEditText
                     android:id="@+id/signup_name"
@@ -240,16 +254,18 @@
                     android:layout_width="550dp"
                     android:layout_height="50dp"
                     android:inputType="text"
-                    android:textSize="25sp"
                     android:imeOptions="actionNext"
-                    app:labelColor="@color/light_gray1"
+                    app:labelColor="@drawable/gray2_to_white_text"
                     app:labelSize="12sp"
                     app:labelText="@string/signup_name" />
-
-                <com.moneydesktop.finance.views.DottedLineView
-                    android:id="@+id/logindotted5"
-                    android:layout_width="550dp"
-                    android:layout_height="wrap_content" />
+        
+		        <com.moneydesktop.finance.views.LineView
+		            android:layout_width="550dp"
+		            android:layout_height="wrap_content"
+		            app:lineColor="@color/gray2"
+		            app:lineStrokeWidth="2dp"
+		            app:isDashed="true"
+		            app:dashLength="2dp"  />
 
                 <com.moneydesktop.finance.views.LabelEditText
                     android:id="@+id/signup_email"
@@ -257,15 +273,18 @@
                     android:layout_width="550dp"
                     android:layout_height="50dp"
                     android:inputType="textEmailAddress"
-                    android:textSize="25sp"
                     android:imeOptions="actionNext"
-                    app:labelColor="@color/light_gray1"
+                    app:labelColor="@drawable/gray2_to_white_text"
                     app:labelSize="12sp"
                     app:labelText="@string/signup_email" />
-
-                <com.moneydesktop.finance.views.DottedLineView
-                    android:layout_width="550dp"
-                    android:layout_height="wrap_content" />
+        
+		        <com.moneydesktop.finance.views.LineView
+		            android:layout_width="550dp"
+		            android:layout_height="wrap_content"
+		            app:lineColor="@color/gray2"
+		            app:lineStrokeWidth="2dp"
+		            app:isDashed="true"
+		            app:dashLength="2dp"  />
 
                 <com.moneydesktop.finance.views.LabelEditText
                     android:id="@+id/signup_bank"
@@ -273,17 +292,21 @@
                     android:layout_width="550dp"
                     android:layout_height="50dp"
                     android:inputType="text"
-                    android:textSize="25sp"
                     android:imeOptions="actionDone"
-                    app:labelColor="@color/light_gray1"
+                    app:labelColor="@drawable/gray2_to_white_text"
                     app:labelSize="12sp"
                     app:labelText="@string/signup_bank" />
 
                 <requestFocus />
-
-                <com.moneydesktop.finance.views.DottedLineView
-                    android:layout_width="550dp"
-                    android:layout_height="wrap_content" />
+        
+		        <com.moneydesktop.finance.views.LineView
+		            android:layout_width="550dp"
+		            android:layout_height="wrap_content"
+		            app:lineColor="@color/gray2"
+		            app:lineStrokeWidth="2dp"
+		            app:isDashed="true"
+		            app:dashLength="2dp"  />
+		        
             </LinearLayout>
 
             <LinearLayout

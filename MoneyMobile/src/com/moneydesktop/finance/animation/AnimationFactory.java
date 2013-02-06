@@ -30,6 +30,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ViewAnimator;
 
@@ -44,6 +45,8 @@ import com.moneydesktop.finance.util.UiUtils;
  *
  */
 public class AnimationFactory {
+    
+    public static final String TAG = "AnimationFactory";
 	
 	/**
 	 * The {@code FlipDirection} enumeration defines the most typical flip view transitions: left-to-right and right-to-left. {@code FlipDirection} is used during the creation of {@link FlipAnimation} animations.
@@ -498,4 +501,34 @@ public class AnimationFactory {
 	    return set;
 	}
 
+	public static Animation createPopAnimation(Context context, View view) {
+
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+        
+        location[0] += view.getMeasuredWidth() / 2;
+        location[1] += view.getHeight() / 2;
+        
+	    AnimationSet set = new AnimationSet(false);
+	    
+	    AlphaAnimation alpha = new AlphaAnimation(0, 1);
+	    alpha.setDuration(380);
+	    set.addAnimation(alpha);
+	    
+	    ScaleAnimation scale = new ScaleAnimation(0, 1.05f, 0, 1.05f, location[0], location[1]);
+	    scale.setDuration(200);
+	    set.addAnimation(scale);
+	    
+	    ScaleAnimation scale1 = new ScaleAnimation(1.05f, 0.95f, 1.05f, 0.95f, location[0], location[1]);
+	    scale1.setStartOffset(200);
+        scale1.setDuration(200);
+        set.addAnimation(scale1);
+        
+        ScaleAnimation scale2 = new ScaleAnimation(0.95f, 1.0f, 0.95f, 1.0f, location[0], location[1]);
+        scale2.setStartOffset(400);
+        scale2.setDuration(100);
+        set.addAnimation(scale2);
+	    
+	    return set;
+	}
 }

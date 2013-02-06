@@ -329,12 +329,15 @@ public class Bank extends BusinessObject  {
     
     public void updateStatus(JSONObject json) {
     	
+    	if (json == null || json.optJSONObject(Constant.KEY_MEMBER) == null) return;
+    	
     	try {
     	
     		int newStatus = json.getJSONObject(Constant.KEY_MEMBER).optInt(Constant.KEY_LAST_JOB, 0);
     		
-    		if (json.getJSONObject(Constant.KEY_MEMBER).optInt(Constant.KEY_IS_MANUAL) == 1)
+    		if (json.getJSONObject(Constant.KEY_MEMBER).optInt(Constant.KEY_IS_MANUAL) == 1) {
     			newStatus = 3;
+    		}
     		
     		setProcessStatus(newStatus);
     	

@@ -21,21 +21,27 @@
 	        android:textColor="@drawable/white_to_primary_text"
        		android:background="@drawable/primary_to_white"
 	        app:isLeft="false" />
-	
-	    <TextView
-	        android:id="@+id/date"
-	        style="@style/tablet_txn_text"
+	    
+	    <RelativeLayout 
 	        android:layout_width="0dp"
 	        android:layout_height="match_parent"
-	        android:layout_weight="11"
-	        android:gravity="center" />
+	        android:layout_weight="11" >
+	
+		    <TextView
+		        android:id="@+id/date"
+		        style="@style/tablet_txn_text"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_centerInParent="true" />
+	        
+	    </RelativeLayout>
 	        
         <com.moneydesktop.finance.views.LineView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginTop="3dp"
             android:layout_marginBottom="3dp"
-            app:lineColor="@color/primaryColor"
+            app:lineColor="@drawable/primary_to_white_text"
             app:lineStrokeWidth="2dp"
             app:dashLength="3dp"
             app:isVertical="true" />
@@ -53,7 +59,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="3dp"
             android:layout_marginBottom="3dp"
-            app:lineColor="@color/primaryColor"
+            app:lineColor="@drawable/primary_to_white_text"
             app:lineStrokeWidth="2dp"
             app:dashLength="3dp"
             app:isVertical="true" />
@@ -71,7 +77,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="3dp"
             android:layout_marginBottom="3dp"
-            app:lineColor="@color/primaryColor"
+            app:lineColor="@drawable/primary_to_white_text"
             app:lineStrokeWidth="2dp"
             app:dashLength="3dp"
             app:isVertical="true" />
@@ -92,10 +98,11 @@
 	        
 	        <TextView
 		        android:id="@+id/amount"
-		        android:layout_width="match_parent"
-		        android:layout_height="match_parent"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentRight="true"
+		        android:layout_centerVertical="true"
 		        style="@style/tablet_txn_text"
-		        android:gravity="center_vertical|right"
 		        android:textColor="@drawable/primary_to_white_text" />
 	        
         </RelativeLayout>
@@ -105,7 +112,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="3dp"
             android:layout_marginBottom="3dp"
-            app:lineColor="@color/primaryColor"
+            app:lineColor="@drawable/primary_to_white_text"
             app:lineStrokeWidth="2dp"
             app:dashLength="3dp"
             app:isVertical="true" />

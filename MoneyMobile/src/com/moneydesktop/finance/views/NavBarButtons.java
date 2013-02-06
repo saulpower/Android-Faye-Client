@@ -1,5 +1,7 @@
 package com.moneydesktop.finance.views;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -7,12 +9,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.Fonts;
-
-import java.util.ArrayList;
 
 public class NavBarButtons extends LinearLayout  {
 
@@ -42,7 +41,7 @@ public class NavBarButtons extends LinearLayout  {
         
         for (int i = 0; i < mButtonTexts.length; i++) {
             
-            final TextView icon = new TextView(mContext);
+            final NavBarView icon = new NavBarView(mContext);
 
             icon.setPadding(0, 0, 25, 0);
             

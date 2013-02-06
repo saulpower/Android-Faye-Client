@@ -38,6 +38,9 @@ public class Tag extends BusinessObject  {
     private List<TagInstance> tagInstances;
 
     // KEEP FIELDS - put your custom fields here
+    private static QueryProperty mBusinessObjectBase = new QueryProperty(BusinessObjectBaseDao.TABLENAME, TagDao.Properties.BusinessObjectId, BusinessObjectBaseDao.Properties.Id);
+    private static QueryProperty mDataState = new QueryProperty(BusinessObjectBaseDao.TABLENAME, BusinessObjectBaseDao.Properties.DataState, QueryProperty.NOT_EQUALS);
+    private static QueryProperty mTagName = new QueryProperty(TagDao.TABLENAME, TagDao.Properties.TagName);
     // KEEP FIELDS END
 
     public Tag() {
@@ -166,39 +169,71 @@ public class Tag extends BusinessObject  {
     	return getTagId();
     }
     
-    public static Tag createTag(String tagName, BusinessObject base) {
+    public static Tag createTag(String tagName) {
+        
+        if (tagName == null || tagName.equals("")) return null;
         
         Tag tag = new Tag();
         tag.setTagName(tagName);
         tag.setTagId(tagName);
         tag.insertSingle();
-        tag.tagObject(base);
         
         return tag;
     }
     
-    public void tagObject(BusinessObject base) {
-        TagInstance ti = new TagInstance();
-        ti.setBaseObjectId(base.getBusinessObjectId());
-        ti.setTag(this);
+    public void tagObject(BusinessObjectBase base) {
         
+        TagInstance ti = new TagInstance();
+        ti.setBaseObjectId(base.getId());
+        ti.setTag(this);
+
         ti.insertBatch();
-        base.setModified();
+        ti.acceptChanges();
+        
         base.updateBatch();
+        base.resetTagInstances();
+        
         DataController.save();
     }
     
-    public static void deleteTag(Tag tag) {
+    public void untagObject(BusinessObjectBase base) {
         
-        for (TagInstance ti : tag.getTagInstances()) {
-            ti.softDeleteBatch();
-            ti.setModified();
-            ti.getBusinessObjectBase().updateBatch();
+        TagInstance remove = null;
+        
+        for (TagInstance ti : base.getTagInstances()) {
+            
+            if (ti.getTagId() == getId()) {
+                remove = ti;
+                break;
+            }
         }
         
-        tag.softDeleteBatch();
+        if (remove != null) {
+            remove.deleteSingle();
+            base.resetTagInstances();
+            base.updateSingle();
+        }
+    }
+    
+    public static void deleteTag(final Tag tag) {
         
-        DataController.save();
+        if (tag == null) return;
+        
+        tag.softDeleteSingle();
+        
+        Thread thread = new Thread() {
+            
+            @Override
+            public void run() {
+                
+                for (TagInstance ti : tag.getTagInstances()) {
+                    ti.deleteBatch();
+                }
+                
+                DataController.save();
+            }
+        };
+        thread.start();
     }
     
     public static Tag saveTag(JSONObject json, boolean delete) {
@@ -269,6 +304,16 @@ public class Tag extends BusinessObject  {
     	json.put(Constant.KEY_REVISION, getBusinessObjectBase().getVersion());
     	
     	return json;
+    }
+    
+    public static List<Tag> loadAll() {
+        TagDao tagDao = (TagDao) DataController.getDao(Tag.class);
+        PowerQuery query = new PowerQuery(tagDao);
+        query.join(mBusinessObjectBase)
+            .where(mDataState, Integer.toString(DataState.DATA_STATE_DELETED.index()))
+            .orderBy(mTagName, false);
+        
+        return tagDao.queryRaw(query.toString(), query.getSelectionArgs());
     }
     // KEEP METHODS END
 

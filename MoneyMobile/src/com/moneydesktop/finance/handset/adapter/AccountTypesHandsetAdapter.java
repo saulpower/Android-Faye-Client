@@ -1,15 +1,17 @@
 package com.moneydesktop.finance.handset.adapter;
 
+import java.text.NumberFormat;
+import java.util.List;
+
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView.OnGroupCollapseListener;
+import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ExpandableListView.OnGroupExpandListener;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.BaseActivity;
@@ -19,11 +21,7 @@ import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.views.AccountTypeGroupView;
 import com.moneydesktop.finance.views.UltimateListView;
-
-import java.text.NumberFormat;
-import java.util.List;
 
 public class AccountTypesHandsetAdapter extends UltimateAdapter implements OnGroupExpandListener, OnGroupCollapseListener{
 

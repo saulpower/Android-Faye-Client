@@ -15,8 +15,9 @@ public class BankLogoManager {
 	
 	public static void getBankImage(final ImageView view, String guid) {
 		
-		if (guid == null || guid.equals("") || checkForPackagedImage(view, guid))
-			return;
+	    if (guid == null || guid.equals("") || guid.toLowerCase().contains("manual")) guid = "bank";
+	    
+		if (checkForPackagedImage(view, guid)) return;
 		
 		new AsyncTask<String, Void, String>() {
 			
@@ -38,8 +39,9 @@ public class BankLogoManager {
 				
 				Bitmap image = BitmapFactory.decodeFile(filePath);
 				
-				if (image != null & view != null)
+				if (image != null & view != null) {
 					view.setImageBitmap(image);
+				}
 			};
 			
 		}.execute(guid);

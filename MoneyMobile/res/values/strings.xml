@@ -1,84 +1,83 @@
 <resources>
+
     <string-array name="account_selection_popup">
         <item>VIEW ALL TXNS</item>
         <item>VIEW UNCLEARED TXNS</item>
         <item>EDIT SETTINGS</item>
         <item>SHOW/HIDE DATA</item>
         <item>DELETE THIS ACCOUNT</item>
-    </string-array>    
-    
+    </string-array>
     <string-array name="bank_selection_popup">
         <item>REFRESH DATA</item>
         <item>REMOVE</item>
         <item>UPDATE USERNAME AND PASSWORD</item>
-    </string-array> 
-    
-   <string-array name="account_types_bank_options">
+    </string-array>
+    <string-array name="account_types_bank_options">
         <item>@string/icon_lock</item>
         <item>@string/icon_trash</item>
     </string-array>
-    
     <string-array name="account_types_title_bar_icons">
         <item>@string/icon_add</item>
         <item>@string/icon_refresh</item>
         <item>@string/icon_help</item>
-    </string-array>   
-    
-   <string-array name="account_summary_title_bar_icons">
-        <item>@string/icon_print</item>
+    </string-array>
+    <string-array name="dashboard_title_bar_icons">
         <item>@string/icon_email</item>
         <item>@string/icon_help</item>
+        <item>@string/icon_refresh</item>
     </string-array>
-    
-    <string name="account_types_title">Accounts</string>
-    <string name="account_types_indicator_show">SHOW</string>
+    <string-array name="transactions_title_bar_icons">
+        <item>@string/icon_help</item>
+    </string-array>
+
     <string name="account_types_indicator_hide">HIDE</string>
+    <string name="account_types_indicator_show">SHOW</string>
+    <string name="account_types_title">Accounts</string>
+    <string name="action_menu">ACTION MENU</string>
     <string name="all_accounts">All Accounts</string>
     <string name="app_name">MoneyMobile</string>
-    <string name="at_unknown">Unknown</string>
-    <string name="at_checking">Checking</string>
-    <string name="at_saving">Savings</string>
-    <string name="at_loans">Loans</string>
-    <string name="at_cc">Credit Card</string>
-    <string name="at_inv">Investments</string>
-    <string name="at_loc">Line of Credit</string>
-    <string name="at_mort">Mortgage</string>
-    <string name="at_prop">Property</string>
-    <string name="at_art">Art</string>
-    <string name="at_re">Real Estate</string>
-    <string name="at_veh">Vehicle</string>
-    <string name="at_jew">Jewelry</string>
-    <string name="at_fur">Furniture</string>
     <string name="at_app">Appliances</string>
+    <string name="at_art">Art</string>
+    <string name="at_cash">Cash</string>
+    <string name="at_cc">Credit Card</string>
+    <string name="at_checking">Checking</string>
     <string name="at_comp">Computer</string>
     <string name="at_elec">Electronics</string>
-    <string name="at_se">Sports Equipment</string>
+    <string name="at_fur">Furniture</string>
+    <string name="at_inv">Investments</string>
+    <string name="at_jew">Jewelry</string>
+    <string name="at_loans">Loans</string>
+    <string name="at_loc">Line of Credit</string>
     <string name="at_misc">Miscellaneous</string>
-    <string name="atg_inv">Investments</string>
-    <string name="atg_prop">Property</string>
+    <string name="at_mort">Mortgage</string>
+    <string name="at_prop">Property</string>
+    <string name="at_re">Real Estate</string>
+    <string name="at_saving">Savings</string>
+    <string name="at_se">Sports Equipment</string>
+    <string name="at_unknown">Unknown</string>
+    <string name="at_veh">Vehicle</string>
     <string name="atg_cash">Cash</string>
     <string name="atg_ccd">Credit Card Debt</string>
+    <string name="atg_inv">Investments</string>
     <string name="atg_od">Other Debt</string>
-    <string name="at_cash">Cash</string>
-    <string name="bank_options_credentials">Credentials</string>
-    <string name="bank_options_delete">Delete This Institution</string>
+    <string name="atg_prop">Property</string>
     <string name="button_cancel">CANCEL</string>
     <string name="button_demo">DEMO MODE</string>
     <string name="button_login">LOGIN</string>
     <string name="button_ok">OK</string>
-    <string name="button_return_login">RETURN TO LOGIN</string>
     <string name="button_return_home">RETURN TO HOME</string>
+    <string name="button_return_login">RETURN TO LOGIN</string>
     <string name="button_setup">I NEED TO SET UP MY MOBILE ACCOUNT</string>
     <string name="button_submit">SUBMIT</string>
     <string name="category_search">Start typing to search for a category</string>
     <string name="connecting">Connecting to bank</string>
-    <string name="ct_exp">Expense</string>
-    <string name="ct_inc">Income</string>
     <string name="ct_asst">Asset</string>
-    <string name="ct_liab">Liability</string>
-    <string name="ct_equity">Equity</string>
-    <string name="ct_flow">Flow</string>
     <string name="ct_bal">Balance</string>
+    <string name="ct_equity">Equity</string>
+    <string name="ct_exp">Expense</string>
+    <string name="ct_flow">Flow</string>
+    <string name="ct_inc">Income</string>
+    <string name="ct_liab">Liability</string>
     <string name="ct_stat">Statistic</string>
     <string name="dashboard_title">Financial Dashboard:</string>
     <string name="default_account">MONEY MARKET</string>
@@ -88,16 +87,20 @@
     <string name="default_price">5.99</string>
     <string name="default_title">Title</string>
     <string name="delete_account_message">This will delete all data associated with this account. Are you sure?</string>
-    <string name="delete_bank_message">All associated accounts will also be removed</string>
     <string name="delete_bank_with_no_accounts_message">All accounts for this institution have been removed. Continue to remove the institution?</string>
+    <string name="delete_bank_message">All associated accounts will also be removed</string>
     <string name="delete_bank_title">Remove %1$s?</string>
-    <string name="description">description</string>
     <string name="demo_message">Creating Demo Data&#8230;</string>
+    <string name="description">description</string>
     <string name="dollar_sign">$</string>
+    <string name="email_title">Send Email</string>
+    <string name="email_dashboard_subject">My Finance Dashboard</string>
+    <string name="email_transaction_subject">Check Out This Transaction</string>
+    <string name="email_transactions_subject">Check Out These Transactions</string>
     <string name="empty_transactions">No Transactions</string>
+    <string name="error_email_invalid">Please ensure your email address is valid.</string>
     <string name="error_login_failed">YOUR LOGIN\nWAS UNSUCCESSFUL.</string>
     <string name="error_login_incomplete">Please complete the login fields</string>
-    <string name="error_email_invalid">Please ensure your email address is valid.</string>
     <string name="error_login_invalid">Did you know you need to setup\nyour mobile account before you\ncan use this app?</string>
     <string name="error_title">Error</string>
     <string name="feature_not_available">Feature Not Available</string>
@@ -106,89 +109,96 @@
     <string name="feature_not_available_delete_message">This account cannot be removed</string>
     <string name="feedback_email">mobile.support@moneydesktop.com</string>
     <string name="feedback_subject">MoneyMobile Feedback</string>
-    <string name="feedback_title">Send Email</string>
-    <string name="filter_folder">FOLDERS</string>
     <string name="filter_accounts">ACCOUNTS</string>
     <string name="filter_cats">CATEGORIES</string>
-    <string name="filter_tags">TAGS</string>
+    <string name="filter_folder">FOLDERS</string>
     <string name="filter_payees">PAYEES</string>
-    <string name="folder_all">ALL TRANSACTIONS</string>
+    <string name="filter_tags">TAGS</string>
     <string name="folder_all_sub">All Items, All Accounts</string>
-    <string name="folder_new">NEW</string>
-    <string name="folder_new_sub">Items You Have Not Opened Yet</string>
-    <string name="folder_flag">FLAGGED</string>
-    <string name="folder_flag_sub">Items You Have Flagged</string>
-    <string name="folder_clear">NOT CLEARED</string>
+    <string name="folder_all">ALL TRANSACTIONS</string>
     <string name="folder_clear_sub">Items That Have Not Cleared Your Bank</string>
+    <string name="folder_clear">NOT CLEARED</string>
+    <string name="folder_flag_sub">Items You Have Flagged</string>
+    <string name="folder_flag">FLAGGED</string>
+    <string name="folder_new_sub">Items You Have Not Opened Yet</string>
+    <string name="folder_new">NEW</string>
     <string name="get_started">BEGIN USING THE APP</string>
-    <string name="handset_intro_title_1">THERE\'S NO PLACE LIKE HOME</string>
-    <string name="handset_intro_title_2">DROPDOWNS ARE AWESOME</string>
-    <string name="handset_intro_title_3">TRANSACTION FOLDERS</string>
+    <string name="generate_email">Generating Email&#8230;</string>
     <string name="handset_intro_desc_1">No matter where you are in the app, you can always press this home button to take you right back to the dashboard.</string>
     <string name="handset_intro_desc_2">We fill our dropdown menus chuck full of useful tools like \"Add another Account\", or \"Print this Transaction\", or \"Call Mom.\" Seriously, call her.</string>
     <string name="handset_intro_desc_3">Giving a little sideways swipe on the transactions list will open up the transactions folders. Think of the folders as preset filters.</string>
+    <string name="handset_intro_title_1">THERE\'S NO PLACE LIKE HOME</string>
+    <string name="handset_intro_title_2">DROPDOWNS ARE AWESOME</string>
+    <string name="handset_intro_title_3">TRANSACTION FOLDERS</string>
     <string name="hello_world">Hello world!</string>
     <string name="hint_search_transactions">Search For Transactions</string>
-    <string name="icon_lock">E</string>
-    <string name="icon_feedback">6</string>
-    <string name="icon_left_arrow">3</string>
-    <string name="icon_logout">7</string>
-    <string name="icon_password">§</string>
-    <string name="icon_cash">C</string>
-    <string name="icon_checking">D</string>
-    <string name="icon_inv">I</string>
-    <string name="icon_prop">M</string>
-    <string name="icon_saving">O</string>
-    <string name="icon_trash">G</string>
-    <string name="icon_cc">F</string>
-    <string name="icon_loc">J</string>
-    <string name="icon_loans">H</string>
-    <string name="icon_mort">L</string>
-    <string name="icon_smile">:</string>
-    <string name="icon_frown">f</string>
-    <string name="icon_qmark">\?</string>
- 	<string name="icon_help">v</string>
     <string name="icon_add">A</string>
-    <string name="icon_print">®</string>
+    <string name="icon_cancel">X</string>
+    <string name="icon_cash">C</string>
+    <string name="icon_cc">F</string>
+    <string name="icon_checking">D</string>
     <string name="icon_email">(</string>
+    <string name="icon_feedback">6</string>
+    <string name="icon_frown">f</string>
+    <string name="icon_help">v</string>
+    <string name="icon_inv">I</string>
+    <string name="icon_left_arrow">3</string>
+    <string name="icon_loans">H</string>
+    <string name="icon_loc">J</string>
+    <string name="icon_lock">E</string>
+    <string name="icon_logout">7</string>
+    <string name="icon_mort">L</string>
+    <string name="icon_password">§</string>
+    <string name="icon_print">print</string>
+    <string name="icon_prop">M</string>
+    <string name="icon_qmark">\?</string>
     <string name="icon_refresh">N</string>
-    <string name="intro_title_1">DID YOU KNOW?</string>
-    <string name="intro_title_2">PRINT OR EMAIL</string>
-    <string name="intro_title_3">BIZ/PERSONAL</string>
-    <string name="intro_title_4">DID YOU KNOW?</string>
+    <string name="icon_saving">O</string>
+    <string name="icon_search">8</string>
+    <string name="icon_share">4</string>
+    <string name="icon_smile">:</string>
+    <string name="icon_trash">G</string>
     <string name="intro_desc_1">You can print a report of your financial data straight from the app. Just look for this printer icon.\nIt really is that easy.</string>
     <string name="intro_desc_2">You can print or email any transaction you want. \"Honey, why did you spend $112 at the golf course? Did you lose a bet?\" Sorry boys, now your wife knows everything.</string>
     <string name="intro_desc_3">Keep your side biz separate from your personal stuff by tagging transaction as business expenses (\"B\") or personal expenses (\"P\"). Some call it OCD. We call it organization. You\'re welcome.</string>
     <string name="intro_desc_4">You can email any report to whomeever you like. Want to show your husband how much money he spent at Home Depot this month? Just email him a copy of the Spending by Payee report. Now he\'s got nowhere to hide.</string>
-	<string name="label_account_name">Account Name</string>
+    <string name="intro_title_1">DID YOU KNOW?</string>
+    <string name="intro_title_2">PRINT OR EMAIL</string>
+    <string name="intro_title_3">BIZ/PERSONAL</string>
+    <string name="intro_title_4">DID YOU KNOW?</string>
+    <string name="label_account_name">Account Name</string>
 	<string name="label_account_type">Account Type</string>
     <string name="label_amount">Amount</string>
     <string name="label_app_lock">APP LOCK</string>
+    <string name="label_average">Average</string>
+    <string name="label_balances">Account Balances as of Today</string>
     <string name="label_category">Category</string>
     <string name="label_change_lock">CHANGE LOCK CODE</string>
+    <string name="label_count">Count</string>
+    <string name="label_daily_spending">Daily Spending - This Month</string>
     <string name="label_date">Date</string>
+    <string name="label_delete">Delete</string>
     <string name="label_email">Email</string>
     <string name="label_exit">exit demo</string>
+    <string name="label_expense">in expenses</string>
     <string name="label_feedback">FEEDBACK</string>
+    <string name="label_income">in income</string>
     <string name="label_memo">Memo</string>
+    <string name="label_new_transactions">New Transactions</string>
     <string name="label_no">no</string>
     <string name="label_other">Other Markers</string>
     <string name="label_password">Password</string>
     <string name="label_payee">Payee</string>
     <string name="label_stmt">Statement Description</string>
+    <string name="label_sum">Sum</string>
     <string name="label_tags">Tags</string>
-    <string name="label_unlink">UNLINK</string>
-    <string name="label_income">in income</string>
-    <string name="label_expense">in expenses</string>
-    <string name="label_yes">yes</string>
-    <string name="label_balances">Account Balances as of Today</string>
-    <string name="label_new_transactions">New Transactions</string>
-    <string name="label_transactions">Transaction Summary</string>
-    <string name="label_daily_spending">Daily Spending - This Month</string>
     <string name="label_top_category">Top Category</string>
-    <string name="loading">Loading</string>
+    <string name="label_transactions">Transaction Summary</string>
+    <string name="label_unlink">UNLINK</string>
+    <string name="label_yes">yes</string>
     <string name="loading_app">Preparing the app&#8230;</string>
     <string name="loading_menu">Loading menu&#8230;</string>
+    <string name="loading">Loading</string>
     <string name="logging_out">Logging Out&#8230;</string>
     <string name="logout_cancel">Cancel Logout</string>
     <string name="logout_message">Waiting for sync to complete.</string>
@@ -196,38 +206,39 @@
     <string name="menu_settings">Settings</string>
     <string name="nag_bank">MoneyDesktop is a free service offered through hundreds of leading financial institutions\' Online Banking. If your institution doesn\'t currently offer MoneyDesktop, please let us know by submitting a request below.</string>
     <string name="need_account">You need a MoneyDesktop account to use MoneyMobile.</string>
+    <string name="new_sub_category_hint">type your new category here</string>
     <string name="new_sub_category">ADD NEW SUBCATEGORY</string>
+    <string name="new_tag">(Select to Add)</string>
     <string name="panel_title">MY INSTITUTIONS</string>
-    <string name="save">Save</string>
     <string name="plus">+</string>
-    <string name="setup_url">http://embed.moneydesktop.com/setup-instructions.html</string>
-    <string name="setting_feedback_title">Feedback</string>
+    <string name="save">Save</string>
     <string name="setting_feedback_text">Tell us what we\'re doing wrong, or right. Don\'t hold back we can take it.</string>
-    <string name="setting_lock_title">Lock Device</string>
+    <string name="setting_feedback_title">Feedback</string>
     <string name="setting_lock_text">Enter a four-digit code to password protect your data.</string>
-    <string name="setting_unlink_title">Unlink</string>
+    <string name="setting_lock_title">Lock Device</string>
     <string name="setting_unlink_text">Unlink this device from your account and delete all the data from this device. (Your data is still stored on our servers.)</string>
-    <string name="signup_name">Your Name</string>
-    <string name="signup_email">Your Email</string>
+    <string name="setting_unlink_title">Unlink</string>
+    <string name="setup_url">http://embed.moneydesktop.com/setup-instructions.html</string>
     <string name="signup_bank">Your Financial Institution</string>
+    <string name="signup_email">Your Email</string>
+    <string name="signup_name">Your Name</string>
     <string name="status_description_4">An unknown error occurred. Just refresh this bank to try again.</string>
     <string name="status_description_5">Invalid username and password. Click on the button below to try again.</string>
     <string name="status_description_6">Multifactor Authentication Required. Click on the button below to give us these additional pieces of information.</string>
     <string name="status_description_7">This bank needs to be refreshed to get the most up to date data. Please refresh this bank.</string>
+    <string name="tag_search">Search for a tag (or create a new one)</string>
     <string name="text_cancel">Cancel</string>
     <string name="text_lock_app">App is locked. Enter your code to unlock.</string>
-    <string name="text_lock">Enter your current code</string>
     <string name="text_lock_confirm">Confirm secret code</string>
     <string name="text_lock_create">Create your secret code</string>
+    <string name="text_lock">Enter your current code</string>
     <string name="text_login">Learn More.</string>
     <string name="text_new">NEW</string>
     <string name="text_signup">Need an account?</string>
+    <string name="text_syncing">Syncing Data&#8230;</string>
     <string name="text_uncat_trans">uncategorized transactions.</string>
     <string name="text_you_have">You have</string>
     <string name="thank_you">Thank you for your interest in MoneyDesktop.</string>
-    <string name="try_demo">Your request has been submitted. Try out demo mode to see what MoneyDesktop has to offer.</string>
-    <string name="text_syncing">Syncing Data&#8230;</string>
-    <string name="title_activity_account_settings">Account Settings</string>
     <string name="title_activity_accounts">Accounts</string>
     <string name="title_activity_budget">Budgets</string>
     <string name="title_activity_dashboard">Financial Dashboard</string>
@@ -236,8 +247,11 @@
     <string name="title_activity_money_mobile">MoneyMobileActivity</string>
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_spending">Spending</string>
-    <string name="title_activity_transaction">Transaction</string>
     <string name="title_activity_transactions">Transactions</string>
-    <string name="unlink_title">Unlink?</string>
+    <string name="title_fragment_transaction_totals">Transaction Totals</string>
+    <string name="transactions_list">TransactionsList</string>
+    <string name="try_demo">Your request has been submitted. Try out demo mode to see what MoneyDesktop has to offer.</string>
     <string name="unlink_message">Unlinking will remove this device from your list of approved devices. you can re-link it at any time. Would you like to continue?</string>
+    <string name="unlink_title">Unlink?</string>
+
 </resources>

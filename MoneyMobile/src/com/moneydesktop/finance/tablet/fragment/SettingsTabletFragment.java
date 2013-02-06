@@ -1,8 +1,9 @@
 package com.moneydesktop.finance.tablet.fragment;
 
+import java.util.ArrayList;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,8 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
+import com.moneydesktop.finance.util.EmailUtils;
+import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.SettingButton;
 
 import de.greenrobot.event.EventBus;
@@ -35,13 +38,6 @@ public class SettingsTabletFragment extends BaseFragment {
         
         return fragment;
 	}
-    
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        this.mActivity.onFragmentAttached(this);
-    }
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,8 +53,8 @@ public class SettingsTabletFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        this.mActivity.updateNavBar(getFragmentTitle());
+        
+        setupTitleBar(getActivity());
     }
     
     @Override
@@ -72,6 +68,15 @@ public class SettingsTabletFragment extends BaseFragment {
     public void onSaveInstanceState(Bundle outState)  {
         super.onSaveInstanceState(outState);
     }
+
+    private void setupTitleBar(final Activity activity) {
+        
+        String[] icons = new String[0];
+        
+        ArrayList<OnClickListener> onClickListeners = new ArrayList<OnClickListener>();
+        
+        new NavBarButtons(activity, icons, onClickListeners);
+     }
 	
 	private void setupViews() {
 		
@@ -100,12 +105,7 @@ public class SettingsTabletFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 
-			    Intent intent = new Intent(Intent.ACTION_SEND);
-			    intent.setType("plain/text");
-			    intent.putExtra(Intent.EXTRA_EMAIL,new String[] { mActivity.getString(R.string.feedback_email) });
-			    intent.putExtra(Intent.EXTRA_SUBJECT, mActivity.getString(R.string.feedback_subject));
-			    intent.putExtra(Intent.EXTRA_TEXT, "");
-			    startActivity(Intent.createChooser(intent, mActivity.getString(R.string.feedback_title)));
+			    EmailUtils.sendEmail(mActivity, mActivity.getString(R.string.feedback_subject), "", new String[] { mActivity.getString(R.string.feedback_email) });
 			}
 		});
 
@@ -121,7 +121,7 @@ public class SettingsTabletFragment extends BaseFragment {
 	
 	@Override
 	public String getFragmentTitle() {
-		return getString(R.string.title_activity_settings);
+		return getString(R.string.title_activity_settings).toUpperCase();
 	}
 
     @Override

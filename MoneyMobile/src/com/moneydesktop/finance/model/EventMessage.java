@@ -1,14 +1,15 @@
 package com.moneydesktop.finance.model;
 
-import com.moneydesktop.finance.database.AccountType;
-import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.data.Enums.LockType;
-import com.moneydesktop.finance.data.Enums.NavDirection;
-import com.moneydesktop.finance.database.PowerQuery;
-import com.moneydesktop.finance.views.AnchorView;
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.moneydesktop.finance.data.Enums.LockType;
+import com.moneydesktop.finance.data.Enums.NavDirection;
+import com.moneydesktop.finance.database.AccountType;
+import com.moneydesktop.finance.database.Bank;
+import com.moneydesktop.finance.database.PowerQuery;
+import com.moneydesktop.finance.views.AnchorView;
 
 public class EventMessage {
     
@@ -31,8 +32,22 @@ public class EventMessage {
     }
     
 	public class AuthEvent extends EventMessage {}
-    public class DataUpdateEvent extends EventMessage {}
-    public class DatabaseSaveEvent extends EventMessage {}
+    public class DatabaseSaveEvent extends EventMessage {
+    	
+    	private List<Class<?>> mClasses = new ArrayList<Class<?>>();
+    	
+    	public DatabaseSaveEvent(List<Class<?>> classes) {
+    		mClasses = classes;
+    	}
+    	
+    	public List<Class<?>> getChangedClassesList() {
+    		return mClasses;
+    	}
+    	
+    	public boolean didDatabaseChange() {
+    		return mClasses.size() > 0;
+    	}
+    }
 	public class DefaultsEvent extends EventMessage {}
 	
 	public class FilterEvent extends EventMessage {

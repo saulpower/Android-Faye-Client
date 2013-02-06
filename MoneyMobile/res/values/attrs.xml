@@ -2,7 +2,7 @@
 <resources>
     
     <declare-styleable name="LabelEditText">
-        <attr name="labelColor" format="color" />
+        <attr name="labelColor" format="reference" />
         <attr name="labelSize" format="dimension" />
         <attr name="labelText" format="string" />
     </declare-styleable>
@@ -31,7 +31,7 @@
     </declare-styleable>
     
     <declare-styleable name="Line">
-        <attr name="lineColor" format="color" />
+        <attr name="lineColor" format="reference" />
         <attr name="isDashed" format="boolean" />
         <attr name="isVertical" format="boolean" />
         <attr name="dashLength" format="dimension" />

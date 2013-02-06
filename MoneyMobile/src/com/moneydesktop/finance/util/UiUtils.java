@@ -2,6 +2,8 @@ package com.moneydesktop.finance.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
@@ -85,11 +87,11 @@ public class UiUtils {
         return metrics;
     }
     
-    public static float getScreenAdjustment(Context context) {
+    public static float getScreenAdjustment() {
         
         float adjustment = 1.0f;
         
-        int dpi = getDensity(context);
+        int dpi = getDensity(ApplicationContext.getContext());
         
         if (dpi >= DisplayMetrics.DENSITY_XHIGH) {
             adjustment = Constant.XHDPI_SCALE;
@@ -107,10 +109,26 @@ public class UiUtils {
         return metrics.densityDpi;
     }
     
-    public static void hideKeyboard(Context context, View view) {
-        InputMethodManager in = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        in.hideSoftInputFromWindow(view.getApplicationWindowToken(),
-                InputMethodManager.HIDE_NOT_ALWAYS);
+    public static void hideKeyboard(Activity activity, View view) {
+        activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        InputMethodManager in = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        in.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+    
+    public static void showKeyboard(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(view, InputMethodManager.RESULT_UNCHANGED_SHOWN);
     }
 
+    public static Bitmap convertViewToBitmap(View view) {
+        
+        if (view.getWidth() <= 0 || view.getHeight() <= 0) return null;
+        
+        final Bitmap b = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);                
+        final Canvas c = new Canvas(b);
+
+        view.draw(c);
+        
+        return b;
+    }
 }

@@ -1,41 +1,62 @@
 package com.moneydesktop.finance.tablet.adapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.util.Pair;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
+import android.widget.ViewFlipper;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.UltimateAdapter;
+import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.database.Category;
 import com.moneydesktop.finance.shared.CategoryViewHolder;
+import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.ClearEditText;
 import com.moneydesktop.finance.views.UltimateListView;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@TargetApi(11)
 public class CategoryTabletAdapter extends UltimateAdapter implements Filterable {
     
     public final String TAG = this.getClass().getSimpleName();
 
     private List<Pair<Category, List<Category>>> mData;
     private List<Pair<Category, List<Category>>> mFilteredData;
-    private Activity mActivity;
+    private PopupTabletActivity mActivity;
     private Filter mFilter;
     private Object mLock = new Object();
     private UltimateListView mListView;
+    private ClearEditText mSearch;
     
-    public CategoryTabletAdapter(Activity activity, UltimateListView listView, List<Pair<Category, List<Category>>> data) {
+    public CategoryTabletAdapter(PopupTabletActivity activity, UltimateListView listView, List<Pair<Category, List<Category>>> data, ClearEditText search) {
         
         mActivity = activity;
         mListView = listView;
         mData = data;
         mFilteredData = new ArrayList<Pair<Category, List<Category>>>(data);
+        mSearch = search;
+    }
+    
+    public void updateData(List<Pair<Category, List<Category>>> categories) {
+    	mData = categories;
+        getFilter().filter(mSearch.getText().toString());
     }
     
     @Override
@@ -58,6 +79,16 @@ public class CategoryTabletAdapter extends UltimateAdapter implements Filterable
     public long getChildId(int groupPosition, int childPosition) {
         return (new String(groupPosition + "-" + childPosition)).hashCode();
     }
+    
+    @Override
+    public int getChildType(int groupPosition, int childPosition) {
+        return (getChild(groupPosition, childPosition) == null) ? 1 : 0;
+    }
+    
+    @Override
+    public int getChildTypeCount() {
+        return 2;
+    }
 
     @Override
     public View getItemView(int section, int position, boolean isLastChild, View convertView, ViewGroup parent) {
@@ -75,14 +106,20 @@ public class CategoryTabletAdapter extends UltimateAdapter implements Filterable
             
             viewHolder = (CategoryViewHolder) cell.getTag();
         }
-        
+
         Category category = (Category) getChild(section, position);
         
+        configureListeners(category != null, viewHolder);
+        
         if (category != null) {
+            viewHolder.parent = null;
             viewHolder.subCategory.setVisibility(View.GONE);
             viewHolder.itemTitle.setText(category.getCategoryName());
             Fonts.applyPrimaryFont(viewHolder.itemTitle, 12);
         } else {
+            Category parentCat = mFilteredData.get(section).first;
+            viewHolder.flipper.setDisplayedChild(0);
+            viewHolder.parent = parentCat;
             viewHolder.subCategory.setVisibility(View.VISIBLE);
             viewHolder.itemTitle.setText(ApplicationContext.getContext().getString(R.string.new_sub_category));
             Fonts.applyPrimaryBoldFont(viewHolder.itemTitle, 12);
@@ -106,7 +143,14 @@ public class CategoryTabletAdapter extends UltimateAdapter implements Filterable
 
     @Override
     public Object getGroup(int groupPosition) {
-        return mFilteredData.get(groupPosition).first;
+        
+        Object object = null;
+        
+        if (groupPosition >= 0 && groupPosition < mFilteredData.size()) {
+            object = mFilteredData.get(groupPosition).first;
+        }
+        
+        return object;
     }
 
     @Override
@@ -145,12 +189,68 @@ public class CategoryTabletAdapter extends UltimateAdapter implements Filterable
     
     private CategoryViewHolder createViewHolder(View cell) {
 
-        CategoryViewHolder viewHolder = new CategoryViewHolder();
+        final CategoryViewHolder viewHolder = new CategoryViewHolder();
 
         viewHolder.icon = (TextView) cell.findViewById(R.id.icon);
         viewHolder.title = (TextView) cell.findViewById(R.id.title);
         viewHolder.itemTitle = (TextView) cell.findViewById(R.id.item_title);
         viewHolder.subCategory = (TextView) cell.findViewById(R.id.sub_category);
+        viewHolder.newCategory = (EditText) cell.findViewById(R.id.new_category);
+        viewHolder.cancel = (TextView) cell.findViewById(R.id.cancel);
+        
+        viewHolder.flipper = (ViewFlipper) cell.findViewById(R.id.flipper);
+        viewHolder.addCategory = (LinearLayout) cell.findViewById(R.id.add);
+        viewHolder.info = (LinearLayout) cell.findViewById(R.id.info);
+        
+        if (viewHolder.cancel != null) {
+            
+            viewHolder.info.setOnClickListener(new OnClickListener() {
+                
+                @Override
+                public void onClick(View v) {
+                    
+                    viewHolder.flipper.showNext();
+                    
+                    // Make adjustments to show EditText when covered by keyboard
+                    if (mActivity instanceof PopupTabletActivity) {
+                        ((PopupTabletActivity) mActivity).setEditText(viewHolder.newCategory);
+                    }
+
+                    viewHolder.newCategory.requestFocus();
+                    UiUtils.showKeyboard(mActivity, viewHolder.newCategory);
+                }
+            });
+            
+	        viewHolder.cancel.setOnClickListener(new OnClickListener() {
+	            
+	            @Override
+	            public void onClick(View v) {
+	                viewHolder.flipper.showPrevious();
+	                viewHolder.newCategory.clearFocus();
+                    UiUtils.hideKeyboard(mActivity, viewHolder.newCategory);
+	            }
+	        });
+	        
+	        viewHolder.newCategory.setOnEditorActionListener(new OnEditorActionListener() {
+	            
+	            @Override
+	            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+	                
+	                if (actionId == EditorInfo.IME_ACTION_DONE) {
+	                    
+	                    createSubCategory(v.getText().toString(), viewHolder.parent);
+	                    v.setText("");
+	                    v.clearFocus();
+	                    viewHolder.flipper.showPrevious();
+	                    UiUtils.hideKeyboard(mActivity, v);
+	                    
+	                    return true;
+	                }
+	                
+	                return false;
+	            }
+	        });
+        }
         
         applyFonts(viewHolder);
         
@@ -159,11 +259,36 @@ public class CategoryTabletAdapter extends UltimateAdapter implements Filterable
         return viewHolder;
     }
     
+    private void configureListeners(boolean isCategory, final CategoryViewHolder viewHolder) {
+        
+        viewHolder.info.setClickable(!isCategory);
+    }
+    
     private void applyFonts(CategoryViewHolder viewHolder) {
 
-        Fonts.applyGlyphFont(viewHolder.icon, 34);
+        Fonts.applyGlyphFont(viewHolder.icon, 26);
         Fonts.applyPrimaryBoldFont(viewHolder.title, 14);
-        Fonts.applyPrimarySemiBoldFont(viewHolder.subCategory, 12);
+        Fonts.applyGlyphFont(viewHolder.cancel, 18);
+        Fonts.applyPrimaryFont(viewHolder.newCategory, 12);
+        Fonts.applyPrimaryBoldFont(viewHolder.subCategory, 20);
+    }
+    
+    private void createSubCategory(String name, Category parent) {
+        
+        if (name == null || name.equals("") || parent == null || parent.getId() == null) return;
+        
+        Category cat = new Category();
+        cat.setCategoryName(name);
+        cat.setImageName(parent.getImageName());
+        cat.setParent(parent);
+        cat.setIsSystem(false);
+        cat.setCategoryType(parent.getCategoryType());
+        cat.insertSingle();
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtras(mActivity.getIntent().getExtras());
+        resultIntent.putExtra(Constant.EXTRA_CATEGORY_ID, cat.getId());
+        mActivity.dismissPopup(Activity.RESULT_OK, resultIntent);
     }
 
     @Override
@@ -179,11 +304,21 @@ public class CategoryTabletAdapter extends UltimateAdapter implements Filterable
     @Override
     public void configureHeader(View header, int section) {
 
-        Category category = mFilteredData.get(section).first;
-        
+        Category category = (Category) getGroup(section);
         CategoryViewHolder holder = (CategoryViewHolder) header.getTag();
-        holder.icon.setText(category.getImageName());
-        holder.title.setText(category.getCategoryName().replace("+", "&"));
+        
+        if (category != null) {
+            holder.icon.setText(category.getImageName());
+            holder.title.setText(category.getCategoryName().replace("+", "&"));
+        } else {
+            holder.icon.setText(mActivity.getString(R.string.icon_frown));
+            holder.title.setText("No Categories Found");
+        }
+    }
+    
+    @Override
+    protected boolean supportsEmptyList() {
+        return true;
     }
 
     @Override
@@ -220,14 +355,14 @@ public class CategoryTabletAdapter extends UltimateAdapter implements Filterable
             } else {
                 
                 String filterText = constraint.toString().toLowerCase();
-                final List<Pair<Category, List<Category>>> list = mFilteredData;
-                final int count = mFilteredData.size();
+                final List<Pair<Category, List<Category>>> list = mData;
+                final int count = mData.size();
                 
                 final List<Pair<Category, List<Category>>> newSection = new ArrayList<Pair<Category, List<Category>>>(count);
                 
                 for (Pair<Category, List<Category>> section : list) {
                     
-                    boolean useSection = section.first.getCategoryName().toLowerCase().startsWith(filterText);
+                    boolean useSection = section.first.getCategoryName().toLowerCase().contains(filterText);
                     final List<Category> sectionItems = section.second;
                     final int sectionCount = section.second.size();
                     
@@ -235,7 +370,7 @@ public class CategoryTabletAdapter extends UltimateAdapter implements Filterable
                     
                     for (Category cat : sectionItems) {
                         
-                        if (cat.getCategoryName().toLowerCase().startsWith(filterText)) {
+                        if (cat.getCategoryName().toLowerCase().contains(filterText)) {
                             newSectionItems.add(cat);
                             useSection = true;
                         }
@@ -245,6 +380,7 @@ public class CategoryTabletAdapter extends UltimateAdapter implements Filterable
                         newSection.add(new Pair<Category, List<Category>>(section.first, newSectionItems));
                     }
                 }
+                
                 results.values = newSection;
                 results.count = newSection.size();
             }

@@ -8,7 +8,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -17,6 +16,7 @@ import android.widget.TextView;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.util.UiUtils;
 
 public class LockCodeView extends RelativeLayout {
     
@@ -179,8 +179,7 @@ public class LockCodeView extends RelativeLayout {
 			@Override
 			public void run() {
 
-				InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-				imm.showSoftInput(mField1, InputMethodManager.SHOW_FORCED);
+			    UiUtils.showKeyboard(mContext, mField1);
 			}
 		}, 100);
 

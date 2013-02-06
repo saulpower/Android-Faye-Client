@@ -2,8 +2,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/accounts_title_bar"
     android:layout_width="fill_parent"
-    android:layout_height="@dimen/tablet_navbar_height"
-    android:background="@drawable/top_nav_wood" >
+    android:layout_height="@dimen/tablet_navbar_height" >
+    
+    <View 
+        android:id="@+id/nav_bg"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+    	android:background="@drawable/nav_wood_background"/>
+    
+    <View 
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_below="@id/nav_bg"
+        android:background="@drawable/nav_shadow_background"/>
 
     <ImageView
         android:id="@+id/home"

@@ -207,6 +207,8 @@ abstract public class BaseActivity extends FragmentActivity {
 		}
 	}
 	
+	protected void updateNavBar(String titleString, boolean fragmentTitle) {}
+	
 	/**
 	 * Flip the navigation bar to transition between dashboard and
 	 * various view controllers
@@ -272,7 +274,7 @@ abstract public class BaseActivity extends FragmentActivity {
 		mFragmentCount--;
 		getSupportFragmentManager().popBackStack();
 		
-		updateNavBar(mFragmentCount == 0 ? getActivityTitle() : null);
+		updateNavBar(mFragmentCount == 0 ? getActivityTitle() : null, false);
 		
 		if (mFragmentCount == 0) {
 			mOnFragment = false;

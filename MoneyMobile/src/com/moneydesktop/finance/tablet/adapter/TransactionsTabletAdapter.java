@@ -7,26 +7,28 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.AmazingAdapter;
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.Enums.DataState;
 import com.moneydesktop.finance.database.BankAccountDao;
+import com.moneydesktop.finance.database.BusinessObjectBaseDao;
 import com.moneydesktop.finance.database.CategoryDao;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.database.TagInstanceDao;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
+import com.moneydesktop.finance.model.StopListFling;
 import com.moneydesktop.finance.shared.TransactionViewHolder;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.AmazingListView;
 import com.moneydesktop.finance.views.CaretView;
 import com.moneydesktop.finance.views.VerticalTextView;
-
-import org.apache.commons.lang.WordUtils;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -60,10 +62,12 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
     private QueryProperty mTransactionDate = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Date, TransactionsDao.Properties.Id);
     private QueryProperty mTransactionTitle = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Title, TransactionsDao.Properties.Id);
     private QueryProperty mTagInstance = new QueryProperty(TagInstanceDao.TABLENAME, TransactionsDao.Properties.BusinessObjectId, TagInstanceDao.Properties.BaseObjectId);
+    private QueryProperty mDataState = new QueryProperty(BusinessObjectBaseDao.TABLENAME, BusinessObjectBaseDao.Properties.DataState, QueryProperty.NOT_EQUALS);
 
     private QueryProperty mCategoryId = new QueryProperty(CategoryDao.TABLENAME, TransactionsDao.Properties.CategoryId, CategoryDao.Properties.Id);
     private QueryProperty mCategoryName = new QueryProperty(CategoryDao.TABLENAME, CategoryDao.Properties.CategoryName, CategoryDao.Properties.Id);
     private QueryProperty mBankAccountId = new QueryProperty(BankAccountDao.TABLENAME, TransactionsDao.Properties.BankAccountId, BankAccountDao.Properties.Id);
+    private QueryProperty mBusinessObjectBase = new QueryProperty(BusinessObjectBaseDao.TABLENAME, TransactionsDao.Properties.BusinessObjectId, BusinessObjectBaseDao.Properties.Id);
     TransactionsDao mDao = ApplicationContext.getDaoSession().getTransactionsDao();
 
 	public TransactionsTabletAdapter(Activity activity, AmazingListView listView) {
@@ -73,6 +77,10 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
     
     public void setOnDataLoadedListener(OnDataLoadedListener mOnDataLoadedListener) {
         this.mOnDataLoadedListener = mOnDataLoadedListener;
+    }
+    
+    public List<Transactions> getTransactions() {
+        return mAllTransactions;
     }
 
 	public int getCount() {
@@ -120,18 +128,26 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 	}
 	
 	public void applyNewData() {
-	    
-	    mAllTransactions.clear();
-	    mAllTransactions.addAll(mNewTransactions);
-        mNewTransactions.clear();
-	    notifyDataSetInvalidated();
-        mListView.requestLayout();
+        
+	    mListView.setSelection(0);
+	    mListView.post( new Runnable() {
+            
+            @Override
+            public void run() {
 
-        if (mHasMore) {
-            notifyMayHaveMorePages();
-        } else {
-            notifyNoMorePages();
-        }
+                mAllTransactions.clear();
+                mAllTransactions.addAll(mNewTransactions);
+                mNewTransactions.clear();
+
+                notifyDataSetInvalidated();
+
+                if (mHasMore) {
+                    notifyMayHaveMorePages();
+                } else {
+                    notifyNoMorePages();
+                }
+            }
+        });
 	}
 	
 	private void loadPage(final int page) {
@@ -142,6 +158,15 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 
         mBackgroundTask = new AsyncTask<Integer, Void, Pair<Boolean, List<Transactions>>>() {
 
+            @Override
+            protected void onPreExecute() {
+
+                /* Stop the listview from flinging as it is causing crashes
+                 * due to accessing data while the data is being changed
+                 */
+                StopListFling.stop(mListView);
+            }
+            
             @Override
             protected Pair<Boolean, List<Transactions>> doInBackground(Integer... params) {
                 
@@ -162,7 +187,7 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
                 if (page == 1) {
                     mHasMore = rows.first;
                     mNewTransactions.addAll(rows.second);
-                    notifyDataLoaded(false);
+                    notifyDataLoaded();
                     return;
                 }
 
@@ -175,17 +200,15 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
                 nextPage();
                 
                 mAllTransactions.addAll(rows.second);
-                notifyDataLoaded(true);
-                
-                mListView.requestLayout();
+                notifyDataSetChanged();
             }
 
         }.execute(page);
 	}
 	
-	private void notifyDataLoaded(boolean isRequest) {
+	private void notifyDataLoaded() {
 	    if (mOnDataLoadedListener != null) {
-            mOnDataLoadedListener.dataLoaded(isRequest);
+            mOnDataLoadedListener.dataLoaded();
         }
 	}
 	
@@ -206,8 +229,10 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
         query.join(mCategoryId)
             .join(mBankAccountId)
             .join(mTagInstance)
+            .join(mBusinessObjectBase)
             .where(subQuery).and()
             .where(mQueries).and()
+            .where(mDataState, Integer.toString(DataState.DATA_STATE_DELETED.index())).and()
             .between(mTransactionDate, mStart, mEnd)
             .orderBy(mOrderBy, mDirection)
             .limit(Constant.QUERY_LIMIT)
@@ -250,27 +275,28 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 		    viewHolder = (TransactionViewHolder) res.getTag();
 		}
 		
-		Transactions transactions = getItem(position);
+		final Transactions transactions = getItem(position);
 		
 		if (transactions != null) {
 		
 			viewHolder.date.setText(mDateFormatter.format(transactions.getDate()));
-			viewHolder.payee.setText(WordUtils.capitalize(transactions.getTitle().toLowerCase()));
-			viewHolder.caret.setVisibility(transactions.isIncome() ? View.VISIBLE : View.GONE);
-			
-			int gravity = Gravity.CENTER_VERTICAL|Gravity.RIGHT;
-			double value = transactions.getAmount();
-			
-			if (transactions.isIncome()) {
-			    value = Math.abs(value);
-			    gravity = Gravity.CENTER_VERTICAL|Gravity.LEFT;
-			}
+			viewHolder.payee.setText(transactions.getCapitalizedTitle());
+			viewHolder.caret.setVisibility(transactions.isIncome() ? View.VISIBLE : View.INVISIBLE);
 			
 			viewHolder.newText.setText(!transactions.getIsProcessed() ? "NEW" : "");
-			viewHolder.newText.setBackgroundResource(!transactions.getIsProcessed() ? R.drawable.primary_to_white : R.drawable.gray1_to_white);
+			viewHolder.newText.setBackgroundResource(!transactions.getIsProcessed() ? R.drawable.primary_to_white : R.color.gray1);
 			
-			viewHolder.amount.setText(mFormatter.format(value));
-			viewHolder.amount.setGravity(gravity);
+			viewHolder.amount.setText(mFormatter.format(transactions.normalizedAmount()));
+			
+			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) viewHolder.amount.getLayoutParams();
+			int[] rules = params.getRules();
+			rules[RelativeLayout.ALIGN_PARENT_LEFT] = 0;
+            rules[RelativeLayout.ALIGN_PARENT_RIGHT] = -1;
+            
+            if (transactions.getTransactionType() == 1) {
+                rules[RelativeLayout.ALIGN_PARENT_LEFT] = -1;
+                rules[RelativeLayout.ALIGN_PARENT_RIGHT] = 0;
+            }
 
 			viewHolder.type.setImageResource(transactions.getIsBusiness() ? R.drawable.ipad_txndetail_icon_business_color : R.drawable.ipad_txndetail_icon_personal_grey);
 			viewHolder.flag.setVisibility(transactions.getIsFlagged() ? View.VISIBLE : View.INVISIBLE);
@@ -321,6 +347,6 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
     }
     
     public interface OnDataLoadedListener {
-        public void dataLoaded(boolean isRequest);
+        public void dataLoaded();
     }
 }

@@ -66,7 +66,11 @@ public abstract class UltimateAdapter extends BaseExpandableListAdapter implemen
      */
     public int getPinnedHeaderState(int position, int section) {
         
-    	if (section < 0 || getGroupCount() == 0) {
+        if (getGroupCount() == 0 && supportsEmptyList()) {
+            return PINNED_HEADER_VISIBLE;
+        }
+        
+    	if ((section < 0 || getGroupCount() == 0)) {
     		return PINNED_HEADER_GONE;
     	}
     	
@@ -210,6 +214,10 @@ public abstract class UltimateAdapter extends BaseExpandableListAdapter implemen
 	 */
 	protected abstract void loadSection(int section);
     protected abstract boolean isSectionLoadable(int section);
+    
+    protected boolean supportsEmptyList() {
+        return false;
+    }
 	
 	/**
 	 * read: get view too

@@ -5,28 +5,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:visibility="invisible" >
-		    
-    <com.moneydesktop.finance.views.CaretView
-        android:id="@+id/caret"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:color="@color/gray2"
-        app:width="80dp"
-        app:height="80dp"
-        app:rotation="90" />
     
-	<RelativeLayout
-	    android:id="@+id/popup"
-	    android:layout_width="300dp"
-	    android:layout_height="500dp"
-	    android:background="@color/gray2">
-	
-	    <FrameLayout
-	        android:id="@+id/fragment"
+    <RelativeLayout
+	    android:id="@+id/container"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent" >
+		    
+	    <com.moneydesktop.finance.views.CaretView
+	        android:id="@+id/caret"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_margin="10dp" />
+	        app:color="@color/gray2"
+	        app:width="80dp"
+	        app:height="80dp"
+	        app:rotation="90" />
 	    
+		<RelativeLayout
+		    android:id="@+id/popup"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:paddingBottom="10dp"
+		    android:background="@color/gray2">
+		
+		    <FrameLayout
+		        android:id="@+id/fragment"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_margin="10dp" />
+		    
+		</RelativeLayout>
+		
 	</RelativeLayout>
 	
 </RelativeLayout>

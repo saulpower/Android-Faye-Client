@@ -399,7 +399,7 @@ public class SyncEngine {
 		Map<String, Object> map = new HashMap<String, Object>();
 		JSONArray json = new JSONArray();
 		
-		List<Object> objects = DataController.getChangedData(key, dataState);
+		List<Object> objects = DataController.getByDataState(key, dataState);
 		
 		if (objects != null) {
 			
