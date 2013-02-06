@@ -1,7 +1,6 @@
 package com.moneydesktop.finance.tablet.fragment;
 
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +12,7 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
+import com.moneydesktop.finance.util.EmailUtils;
 import com.moneydesktop.finance.views.SettingButton;
 
 import de.greenrobot.event.EventBus;
@@ -85,12 +85,7 @@ public class SettingsTabletFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 
-			    Intent intent = new Intent(Intent.ACTION_SEND);
-			    intent.setType("plain/text");
-			    intent.putExtra(Intent.EXTRA_EMAIL,new String[] { mActivity.getString(R.string.feedback_email) });
-			    intent.putExtra(Intent.EXTRA_SUBJECT, mActivity.getString(R.string.feedback_subject));
-			    intent.putExtra(Intent.EXTRA_TEXT, "");
-			    startActivity(Intent.createChooser(intent, mActivity.getString(R.string.feedback_title)));
+			    EmailUtils.sendEmail(mActivity, mActivity.getString(R.string.feedback_subject), "", new String[] { mActivity.getString(R.string.feedback_email) });
 			}
 		});
 

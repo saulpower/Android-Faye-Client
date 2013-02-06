@@ -32,6 +32,7 @@ public class Constant {
     public static final String EXTRA_POSITION_Y = "position_y";
     public static final String EXTRA_SOURCE_CODE = "source_code";
     public static final String EXTRA_TXN_TYPE = "txn_type";
+    public static final String EXTRA_VALUES = "values";
     
     public static final int CODE_CATEGORY_LIST = 1;
     public static final int CODE_CATEGORY_DETAIL = 2;

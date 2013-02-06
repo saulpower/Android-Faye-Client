@@ -7,13 +7,16 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.adapters.AmazingAdapter;
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.Enums.DataState;
 import com.moneydesktop.finance.database.BankAccountDao;
+import com.moneydesktop.finance.database.BusinessObjectBaseDao;
 import com.moneydesktop.finance.database.CategoryDao;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.database.QueryProperty;
@@ -59,10 +62,12 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
     private QueryProperty mTransactionDate = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Date, TransactionsDao.Properties.Id);
     private QueryProperty mTransactionTitle = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Title, TransactionsDao.Properties.Id);
     private QueryProperty mTagInstance = new QueryProperty(TagInstanceDao.TABLENAME, TransactionsDao.Properties.BusinessObjectId, TagInstanceDao.Properties.BaseObjectId);
+    private QueryProperty mDataState = new QueryProperty(BusinessObjectBaseDao.TABLENAME, BusinessObjectBaseDao.Properties.DataState, QueryProperty.NOT_EQUALS);
 
     private QueryProperty mCategoryId = new QueryProperty(CategoryDao.TABLENAME, TransactionsDao.Properties.CategoryId, CategoryDao.Properties.Id);
     private QueryProperty mCategoryName = new QueryProperty(CategoryDao.TABLENAME, CategoryDao.Properties.CategoryName, CategoryDao.Properties.Id);
     private QueryProperty mBankAccountId = new QueryProperty(BankAccountDao.TABLENAME, TransactionsDao.Properties.BankAccountId, BankAccountDao.Properties.Id);
+    private QueryProperty mBusinessObjectBase = new QueryProperty(BusinessObjectBaseDao.TABLENAME, TransactionsDao.Properties.BusinessObjectId, BusinessObjectBaseDao.Properties.Id);
     TransactionsDao mDao = ApplicationContext.getDaoSession().getTransactionsDao();
 
 	public TransactionsTabletAdapter(Activity activity, AmazingListView listView) {
@@ -72,6 +77,10 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
     
     public void setOnDataLoadedListener(OnDataLoadedListener mOnDataLoadedListener) {
         this.mOnDataLoadedListener = mOnDataLoadedListener;
+    }
+    
+    public List<Transactions> getTransactions() {
+        return mAllTransactions;
     }
 
 	public int getCount() {
@@ -220,8 +229,10 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
         query.join(mCategoryId)
             .join(mBankAccountId)
             .join(mTagInstance)
+            .join(mBusinessObjectBase)
             .where(subQuery).and()
             .where(mQueries).and()
+            .where(mDataState, Integer.toString(DataState.DATA_STATE_DELETED.index())).and()
             .between(mTransactionDate, mStart, mEnd)
             .orderBy(mOrderBy, mDirection)
             .limit(Constant.QUERY_LIMIT)
@@ -272,17 +283,20 @@ public class TransactionsTabletAdapter extends AmazingAdapter {
 			viewHolder.payee.setText(transactions.getCapitalizedTitle());
 			viewHolder.caret.setVisibility(transactions.isIncome() ? View.VISIBLE : View.INVISIBLE);
 			
-			int gravity = Gravity.CENTER_VERTICAL|Gravity.RIGHT;
-			
-			if (transactions.getTransactionType() == 1) {
-			    gravity = Gravity.CENTER_VERTICAL|Gravity.LEFT;
-			}
-			
 			viewHolder.newText.setText(!transactions.getIsProcessed() ? "NEW" : "");
 			viewHolder.newText.setBackgroundResource(!transactions.getIsProcessed() ? R.drawable.primary_to_white : R.color.gray1);
 			
 			viewHolder.amount.setText(mFormatter.format(transactions.normalizedAmount()));
-			viewHolder.amount.setGravity(gravity);
+			
+			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) viewHolder.amount.getLayoutParams();
+			int[] rules = params.getRules();
+			rules[RelativeLayout.ALIGN_PARENT_LEFT] = 0;
+            rules[RelativeLayout.ALIGN_PARENT_RIGHT] = -1;
+            
+            if (transactions.getTransactionType() == 1) {
+                rules[RelativeLayout.ALIGN_PARENT_LEFT] = -1;
+                rules[RelativeLayout.ALIGN_PARENT_RIGHT] = 0;
+            }
 
 			viewHolder.type.setImageResource(transactions.getIsBusiness() ? R.drawable.ipad_txndetail_icon_business_color : R.drawable.ipad_txndetail_icon_personal_grey);
 			viewHolder.flag.setVisibility(transactions.getIsFlagged() ? View.VISIBLE : View.INVISIBLE);

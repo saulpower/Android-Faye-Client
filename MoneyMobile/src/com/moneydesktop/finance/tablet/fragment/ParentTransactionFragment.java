@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
@@ -23,7 +22,6 @@ public abstract class ParentTransactionFragment extends BaseFragment implements 
     public void setupView() {
 
         ImageView fakeCell = (ImageView) mRoot.findViewById(R.id.cell);
-        RelativeLayout container = (RelativeLayout) mRoot.findViewById(R.id.detail_container);
         FrameLayout detail = (FrameLayout) mRoot.findViewById(R.id.detail_fragment);
         
         mBase = new TransactionDetailController(fakeCell, detail, 0);

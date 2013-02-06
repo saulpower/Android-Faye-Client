@@ -28,6 +28,7 @@ import com.moneydesktop.finance.shared.LockFragment;
 import com.moneydesktop.finance.shared.TransactionDetailController;
 import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
 import com.moneydesktop.finance.tablet.activity.DialogBaseActivity.OnKeyboardStateChangeListener;
+import com.moneydesktop.finance.tablet.fragment.TransactionTotalsFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment.onBackPressedListener;
 import com.moneydesktop.finance.tablet.fragment.TransactionsPageTabletFragment;
@@ -251,6 +252,8 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
                 return LockFragment.newInstance(true);
             case TRANSACTIONS_PAGE:
                 return TransactionsPageTabletFragment.newInstance(this, getIntent());
+            case TRANSACTION_SUMMARY:
+                return TransactionTotalsFragment.newInstance(getIntent().getStringArrayExtra(Constant.EXTRA_VALUES));
             default:
                 finish();
         }
@@ -277,6 +280,10 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
                 mLabel.setVisibility(View.INVISIBLE);
                 mArrow.setVisibility(View.INVISIBLE);
                 setupTransactionDetail();
+                break;
+            case TRANSACTION_SUMMARY:
+                mArrow.setVisibility(View.GONE);
+                configureSize(0.4f, 0.4f);
                 break;
             default:
                 break;

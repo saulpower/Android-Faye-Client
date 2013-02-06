@@ -4,13 +4,18 @@ package com.moneydesktop.finance.tablet.fragment;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.MeasureSpec;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -21,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
@@ -41,9 +47,13 @@ import com.moneydesktop.finance.model.EventMessage.FilterEvent;
 import com.moneydesktop.finance.model.EventMessage.ParentAnimationEvent;
 import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
 import com.moneydesktop.finance.shared.TransactionViewHolder;
+import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.TransactionsTabletAdapter;
 import com.moneydesktop.finance.tablet.adapter.TransactionsTabletAdapter.OnDataLoadedListener;
+import com.moneydesktop.finance.util.DialogUtils;
+import com.moneydesktop.finance.util.EmailUtils;
+import com.moneydesktop.finance.util.FileIO;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.AmazingListView;
@@ -54,6 +64,10 @@ import com.moneydesktop.finance.views.HorizontalScroller;
 import com.moneydesktop.finance.views.LineView;
 
 import de.greenrobot.event.EventBus;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 @TargetApi(11)
 public class TransactionsPageTabletFragment extends BaseFragment implements OnItemClickListener, FilterChangeListener, OnDataLoadedListener, OnItemLongClickListener {
@@ -82,9 +96,13 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     
     private HeaderView mDate, mPayee, mCategory, mAmount;
     private EditText mSearch;
+    private LinearLayout mButtons, mHeaders;
+    private ImageView mSum, mEmail, mPrint, mReport, mAdd;
     
     private boolean mLoaded = false;
     private boolean mWaiting = true;
+    private boolean mShowButtons = true;
+    private DecimalFormat mFormatter = new DecimalFormat("$#,##0.00;-$#,##0.00");
     
     private Animation mFadeIn, mFadeOut;
     
@@ -124,6 +142,10 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
     public void setLineFix() {
         mFixLine = true;
     }
+    
+    public void setShowButtons(boolean showButtons) {
+        mShowButtons = showButtons;
+    }
 
     public static TransactionsPageTabletFragment newInstance(ParentTransactionInterface parent, Intent intent) {
             
@@ -131,6 +153,7 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         fragment.setParent(parent);
         fragment.setAccountId(intent.getStringExtra(Constant.EXTRA_ACCOUNT_ID));
         fragment.setTxFilter((TxFilter) intent.getSerializableExtra(Constant.EXTRA_TXN_TYPE));
+        fragment.setShowButtons(false);
         
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -216,6 +239,19 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         mSearch = (EditText) mRoot.findViewById(R.id.search);
         mSearch.addTextChangedListener(mWatcher);
         
+        mHeaders = (LinearLayout) mRoot.findViewById(R.id.list_headers);
+        mButtons = (LinearLayout) mRoot.findViewById(R.id.button_container);
+        
+        if (!mShowButtons) {
+            mButtons.setVisibility(View.INVISIBLE);
+        }
+        
+        mSum = (ImageView) mRoot.findViewById(R.id.sum);
+        mEmail = (ImageView) mRoot.findViewById(R.id.email);
+        mPrint = (ImageView) mRoot.findViewById(R.id.print);
+        mReport = (ImageView) mRoot.findViewById(R.id.report);
+        mAdd = (ImageView) mRoot.findViewById(R.id.add);
+        
         // Bug with line not being lined up correctly
         if (mFixLine) {
             mLine = (LineView) mRoot.findViewById(R.id.line_bug);
@@ -296,6 +332,30 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
                 }
                 
                 return false;
+            }
+        });
+        
+        mSum.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                displaySum();
+            }
+        });
+        
+        mEmail.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                emailTransactions();
+            }
+        });
+        
+        mAdd.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "Add");
             }
         });
         
@@ -519,5 +579,102 @@ public class TransactionsPageTabletFragment extends BaseFragment implements OnIt
         if (mTxFilter != null && mTxFilter == TxFilter.UNCLEARED) {
             mQueries.and().where(mIsProcessed, "0");
         }
+    }
+    
+    private void displaySum() {
+
+        Intent i = new Intent(mActivity, DropDownTabletActivity.class);
+        i.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.TRANSACTION_SUMMARY);
+        i.putExtra(Constant.EXTRA_VALUES, calculateStats());
+        startActivity(i);
+    }
+    
+    private String[] calculateStats() {
+        
+        List<Transactions> transactions = mAdapter.getTransactions();
+        
+        String[] values = new String[3];
+        double[] amounts = new double[2];
+        
+        for (Transactions t : transactions) {
+            
+            amounts[0] += t.getAmount();
+            amounts[1] += t.getRawAmount();
+        }
+        
+        values[0] = Integer.toString(transactions.size());
+        values[1] = mFormatter.format(Math.abs(amounts[0] / transactions.size()));
+        values[2] = mFormatter.format(Math.abs(amounts[1]));
+        
+        return values;
+    }
+    
+    private void emailTransactions() {
+        
+        DialogUtils.showProgress(getActivity(), getString(R.string.generate_email));
+
+        new AsyncTask<Void, Void, String>() {
+
+            @Override
+            protected String doInBackground(Void... params) {
+
+                Bitmap image = getWholeListViewItemsToBitmap();
+                String path = FileIO.saveBitmap(getActivity(), image, getString(R.string.transactions_list));
+
+                return path;
+            }
+
+            @Override
+            protected void onPostExecute(String path) {
+
+                DialogUtils.hideProgress();
+                EmailUtils.sendEmail(getActivity(), getString(R.string.email_transactions_subject), "", path);
+            }
+
+        }.execute();
+    }
+    
+    private  Bitmap getWholeListViewItemsToBitmap() {
+
+        final float divider = UiUtils.getDynamicPixels(getActivity(), 1);
+        int allitemsheight = mHeaders.getHeight();
+        Bitmap header = UiUtils.convertViewToBitmap(mHeaders);
+        
+        List<Bitmap> bitmaps = new ArrayList<Bitmap>();
+        bitmaps.add(header);
+
+        for (int i = 0; i < mAdapter.getCount(); i++) {
+
+            View childView = mAdapter.getView(i, null, mTransactionsList);
+            childView.measure(
+                    MeasureSpec.makeMeasureSpec(mTransactionsList.getWidth(), MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+
+            childView.layout(0, 0, childView.getMeasuredWidth(), childView.getMeasuredHeight());
+            childView.setDrawingCacheEnabled(true);
+            childView.buildDrawingCache();
+            
+            bitmaps.add(childView.getDrawingCache());
+            allitemsheight += childView.getMeasuredHeight();
+        }
+
+        Bitmap listBitmap = Bitmap.createBitmap(mTransactionsList.getMeasuredWidth(), (int) (allitemsheight + mAdapter.getCount() * divider), Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(listBitmap);
+        canvas.drawColor(getResources().getColor(R.color.gray1));
+        
+        final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        int currentTop = 0;
+
+        for (int i = 0; i < bitmaps.size(); i++) {
+            
+            Bitmap bmp = bitmaps.get(i);
+            canvas.drawBitmap(bmp, 0, currentTop, paint);
+            currentTop += (bmp.getHeight() + divider);
+
+            bmp.recycle();
+            bmp = null;
+        }
+
+        return listBitmap;
     }
 }

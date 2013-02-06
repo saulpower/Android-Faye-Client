@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,8 @@ import com.moneydesktop.finance.shared.DashboardBaseActivity;
 import com.moneydesktop.finance.shared.TransactionDetailBaseFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
+import com.moneydesktop.finance.util.EmailUtils;
+import com.moneydesktop.finance.util.FileIO;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 
@@ -259,8 +262,7 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
             
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                
+                deleteTransaction();
             }
         });
         
@@ -268,8 +270,7 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
             
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                
+                emailTransaction();
             }
         });
         
@@ -277,17 +278,7 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
             
             @Override
             public void onClick(View v) {
-                
                 configureContainer();
-            }
-        });
-
-        mRoot.setSoundEffectsEnabled(false);
-        mRoot.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                // intercepting clicks
             }
         });
         
@@ -308,6 +299,19 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
                 showTagPopup(v);
             }
         });
+    }
+    
+    private void emailTransaction() {
+        
+        Bitmap image = UiUtils.convertViewToBitmap(mContainer);
+        String path = FileIO.saveBitmap(getActivity(), image, mTransaction.getTransactionId());
+        
+        EmailUtils.sendEmail(getActivity(), getString(R.string.email_transaction_subject), "", path);
+    }
+    
+    private void deleteTransaction() {
+        mTransaction.softDeleteSingle();
+        onBackPressed();
     }
     
     private void showCategoryPopup(View view) {
@@ -354,10 +358,7 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
 
         if (mTransaction == null) return;
         
-        // TODO: Need to show delete option when account is manual
-//        mDeleteItem.setVisibility(mTransaction.getBankAccount().getIsLinked() ? View.GONE : View.VISIBLE);
-
-        mDeleteItem.setVisibility(View.GONE);
+        mDeleteItem.setVisibility(mTransaction.getIsManual() ? View.VISIBLE : View.GONE);
     }
     
     @Override
@@ -396,10 +397,6 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
         mStatement.setLabelFont(Fonts.getFont(Fonts.PRIMARY_BOLD));
         mStatement.setLabelSize(UiUtils.getScaledPixels(mActivity, 15));
     }
-    
-    public interface onBackPressedListener {
-        public void onFragmentBackPressed();
-    }
 
     @Override
     public boolean onBackPressed() {
@@ -416,5 +413,9 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
     public void onEvent(DatabaseSaveEvent event) {
 
         configureTransactionView();
+    }
+    
+    public interface onBackPressedListener {
+        public void onFragmentBackPressed();
     }
 }

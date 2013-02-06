@@ -2,6 +2,8 @@ package com.moneydesktop.finance.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
@@ -118,4 +120,15 @@ public class UiUtils {
         imm.showSoftInput(view, InputMethodManager.RESULT_UNCHANGED_SHOWN);
     }
 
+    public static Bitmap convertViewToBitmap(View view) {
+        
+        if (view.getWidth() <= 0 || view.getHeight() <= 0) return null;
+        
+        final Bitmap b = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);                
+        final Canvas c = new Canvas(b);
+
+        view.draw(c);
+        
+        return b;
+    }
 }

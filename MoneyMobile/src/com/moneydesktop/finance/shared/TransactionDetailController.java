@@ -8,7 +8,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -29,6 +28,7 @@ import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
+import com.moneydesktop.finance.util.UiUtils;
 
 import de.greenrobot.event.EventBus;
 
@@ -237,10 +237,7 @@ public class TransactionDetailController {
                 
                 mCenterX = (int) (view.getWidth() / 2.0f);
                 
-                final Bitmap b = Bitmap.createBitmap(mCellView.getWidth(), mCellView.getHeight(), Bitmap.Config.ARGB_8888);                
-                final Canvas c = new Canvas(b);
-                
-                mCellView.draw(c);
+                Bitmap b = UiUtils.convertViewToBitmap(mCellView);
                 
                 return b;
             }

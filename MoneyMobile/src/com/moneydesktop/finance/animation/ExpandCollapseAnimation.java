@@ -1,6 +1,5 @@
 package com.moneydesktop.finance.animation;
 
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
@@ -55,7 +54,6 @@ public class ExpandCollapseAnimation extends Animation {
 			} else {
 				mLayoutParams.bottomMargin = - (int) (mEndHeight * interpolatedTime);
 			}
-			Log.d("ExpandCollapseAnimation", "anim height " + mLayoutParams.bottomMargin);
 			mAnimatedView.requestLayout();
 		} else {
 			if(mType == EXPAND) {

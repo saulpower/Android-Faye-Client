@@ -84,6 +84,9 @@
     <string name="demo_message">Creating Demo Data&#8230;</string>
     <string name="description">description</string>
     <string name="dollar_sign">$</string>
+    <string name="email_title">Send Email</string>
+    <string name="email_transaction_subject">Check Out This Transaction</string>
+    <string name="email_transactions_subject">Check Out These Transactions</string>
     <string name="empty_transactions">No Transactions</string>
     <string name="error_email_invalid">Please ensure your email address is valid.</string>
     <string name="error_login_failed">YOUR LOGIN\nWAS UNSUCCESSFUL.</string>
@@ -92,7 +95,6 @@
     <string name="error_title">Error</string>
     <string name="feedback_email">mobile.support@moneydesktop.com</string>
     <string name="feedback_subject">MoneyMobile Feedback</string>
-    <string name="feedback_title">Send Email</string>
     <string name="filter_accounts">ACCOUNTS</string>
     <string name="filter_cats">CATEGORIES</string>
     <string name="filter_folder">FOLDERS</string>
@@ -107,6 +109,7 @@
     <string name="folder_new_sub">Items You Have Not Opened Yet</string>
     <string name="folder_new">NEW</string>
     <string name="get_started">BEGIN USING THE APP</string>
+    <string name="generate_email">Generating Email&#8230;</string>
     <string name="handset_intro_desc_1">No matter where you are in the app, you can always press this home button to take you right back to the dashboard.</string>
     <string name="handset_intro_desc_2">We fill our dropdown menus chuck full of useful tools like \"Add another Account\", or \"Print this Transaction\", or \"Call Mom.\" Seriously, call her.</string>
     <string name="handset_intro_desc_3">Giving a little sideways swipe on the transactions list will open up the transactions folders. Think of the folders as preset filters.</string>
@@ -151,9 +154,11 @@
     <string name="intro_title_4">DID YOU KNOW?</string>
     <string name="label_amount">Amount</string>
     <string name="label_app_lock">APP LOCK</string>
+    <string name="label_average">Average</string>
     <string name="label_balances">Account Balances as of Today</string>
     <string name="label_category">Category</string>
     <string name="label_change_lock">CHANGE LOCK CODE</string>
+    <string name="label_count">Count</string>
     <string name="label_daily_spending">Daily Spending - This Month</string>
     <string name="label_date">Date</string>
     <string name="label_delete">Delete</string>
@@ -169,6 +174,7 @@
     <string name="label_password">Password</string>
     <string name="label_payee">Payee</string>
     <string name="label_stmt">Statement Description</string>
+    <string name="label_sum">Sum</string>
     <string name="label_tags">Tags</string>
     <string name="label_top_category">Top Category</string>
     <string name="label_transactions">Transaction Summary</string>
@@ -225,6 +231,8 @@
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_spending">Spending</string>
     <string name="title_activity_transactions">Transactions</string>
+    <string name="title_fragment_transaction_totals">Transaction Totals</string>
+    <string name="transactions_list">TransactionsList</string>
     <string name="try_demo">Your request has been submitted. Try out demo mode to see what MoneyDesktop has to offer.</string>
     <string name="unlink_message">Unlinking will remove this device from your list of approved devices. you can re-link it at any time. Would you like to continue?</string>
     <string name="unlink_title">Unlink?</string>

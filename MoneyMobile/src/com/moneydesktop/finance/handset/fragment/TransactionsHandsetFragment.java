@@ -31,9 +31,6 @@ import java.util.List;
 public class TransactionsHandsetFragment extends BaseFragment implements OnItemClickListener {
 	
 	public final String TAG = this.getClass().getSimpleName();
-	
-	private static TransactionsHandsetFragment sFragment;
-	private static String sAccountNumber;
 
 	private AmazingListView mTransactionsList;
 	private RelativeLayout mLoading;
@@ -45,13 +42,12 @@ public class TransactionsHandsetFragment extends BaseFragment implements OnItemC
 	
 	public static TransactionsHandsetFragment newInstance(String accountNumber) {
 			
-		sFragment = new TransactionsHandsetFragment();
-		sAccountNumber = accountNumber;
+	    TransactionsHandsetFragment frag = new TransactionsHandsetFragment();
 	
         Bundle args = new Bundle();
-        sFragment.setArguments(args);
+        frag.setArguments(args);
         
-        return sFragment;
+        return frag;
 	}
 	
 	@Override
