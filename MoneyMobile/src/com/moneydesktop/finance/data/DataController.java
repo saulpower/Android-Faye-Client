@@ -2,6 +2,7 @@ package com.moneydesktop.finance.data;
 
 import android.database.sqlite.SQLiteConstraintException;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.data.Enums.DataState;
@@ -79,11 +80,13 @@ public class DataController {
 		processTx(sPendingUpdateTx, TxType.UPDATE);
 		processTx(sPendingDeleteTx, TxType.DELETE);
 		
+		if (sPendingDeleteTx.size() > 0) {
+			ApplicationContext.startNewDatabaseSession();
+		}
+		
 		// Reset pending transaction list
-		sPendingInsertTx.clear();
-		sPendingUpdateTx.clear();
-		sPendingDeleteTx.clear();
-		sPendingCache.clear();
+		clearCache();
+		
 		
 		EventBus.getDefault().post(new EventMessage().new DatabaseSaveEvent());
 		Log.i(TAG, "Processed " + sCount + " records in " + (System.currentTimeMillis() - start) + " ms");
@@ -195,7 +198,6 @@ public class DataController {
 	}
     
     public static void softDelete(Object object) {
-
         addTransaction(object, TxType.UPDATE);
     }
 	
@@ -253,7 +255,7 @@ public class DataController {
 		if (pendingTx != null) {
 			
 			list = getList(key, pendingTx);
-			
+		
 			if (!list.contains(object)) {
 				list.add(object);
 			}
@@ -292,6 +294,15 @@ public class DataController {
 		
 		return sPendingCache.get(id);
 	}
+	
+	public static void clearCache() {
+		
+		sPendingCache.clear();
+		sPendingInsertTx.clear();
+		sPendingDeleteTx.clear();
+		sPendingUpdateTx.clear();
+	}
+	
 	
 	/**
 	 * Deletes all objects in the database for a given

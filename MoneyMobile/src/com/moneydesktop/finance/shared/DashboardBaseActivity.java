@@ -141,6 +141,7 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 	            Preferences.saveString(Preferences.KEY_LOCK_CODE, "");
 			
 				Preferences.saveBoolean(Preferences.KEY_IS_DEMO_MODE, false);
+				DataController.clearCache();
 
 				return true;
 			}

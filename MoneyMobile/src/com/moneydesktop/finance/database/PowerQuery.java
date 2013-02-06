@@ -65,10 +65,10 @@ public class PowerQuery {
     
     public PowerQuery where(QueryProperty field, String value) {
 
-        if (field.getComparator() == null) {
-            field.setComparator("= ?");
-        }
-        
+    	if (field.getComparator() == null) {
+	        field.setComparator("= ?");
+    	}
+	        
         return addWhere(field, value);
     }
     

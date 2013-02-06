@@ -25,10 +25,10 @@ import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.shared.LockFragment;
-import com.moneydesktop.finance.shared.TransactionDetailController;
-import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
-import com.moneydesktop.finance.tablet.activity.DialogBaseActivity.OnKeyboardStateChangeListener;
-import com.moneydesktop.finance.tablet.fragment.TransactionTotalsFragment;
+import com.moneydesktop.finance.shared.TransactionController;
+import com.moneydesktop.finance.shared.TransactionController.ParentTransactionInterface;
+import com.moneydesktop.finance.tablet.fragment.AccountSettingsTabletFragment;
+import com.moneydesktop.finance.tablet.activity.DialogActivity.OnKeyboardStateChangeListener;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment.onBackPressedListener;
 import com.moneydesktop.finance.tablet.fragment.TransactionsPageTabletFragment;
@@ -252,6 +252,8 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
                 return LockFragment.newInstance(true);
             case TRANSACTIONS_PAGE:
                 return TransactionsPageTabletFragment.newInstance(this, getIntent());
+            case ACCOUNT_SETTINGS:
+            	return AccountSettingsTabletFragment.newInstance(getIntent());
             case TRANSACTION_SUMMARY:
                 return TransactionTotalsFragment.newInstance(getIntent().getStringArrayExtra(Constant.EXTRA_VALUES));
             default:
@@ -281,6 +283,10 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
                 mArrow.setVisibility(View.INVISIBLE);
                 setupTransactionDetail();
                 break;
+            case ACCOUNT_SETTINGS:
+            	configureSize(0.6f, 0.7f);
+                mLabel.setVisibility(View.VISIBLE);
+                mArrow.setVisibility(View.INVISIBLE);
             case TRANSACTION_SUMMARY:
                 mArrow.setVisibility(View.GONE);
                 configureSize(0.4f, 0.4f);

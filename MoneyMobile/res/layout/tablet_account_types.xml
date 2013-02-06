@@ -21,38 +21,39 @@
         android:layout_alignParentRight="true"
         moneydesktop:content="@+id/panel_frame"
         moneydesktop:handle="@+id/account_handle"
-        moneydesktop:orientation="horizontal" >
+        moneydesktop:orientation="horizontal">
 
         <ImageView
             android:id="@+id/account_handle"
-            android:layout_width="wrap_content"
+            android:layout_width="7dip"
+            android:layout_marginTop="3dip"
             android:layout_height="fill_parent"
             android:layout_alignParentRight="true"
-            android:src="@drawable/icon" />
+			android:background="@drawable/fade_shadow" />
 
         <RelativeLayout
             android:id="@+id/panel_frame"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:background="@drawable/tablet_vertical_tray_background"
-            android:gravity="right" >
+            android:gravity="right">
 
             <LinearLayout
                 android:id="@+id/panel_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:gravity="right" >
 
                 <ScrollView
                     android:layout_width="fill_parent"
-                    android:layout_height="fill_parent" >
+                    android:layout_height="fill_parent">
 
                     <LinearLayout
                         android:id="@+id/panel_layout_holder"
                         android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
+                        android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="10dip" />
                 </ScrollView>
@@ -60,4 +61,4 @@
         </RelativeLayout>
     </com.moneydesktop.finance.views.SlidingDrawerRightSide>
 
-</RelativeLayout>
+</RelativeLayout>	

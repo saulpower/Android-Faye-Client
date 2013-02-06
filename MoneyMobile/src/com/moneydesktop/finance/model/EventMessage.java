@@ -1,11 +1,14 @@
 package com.moneydesktop.finance.model;
 
+import com.moneydesktop.finance.database.AccountType;
+import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.data.Enums.LockType;
 import com.moneydesktop.finance.data.Enums.NavDirection;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.views.AnchorView;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class EventMessage {
     
@@ -136,6 +139,76 @@ public class EventMessage {
 		}
 	}
 	
+   public class BankStatusUpdateEvent extends EventMessage {
+        
+        protected Bank mBank;
+
+        public BankStatusUpdateEvent(Bank bank) {
+            this.mBank = bank;
+        }
+        
+        public Bank getUpdatedBank() {
+            return mBank;
+        }
+
+    }
+   
+   public class RefreshAccountEvent extends EventMessage {
+       
+       protected Bank mBank;
+
+       public RefreshAccountEvent(Bank bank) {
+           this.mBank = bank;
+       }
+       
+       public Bank getRefreshedBank() {
+           return mBank;
+       }
+
+   }
+   
+   public class ReloadBannersEvent extends EventMessage {
+       public ReloadBannersEvent() {
+           super();
+       }
+   }
+   
+   public class BankDeletedEvent extends EventMessage {
+       protected Bank mBank;
+
+       public BankDeletedEvent(Bank bank) {
+           this.mBank = bank;
+       }
+       
+       public Bank getDeletedBank() {
+           return mBank;
+       }
+   }
+	
+   public class RemoveAccountTypeEvent extends EventMessage {
+       protected AccountType mAccountType;
+
+       public RemoveAccountTypeEvent(AccountType accountToBeRemoved) {
+           this.mAccountType = accountToBeRemoved;
+       }
+       
+       public AccountType getAccountType() {
+           return mAccountType;
+       }
+   }
+   
+	public class CheckRemoveBankEvent extends EventMessage {
+		protected Bank mBank;
+		
+		public CheckRemoveBankEvent(Bank bank) {
+			this.mBank = bank;
+		}
+			       
+        public Bank getBank() {
+            return mBank;
+        }
+	}
+   
 	protected HashMap<String, Object> mInfo;
 	protected String mMessage;
 	

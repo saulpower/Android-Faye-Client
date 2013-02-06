@@ -37,7 +37,7 @@ public class PopupWindowAtLocation extends FrameLayout {
 
 	List<OnClickListener> mButtonClickListeners;
 	ViewGroup mParentView;
-	RelativeLayout mRoot;
+	ViewGroup mRoot;
 	LayoutInflater mInflater;
 	int mScreenHeight;
 	int mScreenWidth;
@@ -51,6 +51,7 @@ public class PopupWindowAtLocation extends FrameLayout {
 	private int mWidth;
 	private int mHeight;
 	private Rect mRect;
+	private View mPassedInView;
 	
     /**
      * 
@@ -62,7 +63,7 @@ public class PopupWindowAtLocation extends FrameLayout {
      * @param onClickListeners -- onClick listeners for the buttons supplied. Note** MUST be put in the list in the same order as the Button Titles
      * @param view 
      */
-	public PopupWindowAtLocation(Context context, ViewGroup parentView, int positionX, int positionY, String[] buttonTitles, List<OnClickListener> onClickListeners, View view) {
+	public PopupWindowAtLocation(Context context, ViewGroup parentView, int positionX, int positionY, String[] buttonTitles, List<OnClickListener> onClickListeners, View touchedView) {
 		super(context);
 		
 		mContext = context;
@@ -71,7 +72,7 @@ public class PopupWindowAtLocation extends FrameLayout {
 		mButtonClickListeners = onClickListeners;
 		mButtonTitles = buttonTitles;
 		mParentView = parentView;
-		mTouchedView = view;
+		mTouchedView = touchedView;
 		
 		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	    mRoot = (RelativeLayout) mInflater.inflate(R.layout.popup_with_buttons, null);
@@ -92,6 +93,29 @@ public class PopupWindowAtLocation extends FrameLayout {
 	    mParentView.addView(mRoot);
 	    
 	    populateView();
+	}
+	
+	public PopupWindowAtLocation(Context context, ViewGroup parentView, int positionX, int positionY, View touchedView, ViewGroup inflatedView) {
+		super(context);
+		
+		mContext = context;
+		mX = positionX;
+		mY = positionY;
+		mParentView = parentView;
+		mTouchedView = touchedView;
+		
+	    mRoot = inflatedView;
+	    
+	    LinearLayout.LayoutParams overlayParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT);
+	    mRoot.setLayoutParams(overlayParams);
+	    
+	    mScreenHeight = UiUtils.getScreenHeight((Activity)mContext);
+	    mScreenWidth = UiUtils.getScreenWidth((Activity)mContext);
+	  
+        Animation backgroundFadeIn = AnimationUtils.loadAnimation(mContext, R.anim.fade_in_fast);
+        mRoot.startAnimation(backgroundFadeIn);
+
+	    mParentView.addView(mRoot);  
 	}
 	
 
