@@ -94,7 +94,7 @@ public class PopupWindowAtLocation extends FrameLayout {
 	    
 	    populateView();
 	}
-	
+
 	public PopupWindowAtLocation(Context context, ViewGroup parentView, int positionX, int positionY, View touchedView, ViewGroup inflatedView) {
 		super(context);
 		

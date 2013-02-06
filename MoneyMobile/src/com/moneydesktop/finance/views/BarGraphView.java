@@ -53,6 +53,15 @@ public class BarGraphView extends RelativeLayout implements DataSetChangeListene
                 BarView manip = (BarView) mBarContainer.getChildAt(mSelectedBar);
                 manip.setBarColor(mSelectedColor);
                 manip.startAnimation(bounce);
+                BarGraphPopUpView popup = new BarGraphPopUpView(v.getContext());
+                popup.mTopLine.setText(manip.getLabel());
+                popup.mMidLine.setText(Double.toString(manip.getAmount()));
+                popup.mBottomLine.setText(getResources().getString(R.string.button_transactions));
+                int pX = (int) (500);
+                		//(int) (manip.getLeft()+(manip.getWidth()/2)-popup.getWidth()/2);
+                int pY = 500;
+                //(int) (manip.getHeight()+10+popup.getHeight());
+                PopupWindowAtLocation p = new PopupWindowAtLocation(getContext(), BarGraphView.this, pX, pY, manip, popup);
                 return true;
             }
 

@@ -113,7 +113,7 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
     }
 
     private void setupBarGraphView(View v) {
-        List<Double[]> data = Transactions.get30DayExpenseTotals();
+        List<Double[]> data = Transactions.get30DayExpenseTotals(new Date());
         double max = 0;
         for(int i = 0; i < data.size(); i++){
             if(data.get(i)[1] > max){

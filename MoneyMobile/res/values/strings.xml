@@ -72,6 +72,7 @@
     <string name="button_return_home">RETURN TO HOME</string>
     <string name="button_setup">I NEED TO SET UP MY MOBILE ACCOUNT</string>
     <string name="button_submit">SUBMIT</string>
+    <string name="button_transactions">Tap to View Transactions</string>
     <string name="button_yearly">BY YEAR</string>
     <string name="category_search">Start typing to search for a category</string>
     <string name="connecting">Connecting to bank</string>

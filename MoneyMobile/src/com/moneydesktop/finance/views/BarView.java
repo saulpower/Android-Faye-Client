@@ -155,7 +155,9 @@ public class BarView extends View {
         invalidate();
 
     }
-
+    public String getLabel(){
+    	return mLabelText;
+    }
     public void setBarColor(int color){
         if(mBPaint == null){
             makePaint();

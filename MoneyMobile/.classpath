@@ -13,7 +13,7 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Communication"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/library"/>
-	<classpathentry kind="lib" path="/Users/kentandersen/Desktop/android-sdk-macosx/platforms/android-14/android.jar">
+	<classpathentry kind="lib" path="/home/matthew/android-sdk/platforms/android-14/android.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="file:/Users/kentandersen/Desktop/android-sdk-macosx/docs/reference"/>
 		</attributes>
