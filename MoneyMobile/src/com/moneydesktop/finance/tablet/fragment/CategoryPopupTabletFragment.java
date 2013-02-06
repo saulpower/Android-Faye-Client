@@ -1,5 +1,7 @@
 package com.moneydesktop.finance.tablet.fragment;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -11,8 +13,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.SoundEffectConstants;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnFocusChangeListener;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -26,6 +28,7 @@ import android.widget.TextView.OnEditorActionListener;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.database.Category;
+import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.tablet.adapter.CategoryTabletAdapter;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
@@ -33,7 +36,7 @@ import com.moneydesktop.finance.views.ClearEditText;
 import com.moneydesktop.finance.views.SpinnerView;
 import com.moneydesktop.finance.views.UltimateListView;
 
-import java.util.List;
+import de.greenrobot.event.EventBus;
 
 public class CategoryPopupTabletFragment extends PopupFragment implements OnChildClickListener, OnGroupClickListener {
     
@@ -55,6 +58,13 @@ public class CategoryPopupTabletFragment extends PopupFragment implements OnChil
         
         return fragment;
     }
+    
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        EventBus.getDefault().register(this);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,9 +79,23 @@ public class CategoryPopupTabletFragment extends PopupFragment implements OnChil
     }
     
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        
+        EventBus.getDefault().unregister(this);
+    }
+    
+    @Override
     public void popupVisible() {
 
         setupCategoryList();
+    }
+    
+    public void onEvent(DatabaseSaveEvent event) {
+        
+    	if (mAdapter != null && event.didDatabaseChange() && event.getChangedClassesList().contains(Category.class)) {
+    		setupCategoryList();
+    	}
     }
     
     private void loadAnimations() {
@@ -174,13 +198,20 @@ public class CategoryPopupTabletFragment extends PopupFragment implements OnChil
                     return;
                 }
                 
-                mAdapter = new CategoryTabletAdapter(mActivity, mCategoryList, data);
-                mCategoryList.setAdapter(mAdapter);
+                if (mAdapter == null) {
+	                mAdapter = new CategoryTabletAdapter(mActivity, mCategoryList, data, mSearch);
+	                mCategoryList.setAdapter(mAdapter);
+                } else {
+                	mAdapter.updateData(data);
+                }
                 
                 mCategoryList.expandAll();
-                mCategoryList.setVisibility(View.VISIBLE);
-                mCategoryList.startAnimation(mFadeIn);
-                mSpinner.startAnimation(mFadeOut);
+                
+                if (mCategoryList.getVisibility() != View.VISIBLE) {
+	                mCategoryList.setVisibility(View.VISIBLE);
+	                mCategoryList.startAnimation(mFadeIn);
+	                mSpinner.startAnimation(mFadeOut);
+                }
             }
 
         }.execute();

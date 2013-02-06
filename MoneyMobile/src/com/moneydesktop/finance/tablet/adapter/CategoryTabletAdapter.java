@@ -1,5 +1,8 @@
 package com.moneydesktop.finance.tablet.adapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
@@ -26,10 +29,8 @@ import com.moneydesktop.finance.shared.CategoryViewHolder;
 import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.ClearEditText;
 import com.moneydesktop.finance.views.UltimateListView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @TargetApi(11)
 public class CategoryTabletAdapter extends UltimateAdapter implements Filterable {
@@ -42,13 +43,20 @@ public class CategoryTabletAdapter extends UltimateAdapter implements Filterable
     private Filter mFilter;
     private Object mLock = new Object();
     private UltimateListView mListView;
+    private ClearEditText mSearch;
     
-    public CategoryTabletAdapter(PopupTabletActivity activity, UltimateListView listView, List<Pair<Category, List<Category>>> data) {
+    public CategoryTabletAdapter(PopupTabletActivity activity, UltimateListView listView, List<Pair<Category, List<Category>>> data, ClearEditText search) {
         
         mActivity = activity;
         mListView = listView;
         mData = data;
         mFilteredData = new ArrayList<Pair<Category, List<Category>>>(data);
+        mSearch = search;
+    }
+    
+    public void updateData(List<Pair<Category, List<Category>>> categories) {
+    	mData = categories;
+        getFilter().filter(mSearch.getText().toString());
     }
     
     @Override
