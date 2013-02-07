@@ -4,13 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/phone_wood" >
+	    
+    <include
+        android:id="@+id/nav_bar"
+        android:layout_width="match_parent"
+    	android:layout_height="@dimen/navbar_height"
+        android:layout_alignParentTop="true"
+        layout="@layout/handset_navigation_bar" />
     
     <ViewFlipper 
         android:id="@+id/flipper"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/nav_bar">
 		
-        <android.support.v4.view.ViewPager
+        <com.moneydesktop.finance.views.GrowViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
@@ -18,27 +26,8 @@
 	    <FrameLayout
 	        android:id="@+id/fragment"
 	        android:layout_width="match_parent"
-	        android:layout_height="match_parent"
-        	android:paddingTop="@dimen/navbar_height" />
-        
-    </ViewFlipper>
-
-    <ViewFlipper 
-        android:id="@+id/nav_flipper"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true">
-	    
-        <View
-	        android:layout_width="match_parent"
 	        android:layout_height="match_parent" />
-	    
-	    <include
-	        android:id="@+id/nav_bar"
-	        android:layout_width="match_parent"
-	        android:layout_height="match_parent"
-	        layout="@layout/handset_navigation_bar" />
-	    
+        
     </ViewFlipper>
     
 </RelativeLayout>

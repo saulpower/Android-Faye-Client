@@ -10,13 +10,13 @@ public class DashboardHandsetFragmentFactory {
         switch (position) {
             case 0:
                 return AccountSummaryHandsetFragment.getInstance(FragmentType.ACCOUNT_SUMMARY);
+//            case 1:
+//                return SpendingSummaryFragment.getInstance(FragmentType.SPENDING_SUMMARY);
+//            case 2:
+//                return BudgetSummaryHandsetFragment.getInstance(FragmentType.ACCOUNT_SUMMARY);
             case 1:
-                return SpendingSummaryFragment.getInstance(FragmentType.SPENDING_SUMMARY);
+                return TransactionSummaryHandsetFragment.getInstance(FragmentType.TRANSACTION_SUMMARY);
             case 2:
-                return BudgetSummaryHandsetFragment.getInstance(FragmentType.ACCOUNT_SUMMARY);
-            case 3:
-                return TransactionSummaryHandsetFragment.getInstance(FragmentType.BUDGET_SUMMARY);
-            case 4:
                 return SettingsHandsetFragment.getInstance(FragmentType.SETTINGS);
         }
         

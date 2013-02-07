@@ -46,16 +46,11 @@ public abstract class DashboardBaseActivity extends BaseActivity {
     
     @Override
     public void onFragmentAttached(BaseFragment fragment) {
-
+    	super.onFragmentAttached(fragment);
+    	
         mFragment = fragment;
         
-        if (mOnFragment) {
-            mFragmentCount = 1;
-        }
-        
-        if (mFragmentCount == 1 && mOnHome) {
-            configureView(false);
-        }
+        if (mOnFragment) mFragmentCount = 1;
     }
     
     public void setDetailFragment(TransactionsDetailTabletFragment fragment) {

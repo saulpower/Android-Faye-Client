@@ -1,7 +1,5 @@
 package com.moneydesktop.finance;
 
-import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,29 +9,14 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.util.FloatMath;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
-import android.view.animation.OvershootInterpolator;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.ViewFlipper;
 
-import com.moneydesktop.finance.animation.AnimationFactory;
-import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
-import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.data.Enums.LockType;
+import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.handset.activity.LockCodeHandsetActivity;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.LockEvent;
 import com.moneydesktop.finance.shared.LockCodeFragment;
 import com.moneydesktop.finance.tablet.activity.LockCodeTabletActivity;
-import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 
 import de.greenrobot.event.EventBus;
@@ -81,17 +64,8 @@ abstract public class BaseActivity extends FragmentActivity {
 	protected final long TRANSITION_DURATION = 300;
 
 	protected FragmentManager mFm;
-	
-	private ViewFlipper mNavFlipper;
-    protected RelativeLayout mNavBar;
-    private LinearLayout mInfo;
-    private TextView mTitle;
-    private ImageButton mBack;
-    
-    protected Animation mPushDown, mPushUp;
     
     protected int mFragmentCount = 0;
-    private boolean mBackShowing = false;
 	protected boolean mOnFragment = false;
 	
 	private SharedPreferences mPreferences;
@@ -109,10 +83,7 @@ abstract public class BaseActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 
     	mFm = getSupportFragmentManager();
-    	
 		mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		navigationCheck();
-		setupAnimations();
 	}
 	
 	@Override
@@ -130,51 +101,8 @@ abstract public class BaseActivity extends FragmentActivity {
 		super.onPause();
 		
 		sInForeground = false;
-		if (!(this instanceof SplashActivity))
-			sPause = System.currentTimeMillis();
+		if (!(this instanceof SplashActivity)) sPause = System.currentTimeMillis();
 		EventBus.getDefault().unregister(this);
-	}
-	
-	private void setupAnimations() {
-		mPushDown = AnimationUtils.loadAnimation(this, R.anim.in_down);
-		mPushUp = AnimationUtils.loadAnimation(this, R.anim.out_up);
-	}
-	
-	/**
-	 * Check if there is a navigation bar present and load it
-	 * if so.
-	 */
-	private void navigationCheck() {
-		
-		if (mNavFlipper == null) {
-			
-			mNavFlipper = (ViewFlipper) findViewById(R.id.nav_flipper);
-			mNavBar = (RelativeLayout) findViewById(R.id.nav_bar);
-			
-			if (mNavBar != null) {
-				
-				setupNavigation();
-				updateNavBar(getActivityTitle());
-			}
-		}
-	}
-	
-	/**
-	 * Configure the navigation bar so we can use it
-	 */
-	private void setupNavigation() {
-
-		mInfo = (LinearLayout) mNavBar.findViewById(R.id.info);
-		mTitle = (TextView) mNavBar.findViewById(R.id.title);
-		Fonts.applyPrimaryFont(mTitle, 16);
-		mBack = (ImageButton) mNavBar.findViewById(R.id.back_button);
-		mBack.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				navigateBack();
-			}
-		});
 	}
 	
 	/**
@@ -185,85 +113,9 @@ abstract public class BaseActivity extends FragmentActivity {
 	 * @param navButtons 
 	 * @return 
 	 */
-	public void updateNavBar(String titleString) {
-		
-		if (mNavBar != null) {
-			
-			if (titleString != null) {
-				mTitle.setText(titleString.toUpperCase());
-			}
-			
-			if (mFragmentCount > 1 && !mBackShowing) {
-				
-				mBackShowing = true;
-				configureBackButton(true);
-				
-			} else if (mFragmentCount <= 1 && mBackShowing) {
-				
-				mBackShowing = false;
-				configureBackButton(false);
-				
-			}
-		}
-	}
+	public void updateNavBar(String titleString) {}
 	
 	protected void updateNavBar(String titleString, boolean fragmentTitle) {}
-	
-	/**
-	 * Flip the navigation bar to transition between dashboard and
-	 * various view controllers
-	 * 
-	 * @param home whether we are returning to the dashboard (home) or not
-	 */
-	public void configureView(final boolean home) {
-		
-		if (mNavFlipper == null)
-			return;
-		
-		if (home) {
-    		
-			AnimationFactory.flipTransition(mNavFlipper, home ? FlipDirection.RIGHT_LEFT : FlipDirection.LEFT_RIGHT, TRANSITION_DURATION);
-			
-    	} else {
-	    	
-	        AnimationFactory.flipTransition(mNavFlipper, home ? FlipDirection.RIGHT_LEFT : FlipDirection.LEFT_RIGHT, TRANSITION_DURATION);
-    	}
-	}
-	
-	/**
-	 * Configure the back button
-	 * 
-	 * @param show whether to show it or not
-	 */
-	private void configureBackButton(final boolean show) {
-		
-		int direction = show ? 1 : 0;
-		
-		int dp = (int) getResources().getDimension(R.dimen.navbar_text_slide);
-		animate(mInfo).setDuration(400).translationX(dp * direction).setInterpolator(new OvershootInterpolator());
-
-		Animation fade = new AlphaAnimation(show ? 0.0f : 1.0f, show ? 1.0f : 0.0f);
-		fade.setDuration(400);
-		fade.setStartOffset(show ? 200 : 0);
-		fade.setAnimationListener(new AnimationListener() {
-			
-			public void onAnimationStart(Animation animation) {
-
-				if (show)
-					mBack.setVisibility(View.VISIBLE);
-			}
-			
-			public void onAnimationRepeat(Animation animation) {}
-			
-			public void onAnimationEnd(Animation animation) {
-
-				if (!show)
-					mBack.setVisibility(View.GONE);
-			}
-		});
-		
-		mBack.startAnimation(fade);
-	}
 	
 	/**
 	 * Pop back on the fragment manager's stack of fragments.
@@ -276,9 +128,7 @@ abstract public class BaseActivity extends FragmentActivity {
 		
 		updateNavBar(mFragmentCount == 0 ? getActivityTitle() : null, false);
 		
-		if (mFragmentCount == 0) {
-			mOnFragment = false;
-		}
+		if (mFragmentCount == 0) mOnFragment = false;
 	}
 	
 	/**
@@ -289,9 +139,7 @@ abstract public class BaseActivity extends FragmentActivity {
 	 */
 	public void onFragmentAttached(BaseFragment fragment) {
 		
-		if (mOnFragment) {
-			mFragmentCount++;
-		}
+		if (mOnFragment) mFragmentCount++;
 	}
 	
 	public void modalActivity(Class<?> key) {
@@ -312,8 +160,7 @@ abstract public class BaseActivity extends FragmentActivity {
 			
 			String code = Preferences.getString(Preferences.KEY_LOCK_CODE, "");
 			
-			if (!code.equals(""))
-				showLockScreen(LockType.LOCK);
+			if (!code.equals("")) showLockScreen(LockType.LOCK);
 		}
 	}
 	

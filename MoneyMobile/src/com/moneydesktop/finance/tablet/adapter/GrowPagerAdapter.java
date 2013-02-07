@@ -84,11 +84,9 @@ public class GrowPagerAdapter extends FragmentPagerAdapter implements OnPageChan
         float percentOut = scaleUp > BASE_ALPHA ? BASE_ALPHA : scaleUp;
         float percentIn = scaleDown > BASE_ALPHA ? BASE_ALPHA : scaleDown;
         
-        if (scaleUp < BASE_SIZE)
-            scaleUp = BASE_SIZE;
+        if (scaleUp < BASE_SIZE) scaleUp = BASE_SIZE;
 
-        if (scaleDown < BASE_SIZE)
-            scaleDown = BASE_SIZE;
+        if (scaleDown < BASE_SIZE) scaleDown = BASE_SIZE;
         
         // Adjust the fragments that are, or will be, on screen
         SummaryTabletFragment current = (position < mFragments.size()) ? mFragments.get(position) : null;

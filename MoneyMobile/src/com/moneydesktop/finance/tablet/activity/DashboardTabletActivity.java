@@ -64,6 +64,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	private NavWheelView mNavigation;
 	private ImageView mHomeButton;
 	private TextSwitcher mNavTitle;
+    private RelativeLayout mNavBar;
 	
 	private Handler mHandler = new Handler();
 	private Runnable mTask = new Runnable() {
@@ -160,9 +161,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 		outState.putInt("pager", mPager.getCurrentItem());
 	}
     
-    @Override
     public void configureView(final boolean home) {
-		super.configureView(home);
 
         mOnHome = home;
         

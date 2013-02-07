@@ -19,26 +19,20 @@ import com.moneydesktop.finance.util.Fonts;
 import de.greenrobot.event.EventBus;
 
 public class SettingsHandsetFragment extends BaseFragment {
-
-    private static SettingsHandsetFragment sFragment;
     
 	private TextView mLockIcon, mFeedbackIcon, mLogoutIcon, mLogoutLabel;
 	private LinearLayout mLock, mFeedback, mLogout;
 	
 	public static SettingsHandsetFragment getInstance(FragmentType type) {
-		
-	    if (sFragment != null) {
-	        return sFragment;
-	    }
 	    
-	    sFragment = new SettingsHandsetFragment();
-	    sFragment.setType(type);
-        sFragment.setRetainInstance(true);
+		SettingsHandsetFragment fragment = new SettingsHandsetFragment();
+		fragment.setType(type);
+		fragment.setRetainInstance(true);
 		
         Bundle args = new Bundle();
-        sFragment.setArguments(args);
+        fragment.setArguments(args);
         
-        return sFragment;
+        return fragment;
 	}
 	
 	@Override
@@ -77,9 +71,9 @@ public class SettingsHandsetFragment extends BaseFragment {
 	
 	private void configureView() {
 
-        Fonts.applyGlyphFont(mLockIcon, 50);
-        Fonts.applyGlyphFont(mFeedbackIcon, 50);
-        Fonts.applyGlyphFont(mLogoutIcon, 50);
+        Fonts.applyGlyphFont(mLockIcon, 35);
+        Fonts.applyGlyphFont(mFeedbackIcon, 35);
+        Fonts.applyGlyphFont(mLogoutIcon, 35);
         
         String logoutText = Preferences.getBoolean(Preferences.KEY_IS_DEMO_MODE, false) ? getString(R.string.label_exit) : getString(R.string.label_unlink);
         mLogoutLabel.setText(logoutText.toUpperCase());
@@ -94,7 +88,7 @@ public class SettingsHandsetFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 				
-				mActivity.showFragment(getType());
+				mActivity.showFragment(FragmentType.LOCK_SCREEN);
 			}
 		});
 		
