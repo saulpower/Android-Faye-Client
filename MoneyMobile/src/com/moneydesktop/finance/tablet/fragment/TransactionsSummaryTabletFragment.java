@@ -66,6 +66,14 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
             }
             
         });
+        View quarterly = mRoot.findViewById(R.id.tablet_transaction_quarterly_button);
+        quarterly.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){                
+                 setGraphViewQuarterly(new Date());                
+            }
+            
+        });
         View yearly = mRoot.findViewById(R.id.tablet_transaction_yearly_button);
         yearly.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -93,6 +101,31 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
                     StringBuffer date = new StringBuffer();
                     date = format.format(data.get(c)[0],date,new FieldPosition(0));
                     barList.add(new BarViewModel(date.toString(),data.get(c)[1],max));
+                }              
+            }
+            mAdapter.setNewList(barList);
+            mGraph.setMax(max);
+            mGraph.setLabel(true);
+            mGraph.setLabelFontSize(14);    
+    }
+    private void setGraphViewQuarterly(Date end){
+        List<Double[]> data = Transactions.getQuarterlyExpenseTotals(end);
+        double max = 0;
+        for(int i = 0; i < data.size(); i++){
+            if(data.get(i)[1] > max){
+                max = data.get(i)[1];
+            }
+        }      
+        
+        ArrayList<BarViewModel> barList = new ArrayList<BarViewModel>();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy");
+        for(int c = 0; c < data.size(); c++){
+                if( data.get(c)[1] > 0){
+                    StringBuffer date = new StringBuffer();
+                    date = format.format(data.get(c)[0],date,new FieldPosition(0));
+                    int quarter = (int)(double)data.get(c)[2];
+                    String addVal = getResources().getString(R.string.quarter) + ": " + Integer.toString(quarter) + ", " + date.toString();
+                    barList.add(new BarViewModel(addVal,data.get(c)[1],max));
                 }              
             }
             mAdapter.setNewList(barList);

@@ -810,6 +810,45 @@ public class Transactions extends BusinessObject  {
         }
         return retVal;
     }
+    public static List<Double[]> getQuarterlyExpenseTotals(Date end) {
+        CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
+        Set<Long> catIDs = new HashSet<Long>();
+        List<Category> cats = cat.loadAll();
+        for (int i = 0; i < cats.size(); i++) {
+            if (isCategoryIncome(cats.get(i))) {
+                catIDs.add(cats.get(i).getId());
+            }
+        }
+        String SQLQuery = new String();
+        Iterator<Long> iter = catIDs.iterator();
+        while (iter.hasNext()) {
+
+            SQLQuery = SQLQuery.toString() + "CATEGORY_ID != " + iter.next() + " AND ";
+        }
+        SQLQuery = SQLQuery.substring(0, (SQLQuery.length() - 4));
+        String query = String.format(Constant.QUERY_QUARTERLY_TRANSACTIONS, SQLQuery);
+        SQLiteDatabase db = ApplicationContext.getDb();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.YEAR, -1);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        Date start = cal.getTime();
+        Cursor cursor = db.rawQuery(query, new String[] {
+
+                Long.toString(start.getTime()), Long.toString(end.getTime())
+        });
+        cursor.moveToFirst();
+        List<Double[]> retVal = new ArrayList<Double[]>();
+        while (cursor.isAfterLast() == false) {
+            Double[] d = new Double[3];
+            d[0] = cursor.getDouble(0);
+            d[1] = cursor.getDouble(1);
+            d[2] = (double) cursor.getInt(2);
+            retVal.add(d);
+            cursor.moveToNext();
+        }
+        return retVal;
+    }
     public static List<Double[]> getMonthlyExpenseTotals(Date end) {
         CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
         Set<Long> catIDs = new HashSet<Long>();
