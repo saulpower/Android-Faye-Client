@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -25,30 +26,36 @@ import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.shared.LockFragment;
-import com.moneydesktop.finance.shared.TransactionController;
-import com.moneydesktop.finance.shared.TransactionController.ParentTransactionInterface;
+import com.moneydesktop.finance.shared.TransactionDetailController;
+import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
+import com.moneydesktop.finance.tablet.activity.DialogBaseActivity.OnKeyboardStateChangeListener;
 import com.moneydesktop.finance.tablet.fragment.AccountSettingsTabletFragment;
-import com.moneydesktop.finance.tablet.activity.DialogActivity.OnKeyboardStateChangeListener;
+import com.moneydesktop.finance.tablet.fragment.TransactionTotalsFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment.onBackPressedListener;
 import com.moneydesktop.finance.tablet.fragment.TransactionsPageTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.util.UiUtils;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.animation.ValueAnimator;
 
 import de.greenrobot.event.EventBus;
 
-public class DropDownTabletActivity extends DialogActivity implements onBackPressedListener, ParentTransactionInterface, OnKeyboardStateChangeListener {
+public class DropDownTabletActivity extends DialogBaseActivity implements onBackPressedListener, ParentTransactionInterface, OnKeyboardStateChangeListener {
     
     public final String TAG = this.getClass().getSimpleName();
     
     private FragmentType mIndex = FragmentType.LOCK_SCREEN;
     
-    private TextView mLabel, mArrow;
+    private TextView mLabel, mArrow, mLabelDetails;
     private RelativeLayout mRoot, mDropdown, mDetailContainer;
-    private LinearLayout mContainer;
+    private RelativeLayout mContainer;
     private Animation mIn, mOut;
-    private TransactionController mBase;
+    private TransactionDetailController mBase;
     private int mOffset = 0;
     private View mEditText;
+    private int mLabelSpacing;
     
     public View getEditText() {
         return mEditText;
@@ -61,6 +68,49 @@ public class DropDownTabletActivity extends DialogActivity implements onBackPres
             adjustViewForKeyboard();
         }
     }
+    
+    public void animateLabelsForward(String subLabel) {
+
+    	mLabelDetails.setText(subLabel);
+    	ValueAnimator animationY = ObjectAnimator.ofFloat(mLabel, "translationY", -((mLabel.getY() - mArrow.getY()) + (mArrow.getHeight()/3) ));
+    	ValueAnimator animationSide = ObjectAnimator.ofFloat(mLabel, "translationX", mLabelSpacing);
+    	ValueAnimator scaleDownX = ObjectAnimator.ofFloat(mLabel, "scaleX", 1f, 0.75f);
+    	ValueAnimator scaleDownY = ObjectAnimator.ofFloat(mLabel, "scaleY", 1f, 0.75f);
+    	ValueAnimator animationX = ObjectAnimator.ofFloat(mLabelDetails, "translationX", (mDropdown.getWidth()/2), mContainer.getLeft());
+    	ValueAnimator fadeIn = ObjectAnimator.ofFloat(mLabelDetails, "alpha", 0.25f, 1, 1);
+    	
+    	AnimatorSet set = new AnimatorSet();
+    	set.playTogether(animationY, 
+		    			animationX, 
+		    			animationSide, 
+		    			fadeIn,
+		    			scaleDownX,
+		    			scaleDownY);
+    	
+    	set.setDuration(500);
+    	set.start();
+    }
+    
+    public void animateLabelsReverse() {
+
+    	ValueAnimator animationY = ObjectAnimator.ofFloat(mLabel, "translationY", ((mLabel.getY() - mArrow.getY()) + (mArrow.getHeight()/3) ));
+    	ValueAnimator animationSide = ObjectAnimator.ofFloat(mLabel, "translationX", mLabel.getY());
+    	ValueAnimator scaleDownX = ObjectAnimator.ofFloat(mLabel, "scaleX", 0.75f, 1f);
+    	ValueAnimator scaleDownY = ObjectAnimator.ofFloat(mLabel, "scaleY", 0.75f, 1f);
+    	ValueAnimator animationX = ObjectAnimator.ofFloat(mLabelDetails, "translationX", mContainer.getLeft(), (mDropdown.getWidth()/2));
+    	ValueAnimator fadeOut = ObjectAnimator.ofFloat(mLabelDetails, "alpha", 1f, 0, 0);
+    	
+    	AnimatorSet set = new AnimatorSet();
+    	set.playTogether(animationY, 
+		    			animationX, 
+		    			animationSide, 
+		    			fadeOut,
+		    			scaleDownX,
+		    			scaleDownY);
+    	
+    	set.setDuration(500);
+    	set.start();
+    }
 
     @Override
     public void onFragmentAttached(BaseFragment fragment) {
@@ -71,10 +121,7 @@ public class DropDownTabletActivity extends DialogActivity implements onBackPres
     
     @Override
     public void onBackPressed() {
-        
-        if (!mBase.getDetailFragment().onBackPressed()) {
-            dismissDropdown();
-        }
+        dismissDropdown();
     }
 
     @Override
@@ -87,6 +134,8 @@ public class DropDownTabletActivity extends DialogActivity implements onBackPres
         setContentView(R.layout.tablet_dropdown_view);
         
         setKeyboardStateChangeListener(this);
+        
+        mLabelSpacing = (int) UiUtils.convertDpToPixel(10, this);
         
         // Set dialog window to fill entire screen
         LayoutParams params = getWindow().getAttributes();
@@ -176,18 +225,24 @@ public class DropDownTabletActivity extends DialogActivity implements onBackPres
         
         mArrow = (TextView) findViewById(R.id.arrow);
         mLabel = (TextView) findViewById(R.id.label);
-        mContainer = (LinearLayout) findViewById(R.id.container);
+        mLabelDetails = (TextView) findViewById(R.id.label_details);
+        mContainer = (RelativeLayout) findViewById(R.id.container);
         
+        Fonts.applyPrimaryBoldFont(mLabelDetails, 14);
         Fonts.applyPrimaryBoldFont(mLabel, 14);
         Fonts.applyGlyphFont(mArrow, 14);
         
-        mContainer.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                dismissDropdown();
-            }
-        });
+        backArrowAction(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				dismissDropdown();
+			}
+		});
+    }
+    
+    public void backArrowAction(OnClickListener listener) {
+    	mArrow.setOnClickListener(listener);
     }
     
     private void setupTransactionDetail() {
@@ -196,7 +251,7 @@ public class DropDownTabletActivity extends DialogActivity implements onBackPres
         mDetailContainer = (RelativeLayout) mRoot.findViewById(R.id.detail_container);
         FrameLayout detail = (FrameLayout) mRoot.findViewById(R.id.detail_fragment);
         
-        mBase = new TransactionController(mDetailContainer, fakeCell, detail, mRoot.getPaddingTop());
+        mBase = new TransactionDetailController(fakeCell, detail, mRoot.getPaddingTop());
         mBase.setDetailFragment(TransactionsDetailTabletFragment.newInstance());
         mBase.getDetailFragment().setListener(this);
 
@@ -226,6 +281,11 @@ public class DropDownTabletActivity extends DialogActivity implements onBackPres
     }
     
     @Override
+    public TransactionsDetailTabletFragment getDetailFragment() {
+        return mBase.getDetailFragment();
+    }
+    
+    @Override
     public String getActivityTitle() {
         return null;
     }
@@ -249,6 +309,8 @@ public class DropDownTabletActivity extends DialogActivity implements onBackPres
                 return TransactionsPageTabletFragment.newInstance(this, getIntent());
             case ACCOUNT_SETTINGS:
             	return AccountSettingsTabletFragment.newInstance(getIntent());
+            case TRANSACTION_SUMMARY:
+                return TransactionTotalsFragment.newInstance(getIntent().getStringArrayExtra(Constant.EXTRA_VALUES));
             default:
                 finish();
         }
@@ -277,9 +339,25 @@ public class DropDownTabletActivity extends DialogActivity implements onBackPres
                 setupTransactionDetail();
                 break;
             case ACCOUNT_SETTINGS:
-            	configureSize(0.6f, 0.7f);
+            	DisplayMetrics dm = new DisplayMetrics();
+        	    getWindowManager().getDefaultDisplay().getMetrics(dm);
+        	    double x = Math.pow(dm.widthPixels/dm.xdpi,2);
+        	    double y = Math.pow(dm.heightPixels/dm.ydpi,2);
+        	    double screenInches = Math.sqrt(x+y);
+        	    if (screenInches > 8) {
+        	    	configureSize(0.6f, 0.7f);
+        	    } else {
+        	    	configureSize(0.6f, 0.85f);
+        	    }
+            	
                 mLabel.setVisibility(View.VISIBLE);
-                mArrow.setVisibility(View.INVISIBLE);
+                mArrow.setVisibility(View.VISIBLE);
+                mLabelDetails.setVisibility(View.VISIBLE);
+                break;
+            case TRANSACTION_SUMMARY:
+                mArrow.setVisibility(View.GONE);
+                configureSize(0.4f, 0.4f);
+                break;
             default:
                 break;
         }

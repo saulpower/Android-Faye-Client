@@ -1,5 +1,13 @@
 package com.moneydesktop.finance.util;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Environment;
+import android.provider.MediaStore.Images;
+import android.util.Log;
+
+import com.moneydesktop.finance.ApplicationContext;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,11 +18,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import android.os.Environment;
-import android.util.Log;
-
-import com.moneydesktop.finance.ApplicationContext;
 
 public class FileIO {
 	
@@ -145,6 +148,11 @@ public class FileIO {
 		} catch (Exception e) {}
 		
 		return total;
+	}
+	
+	public static String saveBitmap(Context context, Bitmap bitmap, String name) {
+	    
+	    return Images.Media.insertImage(context.getContentResolver(), bitmap, name, null);
 	}
 	
 	public interface ProgressListener {

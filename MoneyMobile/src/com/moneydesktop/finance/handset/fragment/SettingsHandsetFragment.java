@@ -1,6 +1,5 @@
 package com.moneydesktop.finance.handset.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +13,7 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.model.EventMessage;
+import com.moneydesktop.finance.util.EmailUtils;
 import com.moneydesktop.finance.util.Fonts;
 
 import de.greenrobot.event.EventBus;
@@ -103,12 +103,7 @@ public class SettingsHandsetFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 
-			    Intent intent = new Intent(Intent.ACTION_SEND);
-			    intent.setType("plain/text");
-			    intent.putExtra(Intent.EXTRA_EMAIL,new String[] { mActivity.getString(R.string.feedback_email) });
-			    intent.putExtra(Intent.EXTRA_SUBJECT, mActivity.getString(R.string.feedback_subject));
-			    intent.putExtra(Intent.EXTRA_TEXT, "");
-			    startActivity(Intent.createChooser(intent, mActivity.getString(R.string.feedback_title)));
+                EmailUtils.sendEmail(mActivity, mActivity.getString(R.string.feedback_subject), "", new String[] { mActivity.getString(R.string.feedback_email) });
 			}
 		});
 

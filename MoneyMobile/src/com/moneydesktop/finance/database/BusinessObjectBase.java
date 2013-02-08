@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.DataController;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
@@ -209,6 +210,11 @@ public class BusinessObjectBase extends BusinessObject  {
 		}
 		
 		return idCount++;
+	}
+	
+	public static BusinessObjectBase getBusinessObjectBase(long id) {
+	    BusinessObjectBaseDao bobDao = (BusinessObjectBaseDao) DataController.getDao(BusinessObjectBase.class);
+	    return bobDao.load(id);
 	}
     
     public JSONObject getJson() {

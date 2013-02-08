@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+    
+	<EditText
+        android:layout_width="0dp"
+    	android:layout_height="0dp"
+    	android:inputType="none" />
+
+    <com.moneydesktop.finance.views.ClearEditText
+        android:id="@+id/search"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="4dp"
+		android:paddingLeft="13dp"
+		android:paddingRight="13dp"
+		android:paddingTop="18dp"
+		android:paddingBottom="18dp"
+		android:inputType="textCapWords"
+        android:background="@color/white"
+        android:singleLine="true"
+        android:textColor="@color/primaryColor"
+        android:textColorHint="@color/gray4"
+        app:iconText="@string/icon_search"
+        app:clearText="@string/icon_cancel"
+        app:iconTextColor="@color/primaryColor"
+        android:hint="@string/tag_search"
+        android:imeOptions="actionDone"/>
+    
+    <RelativeLayout
+        android:id="@+id/container"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+        android:layout_below="@id/search" >
+
+	    <ListView
+	        android:id="@+id/categories"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:background="@color/white"
+	        android:visibility="invisible" />
+	    
+		<com.moneydesktop.finance.views.SpinnerView
+		    android:id="@+id/spinner"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_margin="50dp"
+		    android:layout_centerInParent="true" />
+	
+	</RelativeLayout>
+	    
+</RelativeLayout>

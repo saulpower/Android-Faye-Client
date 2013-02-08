@@ -74,7 +74,9 @@ public class PowerQuery {
     
     public PowerQuery whereLike(QueryProperty field, String value) {
 
-        field.setComparator("LIKE ?");
+        if (field.getComparator() == null) {
+            field.setComparator("LIKE ?");
+        }
         
         return addWhere(field, value);
     }

@@ -19,7 +19,7 @@ public class AnchorView extends Drawable {
     
     public final String TAG = this.getClass().getSimpleName();
 
-    private final int PADDING = 30;
+    private final int PADDING = 15;
     private final int WIDTH = 15;
     
     private Context mContext;

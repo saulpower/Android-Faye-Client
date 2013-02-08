@@ -3,7 +3,6 @@ package com.moneydesktop.finance.views;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
@@ -169,7 +168,7 @@ public class UltimateListView extends ExpandableListView {
         
         int position = super.getFirstVisiblePosition();
         
-        if (mHeaderViewHeight == -1) {
+        if (mHeaderViewHeight == -1 || getChildCount() == 0) {
             return position;
         }
 
@@ -179,10 +178,11 @@ public class UltimateListView extends ExpandableListView {
         i++;
         final int top = (v == null) ? 0 : v.getTop();
         
-        int sum = v.getHeight() + top;
+        int sum = ((v == null) ? 0 : v.getHeight()) + top;
         
-        while (sum < mHeaderViewHeight) {
-            sum += getChildAt(i).getHeight();
+        while (sum < mHeaderViewHeight && i < getChildCount()) {
+            v = getChildAt(i);
+            sum += (v == null) ? 0 : v.getHeight();
             i++;
             position++;
         }

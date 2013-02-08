@@ -73,7 +73,7 @@ public class ClearEditText extends EditText {
 
     private void init(AttributeSet attrs) {
         
-        mPaddingRight = UiUtils.getDynamicPixels(getContext(), PADDING_RIGHT);
+        mPaddingRight = UiUtils.getDynamicPixels(getContext(), PADDING_RIGHT) + getPaddingRight();
         
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.ClearEditText);
         
@@ -91,13 +91,13 @@ public class ClearEditText extends EditText {
         mClearPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mClearPaint.setStyle(Paint.Style.FILL);
         mClearPaint.setTypeface(Fonts.getFont(Fonts.GLYPH));
-        mClearPaint.setTextSize(UiUtils.getScaledPixels(getContext(), 18));
+        mClearPaint.setTextSize(UiUtils.getScaledPixels(getContext(), 20));
         mClearPaint.setColor(getIconColor());
 
         mIconPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mIconPaint.setStyle(Paint.Style.FILL);
         mIconPaint.setTypeface(Fonts.getFont(Fonts.GLYPH));
-        mIconPaint.setTextSize(UiUtils.getScaledPixels(getContext(), 18));
+        mIconPaint.setTextSize(UiUtils.getScaledPixels(getContext(), 20));
         mIconPaint.setColor(getIconColor());
 
         mClearPaint.getTextBounds(mClear, 0, mClear.length(), mClearBounds);

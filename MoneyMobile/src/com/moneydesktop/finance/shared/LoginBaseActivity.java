@@ -1,7 +1,6 @@
 
 package com.moneydesktop.finance.shared;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -16,7 +15,6 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -421,7 +419,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mViewFlipper.setDisplayedChild(1);
         
         mUsername.requestFocus();
-        showKeyboard(mUsername);
+        UiUtils.showKeyboard(this, mUsername);
     }
 
     private void toSignupView() {
@@ -431,7 +429,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mViewFlipper.setDisplayedChild(2);
 
         mSignupName.requestFocus();
-        showKeyboard(mSignupName);
+        UiUtils.showKeyboard(this, mSignupName);
     }
 
     private void demoMode() {
@@ -679,11 +677,6 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mViewFlipper.setOutAnimation(out);
         mViewFlipper.setInAnimation(in);
         mViewFlipper.setDisplayedChild(0);
-    }
-    
-    private void showKeyboard(View view) {
-        InputMethodManager keyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        keyboard.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
     }
 
     @Override

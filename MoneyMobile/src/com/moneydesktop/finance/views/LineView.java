@@ -2,9 +2,9 @@ package com.moneydesktop.finance.views;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.util.AttributeSet;
@@ -22,6 +22,7 @@ public class LineView extends View {
     private float mDashLength = 1.0f;
     private boolean mIsVertical = false;
     private float mDensity;
+    private ColorStateList mLineColors;
     
     public int getColor() {
         return mLinePaint.getColor();
@@ -30,6 +31,12 @@ public class LineView extends View {
     public void setColor(int color) {
         mLinePaint.setColor(color);
         invalidate();
+    }
+    
+    public void setLineColors(ColorStateList colors) {
+        
+        mLineColors = colors;
+        updateLineColor();
     }
     
     public boolean isDashed() {
@@ -79,6 +86,15 @@ public class LineView extends View {
         invalidate();
         requestLayout();
     }
+    
+    private void updateLineColor() {
+        
+        int color = mLineColors.getColorForState(getDrawableState(), 0);
+        
+        if (color != mLinePaint.getColor()) {
+            setColor(color);
+        }
+    }
 
     @SuppressLint("NewApi")
     public LineView(Context context, AttributeSet attrs) {
@@ -91,8 +107,8 @@ public class LineView extends View {
         if (attrs != null) {
             
             TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.Line);
-            
-            setColor(a.getColor(R.styleable.Line_lineColor, Color.BLACK));
+
+            setLineColors(a.getColorStateList(R.styleable.Line_lineColor));
             setIsDashed(a.getBoolean(R.styleable.Line_isDashed, false));
             setLineWidth(a.getDimension(R.styleable.Line_lineStrokeWidth, 1.0f));
             setDashLength(a.getDimension(R.styleable.Line_dashLength, mIsDashed ? 1.0f : 0.0f));
@@ -104,6 +120,13 @@ public class LineView extends View {
         if (mIsDashed && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
             setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
+    }
+    
+    @Override
+    protected void drawableStateChanged() {
+        super.drawableStateChanged();
+        
+        updateLineColor();
     }
     
     private void initPaints() {

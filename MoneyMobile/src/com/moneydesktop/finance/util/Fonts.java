@@ -98,7 +98,7 @@ public class Fonts {
 		
 		if (view instanceof TextView) {
 			TextView tv = (TextView) view;
-			float additional = UiUtils.getScreenAdjustment(ApplicationContext.getContext());
+			float additional = UiUtils.getScreenAdjustment();
 			float adjusted = UiUtils.getScaledPixels(ApplicationContext.getContext(), size) * additional;
 			tv.setTextSize(adjusted);
 			tv.setTypeface(font);

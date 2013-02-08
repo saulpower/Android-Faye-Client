@@ -13,6 +13,7 @@ import com.moneydesktop.finance.model.User;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
 
+import org.apache.commons.lang.WordUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -100,6 +101,8 @@ public class Transactions extends BusinessObject  {
     // KEEP FIELDS - put your custom fields here
     private QueryProperty mTagInstance = new QueryProperty(TagInstanceDao.TABLENAME, TagDao.Properties.Id, TagInstanceDao.Properties.TagId);
     private QueryProperty mBaseObjectId = new QueryProperty(TagInstanceDao.TABLENAME, TagInstanceDao.Properties.BaseObjectId);
+    
+    private String mCapitalizedTitle;
     
     // KEEP FIELDS END
 
@@ -1183,6 +1186,30 @@ public class Transactions extends BusinessObject  {
         
         return builder.toString().substring(0, builder.length() - 2);
     }
+    
+    public Double normalizedAmount() {
+        
+        if (normalizedAmount == null) {
+        
+            normalizedAmount = Double.valueOf(getAmount());
+            
+            if (normalizedAmount < 0 && getTransactionType() == 1) {
+                normalizedAmount = Math.abs(normalizedAmount);
+            }
+        }
+        
+        return normalizedAmount;
+    }
+    
+    public String getCapitalizedTitle() {
+        
+        if (mCapitalizedTitle == null || !mCapitalizedTitle.equalsIgnoreCase(getTitle())) {
+            mCapitalizedTitle = WordUtils.capitalize(getTitle().toLowerCase());
+        }
+        
+        return mCapitalizedTitle;
+    }
+    
     // KEEP METHODS END
 
 }

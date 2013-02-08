@@ -152,6 +152,8 @@ public class Enums {
                 return BUDGET_SUMMARY;
             case 17:
                 return TRANSACTION_SUMMARY;
+            case 18:
+                return ACCOUNT_SETTINGS;
             }
             
             return null;

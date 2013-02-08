@@ -22,26 +22,27 @@
 	        android:id="@+id/fragment"
 	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
-	        android:layout_marginTop="50dp"
+	        android:layout_marginTop="80dp"
 	        android:layout_marginLeft="20dp"
 	        android:layout_marginRight="20dp"
 	        android:layout_marginBottom="20dp" />
 	    
-	    <LinearLayout
+	    <RelativeLayout
 	        android:id="@+id/container"
 	        android:layout_width="match_parent"
-	        android:layout_height="50dp"
-	        android:layout_marginLeft="10dp"
-	        android:orientation="horizontal">
+	        android:layout_height="80dp"
+	        android:layout_marginLeft="10dp">
 	    
 		    <TextView
 		        android:id="@+id/arrow"
-		        android:layout_width="wrap_content"
-		        android:layout_height="match_parent"
-		        android:gravity="center_vertical"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:gravity="top"
 		        android:text="@string/icon_left_arrow"
 		        android:textColor="@color/white"
 		        android:shadowColor="@color/black"
+		        android:layout_marginTop="10dip"
+		        android:layout_marginLeft="12dip"
 		        android:shadowDx="1"
 		        android:shadowDy="1"
 		        android:shadowRadius="3" />
@@ -50,17 +51,34 @@
 		        android:id="@+id/label"
 		        android:layout_width="wrap_content"
 		        android:layout_height="match_parent"
-		        android:paddingTop="10dp"
-		        android:paddingRight="10dp"
-		        android:paddingBottom="10dp"
-		        android:gravity="center_vertical"
+		        android:gravity="bottom"
 		        android:textColor="@color/white"
 		        android:shadowColor="@color/black"
 		        android:shadowDx="1"
 		        android:shadowDy="1"
+		        android:layout_marginLeft="12dip"
+		        android:layout_marginTop="50dip"
 		        android:shadowRadius="3" />
+
+		    
+   		    <TextView
+		        android:id="@+id/label_details"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="50dip"
+		        android:layout_marginLeft="12dip"
+		        android:gravity="bottom"
+		        android:textColor="@color/white"
+		        android:shadowColor="@color/black"
+		        android:shadowDx="1"
+		        android:shadowDy="1"
+		        android:alpha="0"
+		        android:visibility="gone"
+		        android:layout_alignBottom="@id/label"
+		        android:shadowRadius="3" />		    
 	    
-	    </LinearLayout>
+	    </RelativeLayout>
+	    
 	
 	</RelativeLayout>
     
@@ -68,22 +86,11 @@
         android:layout_width="match_parent"
         android:layout_height="7dp"
     	android:background="@drawable/shadow_bottom" />
-	
-	<RelativeLayout
-	    android:id="@+id/detail_container"
+	    
+    <FrameLayout
+        android:id="@+id/detail_fragment"
 	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-	    android:background="@color/transparent50percent"
-	    android:visibility="invisible" >
-	    
-	    <FrameLayout
-	        android:id="@+id/detail_fragment"
-		    android:layout_width="650dp"
-		    android:layout_height="425dp"
-		    android:layout_centerInParent="true"
-		    android:visibility="invisible" />
-	    
-	</RelativeLayout>
+	    android:layout_height="match_parent" />
 	
 	<ImageView 
 	    android:id="@+id/cell"

@@ -1,5 +1,8 @@
 package com.moneydesktop.finance.tablet.fragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
@@ -9,9 +12,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.Toast;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
@@ -19,12 +24,10 @@ import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.shared.FilterViewHolder;
 import com.moneydesktop.finance.tablet.adapter.FilterTabletAdapter;
+import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.UltimateListView;
 
 import de.greenrobot.event.EventBus;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @TargetApi(11)
 public class TransactionsTabletFragment extends ParentTransactionFragment implements OnChildClickListener {
@@ -37,7 +40,7 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
 	public static TransactionsTabletFragment newInstance() {
 			
 	    TransactionsTabletFragment fragment = new TransactionsTabletFragment();
-	
+	    
         Bundle args = new Bundle();
         fragment.setArguments(args);
         
@@ -45,26 +48,11 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
 	}
 	
 	@Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        this.mActivity.onFragmentAttached(this);
-	}
-	
-	@Override
-	public void onResume() {
-		super.onResume();
-
+	public void onCreate(Bundle savedInstanceState) {
+	    super.onCreate(savedInstanceState);
+	    
         EventBus.getDefault().register(this);
-        this.mActivity.updateNavBar(getFragmentTitle());
 	}
-    
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        EventBus.getDefault().unregister(this);
-    }
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -83,6 +71,20 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
 		
 		return mRoot;
 	}
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        
+        setupTitleBar(getActivity());
+    }
+    
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        EventBus.getDefault().unregister(this);
+    }
 	
 	@Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -106,7 +108,7 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
 	
 	public void onEvent(DatabaseSaveEvent event) {
 	    
-	    if (mAdapter != null) {
+	    if (mAdapter != null && event.didDatabaseChange()) {
 	        mAdapter.reloadSections();
 	    }
 	}
@@ -140,9 +142,27 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
         mFiltersList.setOnChildClickListener(this);
         mFiltersList.setSelectedChild(0, 0, true);
 	}
+
+    private void setupTitleBar(final Activity activity) {
+        
+        String[] icons = getResources().getStringArray(R.array.transactions_title_bar_icons);
+        
+        ArrayList<OnClickListener> onClickListeners = new ArrayList<OnClickListener>();
+       
+        onClickListeners.add(new OnClickListener() {
+        	
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(activity, "help", Toast.LENGTH_LONG).show();
+            }
+        });
+        
+        new NavBarButtons(activity, icons, onClickListeners);
+     }
+    
 	@Override
 	public String getFragmentTitle() {
-		return getString(R.string.title_activity_transactions);
+		return getString(R.string.title_activity_transactions).toUpperCase();
 	}
 
     @Override

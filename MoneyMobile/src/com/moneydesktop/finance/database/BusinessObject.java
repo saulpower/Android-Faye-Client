@@ -237,13 +237,29 @@ public abstract class BusinessObject implements BusinessObjectInterface {
     
     public void softDeleteBatch() {
 
-        DataController.softDelete(getBusinessObjectBase());
+        if (deleteCheck()) {
+            setDeleted(true);
+            DataController.softDelete(getBusinessObjectBase());
+        }
     }
 	
 	public void softDeleteSingle() {
-		setDeleted(true);
-        DataController.softDelete(getBusinessObjectBase());
-        DataController.save();
+
+	    if (deleteCheck()) {
+    	    setDeleted(true);
+            DataController.softDelete(getBusinessObjectBase());
+            DataController.save();
+	    }
+	}
+	
+	public boolean deleteCheck() {
+	    
+	    if (getDataStateEnum() == DataState.DATA_STATE_NEW) {
+	        deleteSingle();
+	        return false;
+	    }
+	    
+	    return true;
 	}
 	
 	/**

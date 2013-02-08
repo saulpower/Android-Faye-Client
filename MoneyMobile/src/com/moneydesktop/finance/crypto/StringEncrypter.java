@@ -2,7 +2,6 @@ package com.moneydesktop.finance.crypto;
 // CIPHER / GENERATORS
 import android.util.Base64;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -95,8 +94,8 @@ public class StringEncrypter {
         } catch (BadPaddingException e) {
         } catch (IllegalBlockSizeException e) {
         } catch (UnsupportedEncodingException e) {
-        } catch (IOException e) {
         }
+        
         return null;
     }
 
@@ -124,8 +123,8 @@ public class StringEncrypter {
         } catch (BadPaddingException e) {
         } catch (IllegalBlockSizeException e) {
         } catch (UnsupportedEncodingException e) {
-        } catch (IOException e) {
         }
+        
         return null;
     }
 }

@@ -8,7 +8,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,7 +15,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -28,20 +26,19 @@ import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
 import com.moneydesktop.finance.animation.FlipXAnimation;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.database.Transactions;
-import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
-
-import de.greenrobot.event.EventBus;
+import com.moneydesktop.finance.util.UiUtils;
 
 @TargetApi(11)
-public class TransactionController {
+public class TransactionDetailController {
     
     public final String TAG = this.getClass().getSimpleName();
     
     private static final int MOVE_DURATION = 400;
 
-    private RelativeLayout mContainer;
+    private RelativeLayout mBackground, mContainer;
     private FrameLayout mDetail;
+    private View mShader;
     private ImageView mFakeCell;
     private View mCellView;
     private int mCenterX, mCellX, mCellY, mHeight;
@@ -70,8 +67,9 @@ public class TransactionController {
 
             mFakeCell.startAnimation(cellFlip);
             
-            mDetail.setVisibility(View.VISIBLE);
-            mDetail.startAnimation(detailFlip);
+            mContainer.setVisibility(View.VISIBLE);
+            mContainer.startAnimation(detailFlip);
+            shaderAnimation(true).start();
         }
         
         @Override
@@ -90,7 +88,7 @@ public class TransactionController {
         public void onAnimationEnd(Animation animation) {
             
             mFakeCell.setVisibility(View.INVISIBLE);
-            
+            mDetailFragment.viewShowing();
             mAnimating = false;
         }
     };
@@ -106,7 +104,7 @@ public class TransactionController {
         @Override
         public void onAnimationEnd(Animation animation) {
 
-            mDetail.setVisibility(View.INVISIBLE);
+            mContainer.setVisibility(View.INVISIBLE);
             
             AnimatorSet set = moveCell(false);
             set.addListener(mHideFinished);
@@ -126,13 +124,12 @@ public class TransactionController {
         @Override
         public void onAnimationEnd(Animator animation) {
             
-            mContainer.setVisibility(View.INVISIBLE);
+            mBackground.setVisibility(View.INVISIBLE);
             mFakeCell.setVisibility(View.INVISIBLE);
             mCellView.setVisibility(View.VISIBLE);
             
             mAnimating = false;
             mShowing = false;
-            EventBus.getDefault().post(new EventMessage().new DataUpdateEvent());
         }
         
         @Override
@@ -155,13 +152,10 @@ public class TransactionController {
         }
     };
     
-    public TransactionController(RelativeLayout container, ImageView fakeCell, FrameLayout detail, float containerOffset) {
-        mContainer = container;
+    public TransactionDetailController(ImageView fakeCell, FrameLayout detail, float containerOffset) {
         mFakeCell = fakeCell;
         mDetail = detail;
         mContainerOffset = containerOffset;
-        
-        setupView();
     }
     
     protected void addDetailFragment(FragmentManager manager) {
@@ -181,21 +175,32 @@ public class TransactionController {
     public TransactionsDetailTabletFragment getDetailFragment() {
         return mDetailFragment;
     }
-
-    private void setupView() {
+    
+    private void setupContainer(View view) {
         
-        if (ApplicationContext.isLargeTablet()) {
-            mDetail.getLayoutParams().width *= Constant.LARGE_TABLET_SCALE;
-            mDetail.getLayoutParams().height *= Constant.LARGE_TABLET_SCALE;
-        }
-        
-        mContainer.setOnClickListener(new OnClickListener() {
+        if (mBackground == null) {
             
-            @Override
-            public void onClick(View v) {
-                configureDetailView();
+            mBackground = (RelativeLayout) mDetail.findViewById(R.id.root_container);
+            mBackground.setOnClickListener(new OnClickListener() {
+    
+                @Override
+                public void onClick(View v) {
+                    configureDetailView();
+                }
+            });
+            
+            mContainer = (RelativeLayout) mDetail.findViewById(R.id.container);
+            mShader = mDetail.findViewById(R.id.shader);
+            
+            mContainer.getLayoutParams().width = view.getWidth();
+            
+            if (ApplicationContext.isLargeTablet()) {
+                mContainer.getLayoutParams().height *= Constant.LARGE_TABLET_SCALE;
+                mDetail.findViewById(R.id.menu_container).getLayoutParams().height *= Constant.LARGE_TABLET_SCALE;
             }
-        });
+            
+            mDetail.requestLayout();
+        }
     }
     
     protected boolean mAnimating = false;
@@ -203,11 +208,13 @@ public class TransactionController {
     public void showTransactionDetails(final View view, final int offset, final Transactions transaction) {
         
         if (mDetailFragment != null && !mShowing) {
+            
             mShowing = true;
             mDetailFragment.updateTransaction(transaction);
-        } else {
-            return;
-        }
+            
+            setupContainer(view);
+            
+        } else return;
         
         mCellView = view;
         
@@ -226,10 +233,7 @@ public class TransactionController {
                 
                 mCenterX = (int) (view.getWidth() / 2.0f);
                 
-                final Bitmap b = Bitmap.createBitmap(mCellView.getWidth(), mCellView.getHeight(), Bitmap.Config.ARGB_8888);                
-                final Canvas c = new Canvas(b);
-                
-                mCellView.draw(c);
+                Bitmap b = UiUtils.convertViewToBitmap(mCellView);
                 
                 return b;
             }
@@ -262,46 +266,59 @@ public class TransactionController {
             
             mCellView.setVisibility(View.INVISIBLE);
             mFakeCell.setVisibility(View.VISIBLE);
-            mContainer.setVisibility(View.VISIBLE);
-
-            set.start();
+            mFakeCell.post(new Runnable() {
+                
+                @Override
+                public void run() {
+                    mBackground.setVisibility(View.VISIBLE);
+                    set.start();
+                }
+            });
             
         } else {
 
             mAnimating = true;
             
-            if (mDetailFragment != null) {
-                mDetailFragment.updateTransaction(null);
-            }
+            long duration = mDetailFragment.viewWillDisappear();
             
-            Animation cellFlip = flipCell(false);
-            Animation detailFlip = flipDetailView(false);
-            detailFlip.setAnimationListener(mListenerHide);
-            
-            mFakeCell.setVisibility(View.VISIBLE);
-            mFakeCell.startAnimation(cellFlip);
-            mDetail.startAnimation(detailFlip);
+            mFakeCell.postDelayed(new Runnable() {
+                
+                @Override
+                public void run() {
+
+                    if (mDetailFragment != null) {
+                        mDetailFragment.updateTransaction(null);
+                    }
+                    
+                    Animation cellFlip = flipCell(false);
+                    Animation detailFlip = flipDetailView(false);
+                    detailFlip.setAnimationListener(mListenerHide);
+                    
+                    mFakeCell.setVisibility(View.VISIBLE);
+                    mFakeCell.startAnimation(cellFlip);
+                    mContainer.startAnimation(detailFlip);
+                    shaderAnimation(false).start();
+                }
+            }, duration);
         }
     }
     
     private AnimatorSet moveCell(final boolean out) {
         
-        final float startY = out ? mCellY : mDetail.getY() - mHeight + mContainerOffset;
-        final float endY = out ? mDetail.getY() - mHeight + mContainerOffset : mCellY;
+        final float startY = out ? mCellY : mContainer.getY() - mHeight + mContainerOffset;
+        final float endY = out ? mContainer.getY() - mHeight + mContainerOffset : mCellY;
         
-        final float startX = out ? mCellX : mDetail.getX();
-        final float endX = out ? mDetail.getX() : mCellX;
+        final float startX = out ? mCellX : mContainer.getX();
+        final float endX = out ? mContainer.getX() : mCellX;
         
         final float startAlpha = out ? 0 : 1;
         final float endAlpha = out ? 1 : 0;
         
         final ObjectAnimator moveY = ObjectAnimator.ofFloat(mFakeCell, "y", startY, endY);
-        moveY.setInterpolator(new DecelerateInterpolator(3));
         moveY.setDuration(MOVE_DURATION);
         final ObjectAnimator moveX = ObjectAnimator.ofFloat(mFakeCell, "x", startX, endX);
-        moveX.setInterpolator(new DecelerateInterpolator(3));
         moveY.setDuration(MOVE_DURATION);
-        final ObjectAnimator fade = ObjectAnimator.ofFloat(mContainer, "alpha", startAlpha, endAlpha);
+        final ObjectAnimator fade = ObjectAnimator.ofFloat(mBackground, "alpha", startAlpha, endAlpha);
         fade.setDuration(out ? 300 : 400);
         
         final AnimatorSet set = new AnimatorSet();
@@ -321,7 +338,7 @@ public class TransactionController {
         
         FlipDirection dir = up ? FlipDirection.TOP_BOTTOM : FlipDirection.BOTTOM_TOP;
         
-        Animation flip = new FlipXAnimation(dir, (int) (mCenterX + mDetail.getX()), (int) mDetail.getY());
+        Animation flip = new FlipXAnimation(dir, (int) (mCenterX + mContainer.getX()), (int) mContainer.getY());
         flip.setDuration(duration);
         
         if (up) {
@@ -337,7 +354,7 @@ public class TransactionController {
         
         FlipDirection dir = up ? FlipDirection.IN_TOP_BOTTOM : FlipDirection.OUT_BOTTOM_TOP;
         
-        Animation flip = new FlipXAnimation(dir, (int) (mDetail.getWidth() / 2.0f), 0);
+        Animation flip = new FlipXAnimation(dir, (int) (mContainer.getWidth() / 2.0f), 0);
         flip.setDuration(duration);
         
         if (up) {
@@ -345,6 +362,18 @@ public class TransactionController {
         }
         
         return flip;
+    }
+    
+    private ObjectAnimator shaderAnimation(boolean up) {
+
+        int duration = up ? 800 : 375;
+        ObjectAnimator fade = ObjectAnimator.ofFloat(mShader, "alpha", up ? 1 : 0, up ? 0 : 1);
+        fade.setDuration(duration);
+        if (up) {
+            fade.setInterpolator(mInterpolator);
+        }
+        
+        return fade;
     }
     
     public void parentOnActivityResult(int requestCode, int resultCode, Intent data) {
@@ -365,5 +394,6 @@ public class TransactionController {
         public void parentOnActivityResult(int requestCode, int resultCode, Intent data);
         public void showTransactionDetails(View view, int offset, Transactions transaction);
         public void setDetailFragment(TransactionsDetailTabletFragment fragment);
+        public TransactionsDetailTabletFragment getDetailFragment();
     }
 }

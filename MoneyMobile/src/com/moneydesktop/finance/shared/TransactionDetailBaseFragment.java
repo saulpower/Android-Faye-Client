@@ -1,7 +1,6 @@
 package com.moneydesktop.finance.shared;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -9,10 +8,8 @@ import android.view.animation.Animation;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.ToggleButton;
@@ -27,6 +24,8 @@ import com.moneydesktop.finance.database.Tag;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.LabelEditText;
 
 import org.apache.commons.lang.WordUtils;
 
@@ -43,9 +42,8 @@ public class TransactionDetailBaseFragment extends BaseFragment {
     protected TransactionsDao mDao;
     protected Transactions mTransaction;
 
-    protected RelativeLayout mAmountContainer, mDateContainer, mCategoryContainer, mStmtContainer;
-    protected TextView mAccountName, mBankName, mCategory, mTags;
-    protected EditText mPayee, mAmount, mDate, mMemo, mStatement;
+    protected TextView mAccountName, mBankName;
+    protected LabelEditText mPayee, mMemo, mDate, mTags, mAmount, mStatement, mCategory;
     protected ImageView mBankIcon;
     protected ToggleButton mBusiness, mPersonal, mCleared, mFlagged;
     
@@ -58,37 +56,29 @@ public class TransactionDetailBaseFragment extends BaseFragment {
     public void setTransaction(Transactions mTransaction) {
         this.mTransaction = mTransaction;
     }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        
-        this.mActivity.onFragmentAttached(this);
-    }
     
     protected void initialize() {
         
         setupAnimations();
         setupViews();
+        
+        fixDottedLine();
+        applyFonts();
+        configureListeners();
     }
     
     protected void setupViews() {
         
-        mAmountContainer = (RelativeLayout) mRoot.findViewById(R.id.amount_container);
-        mDateContainer = (RelativeLayout) mRoot.findViewById(R.id.date_container);
-        mCategoryContainer = (RelativeLayout) mRoot.findViewById(R.id.category_container);
-        mStmtContainer = (RelativeLayout) mRoot.findViewById(R.id.stmt_container);
-        
         mAccountName = (TextView) mRoot.findViewById(R.id.account_name);
         mBankName = (TextView) mRoot.findViewById(R.id.bank_name);
-        mCategory = (TextView) mRoot.findViewById(R.id.category_name);
-        mTags = (TextView) mRoot.findViewById(R.id.tags);
         
-        mPayee = (EditText) mRoot.findViewById(R.id.payee_name);
-        mAmount = (EditText) mRoot.findViewById(R.id.amount);
-        mDate = (EditText) mRoot.findViewById(R.id.date);
-        mMemo = (EditText) mRoot.findViewById(R.id.memo);
-        mStatement = (EditText) mRoot.findViewById(R.id.stmt);
+        mCategory = (LabelEditText) mRoot.findViewById(R.id.category);
+        mTags = (LabelEditText) mRoot.findViewById(R.id.tags);
+        mPayee = (LabelEditText) mRoot.findViewById(R.id.payee);
+        mAmount = (LabelEditText) mRoot.findViewById(R.id.amount);
+        mDate = (LabelEditText) mRoot.findViewById(R.id.date);
+        mMemo = (LabelEditText) mRoot.findViewById(R.id.memo);
+        mStatement = (LabelEditText) mRoot.findViewById(R.id.stmt);
         
         mBankIcon = (ImageView) mRoot.findViewById(R.id.bank_image);
         
@@ -101,12 +91,10 @@ public class TransactionDetailBaseFragment extends BaseFragment {
         mAmount.setFocusable(false);
         mDate.setFocusable(false);
         mStatement.setFocusable(false);
+        mTags.setFocusable(false);
+        mCategory.setFocusable(false);
         
         mCleared.setEnabled(false);
-        
-        fixDottedLine();
-        applyFonts();
-        configureListeners();
     }
     
     protected void setupAnimations() {
@@ -147,14 +135,13 @@ public class TransactionDetailBaseFragment extends BaseFragment {
         Fonts.applyPrimaryBoldFont(mStatement, 12);
         
         // labels
-        Fonts.applySecondaryItalicFont((TextView) mRoot.findViewById(R.id.payee), 12);
-        Fonts.applySecondaryItalicFont((TextView) mRoot.findViewById(R.id.amount_label), 12);
-        Fonts.applySecondaryItalicFont((TextView) mRoot.findViewById(R.id.date_label), 12);
-        Fonts.applySecondaryItalicFont((TextView) mRoot.findViewById(R.id.category), 12);
-        Fonts.applySecondaryItalicFont((TextView) mRoot.findViewById(R.id.tags_label), 12);
-        Fonts.applySecondaryItalicFont((TextView) mRoot.findViewById(R.id.markers_label), 12);
-        Fonts.applySecondaryItalicFont((TextView) mRoot.findViewById(R.id.memo_label), 12);
-        Fonts.applySecondaryItalicFont((TextView) mRoot.findViewById(R.id.stmt_label), 12);
+        mPayee.setLabelFont(Fonts.getFont(Fonts.PRIMARY_BOLD));
+        mMemo.setLabelFont(Fonts.getFont(Fonts.PRIMARY_BOLD));
+        mAmount.setLabelFont(Fonts.getFont(Fonts.PRIMARY_BOLD));
+        mDate.setLabelFont(Fonts.getFont(Fonts.PRIMARY_BOLD));
+        mCategory.setLabelFont(Fonts.getFont(Fonts.PRIMARY_BOLD));
+        mTags.setLabelFont(Fonts.getFont(Fonts.PRIMARY_BOLD));
+        mStatement.setLabelFont(Fonts.getFont(Fonts.PRIMARY_BOLD));
     }
     
     protected void configureListeners() {
@@ -163,7 +150,7 @@ public class TransactionDetailBaseFragment extends BaseFragment {
             
             @Override
             public void onClick(View v) {
-                mAmountContainer.startAnimation(mShake);
+                mAmount.startAnimation(mShake);
             }
         });
         
@@ -171,7 +158,7 @@ public class TransactionDetailBaseFragment extends BaseFragment {
             
             @Override
             public void onClick(View v) {
-                mDateContainer.startAnimation(mShake);
+                mDate.startAnimation(mShake);
             }
         });
         
@@ -179,7 +166,7 @@ public class TransactionDetailBaseFragment extends BaseFragment {
             
             @Override
             public void onClick(View v) {
-                mStmtContainer.startAnimation(mShake);
+                mStatement.startAnimation(mShake);
             }
         });
         
@@ -221,9 +208,12 @@ public class TransactionDetailBaseFragment extends BaseFragment {
                     
                     mTransaction.setTitle(mPayee.getText().toString());
                     mTransaction.updateSingle();
+                    finishEditing(v);
                     
                     return true;
                 }
+                
+                finishEditing(v);
                 
                 return false;
             }
@@ -238,13 +228,21 @@ public class TransactionDetailBaseFragment extends BaseFragment {
                     
                     mTransaction.setMemo(mMemo.getText().toString());
                     mTransaction.updateSingle();
+                    finishEditing(v);
                     
                     return true;
                 }
                 
+                finishEditing(v);
+                
                 return false;
             }
         });
+    }
+    
+    private void finishEditing(View v) {
+        v.clearFocus();
+        UiUtils.hideKeyboard(getActivity(), v);
     }
     
     protected void loadTransaction() {
@@ -261,10 +259,8 @@ public class TransactionDetailBaseFragment extends BaseFragment {
     }
 
     public void configureTransactionView() {
-        
-        if (mTransaction == null) {
-            return;
-        }
+
+        if (mTransaction == null) return;
         
         if (mTransaction.getBankAccount() != null) {
             BankLogoManager.getBankImage(mBankIcon, mTransaction.getBankAccount().getInstitutionId());
@@ -275,14 +271,8 @@ public class TransactionDetailBaseFragment extends BaseFragment {
         mCategory.setText(mTransaction.getCategory().getCategoryName());
         mTags.setText(mTransaction.buildTagString());
         
-        double value = mTransaction.getRawAmount();
-        
-        if (mTransaction.isIncome()) {
-            value = Math.abs(value);
-        }
-        
         mPayee.setText(WordUtils.capitalize(mTransaction.getTitle().toLowerCase()));
-        mAmount.setText(mFormatter.format(value));
+        mAmount.setText(mFormatter.format(mTransaction.normalizedAmount()));
         mDate.setText(mDateFormatter.format(mTransaction.getDate()));
         mMemo.setText(mTransaction.getMemo());
         mStatement.setText(mTransaction.getOriginalTitle());
@@ -295,7 +285,7 @@ public class TransactionDetailBaseFragment extends BaseFragment {
     
     @Override
     public String getFragmentTitle() {
-        return getString(R.string.title_activity_transaction);
+        return null;
     }
 
     @Override
@@ -303,9 +293,7 @@ public class TransactionDetailBaseFragment extends BaseFragment {
         return false;
     }
     
-    protected void createTag(String tagName) {
-        
-        Tag.createTag(tagName, mTransaction);
+    protected void refreshTag() {
         
         mTags.setText(mTransaction.buildTagString());
     }
