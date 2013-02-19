@@ -20,11 +20,12 @@ public class WheelView extends View {
 
 	public static final String TAG = "WheelView";
     
-	private Bitmap cover;
-	private Paint paint, stroke, text;
-	private float width, height;
-	private Rect boundsYes, boundsNo;
-	private String yes, no;
+	private Bitmap mCover;
+	private Paint mPaint, mStroke, mText;
+	private float mWidth, mHeight;
+	private Rect mBoundsYes, mBoundsNo;
+	private String mYes, mNo;
+	private float mRotation = 0;
 	
 	public WheelView(Context context) {
 		super(context);
@@ -44,74 +45,89 @@ public class WheelView extends View {
 		load(context);
 	}
 	
+	public float getRotation() {
+		return mRotation;
+	}
+
+	public void setRotation(float mRotation) {
+		this.mRotation = mRotation;
+		invalidate();
+	}
+
 	private void load(Context context) {
 
 		Resources res = context.getResources();
 		
-		yes = res.getString(R.string.label_yes).toUpperCase();
-		no = res.getString(R.string.label_no).toUpperCase();
+		mYes = res.getString(R.string.label_yes).toUpperCase();
+		mNo = res.getString(R.string.label_no).toUpperCase();
 		
 		// Load the panel to base our circle off of its measurements
-		this.cover = BitmapFactory.decodeResource(res, R.drawable.phone_switch_paper);
+		this.mCover = BitmapFactory.decodeResource(res, R.drawable.phone_switch_paper);
 		
-		width = cover.getHeight() * .8f;
-		height = cover.getHeight() * .8f;
+		mWidth = mCover.getHeight() * .8f;
+		mHeight = mCover.getHeight() * .8f;
 		
 		// Setup the various paints we will need
-		paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		paint.setColor(res.getColor(R.color.primaryColor));
-		paint.setStyle(Paint.Style.FILL);
-	    paint.setAntiAlias(true);
+		mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		mPaint.setColor(res.getColor(R.color.primaryColor));
+		mPaint.setStyle(Paint.Style.FILL);
+	    mPaint.setAntiAlias(true);
 	    
-		stroke = new Paint(Paint.ANTI_ALIAS_FLAG);
-		stroke.setStrokeWidth(UiUtils.getDynamicPixels(getContext(), 3));
-		stroke.setColor(Color.WHITE);
-		stroke.setStyle(Paint.Style.STROKE);
-		stroke.setAntiAlias(true);
+		mStroke = new Paint(Paint.ANTI_ALIAS_FLAG);
+		mStroke.setStrokeWidth(UiUtils.getDynamicPixels(getContext(), 3));
+		mStroke.setColor(Color.WHITE);
+		mStroke.setStyle(Paint.Style.STROKE);
+		mStroke.setAntiAlias(true);
 		
 		// Scale the font size for the display resolution
 		int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 13, getResources().getDisplayMetrics());
 		
 		// Setup the text paint
-		text = new Paint(Paint.ANTI_ALIAS_FLAG);
-		text.setColor(Color.WHITE);
-		text.setAntiAlias(true);
-		text.setTextSize(px);
-		text.setTypeface(Fonts.getFont(Fonts.PRIMARY_BOLD));
+		mText = new Paint(Paint.ANTI_ALIAS_FLAG);
+		mText.setColor(Color.WHITE);
+		mText.setAntiAlias(true);
+		mText.setTextSize(px);
+		mText.setTypeface(Fonts.getFont(Fonts.PRIMARY_BOLD));
 		
 		// Get the bounds of the yes/no text to help with positioning
-		boundsYes = new Rect();
-		text.getTextBounds(yes, 0, yes.length(), boundsYes);
-		boundsNo = new Rect();
-		text.getTextBounds(no, 0, no.length(), boundsNo);
+		mBoundsYes = new Rect();
+		mText.getTextBounds(mYes, 0, mYes.length(), mBoundsYes);
+		mBoundsNo = new Rect();
+		mText.getTextBounds(mNo, 0, mNo.length(), mBoundsNo);
 	}
 	
 	@Override
-	protected void onDraw(Canvas c) {
-		super.onDraw(c);
+	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
 		
-		// Draw the circle and give it a stroke
-		c.drawCircle(getWidth()/2.0f, getHeight()/2.0f, height/2.0f, paint);
-		c.drawCircle(getWidth()/2.0f, getHeight()/2.0f, height/2.0f, stroke);
-		
-		// Draw the yes and position it appropriately
-		c.drawText(yes, getWidth()/4.0f - boundsYes.width()/2.0f, getHeight()/2.0f + boundsYes.height()/2.0f, text);
-		
-		// Rotate the canvas to write no
 		float py = getHeight()/2.0f;
         float px = getWidth()/2.0f;
-        c.rotate(180, px, py);
+		
+		canvas.save();
+		
+		canvas.rotate(mRotation, px, py);
+		
+		// Draw the circle and give it a stroke
+		canvas.drawCircle(getWidth()/2.0f, getHeight()/2.0f, mHeight/2.0f, mPaint);
+		canvas.drawCircle(getWidth()/2.0f, getHeight()/2.0f, mHeight/2.0f, mStroke);
+		
+		// Draw the yes and position it appropriately
+		canvas.drawText(mYes, getWidth()/4.0f - mBoundsYes.width()/2.0f, getHeight()/2.0f + mBoundsYes.height()/2.0f, mText);
+		
+		// Rotate the canvas to write no
+        
+        canvas.rotate(180, px, py);
         
         // Draw the no and position it appropriately
-		c.drawText(no, getWidth()/4.0f - boundsNo.width()/2.0f, getHeight()/2.0f + boundsNo.height()/2.0f, text);
+		canvas.drawText(mNo, getWidth()/4.0f - mBoundsNo.width()/2.0f, getHeight()/2.0f + mBoundsNo.height()/2.0f, mText);
         
-        c.restore(); 
+        canvas.restore(); 
 	}
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
-        setMeasuredDimension((int) (width * 1.08), (int) (height * 1.08));
+        setMeasuredDimension((int) (mWidth * 1.08), (int) (mHeight * 1.08));
     }
 
 }

@@ -14,12 +14,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.moneydesktop.finance.BaseActivity;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.adapters.UltimateAdapter;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.shared.activity.BaseActivity;
+import com.moneydesktop.finance.shared.adapter.UltimateAdapter;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.UltimateListView;
 

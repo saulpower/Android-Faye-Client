@@ -9,8 +9,8 @@ import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.moneydesktop.finance.adapters.AmazingAdapter;
-import com.moneydesktop.finance.adapters.AmazingAdapter.HasMorePagesListener;
+import com.moneydesktop.finance.shared.adapter.AmazingAdapter;
+import com.moneydesktop.finance.shared.adapter.AmazingAdapter.HasMorePagesListener;
 
 /**
  * A ListView that maintains a header pinned at the top of the list. The
@@ -37,6 +37,7 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
 
     private AmazingAdapter mAdapter;
     
+    private boolean mShowSearch = false;
     private boolean mIsPressed = false;
     private boolean mHeaderClicked = false;
     
@@ -48,6 +49,17 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
 
     public void setOnSectionHeaderClickListener(OnSectionHeaderClickListener sectionHeaderClickListener) {
         this.mSectionHeaderClickListener = sectionHeaderClickListener;
+    }
+    
+    public boolean isSearchShowing() {
+    	return mShowSearch;
+    }
+    
+    @Override
+    public void addHeaderView(View v) {
+    	super.addHeaderView(v);
+    	
+    	mShowSearch = true;
     }
 
     public void setPinnedHeaderView(View view) {
@@ -152,7 +164,7 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         
-        if (mHeaderView != null) {
+        if (mHeaderView != null && mAdapter != null) {
             mHeaderView.layout(0, 0, mHeaderViewWidth, mHeaderViewHeight);
             configureHeaderView();
         }
@@ -174,9 +186,12 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     }
 
     public void configureHeaderView(int position) {
+    	
         if (mHeaderView == null) {
             return;
         }
+        
+        position = mShowSearch ? position - 1 : position;
 
         int state = mAdapter.getPinnedHeaderState(position);
         
@@ -267,6 +282,7 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     
     @Override
     public void setAdapter(ListAdapter adapter) {
+    	
     	if (!(adapter instanceof AmazingAdapter)) {
     		throw new IllegalArgumentException(AmazingListView.class.getSimpleName() + " must use adapter of type " + AmazingAdapter.class.getSimpleName());
     	}
@@ -278,6 +294,8 @@ public class AmazingListView extends ListView implements HasMorePagesListener {
     	}
     	
     	this.mAdapter = (AmazingAdapter) adapter;
+        mAdapter.configurePinnedHeader(mHeaderView, 0, 255);
+        
     	((AmazingAdapter) adapter).setHasMorePagesListener(this);
 		this.setOnScrollListener((AmazingAdapter) adapter);
     	

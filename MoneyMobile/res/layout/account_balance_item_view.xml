@@ -19,8 +19,8 @@
     <com.moneydesktop.finance.views.LineView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:lineColor="@color/gray5"
-	    app:lineStrokeWidth="3dp"
+        app:lineColor="@color/gray4"
+	    app:lineStrokeWidth="2dp"
 	    app:isVertical="true" />
 
     <LinearLayout
@@ -36,22 +36,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" 
             android:layout_marginLeft="5dp"
-            android:gravity="left"/>
+            android:gravity="left|bottom"/>
 
         <TextView
             android:id="@+id/account_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:gravity="left" />
+            android:gravity="left|top" />
 
     </LinearLayout>
 
     <com.moneydesktop.finance.views.LineView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" 
-        app:lineColor="@color/gray5"
-	    app:lineStrokeWidth="3dp"
+        app:lineColor="@color/gray4"
+	    app:lineStrokeWidth="2dp"
 	    app:isVertical="true" />
 
     <TextView

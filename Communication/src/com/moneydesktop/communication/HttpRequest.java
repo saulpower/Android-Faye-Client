@@ -104,12 +104,12 @@ public class HttpRequest {
 
         StatusLine statusLine = response.getStatusLine();
         int statusCode = statusLine.getStatusCode() / 100;
-        if (statusCode != 2) {
-        	
-        	//Closes the connection.
-            response.getEntity().getContent().close();
-            throw new IOException(statusLine.getReasonPhrase() + " URL: " + url);
-        }
+//        if (statusCode != 2) {
+//        	
+//        	//Closes the connection.
+//            response.getEntity().getContent().close();
+//            throw new IOException(statusLine.getReasonPhrase() + " URL: " + url);
+//        }
         
         // Return string response
 	    return getResponseBody(response.getEntity());

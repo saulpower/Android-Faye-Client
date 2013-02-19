@@ -32,8 +32,8 @@ import com.moneydesktop.finance.model.EventMessage.RefreshAccountEvent;
 import com.moneydesktop.finance.model.EventMessage.ReloadBannersEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.shared.Services.SyncService;
+import com.moneydesktop.finance.shared.fragment.PopupFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
-import com.moneydesktop.finance.tablet.fragment.PopupFragment;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.UiUtils;
 

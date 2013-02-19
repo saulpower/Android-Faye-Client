@@ -14,6 +14,7 @@ public class PowerQuery {
     private Map<String, String> mTableMap = new HashMap<String, String>();
     
     private List<String> mSelectionArgs = new ArrayList<String>();
+    private String[] mArgs = new String[2];
 
     private List<QueryProperty> mJoins = new ArrayList<QueryProperty>();
     private List<QueryProperty> mWhereQueries = new ArrayList<QueryProperty>();
@@ -83,8 +84,7 @@ public class PowerQuery {
     
     public PowerQuery between(QueryProperty field, String value1, String value2) {
         
-        mSelectionArgs.add(value1);
-        mSelectionArgs.add(value2);
+    	field.setSelectionArg(value1, value2);
         
         field.setComparator("BETWEEN ? AND ?");
         
@@ -99,7 +99,6 @@ public class PowerQuery {
         
         whereCheck();
         
-        mSelectionArgs.addAll(where.getSelectionArgsList());
         mWhereQueries.addAll(where.getQueryProperties());
         
         return this;
@@ -107,7 +106,7 @@ public class PowerQuery {
     
     private PowerQuery addWhere(QueryProperty field, String value) {
         
-        mSelectionArgs.add(value);
+    	field.setSelectionArg(value);
         
         return addWhere(field);
     }
@@ -171,15 +170,15 @@ public class PowerQuery {
     
     public PowerQuery limit(int limit) {
         
-        mSelectionArgs.add(Integer.toString(limit));
+    	mArgs[0] = Integer.toString(limit);
         mLimit = " LIMIT ?";
         
         return this;
     }
     
     public PowerQuery offset(int offset) {
-        
-        mSelectionArgs.add(Integer.toString(offset));
+
+    	mArgs[1] = Integer.toString(offset);
         mOffset = " OFFSET ?";
         
         return this;
@@ -191,6 +190,7 @@ public class PowerQuery {
     
     private String buildQuery() {
         
+    	mSelectionArgs.clear();
         StringBuilder builder = new StringBuilder();
 
         for (QueryProperty prop : mJoins) {
@@ -219,6 +219,7 @@ public class PowerQuery {
             
             isGroup = field.isGroup();
             
+            mSelectionArgs.addAll(field.getSelectionArgs());
             builder.append((isEnd ? grouper : "") + field.getConnector(i) + " " + (isEnd ? "" : grouper) + getTableRef(field.getTablename()) + "." + field.getColumnName() + " " + field.getComparator());
         }
         
@@ -230,9 +231,11 @@ public class PowerQuery {
         
         if (mLimit != null) {
             builder.append(mLimit);
+            mSelectionArgs.add(mArgs[0]);
         }
         if (mOffset != null) {
             builder.append(mOffset);
+            mSelectionArgs.add(mArgs[1]);
         }
         
         return builder.toString();

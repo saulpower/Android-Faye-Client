@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
 import com.moneydesktop.finance.handset.activity.LoginHandsetActivity;
 import com.moneydesktop.finance.model.User;
+import com.moneydesktop.finance.shared.activity.BaseActivity;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.tablet.activity.LoginTabletActivity;
 
@@ -28,19 +29,35 @@ public class SplashActivity extends BaseActivity {
             endSplash();
         }
     };
+    
+    private boolean mIsHandset = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.splash_view);
         
-        ImageView image = (ImageView) findViewById(R.id.splash_screen);
+        getWindow().setBackgroundDrawable(null);
         
         ApplicationContext.setIsTablet(isTablet(this));
+
+        int deviceResource = ApplicationContext.isTablet() ? R.layout.tablet_splash_view : R.layout.handset_splash_view;
+        int resource = User.getCurrentUser() != null ? deviceResource : R.layout.splash_view;
+        
+        setContentView(resource);
+
+        mIsHandset = false;
         
         if (ApplicationContext.isTablet()) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+        
+        if (User.getCurrentUser() != null) {
+        	endSplash();
+        	return;
+        }
+        
+        if (ApplicationContext.isTablet()) {
+            ImageView image = (ImageView) findViewById(R.id.splash_screen);
             image.setBackgroundResource(R.drawable.default_landscape_tablet);
         }
 
@@ -51,8 +68,13 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+    	
+    	if (event.getPointerCount() >= 6 && !mIsHandset) {
+    		mIsHandset = true;
+    	}
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+        	
             mHandler.removeCallbacks(mTask);
             endSplash();
         }
@@ -64,16 +86,15 @@ public class SplashActivity extends BaseActivity {
 
         Intent i = new Intent(getApplicationContext(), DashboardHandsetActivity.class);
 
-        
         if (User.getCurrentUser() != null) {
 
-            if (ApplicationContext.isTablet()) {
+            if (ApplicationContext.isTablet() && !mIsHandset) {
                 i = new Intent(getApplicationContext(), DashboardTabletActivity.class);
             }
 
         } else {
 
-            if (ApplicationContext.isTablet()) {
+            if (ApplicationContext.isTablet() && !mIsHandset) {
                 i = new Intent(getApplicationContext(), LoginTabletActivity.class);
             } else {
                 i = new Intent(getApplicationContext(), LoginHandsetActivity.class);

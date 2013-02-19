@@ -3,7 +3,7 @@
     
     <declare-styleable name="LabelEditText">
         <attr name="labelColor" format="reference" />
-        <attr name="labelSize" format="dimension" />
+        <attr name="labelSize" format="float" />
         <attr name="labelText" format="string" />
     </declare-styleable>
     
@@ -28,6 +28,10 @@
         <attr name="text" format="string" />
         <attr name="icon" format="string" />
         <attr name="iconSize" format="dimension" />
+    </declare-styleable>
+    
+    <declare-styleable name="Spinner">
+        <attr name="spinnerColor" format="color" />
     </declare-styleable>
     
     <declare-styleable name="Line">

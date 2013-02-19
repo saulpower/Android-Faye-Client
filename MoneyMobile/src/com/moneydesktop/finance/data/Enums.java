@@ -36,7 +36,6 @@ public class Enums {
         
     };
     
-    
     public enum BankRefreshStatus {
         
         STATUS_PENDING (1),
@@ -82,7 +81,6 @@ public class Enums {
         }
         
     };
-    
     public enum HandsetFragments {
         
     }
@@ -117,8 +115,9 @@ public class Enums {
         SPENDING_SUMMARY(15),
         BUDGET_SUMMARY(16),
         TRANSACTION_SUMMARY(17),
-        ACCOUNT_SETTINGS(18);
-        
+        TRANSACTIONS_SUMMARY_TABLET (18),
+        ACCOUNT_SETTINGS (19),
+        FEEDBACK(20);
         private final int index;
         
         FragmentType(int index) {
@@ -285,9 +284,9 @@ public class Enums {
 	};
 	
 	public enum SlideFrom {
-	    RIGHT,
-	    LEFT,
-	    TOP,
-	    BOTTOM
+			RIGHT,
+			LEFT,
+			TOP,
+			BOTTOM
 	}
 }

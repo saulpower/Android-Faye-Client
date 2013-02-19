@@ -11,9 +11,9 @@ import android.util.Log;
 
 import com.moneydesktop.communication.HttpRequest;
 import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.DebugActivity;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
+import com.moneydesktop.finance.shared.activity.DebugActivity;
 
 import de.greenrobot.event.EventBus;
 

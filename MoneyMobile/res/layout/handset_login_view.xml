@@ -69,7 +69,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@color/white" >
 
             <ImageView
@@ -124,8 +124,8 @@
                     android:layout_height="50dp"
                     android:inputType="textEmailAddress"
                     android:textSize="25sp"
-                    app:labelColor="@drawable/gray2_to_white_text"
-                    app:labelSize="12sp"
+                    app:labelColor="@drawable/gray3_to_white_text"
+                    app:labelSize="8"
                     app:labelText="@string/label_email" />
         
 		        <com.moneydesktop.finance.views.LineView
@@ -142,12 +142,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:inputType="textPassword"
+                    android:password="true"
                     android:textSize="25sp"
-                    app:labelColor="@drawable/gray2_to_white_text"
-                    app:labelSize="12sp"
+                    app:labelColor="@drawable/gray3_to_white_text"
+                    app:labelSize="8"
                     app:labelText="@string/label_password" />
-
-                <requestFocus />
         
 		        <com.moneydesktop.finance.views.LineView
 		            android:layout_width="match_parent"
@@ -201,7 +200,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@color/white" >
 
             <ImageView
@@ -209,7 +208,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp"
                 android:contentDescription="@string/description"
                 android:src="@drawable/phone_logo_small" />
@@ -219,7 +217,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/logo2"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:gravity="center"
                 android:text="@string/need_account"
                 android:textColor="@color/gray7" />
@@ -230,6 +230,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/need_account"
                 android:layout_marginTop="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:gravity="center"
                 android:lineSpacingExtra="2dp"
                 android:text="@string/nag_bank"
@@ -260,8 +262,8 @@
                     android:layout_height="50dp"
                     android:inputType="text"
                     android:textSize="25sp"
-                    app:labelColor="@drawable/gray2_to_white_text"
-                    app:labelSize="12sp"
+                    app:labelColor="@drawable/gray3_to_white_text"
+                    app:labelSize="8"
                     app:labelText="@string/signup_name" />
         
 		        <com.moneydesktop.finance.views.LineView
@@ -279,8 +281,8 @@
                     android:layout_height="50dp"
                     android:inputType="textEmailAddress"
                     android:textSize="25sp"
-                    app:labelColor="@drawable/gray2_to_white_text"
-                    app:labelSize="12sp"
+                    app:labelColor="@drawable/gray3_to_white_text"
+                    app:labelSize="8"
                     app:labelText="@string/signup_email" />
         
 		        <com.moneydesktop.finance.views.LineView
@@ -298,11 +300,9 @@
                     android:layout_height="50dp"
                     android:inputType="text"
                     android:textSize="25sp"
-                    app:labelColor="@drawable/gray2_to_white_text"
-                    app:labelSize="12sp"
+                    app:labelColor="@drawable/gray3_to_white_text"
+                    app:labelSize="8"
                     app:labelText="@string/signup_bank" />
-
-                <requestFocus />
         
 		        <com.moneydesktop.finance.views.LineView
 		            android:layout_width="match_parent"
@@ -333,7 +333,6 @@
                     style="@style/text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
                     android:paddingBottom="20dp"
                     android:paddingTop="20dp"
                     android:text="@string/button_cancel" />

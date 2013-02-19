@@ -8,8 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.util.Fonts;
 
 public class IntroHandsetFragment extends BaseFragment {
@@ -22,6 +23,11 @@ public class IntroHandsetFragment extends BaseFragment {
         this.mIntroTitle = mIntroTitle;
         this.mIntroDescription = mIntroDescription;
     }
+
+	@Override
+	public FragmentType getType() {
+		return null;
+	}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

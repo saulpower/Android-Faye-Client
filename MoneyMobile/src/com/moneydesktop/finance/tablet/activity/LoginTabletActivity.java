@@ -2,7 +2,7 @@ package com.moneydesktop.finance.tablet.activity;
 
 import android.os.Bundle;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.shared.LoginBaseActivity;
+import com.moneydesktop.finance.shared.activity.LoginBaseActivity;
 
 public class LoginTabletActivity extends LoginBaseActivity {
     @Override

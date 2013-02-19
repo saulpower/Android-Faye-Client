@@ -3,7 +3,7 @@ package com.moneydesktop.finance.handset.activity;
 import android.os.Bundle;
 
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.shared.LoginBaseActivity;
+import com.moneydesktop.finance.shared.activity.LoginBaseActivity;
 
 public class LoginHandsetActivity extends LoginBaseActivity {
     @Override

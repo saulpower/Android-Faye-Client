@@ -1,5 +1,9 @@
 package com.moneydesktop.finance.database;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import de.greenrobot.dao.Property;
 
 public class QueryProperty {
@@ -14,6 +18,7 @@ public class QueryProperty {
     private String mComparator;
     private String mConnector;
     private boolean mGroup = false;
+    private List<String> mArgs = new ArrayList<String>();
     
     public QueryProperty(String tablename, Property field, Property foreignKey) {
         mTablename = tablename;
@@ -32,6 +37,14 @@ public class QueryProperty {
         mField = field;
     }
     
+    public void setSelectionArg(String... args) {
+    	mArgs.clear();
+    	Collections.addAll(mArgs, args);
+    }
+    
+    public List<String> getSelectionArgs() {
+    	return mArgs;
+    }
 
     public String getTablename() {
         return mTablename;

@@ -3,12 +3,11 @@ package com.moneydesktop.finance.views;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -27,15 +26,16 @@ public class LabelEditText extends EditText {
     
     private float mPaddingRight;
     
-    private Paint mLabelPaint;
+    private Paint mLabelPaint, mCancelPaint;
     private ColorStateList mLabelColors;
+    private Rect mCancelBounds = new Rect();
     
-    private String mText = "";
+    private String mText = "", mCancel;
     private float mLabelHeight = 0;
     private float mTextHeight = 0;
-    private Bitmap mClearButton, mClearButtonPressed;
+    private int mOrgRightPadding = 0;
     
-    private boolean mIsPressed;
+    private boolean mIsPressed, mCancelShowing = false;
 
     public LabelEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -46,7 +46,7 @@ public class LabelEditText extends EditText {
     
     @Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        
+    	
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
         
@@ -54,6 +54,7 @@ public class LabelEditText extends EditText {
         
         if (MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY) {
             adjustment = (int) (mLabelHeight * 1.5f);
+            adjustment += mTextHeight;
         }
         
         setMeasuredDimension(width, height + adjustment);
@@ -113,30 +114,41 @@ public class LabelEditText extends EditText {
         mLabelPaint.setTextSize(UiUtils.getScaledPixels(getContext(), 10));
     }
 
-    private void init(AttributeSet attrs) {
+    private void setupCancelButton() {
+    	
+    	mCancel = getContext().getString(R.string.wingding_cancel);
+    	
+        mCancelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mCancelPaint.setTypeface(Fonts.getFont(Fonts.WINGDINGS));
+        mCancelPaint.setTextSize(UiUtils.getScaledPixels(getContext(), 30));
+        mCancelPaint.setColor(Color.BLACK);
+        mCancelPaint.setAlpha(100);
+        
+        mCancelPaint.getTextBounds(mCancel, 0, mCancel.length(), mCancelBounds);
+    }
 
+    private void init(AttributeSet attrs) {
+        
         makeLabelPaint();
+        setupCancelButton();
         
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.LabelEditText);
         
-        setLabelText(a.getString(R.styleable.LabelEditText_labelText));
+        mText = a.getString(R.styleable.LabelEditText_labelText);
         setLabelTextColors(a.getColorStateList(R.styleable.LabelEditText_labelColor));
-        setLabelSize(a.getDimension(R.styleable.LabelEditText_labelSize, 10.0f));
-        Resources res = getResources();
-        mClearButton = BitmapFactory.decodeResource(res, R.drawable.clear_button);
-        mClearButtonPressed = BitmapFactory.decodeResource(res, R.drawable.clear_button_pressed);
+        setLabelSize(a.getFloat(R.styleable.LabelEditText_labelSize, 10.0f));
         
         a.recycle();
+        
+        mOrgRightPadding = getPaddingRight();
         
         setGravity(Gravity.TOP);
     }
     
     private void adjustPadding() {
 
-        int paddingRight = (int) (mPaddingRight * 1.3);
-        int paddingTop = (int) mLabelHeight;
-        
-        paddingTop += (int) (((getMeasuredHeight() - paddingTop) / 2) - (mTextHeight / 2));
+        int paddingRight = mCancelShowing ? (int) (mPaddingRight * 1.3) : mOrgRightPadding;
+        int paddingTop = (int) (mLabelHeight * 1.25f);
         
         setPadding(getPaddingLeft(), paddingTop, paddingRight, getPaddingBottom());
         
@@ -166,6 +178,10 @@ public class LabelEditText extends EditText {
 
     public void setLabelSize(float labelSize) {
 
+		float additional = UiUtils.getScreenAdjustment();
+    	labelSize = UiUtils.getScaledPixels(getContext(), labelSize) * additional;
+    	labelSize = UiUtils.getScaledPixels(getContext(), labelSize);
+    	
         mLabelPaint.setTextSize(labelSize);
         
         updateLabelHeight();
@@ -178,6 +194,22 @@ public class LabelEditText extends EditText {
         
         updateLabelHeight();
         invalidate();
+    }
+    
+    @Override
+    protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
+    	super.onFocusChanged(focused, direction, previouslyFocusedRect);
+    	
+    	mCancelShowing = !getText().toString().equals("") && hasFocus();
+    	adjustPadding();
+    }
+    
+    @Override
+    protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
+    	super.onTextChanged(text, start, lengthBefore, lengthAfter);
+    	
+    	mCancelShowing = !getText().toString().equals("") && hasFocus();
+    	adjustPadding();
     }
 
     @Override
@@ -234,12 +266,12 @@ public class LabelEditText extends EditText {
         
         c.drawText(mText, getPaddingLeft() + getScrollX(), mLabelHeight, mLabelPaint);
         
-        if (!getText().toString().equals("") && hasFocus()) {
+        if (mCancelShowing) {
             
-            float left = getWidth() - (mClearButton.getWidth() / 2) - (mPaddingRight * 2 / 3) + getScrollX();
-            float top = (((getHeight() - getPaddingTop()) / 2) - (mClearButton.getHeight() / 2)) + getPaddingTop();
+            float left = getWidth() - (mCancelBounds.width() / 2) - (mPaddingRight * 2 / 3) + getScrollX();
+            float top = (getHeight() - getPaddingBottom()) - (mTextHeight / 2) + (mCancelBounds.height() / 2);
             
-            c.drawBitmap(mIsPressed ? mClearButtonPressed : mClearButton, left, top, null);
+            c.drawText(mCancel, left, top, mCancelPaint);
         }
     }
 

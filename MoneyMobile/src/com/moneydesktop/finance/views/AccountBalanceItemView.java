@@ -82,28 +82,28 @@ public class AccountBalanceItemView extends LinearLayout {
         }
         else {
             mLayout.setBackgroundColor(Color.WHITE);
-            mTextIcon.setTextColor(getContext().getResources().getColor(R.color.gray3));
-            mAccountAmount.setTextColor(getContext().getResources().getColor(R.color.gray7));
+            mTextIcon.setTextColor(getContext().getResources().getColor(R.color.gray2));
+            mAccountAmount.setTextColor(getContext().getResources().getColor(R.color.gray4));
         }
-        mAccountType.setTextColor(getContext().getResources().getColor(R.color.gray7));
+        mAccountType.setTextColor(getContext().getResources().getColor(R.color.gray4));
         mAccountStatus.setTextColor(getContext().getResources().getColor(R.color.gray3));
         initFonts();
     }
 
     private void displayDebt() {
-        mIsDebt = new Boolean(true);
-        mLayout.setBackgroundColor(getContext().getResources().getColor(R.color.gray1));
-        mTextIcon.setTextColor(getContext().getResources().getColor(R.color.gray7));
+        mIsDebt = Boolean.valueOf(true);
+        mLayout.setBackgroundColor(getContext().getResources().getColor(R.color.gray0));
+        mTextIcon.setTextColor(getContext().getResources().getColor(R.color.gray3));
         mAccountAmount.setTextColor(getContext().getResources().getColor(R.color.debts));
         invalidate();
 
     }
 
     private void initFonts() {
-        Fonts.applyGlyphFont(mTextIcon, 20);
-        Fonts.applyPrimarySemiBoldFont(mAccountType, 12);
-        Fonts.applyPrimaryBoldFont(mAccountAmount, 12);
-        Fonts.applySecondaryItalicFont(mAccountStatus, 10);
+        Fonts.applyGlyphFont(mTextIcon, 14);
+        Fonts.applyPrimarySemiBoldFont(mAccountType, 10);
+        Fonts.applyPrimaryBoldFont(mAccountAmount, 10);
+        Fonts.applySecondaryItalicFont(mAccountStatus, 8);
     }
 
 }

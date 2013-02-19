@@ -1,169 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"    >
-  <RelativeLayout 
+    android:gravity="center" >
+
+    <RelativeLayout
+        android:id="@+id/root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="20dp">
-    	<LinearLayout
-    	    android:id="@+id/account_summary_fragment_handset_view" 
-    	    android:layout_width="match_parent"
-    		android:layout_height="match_parent"
-   			android:orientation="vertical" 
-    		android:background="@color/white">
-		    <TextView
-		        android:id="@+id/label_balance_view"
-		        android:layout_width="wrap_content"
-		        android:layout_height="0dp"
-		        android:layout_weight=".5"
-		        android:gravity="center_vertical"
-		        android:layout_marginLeft="5dp"
-		        android:src="@string/label_balances"
-		        android:textColor="@color/gray5"/>
-		     <com.moneydesktop.finance.views.LineView
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3dp"
-			    app:isVertical="false" />
-		    <com.moneydesktop.finance.views.AccountBalanceItemView
-		        android:id="@+id/account_balance_cash"
-		        android:layout_width="match_parent"
-		        android:layout_height="0dp"
-				android:layout_weight="1"
-		        app:textIcon="@string/icon_cash"
-		        app:isDebt="false"
-		        app:accountType="@string/at_cash"
-		        />
-		     <com.moneydesktop.finance.views.LineView
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3dp"
-			    app:isVertical="false" />    
-		     <com.moneydesktop.finance.views.AccountBalanceItemView
-		        android:id="@+id/account_balance_checking"
-		        android:layout_width="match_parent"
-		        android:layout_height="0dp"
-				android:layout_weight="1"
-		        app:textIcon="@string/icon_checking"
-		        app:isDebt="false"
-		        app:accountType="@string/at_checking"
-		        />
-		     <com.moneydesktop.finance.views.LineView
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3dp"
-			    app:isVertical="false" />     
-		     <com.moneydesktop.finance.views.AccountBalanceItemView
-		        android:id="@+id/account_balance_inv"
-		        android:layout_width="match_parent"
-		        android:layout_height="0dp"
-				android:layout_weight="1"
-		        app:textIcon="@string/icon_inv"
-		        app:isDebt="false"
-		        app:accountType="@string/at_inv"
-		        />
-		     <com.moneydesktop.finance.views.LineView
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3dp"
-			    app:isVertical="false" />     
-		     <com.moneydesktop.finance.views.AccountBalanceItemView
-		        android:id="@+id/account_balance_prop"
-		        android:layout_width="match_parent"
-		        android:layout_height="0dp"
-				android:layout_weight="1"
-		        app:textIcon="@string/icon_prop"
-		        app:isDebt="false"
-		        app:accountType="@string/at_prop"
-		        />
-		     <com.moneydesktop.finance.views.LineView
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3dp"
-			    app:isVertical="false" />          
-		    <com.moneydesktop.finance.views.AccountBalanceItemView
-		        android:id="@+id/account_balance_saving"
-		        android:layout_width="match_parent"
-		        android:layout_height="0dp"
-				android:layout_weight="1"
-		        app:textIcon="@string/icon_saving"
-		        app:isDebt="false"
-		        app:accountType="@string/at_saving"
-		        />
-		     <com.moneydesktop.finance.views.LineView
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3dp"
-			    app:isVertical="false" />          
-		    <com.moneydesktop.finance.views.AccountBalanceItemView
-		        android:id="@+id/account_balance_cc"
-		        android:layout_width="match_parent"
-		        android:layout_height="0dp"
-				android:layout_weight="1"
-		        app:textIcon="@string/icon_cc"
-		        app:isDebt="true"
-		        app:accountType="@string/at_cc"
-		        />
-		     <com.moneydesktop.finance.views.LineView
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3dp"
-			    app:isVertical="false" />
-		     <com.moneydesktop.finance.views.AccountBalanceItemView
-		        android:id="@+id/account_balance_loc"
-		        android:layout_width="match_parent"
-		        android:layout_height="0dp"
-				android:layout_weight="1"
-		        app:textIcon="@string/icon_loc"
-		        app:isDebt="true"
-		        app:accountType="@string/at_loc"
-		        />
-		     <com.moneydesktop.finance.views.LineView
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3dp"
-			    app:isVertical="false" />
-		     <com.moneydesktop.finance.views.AccountBalanceItemView
-		        android:id="@+id/account_balance_loans"
-		        android:layout_width="match_parent"
-		        android:layout_height="0dp"
-		        android:layout_weight="1"
-		        app:textIcon="@string/icon_loans"
-		        app:isDebt="true"
-		        app:accountType="@string/at_loans"
-		        />
-		      <com.moneydesktop.finance.views.LineView
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3dp"
-			    app:isVertical="false" />
-		      <com.moneydesktop.finance.views.AccountBalanceItemView
-		        android:id="@+id/account_balance_mort"
-		        android:layout_width="match_parent"
-		        android:layout_height="0dp"
-		        android:layout_weight="1"
-		        app:textIcon="@string/icon_mort"
-		        app:isDebt="true"
-		        app:accountType="@string/at_mort"
-		        />
-		      <com.moneydesktop.finance.views.LineView
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        app:lineColor="@color/gray5"
-			    app:lineStrokeWidth="3dp"
-			    app:isVertical="false" />
-		      </LinearLayout>
-      </RelativeLayout>
-</LinearLayout>
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:id="@+id/account_summary_fragment_handset_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/label_balance_view"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="2dp"
+                android:layout_weight=".5"
+                android:gravity="bottom|left"
+                android:src="@string/label_balances"
+                android:textColor="@color/gray4" />
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:isVertical="false"
+                app:lineColor="@color/gray4"
+                app:lineStrokeWidth="2dp" />
+
+            <com.moneydesktop.finance.views.AccountBalanceItemView
+                android:id="@+id/account_balance_cash"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:accountType="@string/at_cash"
+                app:isDebt="false"
+                app:textIcon="@string/icon_cash" />
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:isVertical="false"
+                app:lineColor="@color/gray4"
+                app:lineStrokeWidth="2dp" />
+
+            <com.moneydesktop.finance.views.AccountBalanceItemView
+                android:id="@+id/account_balance_checking"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:accountType="@string/at_checking"
+                app:isDebt="false"
+                app:textIcon="@string/icon_checking" />
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:isVertical="false"
+                app:lineColor="@color/gray4"
+                app:lineStrokeWidth="2dp" />
+
+            <com.moneydesktop.finance.views.AccountBalanceItemView
+                android:id="@+id/account_balance_inv"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:accountType="@string/at_inv"
+                app:isDebt="false"
+                app:textIcon="@string/icon_inv" />
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:isVertical="false"
+                app:lineColor="@color/gray4"
+                app:lineStrokeWidth="2dp" />
+
+            <com.moneydesktop.finance.views.AccountBalanceItemView
+                android:id="@+id/account_balance_prop"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:accountType="@string/at_prop"
+                app:isDebt="false"
+                app:textIcon="@string/icon_prop" />
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:isVertical="false"
+                app:lineColor="@color/gray4"
+                app:lineStrokeWidth="2dp" />
+
+            <com.moneydesktop.finance.views.AccountBalanceItemView
+                android:id="@+id/account_balance_saving"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:accountType="@string/at_saving"
+                app:isDebt="false"
+                app:textIcon="@string/icon_saving" />
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:isVertical="false"
+                app:lineColor="@color/gray4"
+                app:lineStrokeWidth="2dp" />
+
+            <com.moneydesktop.finance.views.AccountBalanceItemView
+                android:id="@+id/account_balance_cc"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:accountType="@string/at_cc"
+                app:isDebt="true"
+                app:textIcon="@string/icon_cc" />
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:isVertical="false"
+                app:lineColor="@color/gray4"
+                app:lineStrokeWidth="2dp" />
+
+            <com.moneydesktop.finance.views.AccountBalanceItemView
+                android:id="@+id/account_balance_loc"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:accountType="@string/at_loc"
+                app:isDebt="true"
+                app:textIcon="@string/icon_loc" />
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:isVertical="false"
+                app:lineColor="@color/gray4"
+                app:lineStrokeWidth="2dp" />
+
+            <com.moneydesktop.finance.views.AccountBalanceItemView
+                android:id="@+id/account_balance_loans"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:accountType="@string/at_loans"
+                app:isDebt="true"
+                app:textIcon="@string/icon_loans" />
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:isVertical="false"
+                app:lineColor="@color/gray4"
+                app:lineStrokeWidth="2dp" />
+
+            <com.moneydesktop.finance.views.AccountBalanceItemView
+                android:id="@+id/account_balance_mort"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:accountType="@string/at_mort"
+                app:isDebt="true"
+                app:textIcon="@string/icon_mort" />
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:isVertical="false"
+                app:lineColor="@color/gray4"
+                app:lineStrokeWidth="2dp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

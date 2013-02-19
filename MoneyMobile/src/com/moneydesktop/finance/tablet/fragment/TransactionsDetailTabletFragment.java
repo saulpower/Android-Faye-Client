@@ -22,9 +22,8 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Transactions;
-import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
-import com.moneydesktop.finance.shared.DashboardBaseActivity;
-import com.moneydesktop.finance.shared.TransactionDetailBaseFragment;
+import com.moneydesktop.finance.shared.activity.DashboardBaseActivity;
+import com.moneydesktop.finance.shared.fragment.TransactionDetailBaseFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
 import com.moneydesktop.finance.util.EmailUtils;
@@ -32,8 +31,6 @@ import com.moneydesktop.finance.util.FileIO;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.LineView;
-
-import de.greenrobot.event.EventBus;
 
 @SuppressLint("NewApi")
 public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragment {
@@ -68,20 +65,11 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
         
         return frag;
     }
-    
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        
-        EventBus.getDefault().register(this);
-    }
-    
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        
-        EventBus.getDefault().unregister(this);
-    }
+
+	@Override
+	public FragmentType getType() {
+		return null;
+	}
     
     @Override
     public void onResume() {
@@ -320,15 +308,15 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
     
     private void showCategoryPopup(View view) {
         
-        showPopup(FragmentType.POPUP_CATEGORIES, Constant.CODE_CATEGORY_DETAIL, view);
+        showPopup(FragmentType.POPUP_CATEGORIES, Constant.CODE_CATEGORY_DETAIL, view, mTransaction.getId());
     }
     
     private void showTagPopup(View view) {
         
-        showPopup(FragmentType.POPUP_TAGS, Constant.CODE_TAG_DETAIL, view);
+        showPopup(FragmentType.POPUP_TAGS, Constant.CODE_TAG_DETAIL, view, mTransaction.getBusinessObjectId());
     }
     
-    private void showPopup(FragmentType type, int requestCode, View view) {
+    private void showPopup(FragmentType type, int requestCode, View view, long id) {
         
         int[] catLocation = new int[2];
         view.getLocationOnScreen(catLocation);
@@ -340,11 +328,9 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
         intent.putExtra(Constant.EXTRA_POSITION_X, adjustedX);
         intent.putExtra(Constant.EXTRA_POSITION_Y, adjustedY);
         intent.putExtra(Constant.EXTRA_FRAGMENT, type);
-        intent.putExtra(Constant.EXTRA_SOURCE_CODE, requestCode);
-        intent.putExtra(Constant.EXTRA_BOB_ID, mTransaction.getBusinessObjectId());
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra(Constant.EXTRA_ID, id);
         
-        startActivityForResult(intent, requestCode);
+        startActivity(intent);
     }
     
     public void updateTransaction(Transactions transaction) {
@@ -389,19 +375,12 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
         
         // labels
         mPayee.setLabelFont(Fonts.getFont(Fonts.PRIMARY_BOLD));
-        mPayee.setLabelSize(UiUtils.getScaledPixels(mActivity, 15));
         mMemo.setLabelFont(Fonts.getFont(Fonts.PRIMARY_BOLD));
-        mMemo.setLabelSize(UiUtils.getScaledPixels(mActivity, 15));
         mDate.setLabelFont(Fonts.getFont(Fonts.PRIMARY_BOLD));
-        mDate.setLabelSize(UiUtils.getScaledPixels(mActivity, 15));
         mTags.setLabelFont(Fonts.getFont(Fonts.PRIMARY_BOLD));
-        mTags.setLabelSize(UiUtils.getScaledPixels(mActivity, 15));
         mAmount.setLabelFont(Fonts.getFont(Fonts.PRIMARY_BOLD));
-        mAmount.setLabelSize(UiUtils.getScaledPixels(mActivity, 15));
         mCategory.setLabelFont(Fonts.getFont(Fonts.PRIMARY_BOLD));
-        mCategory.setLabelSize(UiUtils.getScaledPixels(mActivity, 15));
         mStatement.setLabelFont(Fonts.getFont(Fonts.PRIMARY_BOLD));
-        mStatement.setLabelSize(UiUtils.getScaledPixels(mActivity, 15));
     }
 
     @Override
@@ -416,9 +395,9 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
         return false;
     }
     
-    public void onEvent(DatabaseSaveEvent event) {
-
-        configureTransactionView();
+    @Override
+    public String getFragmentTitle() {
+        return null;
     }
     
     public interface onBackPressedListener {

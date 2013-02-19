@@ -1,13 +1,12 @@
 package com.moneydesktop.finance.views;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.view.WindowManager;
 
-@TargetApi(11)
+import com.moneydesktop.finance.util.UiUtils;
+
 public class GrowViewPager extends ViewPager {
 	
 	public final String TAG = this.getClass().getSimpleName();
@@ -35,12 +34,15 @@ public class GrowViewPager extends ViewPager {
     private void init() {
         
     	// Get screen size to set margin width accordingly
-        final DisplayMetrics metrics = new DisplayMetrics();
-        final WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-        windowManager.getDefaultDisplay().getMetrics(metrics);
+        final DisplayMetrics metrics = UiUtils.getDisplayMetrics(getContext());
         
-        int margin = (int) (MARGIN_SIZE * metrics.widthPixels);
-        setPageMargin(margin);
+        float margin = MARGIN_SIZE * metrics.widthPixels;
+        		
+        if (android.os.Build.VERSION.SDK_INT < 11) {
+        	margin = UiUtils.getDynamicPixels(getContext(), -45);
+        }
+        
+        setPageMargin((int) margin);
         
         // Keep 3 pages loaded up at all times
         setOffscreenPageLimit(3);

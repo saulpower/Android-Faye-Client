@@ -5,9 +5,7 @@ import java.util.List;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -20,10 +18,11 @@ import android.widget.Toast;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.shared.FilterViewHolder;
-import com.moneydesktop.finance.tablet.adapter.FilterTabletAdapter;
+import com.moneydesktop.finance.shared.adapter.FilterAdapter;
 import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.UltimateListView;
 
@@ -35,7 +34,7 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
 	public final String TAG = this.getClass().getSimpleName();
 	
     private UltimateListView mFiltersList;
-    private FilterTabletAdapter mAdapter;
+    private FilterAdapter mAdapter;
 	
 	public static TransactionsTabletFragment newInstance() {
 			
@@ -45,6 +44,11 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
         fragment.setArguments(args);
         
         return fragment;
+	}
+
+	@Override
+	public FragmentType getType() {
+		return FragmentType.TRANSACTIONS;
 	}
 	
 	@Override
@@ -87,16 +91,6 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
     }
 	
 	@Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    super.onActivityResult(requestCode, resultCode, data);
-	    
-	    Fragment frag = getChildFragmentManager().findFragmentById(R.id.fragment);
-	    if (frag != null) {
-	        frag.onActivityResult(requestCode, resultCode, data);
-	    }
-	}
-	
-	@Override
 	public void setupView() {
 	    super.setupView();
 	    
@@ -132,11 +126,11 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
                 }
             }
             
-            Pair<String, List<FilterViewHolder>> temp = new Pair<String, List<FilterViewHolder>>(getString(Constant.FILTERS[j]), subItems);
+            Pair<String, List<FilterViewHolder>> temp = new Pair<String, List<FilterViewHolder>>(getString(Constant.FILTERS[j]).toUpperCase(), subItems);
             data.add(temp);
         }
         
-        mAdapter = new FilterTabletAdapter(mActivity, mFiltersList, data);
+        mAdapter = new FilterAdapter(mActivity, mFiltersList, data);
         mAdapter.setAutomaticSectionLoading(true);
         mFiltersList.setAdapter(mAdapter);
         mFiltersList.setOnChildClickListener(this);

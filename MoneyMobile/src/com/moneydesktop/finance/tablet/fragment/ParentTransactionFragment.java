@@ -7,11 +7,11 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.shared.TransactionDetailController;
 import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
+import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment.onBackPressedListener;
 
 @TargetApi(11)

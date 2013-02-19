@@ -142,5 +142,9 @@
         <item name="android:colorBackground">@color/white</item>
         <item name="android:textColor">@color/gray7</item>
     </style>
+    
+    <style name="Theme.Start" parent="android:Theme.NoTitleBar">
+        <item name="android:windowBackground">@drawable/wood_background</item>
+    </style>
 
 </resources>
