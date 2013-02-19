@@ -11,6 +11,7 @@
 	    android:layout_height="wrap_content"
 	    android:layout_marginLeft="5dp"
 	    android:layout_centerVertical="true"
+	    android:paddingBottom="7dp"
 	    android:text="@string/nav_icon_menu_left"
 	    android:textColor="@color/white" />
     
@@ -29,6 +30,7 @@
 	    android:layout_alignParentRight="true"
 	    android:layout_marginRight="5dp"
 	    android:layout_centerVertical="true"
+	    android:paddingBottom="7dp"
 	    android:text="@string/nav_icon_menu_right"
 	    android:textColor="@color/white" />
     

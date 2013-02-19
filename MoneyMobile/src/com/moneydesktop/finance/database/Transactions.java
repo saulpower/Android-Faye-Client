@@ -775,6 +775,9 @@ public class Transactions extends BusinessObject  {
             }
             cursor.moveToNext();
         }
+        
+        cursor.close();
+        
         return "S";
     }
 
@@ -813,6 +816,9 @@ public class Transactions extends BusinessObject  {
             retVal.add(d);
             cursor.moveToNext();
         }
+        
+        cursor.close();
+        
         return retVal;
     }
     public static List<Double[]> getQuarterlyExpenseTotals(Date end) {
@@ -852,6 +858,9 @@ public class Transactions extends BusinessObject  {
             retVal.add(d);
             cursor.moveToNext();
         }
+        
+        cursor.close();
+        
         return retVal;
     }
     public static List<Double[]> getMonthlyExpenseTotals(Date end) {
@@ -890,6 +899,9 @@ public class Transactions extends BusinessObject  {
             retVal.add(d);
             cursor.moveToNext();
         }
+        
+        cursor.close();
+        
         return retVal;
     }
     public static List<Double[]> getYearlyExpenseTotals(Date end) {
@@ -929,6 +941,9 @@ public class Transactions extends BusinessObject  {
             retVal.add(d);
             cursor.moveToNext();
         }
+        
+        cursor.close();
+        
         return retVal;
     }
     public static Double getExpensesTotal() {
@@ -953,6 +968,9 @@ public class Transactions extends BusinessObject  {
             }
             cursor.moveToNext();
         }
+        
+        cursor.close();
+        
         return retVal;
     }
 
@@ -978,6 +996,9 @@ public class Transactions extends BusinessObject  {
             }
             cursor.moveToNext();
         }
+        
+        cursor.close();
+        
         return retVal;
     }
 
@@ -1003,6 +1024,9 @@ public class Transactions extends BusinessObject  {
             }
             cursor.moveToNext();
         }
+        
+        cursor.close();
+        
         return retVal;
     }
 
@@ -1019,8 +1043,11 @@ public class Transactions extends BusinessObject  {
 
         cursor.moveToFirst();
 
-        return cursor.getInt(0);
+        int result = cursor.getInt(0);
 
+        cursor.close();
+        
+        return result;
     }
 
     /**
@@ -1054,6 +1081,8 @@ public class Transactions extends BusinessObject  {
     		
     		cursor.moveToNext();
     	}
+        
+        cursor.close();
     	
     	return list;
     }

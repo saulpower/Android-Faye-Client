@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
     <issue id="DefaultLocale" severity="ignore" />
+    <issue id="NewApi">
+        <ignore path="src/android/util/Base64.java" />
+        <ignore path="src/com/moneydesktop/finance/crypto/StringEncrypter.java" />
+    </issue>
 </lint>
