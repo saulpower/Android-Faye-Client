@@ -1,9 +1,5 @@
 package com.moneydesktop.finance.views;
 
-import android.animation.Animator;
-import android.animation.Animator.AnimatorListener;
-import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -20,10 +16,12 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.util.UiUtils;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.Animator.AnimatorListener;
+import com.nineoldandroids.animation.ObjectAnimator;
 
 import de.greenrobot.event.EventBus;
 
-@SuppressLint("NewApi")
 public class NavBarView extends TextView {
     
     public final String TAG = this.getClass().getSimpleName();
@@ -41,7 +39,7 @@ public class NavBarView extends TextView {
 		return mRotation;
 	}
 
-	public void setRotation(float mRotation) {
+	public void setRotate(float mRotation) {
 		this.mRotation = mRotation;
 		invalidate();
 	}
@@ -82,7 +80,7 @@ public class NavBarView extends TextView {
 		
 		if (!mIsRefresh) return;
 		
-		mRotate = ObjectAnimator.ofFloat(this, "rotation", 360, 0);
+		mRotate = ObjectAnimator.ofFloat(this, "rotate", 360, 0);
 		mRotate.setDuration(2000);
 		mRotate.setInterpolator(new LinearInterpolator());
 		mRotate.addListener(new AnimatorListener() {
@@ -100,7 +98,7 @@ public class NavBarView extends TextView {
 			
 			@Override
 			public void onAnimationCancel(Animator animation) {
-				setRotation(0);
+				setRotate(0);
 			}
 		});
 		
@@ -121,7 +119,7 @@ public class NavBarView extends TextView {
 		if (!mIsRefresh) return;
 		
 		mRotate.cancel();
-		setRotation(0);
+		setRotate(0);
 	}
 	
 	public void onEvent(final SyncEvent event) {

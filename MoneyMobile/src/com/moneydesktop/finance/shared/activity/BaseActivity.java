@@ -8,7 +8,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
@@ -83,7 +82,6 @@ abstract public class BaseActivity extends FragmentActivity {
 	public static boolean sInForeground = false;
 	
 	public void setFragmentCount(int count) {
-		Log.i(TAG, "frag count: " + count);
 		mFragmentCount = count;
 	}
 	

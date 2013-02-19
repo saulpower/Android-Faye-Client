@@ -1,10 +1,14 @@
 package com.moneydesktop.finance.util;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
 
@@ -87,31 +91,46 @@ public class MacUtil {
 	 *            eth0, wlan0 or NULL=use first interface
 	 * @return mac address or empty string
 	 */
+	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	public static String getMACAddress() {
+		
+		// Hardware address only available in API 10
+		if (android.os.Build.VERSION.SDK_INT < 10) {
+			SecureRandom random = new SecureRandom();
+			return new BigInteger(130, random).toString(32).toUpperCase();
+		}
 		
 		String interfaceName = "eth0";
 		
 		try {
-			List<NetworkInterface> interfaces = Collections
-					.list(NetworkInterface.getNetworkInterfaces());
+			
+			List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+			
 			for (NetworkInterface intf : interfaces) {
+				
 				if (interfaceName != null) {
-					if (!intf.getName().equalsIgnoreCase(interfaceName))
-						continue;
+					if (!intf.getName().equalsIgnoreCase(interfaceName)) continue;
 				}
+				
 				byte[] mac = intf.getHardwareAddress();
-				if (mac == null)
-					return "";
+				
+				if (mac == null) return "";
+				
 				StringBuilder buf = new StringBuilder();
-				for (int idx = 0; idx < mac.length; idx++)
+				
+				for (int idx = 0; idx < mac.length; idx++) {
 					buf.append(String.format("%02X:", mac[idx]));
-				if (buf.length() > 0)
-					buf.deleteCharAt(buf.length() - 1);
+				}
+				
+				if (buf.length() > 0) buf.deleteCharAt(buf.length() - 1);
+				
 				return buf.toString();
 			}
-		} catch (Exception ex) {
-		} // for now eat exceptions
+			
+		} catch (Exception ex) {}
+		
 		return "";
+		
 		/*
 		 * try { // this is so Linux hack return
 		 * loadFileAsString("/sys/class/net/" +interfaceName +
@@ -143,10 +162,8 @@ public class MacUtil {
 								return sAddr;
 						} else {
 							if (!isIPv4) {
-								int delim = sAddr.indexOf('%'); // drop ip6 port
-																// suffix
-								return delim < 0 ? sAddr : sAddr.substring(0,
-										delim);
+								int delim = sAddr.indexOf('%'); // drop ip6 port suffix
+								return delim < 0 ? sAddr : sAddr.substring(0, delim);
 							}
 						}
 					}

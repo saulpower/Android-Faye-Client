@@ -21,7 +21,7 @@ import de.greenrobot.event.EventBus;
 
 public class SettingsHandsetFragment extends BaseFragment {
     
-	private TextView mLockIcon, mFeedbackIcon, mLogoutIcon, mLogoutLabel;
+	private TextView mLockIcon, mFeedbackIcon, mLogoutIcon, mLogoutLabel, mLockLabel, mFeedbackLabel;
 	private LinearLayout mLock, mFeedback, mLogout;
 	
 	public static SettingsHandsetFragment getInstance() {
@@ -67,8 +67,10 @@ public class SettingsHandsetFragment extends BaseFragment {
 		
 		mLock = (LinearLayout) mRoot.findViewById(R.id.lock);
 		mLockIcon = (TextView) mRoot.findViewById(R.id.lock_icon);
+		mLockLabel = (TextView) mRoot.findViewById(R.id.lock_label);
 		mFeedback = (LinearLayout) mRoot.findViewById(R.id.feedback);
 		mFeedbackIcon = (TextView) mRoot.findViewById(R.id.feedback_icon);
+		mFeedbackLabel = (TextView) mRoot.findViewById(R.id.feedback_label);
 		mLogout = (LinearLayout) mRoot.findViewById(R.id.logout);
 		mLogoutIcon = (TextView) mRoot.findViewById(R.id.logout_icon);
 		mLogoutLabel = (TextView) mRoot.findViewById(R.id.logout_label);
@@ -79,6 +81,10 @@ public class SettingsHandsetFragment extends BaseFragment {
         Fonts.applyGlyphFont(mLockIcon, 35);
         Fonts.applyGlyphFont(mFeedbackIcon, 35);
         Fonts.applyGlyphFont(mLogoutIcon, 35);
+        
+        Fonts.applyPrimaryFont(mLogoutLabel, 9);
+        Fonts.applyPrimaryFont(mLockLabel, 9);
+        Fonts.applyPrimaryFont(mFeedbackLabel, 9);
         
         String logoutText = Preferences.getBoolean(Preferences.KEY_IS_DEMO_MODE, false) ? getString(R.string.label_exit) : getString(R.string.label_unlink);
         mLogoutLabel.setText(logoutText.toUpperCase());
