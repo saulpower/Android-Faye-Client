@@ -241,9 +241,7 @@
     <string name="panel_title">MY INSTITUTIONS</string>
     <string name="plus">+</string>
     <string name="save">Save</string>
-    <string name="plus">+</string>
     <string name="quarter">QUARTER</string>
-    <string name="setup_url">http://embed.moneydesktop.com/setup-instructions.html</string>
     <string name="setting_feedback_text">Tell us what we\'re doing wrong, or right. Don\'t hold back we can take it.</string>
     <string name="setting_feedback_title">Feedback</string>
     <string name="setting_lock_text">Enter a four-digit code to password protect your data.</string>

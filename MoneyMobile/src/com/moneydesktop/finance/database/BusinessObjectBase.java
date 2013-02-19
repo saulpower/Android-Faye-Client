@@ -207,6 +207,8 @@ public class BusinessObjectBase extends BusinessObject  {
 	        
 	        cursor.moveToFirst();
 	        idCount = cursor.getLong(0) + 1;
+	        
+	        cursor.close();
 		}
 		
 		return idCount++;

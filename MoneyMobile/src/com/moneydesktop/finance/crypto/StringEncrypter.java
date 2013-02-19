@@ -1,6 +1,5 @@
 package com.moneydesktop.finance.crypto;
 // CIPHER / GENERATORS
-import android.util.Base64;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
@@ -20,6 +19,8 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 // KEY SPECIFICATIONS
 // EXCEPTIONS
+
+import com.moneydesktop.finance.util.Base64;
 
 public class StringEncrypter {
 

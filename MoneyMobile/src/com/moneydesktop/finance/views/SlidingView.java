@@ -1,27 +1,17 @@
 package com.moneydesktop.finance.views;
 
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
-import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.SlideFrom;
 import com.moneydesktop.finance.util.UiUtils;
-
-import java.util.List;
+import com.nineoldandroids.animation.ObjectAnimator;
 
 public class SlidingView extends FrameLayout{
 
@@ -48,7 +38,7 @@ public class SlidingView extends FrameLayout{
         mParentView = parentView;
         mSelectedView = selectedView;
         
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         infaltedView.setLayoutParams(params);
         
         mScreenHeight = UiUtils.getScreenHeight((Activity)mContext);

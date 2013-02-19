@@ -91,8 +91,8 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
         
         // Set dialog window to fill entire screen
         LayoutParams params = getWindow().getAttributes();
-        params.width = LayoutParams.FILL_PARENT;
-        params.height = LayoutParams.FILL_PARENT;
+        params.width = LayoutParams.MATCH_PARENT;
+        params.height = LayoutParams.MATCH_PARENT;
         getWindow().setAttributes(params);
         
         setupAnimations();
