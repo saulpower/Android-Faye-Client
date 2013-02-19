@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.json.JSONObject;
+
+import android.R.bool;
+
 import com.moneydesktop.finance.data.Enums.LockType;
 import com.moneydesktop.finance.data.Enums.NavDirection;
 import com.moneydesktop.finance.database.AccountType;
@@ -32,6 +36,63 @@ public class EventMessage {
     }
     
 	public class AuthEvent extends EventMessage {}
+	
+	public class MfaQuestionsRecieved extends EventMessage {	
+		private List<String> mList;
+		
+		public MfaQuestionsRecieved(List<String> mQuestionLabels) {
+			this.mList = mQuestionLabels;
+		}
+		
+		public List<String> getQuestions() {
+			return mList;
+		}
+	}
+	
+	public class SaveInstitutionFinished extends EventMessage {
+		private JSONObject object;
+	
+		public SaveInstitutionFinished(JSONObject jsonResponse) {
+			this.object = jsonResponse;
+		}
+		
+		public JSONObject getJsonResponse() {
+			return object;
+		}
+	}
+	
+	
+	public class UpdateCredentialsFinished extends EventMessage {
+		private JSONObject object;
+	
+		public UpdateCredentialsFinished(JSONObject jsonResponse) {
+			this.object = jsonResponse;
+		}
+		
+		public JSONObject getJsonResponse() {
+			return object;
+		}
+	}
+	
+	public class GetLogonCredentialsFinished extends EventMessage {
+		private boolean isAddedForFirstTime = false;
+		private List<String> logonTxtLabels;
+		
+	       public GetLogonCredentialsFinished(boolean isAccountAddedForFirstTime, List<String> loginLabels) {
+	           this.isAddedForFirstTime = isAccountAddedForFirstTime;
+	           this.logonTxtLabels = loginLabels;
+	       }
+	       
+	       public boolean isAddedForFistTime() {
+	           return isAddedForFirstTime;
+	       }
+	       
+	       public List<String> getLogonLabels() {
+	           return logonTxtLabels;
+	       }
+		
+	}
+	
 	public class BackEvent extends EventMessage {}
     public class DatabaseSaveEvent extends EventMessage {
     	

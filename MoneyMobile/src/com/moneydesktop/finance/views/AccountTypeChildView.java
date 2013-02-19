@@ -131,6 +131,7 @@ public class AccountTypeChildView extends FrameLayout {
 									intent.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.ACCOUNT_SETTINGS);
 									intent.putExtra(Constant.KEY_ACCOUNT_TYPE, account.getAccountType().getAccountTypeName());
 									intent.putExtra(Constant.KEY_ACCOUNT_NAME, account.getAccountName());
+									intent.putExtra(Constant.KEY_BANK_ACCOUNT_ID, account.getAccountId());
 							        mActivity.startActivity(intent);
 								}
 							});
@@ -139,6 +140,10 @@ public class AccountTypeChildView extends FrameLayout {
 								@Override
 								public void onClick(View v) {
 									mPopup.fadeOutTransparency();
+			                        Intent i = new Intent(mActivity, DropDownTabletActivity.class);
+		                            i.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.SHOW_HIDE_DATA);
+		                            i.putExtra(Constant.KEY_BANK_ACCOUNT_ID, account.getAccountId());
+			                        mContext.startActivity(i);
 								}
 							});
 							
@@ -242,7 +247,7 @@ public class AccountTypeChildView extends FrameLayout {
         boolean updateListDataSet = false;
         AccountType accountToBeRemoved = new AccountType();
         for (final BankAccount account : mBankAccounts) {
-            if (account.getBank().getBankName().equals(deletedBank.getBankName())) { //TODO: null pointer here
+            if (account.getBank().getBankName().equals(deletedBank.getBankName())) { //null pointer here sometimes when deleting multiple banks quickly
                 View view = mBankAccountContainer.getChildAt(iterator);
                 mBankAccountContainer.removeView(view);      
                 

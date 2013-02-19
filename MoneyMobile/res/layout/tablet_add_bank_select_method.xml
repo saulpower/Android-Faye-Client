@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+	    <ScrollView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" >
+	
+	        <LinearLayout
+	            android:id="@+id/add_bank_options_container"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginBottom="5dip"
+	            android:layout_marginLeft="3dip"
+	            android:layout_marginRight="3dip"
+	            android:orientation="vertical" >
+	
+	            <LinearLayout
+	                android:id="@+id/add_bank_automatically_container"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_marginBottom="5dip"
+	                android:layout_marginLeft="10dip"
+	                android:layout_marginRight="10dip"
+	                android:layout_marginTop="10dip"
+	                android:background="@color/white"
+	                android:orientation="vertical" >
+	
+	                <TextView
+	                    android:id="@+id/add_transactions_automatically_title"
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content"
+	                    android:layout_marginLeft="30dip"
+	                    android:layout_marginRight="30dip"
+	                    android:layout_marginTop="10dip"
+	                    android:textColor="@color/primaryColor" />
+	
+	                <TextView
+	                    android:id="@+id/add_transactions_automatically_description"
+	                    android:layout_width="match_parent"
+	                    android:layout_height="wrap_content"
+	                    android:layout_marginBottom="10dip"
+	                    android:layout_marginLeft="30dip"
+	                    android:layout_marginRight="30dip"
+	                    android:textColor="@color/gray7" />
+	            </LinearLayout>
+	
+	            <LinearLayout
+	                android:id="@+id/add_bank_manually_container"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_marginBottom="5dip"
+	                android:layout_marginLeft="10dip"
+	                android:layout_marginRight="10dip"
+	                android:layout_marginTop="5dip"
+	                android:background="@color/white"
+	                android:orientation="vertical" >
+	
+	                <TextView
+	                    android:id="@+id/add_transactions_manually_title"
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content"
+	                    android:layout_marginLeft="30dip"
+	                    android:layout_marginRight="30dip"
+	                    android:layout_marginTop="10dip"
+	                    android:textColor="@color/primaryColor" />
+	
+	                <TextView
+	                    android:id="@+id/add_transactions_manually_description"
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content"
+	                    android:layout_marginBottom="10dip"
+	                    android:layout_marginLeft="30dip"
+	                    android:layout_marginRight="30dip"
+	                    android:textColor="@color/gray7" />
+	            </LinearLayout>
+	        </LinearLayout>
+	    </ScrollView>
+    
+
+</RelativeLayout>

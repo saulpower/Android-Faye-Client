@@ -56,8 +56,10 @@ public class Constant {
     public static final String KEY_ACCOUNT_TYPE = "account_type";
     public static final String KEY_ACCOUNTTYPE = "accountType";
     public static final String KEY_ACCOUNT_NAME = "account_name";
+    public static final String KEY_ACCOUNT_TYPE_ID = "account_id";
     public static final String KEY_AMOUNT = "amount";
     public static final String KEY_ASSOCIATION_DESTROYED = "_association_destroyed";
+    public static final String KEY_BANK_ACCOUNT_ID = "bank_account_id";
     public static final String KEY_BUDGETS = "budgets";
     public static final String KEY_CATEGORIES = "categories";
     public static final String KEY_CATEGORY_GUID = "category_guid";
@@ -65,6 +67,7 @@ public class Constant {
     public static final String KEY_CREATED = "created";
     public static final String KEY_CREDENTIALS = "credentials";
     public static final String KEY_CREDIT_LIMIT = "credit_limit";
+    public static final String KEY_CUSTOM_FIELDS = "custom_fields";
     public static final String KEY_BALANCE = "balance";
     public static final String KEY_DATE = "date";
     public static final String KEY_DAY_DUE = "day_due";
@@ -96,6 +99,7 @@ public class Constant {
     public static final String KEY_IS_REIMBURSABLE = "is_reimbursable";
     public static final String KEY_IS_VOID = "is_void";
     public static final String KEY_JSON = "json";
+    public static final String KEY_LABEL = "label";
     public static final String KEY_LAST_JOB = "last_job_status";
     public static final String KEY_LAST_UPDATE = "last_update_time";
     public static final String KEY_LOGIN_TOKEN = "login_token";
