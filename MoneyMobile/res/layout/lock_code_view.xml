@@ -23,11 +23,12 @@
             android:id="@+id/field1"
             android:layout_width="45dp"
             android:layout_height="wrap_content"
-            android:tag="1"
+            android:tag="0"
             android:gravity="center"
             android:singleLine="true"
             android:nextFocusDown="@+id/field2"
             android:inputType="numberPassword"
+            android:password="true"
             android:cursorVisible="false" />
         
         <EditText
@@ -35,12 +36,13 @@
             android:layout_width="45dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:tag="2"
+            android:tag="1"
             android:gravity="center"
             android:singleLine="true"
             android:nextFocusDown="@+id/field3"
             android:nextFocusUp="@id/field1"
             android:inputType="numberPassword"
+            android:password="true"
             android:cursorVisible="false" />
         
         <EditText
@@ -48,12 +50,13 @@
             android:layout_width="45dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:tag="3"
+            android:tag="2"
             android:gravity="center"
             android:singleLine="true"
             android:nextFocusUp="@id/field2"
             android:nextFocusDown="@+id/field4"
             android:inputType="numberPassword"
+            android:password="true"
             android:cursorVisible="false" />
         
         <EditText
@@ -61,11 +64,12 @@
             android:layout_width="45dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:tag="4"
+            android:tag="3"
             android:gravity="center"
             android:singleLine="true"
             android:nextFocusUp="@id/field3"
             android:inputType="numberPassword"
+            android:password="true"
             android:cursorVisible="false" />
         
     </LinearLayout>

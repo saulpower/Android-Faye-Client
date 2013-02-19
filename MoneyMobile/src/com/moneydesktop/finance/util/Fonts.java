@@ -25,6 +25,8 @@ public class Fonts {
 	public static final String SECONDARY_BOLD = "fonts/UtopiaStd-Bold.otf";
 	public static final String SECONDARY_ITALIC = "fonts/UtopiaStd-Italic.otf";
 	public static final String GLYPH = "fonts/MoneyDesktopIcons.otf";
+	public static final String NAV_ICONS = "fonts/MDiPhoneNavIcons.otf";
+	public static final String WINGDINGS = "fonts/Wingdings2.ttf";
 	
 	public static void applyPrimaryFont(TextView view, float size) {
 		applyFont(PRIMARY, view, size);
@@ -66,6 +68,14 @@ public class Fonts {
 	
 	public static void applyGlyphFont(TextView view, float size) {
 		applyFont(GLYPH, view, size);
+	}
+	
+	public static void applyNavIconFont(TextView view, float size) {
+		applyFont(NAV_ICONS, view, size);
+	}
+	
+	public static void applyWingdingsFont(TextView view, float size) {
+		applyFont(WINGDINGS, view, size);
 	}
 	
 	private static void applyFont(String key, TextView view, float size) {

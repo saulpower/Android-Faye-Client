@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
@@ -21,10 +20,10 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.shared.fragment.CategoriesFragment;
+import com.moneydesktop.finance.shared.fragment.PopupFragment;
+import com.moneydesktop.finance.shared.fragment.TagsFragment;
 import com.moneydesktop.finance.tablet.activity.DialogBaseActivity.OnKeyboardStateChangeListener;
-import com.moneydesktop.finance.tablet.fragment.CategoryPopupTabletFragment;
-import com.moneydesktop.finance.tablet.fragment.PopupFragment;
-import com.moneydesktop.finance.tablet.fragment.TagsPopupTabletFragment;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.CaretView;
 
@@ -99,7 +98,7 @@ public class PopupTabletActivity extends DialogBaseActivity implements OnKeyboar
 
         // Initialize view and fragment
         setupView();
-        showFragment(mFragmentType);
+        showFragment(mFragmentType, false);
         
         // Post so we know when the view has been layed out
         mCaret.post(new Runnable() {
@@ -213,7 +212,7 @@ public class PopupTabletActivity extends DialogBaseActivity implements OnKeyboar
     }
 
     @Override
-    public void showFragment(FragmentType index) {
+    public void showFragment(FragmentType index, boolean moveUp) {
 
         mFragment = getFragment(index);
         
@@ -230,9 +229,9 @@ public class PopupTabletActivity extends DialogBaseActivity implements OnKeyboar
         
         switch (fragment) {
             case POPUP_CATEGORIES:
-                return CategoryPopupTabletFragment.newInstance();
+                return CategoriesFragment.newInstance(getIntent().getLongExtra(Constant.EXTRA_ID, -1));
             case POPUP_TAGS:
-                return TagsPopupTabletFragment.newInstance();
+                return TagsFragment.newInstance(getIntent().getLongExtra(Constant.EXTRA_ID, -1));
             default:
                 dismissPopup();
         }
@@ -242,12 +241,6 @@ public class PopupTabletActivity extends DialogBaseActivity implements OnKeyboar
     
     public void dismissPopup() {
         UiUtils.hideKeyboard(this, mRoot);
-        finish();
-    }
-    
-    public void dismissPopup(int resultCode, Intent resultIntent) {
-        UiUtils.hideKeyboard(this, mRoot);
-        setResult(resultCode, resultIntent);
         finish();
     }
     

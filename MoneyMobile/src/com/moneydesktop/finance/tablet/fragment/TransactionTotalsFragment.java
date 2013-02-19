@@ -6,8 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.util.Fonts;
 
 public class TransactionTotalsFragment extends BaseFragment {
@@ -32,6 +33,11 @@ public class TransactionTotalsFragment extends BaseFragment {
     public void setValues(String[] mValues) {
         this.mValues = mValues;
     }
+
+	@Override
+	public FragmentType getType() {
+		return null;
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

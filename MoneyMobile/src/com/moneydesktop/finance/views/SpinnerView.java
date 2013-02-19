@@ -3,11 +3,19 @@ package com.moneydesktop.finance.views;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
+import android.view.animation.Animation;
 import android.widget.ImageView;
+
+import com.moneydesktop.finance.R;
 
 public class SpinnerView extends ImageView {
 
@@ -25,31 +33,47 @@ public class SpinnerView extends ImageView {
     private long lastTick = 0;
     
 	private Context context;
+	private Paint mPaint;
+	private ColorFilter mFilter;
 	
-	public SpinnerView(Context context) {
-		super(context);
+	private void setSpinnerColor(int color) {
 		
-		load(context);
-	}
+		if (color != -1) {
 
-	public SpinnerView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		
-		load(context);
+			mFilter = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+			mPaint.setColorFilter(mFilter);
+		}
 	}
 	
 	public SpinnerView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		
-		load(context);
+		load(context, attrs);
 	}
 	
-	private void load(Context context) {
+	private void load(Context context, AttributeSet attrs) {
 
 		this.context = context;
+		mPaint = new Paint();
+		
+		if (attrs != null) {
+            
+            TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.Spinner);
+
+            setSpinnerColor(a.getColor(R.styleable.Spinner_spinnerColor, -1));
+            
+            a.recycle();
+        }
 		
 		loadAnimation("phone_loading_big", 8);
 		startAnimation();
+	}
+	
+	@Override
+	public void startAnimation(Animation animation) {
+		stopAnimation();
+		
+		super.startAnimation(animation);
 	}
 	
 	@Override
@@ -57,25 +81,22 @@ public class SpinnerView extends ImageView {
 		
 		if (mIsPlaying) {
 			
-		    if (playFrame >= bitmapList.size())
-		        playFrame = 0;
+		    if (playFrame >= bitmapList.size()) playFrame = 0;
 		    	
 	        long time = (System.currentTimeMillis() - lastTick);
-	        int drawX = 0;
-	        int drawY = 0;
 	        
 	        if (time >= DELAY) {
 	        	
 	            lastTick = System.currentTimeMillis();
-	            c.drawBitmap(bitmapList.get(playFrame), drawX, drawY, null);
+	            c.drawBitmap(bitmapList.get(playFrame), 0, 0, mPaint);
 	            playFrame++;
-	            postInvalidate();
 	            
 	        } else  {
 	        	
-	            c.drawBitmap(bitmapList.get(playFrame), drawX, drawY, null);
-	            postInvalidate();
+	            c.drawBitmap(bitmapList.get(playFrame), 0, 0, mPaint);
 	        }
+	        
+            postInvalidate();
 		}
 	}
 

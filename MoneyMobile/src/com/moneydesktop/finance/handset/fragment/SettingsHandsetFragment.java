@@ -1,6 +1,7 @@
 package com.moneydesktop.finance.handset.fragment;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -8,37 +9,35 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.model.EventMessage;
-import com.moneydesktop.finance.util.EmailUtils;
+import com.moneydesktop.finance.shared.fragment.BaseFragment;
+import com.moneydesktop.finance.shared.fragment.LockFragment;
 import com.moneydesktop.finance.util.Fonts;
 
 import de.greenrobot.event.EventBus;
 
 public class SettingsHandsetFragment extends BaseFragment {
-
-    private static SettingsHandsetFragment sFragment;
     
 	private TextView mLockIcon, mFeedbackIcon, mLogoutIcon, mLogoutLabel;
 	private LinearLayout mLock, mFeedback, mLogout;
 	
-	public static SettingsHandsetFragment getInstance(FragmentType type) {
-		
-	    if (sFragment != null) {
-	        return sFragment;
-	    }
+	public static SettingsHandsetFragment getInstance() {
 	    
-	    sFragment = new SettingsHandsetFragment();
-	    sFragment.setType(type);
-        sFragment.setRetainInstance(true);
+		SettingsHandsetFragment fragment = new SettingsHandsetFragment();
+		fragment.setRetainInstance(true);
 		
         Bundle args = new Bundle();
-        sFragment.setArguments(args);
+        fragment.setArguments(args);
         
-        return sFragment;
+        return fragment;
+	}
+
+	@Override
+	public FragmentType getType() {
+		return FragmentType.SETTINGS;
 	}
 	
 	@Override
@@ -77,9 +76,9 @@ public class SettingsHandsetFragment extends BaseFragment {
 	
 	private void configureView() {
 
-        Fonts.applyGlyphFont(mLockIcon, 50);
-        Fonts.applyGlyphFont(mFeedbackIcon, 50);
-        Fonts.applyGlyphFont(mLogoutIcon, 50);
+        Fonts.applyGlyphFont(mLockIcon, 35);
+        Fonts.applyGlyphFont(mFeedbackIcon, 35);
+        Fonts.applyGlyphFont(mLogoutIcon, 35);
         
         String logoutText = Preferences.getBoolean(Preferences.KEY_IS_DEMO_MODE, false) ? getString(R.string.label_exit) : getString(R.string.label_unlink);
         mLogoutLabel.setText(logoutText.toUpperCase());
@@ -94,7 +93,11 @@ public class SettingsHandsetFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 				
-				mActivity.showFragment(getType());
+				FragmentTransaction ft = getFragmentManager().beginTransaction();
+				ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
+				ft.replace(R.id.settings_fragment, LockFragment.newInstance(false));
+				ft.addToBackStack(null);
+				ft.commit();
 			}
 		});
 		
@@ -103,7 +106,7 @@ public class SettingsHandsetFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 
-                EmailUtils.sendEmail(mActivity, mActivity.getString(R.string.feedback_subject), "", new String[] { mActivity.getString(R.string.feedback_email) });
+				EventBus.getDefault().post(new EventMessage().new FeedbackEvent());
 			}
 		});
 
@@ -119,7 +122,7 @@ public class SettingsHandsetFragment extends BaseFragment {
 	
 	@Override
 	public String getFragmentTitle() {
-		return null;
+		return getString(R.string.title_activity_settings).toUpperCase();
 	}
 
     @Override

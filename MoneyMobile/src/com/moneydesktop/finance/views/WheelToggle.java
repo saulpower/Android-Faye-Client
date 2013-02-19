@@ -4,41 +4,41 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnticipateOvershootInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.Fonts;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.Animator.AnimatorListener;
+import com.nineoldandroids.animation.ObjectAnimator;
 
 public class WheelToggle extends RelativeLayout {
 
 	public static final String TAG = "WheelToggle";
 
     private Context mContext;
-    private View root;
-    private WheelView wheel;
-    private TextView title;
-    private OnCheckedChangeListener listener;
-    private boolean toggling = false;
+    private View mRoot;
+    private WheelView mWheel;
+    private TextView mTitle;
+    private OnCheckedChangeListener mListener;
+    private boolean mToggling = false;
     
     public void setOnCheckedChangeListener(OnCheckedChangeListener listener) {
-		this.listener = listener;
+		this.mListener = listener;
 	}
 
-	private boolean on = true;
+	private boolean mOn = true;
 
     public boolean isOn() {
-		return on;
+		return mOn;
 	}
 
 	public void setOn(boolean on) {
 		
-		if (this.on != on) {
+		if (this.mOn != on) {
 			toggle();
 		}
 	}
@@ -50,8 +50,8 @@ public class WheelToggle extends RelativeLayout {
 
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         
-        root = inflater.inflate(R.layout.wheel_view, this, true);
-        root.setOnClickListener(new OnClickListener() {
+        mRoot = inflater.inflate(R.layout.wheel_view, this, true);
+        mRoot.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -59,10 +59,10 @@ public class WheelToggle extends RelativeLayout {
 			}
 		});
 
-        title = (TextView) findViewById(R.id.title);
-        Fonts.applyPrimaryFont(title, 12);
+        mTitle = (TextView) findViewById(R.id.title);
+        Fonts.applyPrimaryFont(mTitle, 12);
         
-        wheel = (WheelView) findViewById(R.id.wheel);
+        mWheel = (WheelView) findViewById(R.id.wheel);
     }
     
 	/**
@@ -70,32 +70,35 @@ public class WheelToggle extends RelativeLayout {
 	 */
     private void toggle() {
     	
-    	if (!toggling) {
+    	if (!mToggling) {
     		
-	    	toggling = true;
+	    	mToggling = true;
 	    	
-	    	Animation rotate = new RotateAnimation(on ? 0 : 180, on ? 180 : 360, wheel.getWidth()/2, wheel.getHeight()/2);
+	    	ObjectAnimator rotate = ObjectAnimator.ofFloat(mWheel, "rotation", mOn ? 0 : 180, mOn ? 180 : 360);
 	    	rotate.setDuration(700);
-	    	rotate.setFillAfter(true);
 	    	rotate.setInterpolator(new AnticipateOvershootInterpolator());
-	    	rotate.setAnimationListener(new AnimationListener() {
+	    	rotate.addListener(new AnimatorListener() {
 				
 				@Override
-				public void onAnimationStart(Animation animation) {}
+				public void onAnimationStart(Animator animation) {}
 				
 				@Override
-				public void onAnimationRepeat(Animation animation) {}
+				public void onAnimationRepeat(Animator animation) {}
 				
 				@Override
-				public void onAnimationEnd(Animation animation) {
-					toggling = false;
-			    	listener.onCheckedChanged(null, on);
+				public void onAnimationEnd(Animator animation) {
+					mToggling = false;
+					if (mListener != null) {
+						mListener.onCheckedChanged(null, mOn);
+					}
 				}
+				
+				@Override
+				public void onAnimationCancel(Animator animation) {}
 			});
+	    	rotate.start();
 	    	
-	    	wheel.startAnimation(rotate);
-	    	
-	    	on = !on;
+	    	mOn = !mOn;
     	}
     }
 }

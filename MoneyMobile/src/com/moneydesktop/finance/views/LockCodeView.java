@@ -30,6 +30,8 @@ public class LockCodeView extends RelativeLayout {
 	private ProcessCodeListener mListener;
 	private Animation mShake;
 	
+	private int mCurrentFieldIndex = 0;
+	
     public EditText getCurrentField() {
         return mCurrentField;
     }
@@ -54,7 +56,8 @@ public class LockCodeView extends RelativeLayout {
 			
 			if (s.length() > 0) {
 				
-				mNextField = (EditText) mCurrentField.focusSearch(View.FOCUS_DOWN);
+//				mNextField = (EditText) mCurrentField.focusSearch(View.FOCUS_DOWN);
+				mNextField = getNext();
 				
 				if (mNextField != null) {
 					
@@ -80,7 +83,8 @@ public class LockCodeView extends RelativeLayout {
 			
 			if (keyCode == KeyEvent.KEYCODE_DEL && event.getAction() == KeyEvent.ACTION_DOWN) {
 				
-				mNextField = (EditText) mCurrentField.focusSearch(View.FOCUS_UP);
+//				mNextField = (EditText) mCurrentField.focusSearch(View.FOCUS_UP);
+				mNextField = getPrevious();
 				
 				if (mNextField != null) {
 
@@ -110,6 +114,7 @@ public class LockCodeView extends RelativeLayout {
 		public void onFocusChange(View v, boolean hasFocus) {
 			
 			if (hasFocus) {
+				mCurrentFieldIndex = Integer.parseInt(v.getTag().toString());
 				((EditText) v).setText("");
 				mCurrentField = (EditText) v;
 			}
@@ -134,7 +139,7 @@ public class LockCodeView extends RelativeLayout {
 		mContainer = (LinearLayout) findViewById(R.id.container);
 		
 		mText = (TextView) findViewById(R.id.lock_text);
-		Fonts.applyPrimaryFont(mText, 14);
+		Fonts.applyPrimaryFont(mText, 10);
 		
 		mField1 = (EditText) findViewById(R.id.field1);
 		mField2 = (EditText) findViewById(R.id.field2);
@@ -181,7 +186,7 @@ public class LockCodeView extends RelativeLayout {
 
 			    UiUtils.showKeyboard(mContext, mField1);
 			}
-		}, 100);
+		}, 400);
 
 	}
 	
@@ -215,5 +220,35 @@ public class LockCodeView extends RelativeLayout {
 	
 	public interface ProcessCodeListener {
 		public void processCode();
+	}
+	
+	private EditText getNext() {
+		
+		int next = mCurrentFieldIndex + 1;
+		
+		return getField(next);
+	}
+	
+	private EditText getPrevious() {
+		
+		int previous = mCurrentFieldIndex - 1;
+		
+		return getField(previous);
+	}
+	
+	private EditText getField(int index) {
+		
+		switch (index) {
+			case 0:
+				return mField1;
+			case 1:
+				return mField2;
+			case 2:
+				return mField3;
+			case 3:
+				return mField4;
+		}
+		
+		return null;
 	}
 }

@@ -3,12 +3,13 @@ package com.moneydesktop.finance.views;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
-import com.moneydesktop.finance.adapters.UltimateAdapter;
+import com.moneydesktop.finance.shared.adapter.UltimateAdapter;
 import com.moneydesktop.finance.util.UiUtils;
 
 /**
@@ -127,8 +128,10 @@ public class UltimateListView extends ExpandableListView {
         int viewX = location[0];
         int viewY = location[1];
         
+        Log.i(TAG, viewY + ", " + mHeaderView.getBottom() + ", " + mHeaderView.getHeight());
+        
         // point is inside view bounds
-        if ((x > viewX && x < (viewX + mHeaderView.getWidth())) && (y > viewY && y < (viewY + mHeaderView.getHeight()))) {
+        if ((x > viewX && x < (viewX + mHeaderView.getWidth())) && (y > viewY && y < (viewY + mHeaderView.getBottom()))) {
             return true;
         } else {
             return false;
@@ -323,6 +326,8 @@ public class UltimateListView extends ExpandableListView {
     
     public void expandAll() {
         
+    	if (mAdapter == null) return;
+    	
         for (int i = 0; i < mAdapter.getGroupCount(); i++) {
             expandGroup(i);
         }

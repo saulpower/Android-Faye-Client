@@ -1,48 +1,50 @@
 
 package com.moneydesktop.finance.handset.fragment;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
-import android.widget.TextView;
-
-import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.BaseFragment;
-import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.data.Enums.FragmentType;
-import com.moneydesktop.finance.database.Transactions;
-import com.moneydesktop.finance.database.TransactionsDao;
-import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.views.BarView;
-
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-public class TransactionSummaryHandsetFragment extends BaseFragment {
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.TextView;
+
+import com.moneydesktop.finance.ApplicationContext;
+import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.database.TransactionsDao;
+import com.moneydesktop.finance.shared.fragment.GrowFragment;
+import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.views.BarGraphView;
+import com.moneydesktop.finance.views.BarView;
+
+public class TransactionSummaryHandsetFragment extends GrowFragment {
+	
     private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();
-    private static TransactionSummaryHandsetFragment sFragment;
 
-    public static TransactionSummaryHandsetFragment getInstance(FragmentType type) {
+    public static TransactionSummaryHandsetFragment getInstance(int position) {
 
-        if (sFragment != null) {
-            return sFragment;
-        }
 
-        sFragment = new TransactionSummaryHandsetFragment();
-        sFragment.setType(type);
-        sFragment.setRetainInstance(true);
+    	TransactionSummaryHandsetFragment fragment = new TransactionSummaryHandsetFragment();
+    	fragment.setRetainInstance(true);
 
         Bundle args = new Bundle();
-        sFragment.setArguments(args);
+        args.putInt(POSITION, position);
+        fragment.setArguments(args);
 
-        return sFragment;
+        return fragment;
     }
+
+	@Override
+	public FragmentType getType() {
+		return FragmentType.TRANSACTION_SUMMARY;
+	}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,7 +56,8 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         mRoot.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                 mActivity.showFragment(FragmentType.TRANSACTIONS);
+                
+                 mActivity.showFragment(FragmentType.TRANSACTIONS, true);
                 
             }
             
@@ -64,43 +67,43 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
 
     private void setupView(List<Transactions> transList, View v) {
         TextView mainLabel = (TextView) v.findViewById(R.id.label_transactions_view);
-        Fonts.applySecondaryItalicFont(mainLabel, 12);
+        Fonts.applySecondaryItalicFont(mainLabel, 8);
 
         TextView incomeBalanceIcon = (TextView) v.findViewById(R.id.income_balance_icon);
-        Fonts.applyGlyphFont(incomeBalanceIcon, 24);
+        Fonts.applyGlyphFont(incomeBalanceIcon, 20);
         TextView incomeBalance = (TextView) v.findViewById(R.id.income_balance);
-        Fonts.applyPrimarySemiBoldFont(incomeBalance, 24);
+        Fonts.applyPrimarySemiBoldFont(incomeBalance, 20);
         TextView incomeBalanceLabel = (TextView) v.findViewById(R.id.income_balance_label);
-        Fonts.applySecondaryItalicFont(incomeBalanceLabel, 10);
+        Fonts.applySecondaryItalicFont(incomeBalanceLabel, 8);
 
         TextView expenseBalanceIcon = (TextView) v.findViewById(R.id.expense_balance_icon);
-        Fonts.applyGlyphFont(expenseBalanceIcon, 24);
+        Fonts.applyGlyphFont(expenseBalanceIcon, 20);
         TextView expenseBalance = (TextView) v.findViewById(R.id.expense_balance);
-        Fonts.applyPrimarySemiBoldFont(expenseBalance, 24);
+        Fonts.applyPrimarySemiBoldFont(expenseBalance, 20);
         TextView expenseBalanceLabel = (TextView) v.findViewById(R.id.expense_balance_label);
-        Fonts.applySecondaryItalicFont(expenseBalanceLabel, 10);
+        Fonts.applySecondaryItalicFont(expenseBalanceLabel, 8);
 
         TextView dailySpendingText = (TextView) v.findViewById(R.id.daily_spending_text);
-        Fonts.applySecondaryItalicFont(dailySpendingText, 10);
+        Fonts.applySecondaryItalicFont(dailySpendingText, 8);
 
         TextView newTransactionsNumber = (TextView) v.findViewById(R.id.new_transactions_number);
-        Fonts.applyPrimarySemiBoldFont(newTransactionsNumber, 24);
+        Fonts.applyPrimarySemiBoldFont(newTransactionsNumber, 20);
         TextView newTransactionsLabel = (TextView) v.findViewById(R.id.new_transactions_label);
-        Fonts.applySecondaryItalicFont(newTransactionsLabel, 10);
+        Fonts.applySecondaryItalicFont(newTransactionsLabel, 8);
 
         TextView topCategoryIcon = (TextView) v.findViewById(R.id.top_category_icon);
         topCategoryIcon.setText(Transactions.topCategory());
-        Fonts.applyGlyphFont(topCategoryIcon, 24);
+        Fonts.applyGlyphFont(topCategoryIcon, 20);
         TextView topCategoryText = (TextView) v.findViewById(R.id.top_category_text);
-        Fonts.applySecondaryItalicFont(topCategoryText, 10);
+        Fonts.applySecondaryItalicFont(topCategoryText, 8);
 
         TextView uncategorizedTransactionIcon = (TextView) v
                 .findViewById(R.id.uncategorized_transaction_icon);
-        Fonts.applyPrimarySemiBoldFont(uncategorizedTransactionIcon, 38);
+        Fonts.applyPrimarySemiBoldFont(uncategorizedTransactionIcon, 28);
 
         TextView uncategorizedTransactionText = (TextView) v
                 .findViewById(R.id.uncategorized_transaction_text);
-        Fonts.applyPrimaryFont(uncategorizedTransactionText, 12);
+        Fonts.applyPrimaryFont(uncategorizedTransactionText, 8);
         setupBarGraphView(v);
 
         incomeBalance.setText(mFormatter.format(Math.abs(Transactions.getIncomeTotal())));
@@ -112,7 +115,7 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
     }
 
     private void setupBarGraphView(View v) {
-        List<Double[]> data = Transactions.get30DayExpenseTotals();
+        List<Double[]> data = Transactions.get30DayExpenseTotals(new Date());
         double max = 0;
         for(int i = 0; i < data.size(); i++){
             if(data.get(i)[1] > max){
@@ -129,7 +132,7 @@ public class TransactionSummaryHandsetFragment extends BaseFragment {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         cal.add(Calendar.DAY_OF_YEAR, -30);
-        LinearLayout l = (LinearLayout) v.findViewById(R.id.daily_spending_graph);
+        BarGraphView l = (BarGraphView) v.findViewById(R.id.daily_spending_graph);
         
         for(int c = 0; c < data.size(); c++){
                 if( data.get(c)[1] > 0){

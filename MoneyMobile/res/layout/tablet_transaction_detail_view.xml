@@ -8,6 +8,7 @@
     android:visibility="invisible" >
     
 	<EditText
+	    android:id="@+id/dummy"
         android:layout_width="0dp"
     	android:layout_height="0dp"
     	android:inputType="none" />
@@ -208,9 +209,10 @@
 	                android:inputType="none"
 	                android:paddingLeft="10dp"
 	                android:paddingRight="10dp"
+	                android:singleLine="true"
 	                android:textColor="@drawable/primary_to_white_text"
 	                app:labelColor="@drawable/gray3_to_white_text"
-	                app:labelSize="14sp"
+	                app:labelSize="10"
 	                app:labelText="@string/label_amount" />
 	        
 		        <com.moneydesktop.finance.views.LineView
@@ -227,6 +229,16 @@
 	                android:paddingLeft="10dp"
 	                android:paddingRight="10dp"
 	                android:gravity="center_vertical">
+	        
+			        <TextView
+			            android:id="@+id/markers_label"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:layout_alignParentTop="true"
+			            android:layout_marginBottom="5dp"
+			            android:text="@string/label_other"
+			            style="@style/transaction_label"
+			            android:visibility="gone" />
 	                
 	                <ToggleButton 
 			            android:id="@+id/flag_b"
@@ -288,12 +300,12 @@
 				    android:layout_weight="50"
 				    android:background="@drawable/transparent_to_primary"
 				    android:imeOptions="actionDone"
-				    android:inputType="textCapWords"
+				    android:inputType="textCapWords|textNoSuggestions"
 				    android:paddingLeft="10dp"
 				    android:paddingRight="10dp"
 				    android:textColor="@drawable/primary_to_white_text"
 				    app:labelColor="@drawable/gray3_to_white_text"
-				    app:labelSize="14sp"
+				    app:labelSize="10"
 				    app:labelText="@string/label_payee" />
 	        
 		        <com.moneydesktop.finance.views.LineView
@@ -315,7 +327,7 @@
 	                android:paddingRight="10dp"
 	                android:textColor="@drawable/gray7_to_white"
 	                app:labelColor="@drawable/gray3_to_white_text"
-	                app:labelSize="14sp"
+	                app:labelSize="10"
 	                app:labelText="@string/label_memo" />
 	            
 	        </LinearLayout>
@@ -346,7 +358,7 @@
 				    android:paddingRight="10dp"
 				    android:textColor="@drawable/primary_to_white_text"
 				    app:labelColor="@drawable/gray3_to_white_text"
-				    app:labelSize="14sp"
+				    app:labelSize="10"
 				    app:labelText="@string/label_date" />
 	        
 		        <com.moneydesktop.finance.views.LineView
@@ -367,7 +379,7 @@
 	                android:paddingRight="10dp"
 	                android:textColor="@drawable/gray7_to_white"
 	                app:labelColor="@drawable/gray3_to_white_text"
-	                app:labelSize="14sp"
+	                app:labelSize="10"
 	                app:labelText="@string/label_tags" />
 	            
 	        </LinearLayout>
@@ -397,7 +409,7 @@
 	                android:paddingRight="10dp"
 	                android:textColor="@drawable/primary_to_white_text"
 	                app:labelColor="@drawable/gray3_to_white_text"
-	                app:labelSize="14sp"
+	                app:labelSize="10"
 	                app:labelText="@string/label_category" />
 	        
 		        <com.moneydesktop.finance.views.LineView
@@ -418,7 +430,7 @@
 	                android:paddingRight="10dp"
 	                android:textColor="@drawable/gray7_to_white"
 	                app:labelColor="@drawable/gray3_to_white_text"
-	                app:labelSize="14sp"
+	                app:labelSize="10"
 	                app:labelText="@string/label_stmt" />
 	            
 	        </LinearLayout>

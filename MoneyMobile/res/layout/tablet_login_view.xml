@@ -126,8 +126,8 @@
                     android:layout_height="50dp"
                     android:inputType="textEmailAddress"
                     android:imeOptions="actionNext"
-                    app:labelColor="@drawable/gray2_to_white_text"
-                    app:labelSize="12sp"
+                    app:labelColor="@drawable/gray3_to_white_text"
+                    app:labelSize="8"
                     app:labelText="@string/label_email" />
         
 		        <com.moneydesktop.finance.views.LineView
@@ -144,9 +144,10 @@
                     android:layout_width="450dp"
                     android:layout_height="50dp"
                     android:inputType="textPassword"
+                    android:password="true"
                     android:imeOptions="actionDone"
-                    app:labelColor="@drawable/gray2_to_white_text"
-                    app:labelSize="12sp"
+                    app:labelColor="@drawable/gray3_to_white_text"
+                    app:labelSize="8"
                     app:labelText="@string/label_password" />
 
                 <requestFocus />
@@ -255,8 +256,8 @@
                     android:layout_height="50dp"
                     android:inputType="text"
                     android:imeOptions="actionNext"
-                    app:labelColor="@drawable/gray2_to_white_text"
-                    app:labelSize="12sp"
+                    app:labelColor="@drawable/gray3_to_white_text"
+                    app:labelSize="8"
                     app:labelText="@string/signup_name" />
         
 		        <com.moneydesktop.finance.views.LineView
@@ -274,8 +275,8 @@
                     android:layout_height="50dp"
                     android:inputType="textEmailAddress"
                     android:imeOptions="actionNext"
-                    app:labelColor="@drawable/gray2_to_white_text"
-                    app:labelSize="12sp"
+                    app:labelColor="@drawable/gray3_to_white_text"
+                    app:labelSize="8"
                     app:labelText="@string/signup_email" />
         
 		        <com.moneydesktop.finance.views.LineView
@@ -293,8 +294,8 @@
                     android:layout_height="50dp"
                     android:inputType="text"
                     android:imeOptions="actionDone"
-                    app:labelColor="@drawable/gray2_to_white_text"
-                    app:labelSize="12sp"
+                    app:labelColor="@drawable/gray3_to_white_text"
+                    app:labelSize="8"
                     app:labelText="@string/signup_bank" />
 
                 <requestFocus />

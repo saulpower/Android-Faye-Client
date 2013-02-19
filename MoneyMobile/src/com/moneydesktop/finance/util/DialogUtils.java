@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
@@ -32,8 +33,10 @@ public class DialogUtils {
 					return true;
 				}
 			});
+	    	
 	    	TextView text = (TextView) progressView.findViewById(R.id.spinner_text);
 	    	text.setText(message);
+	    	Fonts.applyPrimaryBoldFont(text, 14);
 	    	
 	    	sDialog = new Dialog(context, R.style.MyDialog);
 	    	sDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -67,23 +70,32 @@ public class DialogUtils {
     
     public static void alertDialog(String title, String message, String positiveButton, String negativeButton, Context context, DialogInterface.OnClickListener clickListener) {
     	
-    	if (sAlert != null)
-    		dismissAlert();
+    	if (sAlert != null) dismissAlert();
     	
     	AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
 		alertBuilder.setMessage(message)
+				.setTitle(title)
 				.setCancelable(false)
                 .setPositiveButton(positiveButton, clickListener);
-			
+		
 		if (negativeButton != null) {
             alertBuilder.setNegativeButton(negativeButton, clickListener);
 		}
-		
+
 		sAlert = alertBuilder.create();
-		
-		// Title for AlertDialog
-		sAlert.setTitle(title);
 		sAlert.show();
+		
+	    TextView titleText = (TextView) sAlert.findViewById(android.R.id.title);
+	    TextView messageText = (TextView) sAlert.findViewById(android.R.id.message);
+	    Button button1 = (Button) sAlert.findViewById(android.R.id.button1);
+	    Button button2 = (Button) sAlert.findViewById(android.R.id.button2);
+	    Button button3 = (Button) sAlert.findViewById(android.R.id.button3);
+
+	    Fonts.applyPrimaryBoldFont(titleText, 14);
+	    Fonts.applyPrimaryFont(messageText, 12);
+	    Fonts.applyPrimaryFont(button1, 12);
+	    Fonts.applyPrimaryFont(button2, 12);
+	    Fonts.applyPrimaryFont(button3, 12);
     }
     
     public static void dismissAlert() {

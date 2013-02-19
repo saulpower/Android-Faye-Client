@@ -28,12 +28,15 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ViewAnimator;
 
+import com.moneydesktop.finance.ApplicationContext;
+import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.UiUtils;
 
 /**
@@ -209,6 +212,30 @@ public class AnimationFactory {
 		viewAnimator.setInAnimation(animc[1]);
 		
 		viewAnimator.setDisplayedChild(nextIndex);
+	}
+	
+	public static void slideTransition(final ViewAnimator viewAnimator, AnimationListener finish1, AnimationListener finish2, FlipDirection dir, long duration) {   
+		
+		final int currentIndex = viewAnimator.getDisplayedChild();
+		final int nextIndex = (currentIndex + 1) % viewAnimator.getChildCount();
+
+		slideTransition(viewAnimator, nextIndex, finish1, finish2, dir, duration);
+	}
+	
+	public static void slideTransition(final ViewAnimator viewAnimator, int index, AnimationListener finish1, AnimationListener finish2, FlipDirection dir, long duration) {   
+
+		Animation in = AnimationUtils.loadAnimation(ApplicationContext.getContext(), FlipDirection.BOTTOM_TOP == dir ? R.anim.in_up : R.anim.in_down);
+		Animation out = AnimationUtils.loadAnimation(ApplicationContext.getContext(), FlipDirection.BOTTOM_TOP == dir ? R.anim.out_up : R.anim.out_down);
+		Animation[] animc = new Animation[] { out, in };
+  
+		if (finish1 != null) animc[0].setAnimationListener(finish1);
+		
+		if (finish2 != null) animc[1].setAnimationListener(finish2);
+		
+		viewAnimator.setOutAnimation(animc[0]);
+		viewAnimator.setInAnimation(animc[1]);
+		
+		viewAnimator.setDisplayedChild(index);
 	}
 	
 	//////////////

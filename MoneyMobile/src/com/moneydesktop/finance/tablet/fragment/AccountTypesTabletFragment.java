@@ -20,9 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.adapters.AccountsExpandableListAdapter;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.data.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.data.SyncEngine;
@@ -44,6 +42,8 @@ import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.model.EventMessage.BankStatusUpdateEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.shared.Services.SyncService;
+import com.moneydesktop.finance.shared.adapter.AccountsExpandableListAdapter;
+import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.NavBarButtons;
@@ -78,14 +78,18 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
     private AccountsExpandableListAdapter mAdapter1;
     private int mAccountCounter = 0;
 	
-	public static AccountTypesTabletFragment newInstance(FragmentType type) {	
+	public static AccountTypesTabletFragment newInstance() {	
 		AccountTypesTabletFragment frag = new AccountTypesTabletFragment();
-		frag.setType(type);
 		
         Bundle args = new Bundle();
         frag.setArguments(args);
         
         return frag;
+	}
+
+	@Override
+	public FragmentType getType() {
+		return FragmentType.ACCOUNT_TYPES;
 	}
 	
 	@Override

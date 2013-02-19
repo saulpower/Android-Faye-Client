@@ -134,7 +134,8 @@ public class LineView extends View {
         mLinePaint = new Paint();
         mLinePaint.setColor(getResources().getColor(R.color.light_gray1));
         mLinePaint.setStyle(Paint.Style.STROKE);
-        mLinePaint.setStrokeWidth(1.0f);
+        mLinePaint.setStrokeWidth(0);
+        mLinePaint.setAntiAlias(false);
     }
     
     private void configureDashes() {
@@ -165,9 +166,12 @@ public class LineView extends View {
         int height = (int) mLinePaint.getStrokeWidth();
         height /= mDensity;
         
+        height = (height <= 0) ? 1 : height;
+        
         if (mIsVertical) {
             width  = (int) mLinePaint.getStrokeWidth();
             width /= mDensity;
+            width = (width <= 0) ? 1 : width;
             height = MeasureSpec.getSize(heightMeasureSpec);
         }
         

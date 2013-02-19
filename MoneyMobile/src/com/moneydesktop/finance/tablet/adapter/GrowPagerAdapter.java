@@ -1,21 +1,15 @@
 package com.moneydesktop.finance.tablet.adapter;
 
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 
-import com.moneydesktop.finance.tablet.fragment.SummaryTabletFragment;
+import com.moneydesktop.finance.shared.fragment.GrowFragment;
 import com.moneydesktop.finance.views.GrowViewPager.OnScrollChangedListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class GrowPagerAdapter extends FragmentPagerAdapter implements OnPageChangeListener, OnScrollChangedListener {
+public abstract class GrowPagerAdapter extends FragmentPagerAdapter implements OnPageChangeListener, OnScrollChangedListener {
 
     public final String TAG = this.getClass().getSimpleName();
-    
-    private final int COUNT = 2;
     
     public static final float BASE_SIZE = 0.8f;
     public static final float BASE_ALPHA = 0.8f;
@@ -23,31 +17,21 @@ public class GrowPagerAdapter extends FragmentPagerAdapter implements OnPageChan
     private int mCurrentPage = 0;
     private boolean mScrollingLeft;
     
-    private List<SummaryTabletFragment> mFragments;
-    
-    public int getCurrentPage() {
-        return mCurrentPage;
-    }
-    
-    public void addFragment(SummaryTabletFragment fragment) {
-        mFragments.add(fragment.getPosition(), fragment);
-  }
-    
-    public GrowPagerAdapter(FragmentManager fm) {
-        super(fm);
+	private GrowFragment[] mFragments;
 
-        mFragments = new ArrayList<SummaryTabletFragment>();
-    }
+	public int getCurrentPage() {
+		return mCurrentPage;
+	}
 
-    @Override
-    public int getCount() {
-        return COUNT;
-    }
+	public void addFragment(GrowFragment fragment) {
+		mFragments[fragment.getPosition()] = fragment;
+	}
 
-    @Override
-    public Fragment getItem(int position) {
-        return SummaryTabletFragment.newInstance(position);
-    }
+	public GrowPagerAdapter(FragmentManager fm) {
+		super(fm);
+
+		mFragments = new GrowFragment[getCount()];
+	}
 
     @Override
     public void onPageScrollStateChanged(int state) {}
@@ -71,7 +55,6 @@ public class GrowPagerAdapter extends FragmentPagerAdapter implements OnPageChan
      * @param position
      * @param percent
      */
-    @SuppressWarnings("unused")
     private void adjustSize(int position, float percent) {
         
         position += (mScrollingLeft ? 1 : 0);
@@ -84,16 +67,14 @@ public class GrowPagerAdapter extends FragmentPagerAdapter implements OnPageChan
         float percentOut = scaleUp > BASE_ALPHA ? BASE_ALPHA : scaleUp;
         float percentIn = scaleDown > BASE_ALPHA ? BASE_ALPHA : scaleDown;
         
-        if (scaleUp < BASE_SIZE)
-            scaleUp = BASE_SIZE;
+        if (scaleUp < BASE_SIZE) scaleUp = BASE_SIZE;
 
-        if (scaleDown < BASE_SIZE)
-            scaleDown = BASE_SIZE;
+        if (scaleDown < BASE_SIZE) scaleDown = BASE_SIZE;
         
         // Adjust the fragments that are, or will be, on screen
-        SummaryTabletFragment current = (position < mFragments.size()) ? mFragments.get(position) : null;
-        SummaryTabletFragment next = (secondary < mFragments.size() && secondary > -1) ? mFragments.get(secondary) : null;
-        SummaryTabletFragment afterNext = (tertiary < mFragments.size() && tertiary > -1) ? mFragments.get(tertiary) : null;
+        GrowFragment current = (position < mFragments.length) ? mFragments[position] : null;
+        GrowFragment next = (secondary < mFragments.length && secondary > -1) ? mFragments[secondary] : null;
+        GrowFragment afterNext = (tertiary < mFragments.length && tertiary > -1) ? mFragments[tertiary] : null;
         
         if (current != null && next != null) {
             
@@ -101,7 +82,7 @@ public class GrowPagerAdapter extends FragmentPagerAdapter implements OnPageChan
             current.transitionFragment(percentIn, scaleUp);
             next.transitionFragment(percentOut, scaleDown);
             
-            if (afterNext != null && COUNT > 2) {
+            if (afterNext != null && getCount() > 2) {
                 afterNext.transitionFragment(BASE_ALPHA, BASE_SIZE);
             }
         }

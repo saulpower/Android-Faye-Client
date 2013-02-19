@@ -1,44 +1,122 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?> 
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@id/mdContent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/phone_wood" >
-    
-    <ViewFlipper 
-        android:id="@+id/flipper"
+    android:layout_height="match_parent" >
+	    
+    <include
+        android:id="@+id/nav_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-		
-        <android.support.v4.view.ViewPager
-            android:id="@+id/pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        
-	    <FrameLayout
-	        android:id="@+id/fragment"
+    	android:layout_height="@dimen/navbar_height"
+        android:layout_alignParentTop="true"
+        layout="@layout/handset_navigation_bar" />
+	    
+    <net.simonvt.menudrawer.RightDrawer
+	    android:id="@+id/drawer"
+	    android:orientation="vertical"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_below="@id/nav_bar"
+	    app:mdMenuSize="150dp">
+	    
+	    <ViewFlipper
+	        android:id="@id/mdMenu"
 	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
-        	android:paddingTop="@dimen/navbar_height" />
-        
-    </ViewFlipper>
+    		android:background="@color/gray7" >
+	        
+	        <LinearLayout
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:orientation="vertical" >
+	            
+		        <RelativeLayout
+			        android:layout_width="match_parent"
+			        android:layout_height="@dimen/navbar_height" >
+		            
+		            <LinearLayout
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentLeft="true"
+				        android:layout_centerVertical="true"
+				        android:orientation="vertical"
+				        android:paddingLeft="10dp">
+				        
+			            <TextView 
+			                android:id="@+id/updated_label"
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textColor="@color/white"
+					        android:text="@string/label_update" />
+			            
+			            <TextView 
+			                android:id="@+id/updated_status"
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:layout_marginTop="3dp"
+					        android:textColor="@color/white"
+					        android:text="@string/update_refresh" />
+			            
+		            </LinearLayout>
+		            
+		            <com.moneydesktop.finance.views.NavBarView 
+		                android:id="@+id/refresh"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentRight="true"
+				        android:paddingRight="5dp"
+				        android:textColor="@color/white"
+				        android:text="@string/nav_icon_refresh" />
+		            
+		        </RelativeLayout>
+	            
+	            <com.moneydesktop.finance.views.UltimateListView
+	                android:id="@+id/menu_right_list"
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:divider="@null"
+	            	android:groupIndicator="@null" />
+	        
+	        </LinearLayout>
+	        
+        </ViewFlipper>
+	    
+		<RelativeLayout
+		    android:id="@id/mdContent"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:background="@drawable/phone_wood" >
+		    
+		    <ViewFlipper 
+		        android:id="@+id/flipper"
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent">
+	            
+	            <com.moneydesktop.finance.views.GrowViewPager
+                    android:id="@+id/pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
-    <ViewFlipper 
-        android:id="@+id/nav_flipper"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true">
-	    
-        <View
-	        android:layout_width="match_parent"
-	        android:layout_height="match_parent" />
-	    
-	    <include
-	        android:id="@+id/nav_bar"
-	        android:layout_width="match_parent"
-	        android:layout_height="match_parent"
-	        layout="@layout/handset_navigation_bar" />
-	    
-    </ViewFlipper>
-    
+                <FrameLayout
+                    android:id="@+id/accounts_fragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <FrameLayout
+                    android:id="@+id/transactions_fragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <FrameLayout
+                    android:id="@+id/settings_fragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+		        
+		    </ViewFlipper>
+		    
+		</RelativeLayout>
+	
+	</net.simonvt.menudrawer.RightDrawer>
+	
 </RelativeLayout>

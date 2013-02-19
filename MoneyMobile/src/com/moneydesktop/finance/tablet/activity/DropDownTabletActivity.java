@@ -2,6 +2,7 @@ package com.moneydesktop.finance.tablet.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -16,17 +17,17 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.EventMessage;
-import com.moneydesktop.finance.shared.LockFragment;
 import com.moneydesktop.finance.shared.TransactionDetailController;
 import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
+import com.moneydesktop.finance.shared.fragment.BaseFragment;
+import com.moneydesktop.finance.shared.fragment.FeedbackFragment;
+import com.moneydesktop.finance.shared.fragment.LockFragment;
 import com.moneydesktop.finance.tablet.activity.DialogBaseActivity.OnKeyboardStateChangeListener;
 import com.moneydesktop.finance.tablet.fragment.AccountSettingsTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionTotalsFragment;
@@ -34,22 +35,28 @@ import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment.onBackPressedListener;
 import com.moneydesktop.finance.tablet.fragment.TransactionsPageTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.AnimatedNavView;
+import com.moneydesktop.finance.views.AnimatedNavView.NavigationListener;
 
 import de.greenrobot.event.EventBus;
 
-public class DropDownTabletActivity extends DialogBaseActivity implements onBackPressedListener, ParentTransactionInterface, OnKeyboardStateChangeListener {
+public class DropDownTabletActivity extends DialogBaseActivity implements onBackPressedListener, ParentTransactionInterface, OnKeyboardStateChangeListener, NavigationListener {
     
     public final String TAG = this.getClass().getSimpleName();
     
     private FragmentType mIndex = FragmentType.LOCK_SCREEN;
     
-    private TextView mLabel, mArrow;
     private RelativeLayout mRoot, mDropdown, mDetailContainer;
     private LinearLayout mContainer;
     private Animation mIn, mOut;
     private TransactionDetailController mBase;
     private int mOffset = 0;
     private View mEditText;
+    
+    private boolean mPopped = false;
+    
+    private AnimatedNavView mNavView;
     
     public View getEditText() {
         return mEditText;
@@ -62,18 +69,11 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
             adjustViewForKeyboard();
         }
     }
-
-    @Override
-    public void onFragmentAttached(BaseFragment fragment) {
-        super.onFragmentAttached(fragment);
-        
-        mLabel.setText(fragment.getFragmentTitle());
-    }
     
     @Override
     public void onBackPressed() {
         
-        if (!mBase.getDetailFragment().onBackPressed()) {
+        if ((mBase != null && !mBase.getDetailFragment().onBackPressed()) || (mFragment != null && !mFragment.onBackPressed())) {
             dismissDropdown();
         }
     }
@@ -99,7 +99,7 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
         setupView();
 
         mIndex = (FragmentType) getIntent().getSerializableExtra(Constant.EXTRA_FRAGMENT);
-        showFragment(mIndex);
+        showFragment(mIndex, false);
         
         // Adjust the popup's window size based on the view passed in
         mRoot.post(new Runnable() {
@@ -175,12 +175,10 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
             }
         });
         
-        mArrow = (TextView) findViewById(R.id.arrow);
-        mLabel = (TextView) findViewById(R.id.label);
-        mContainer = (LinearLayout) findViewById(R.id.container);
+        mNavView = (AnimatedNavView) findViewById(R.id.nav_view);
+        setupNavView();
         
-        Fonts.applyPrimaryBoldFont(mLabel, 14);
-        Fonts.applyGlyphFont(mArrow, 14);
+        mContainer = (LinearLayout) findViewById(R.id.container);
         
         mContainer.setOnClickListener(new OnClickListener() {
             
@@ -189,6 +187,14 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
                 dismissDropdown();
             }
         });
+    }
+    
+    private void setupNavView() {
+    	
+    	mNavView.setNavigationListener(this);
+    	mNavView.setFontColor(Color.WHITE);
+    	mNavView.setFontSize(UiUtils.getScaledPixels(this, 20));
+    	mNavView.setTypeface(Fonts.getFont(Fonts.PRIMARY_SEMI_BOLD));
     }
     
     private void setupTransactionDetail() {
@@ -202,12 +208,11 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
         mBase.getDetailFragment().setListener(this);
 
         FragmentTransaction ft = mFm.beginTransaction();
-        ft = mFm.beginTransaction();
         ft.replace(R.id.detail_fragment, mBase.getDetailFragment());
         ft.commit();
     }
     
-    private void dismissDropdown() {
+    public void dismissDropdown() {
         
         // Hide keyboard
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -237,7 +242,7 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
     }
 
     @Override
-    public void showFragment(FragmentType type) {
+    public void showFragment(FragmentType type, boolean moveUp) {
 
         BaseFragment fragment = getFragment(type);
         
@@ -255,6 +260,8 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
                 return TransactionsPageTabletFragment.newInstance(this, getIntent());
             case ACCOUNT_SETTINGS:
             	return AccountSettingsTabletFragment.newInstance(getIntent());
+            case FEEDBACK:
+            	return FeedbackFragment.newInstance();
             case TRANSACTION_SUMMARY:
                 return TransactionTotalsFragment.newInstance(getIntent().getStringArrayExtra(Constant.EXTRA_VALUES));
             default:
@@ -277,19 +284,21 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
                 break;
             case TRANSACTIONS_PAGE:
                 configureSize(0.8f, 0.8f);
+                mNavView.setVisibility(View.GONE);
                 int[] location = new int[2];
                 mRoot.getLocationOnScreen(location);
                 mOffset = location[1];
-                mLabel.setVisibility(View.INVISIBLE);
-                mArrow.setVisibility(View.INVISIBLE);
                 setupTransactionDetail();
                 break;
             case ACCOUNT_SETTINGS:
             	configureSize(0.6f, 0.7f);
-                mLabel.setVisibility(View.VISIBLE);
-                mArrow.setVisibility(View.INVISIBLE);
+                break;
+            case FEEDBACK:
+                configureSize(0.6f, 0.7f);
+                mNavView.setVisibility(View.GONE);
+            	break;
             case TRANSACTION_SUMMARY:
-                mArrow.setVisibility(View.GONE);
+                mNavView.setVisibility(View.GONE);
                 configureSize(0.4f, 0.4f);
                 break;
             default:
@@ -333,4 +342,37 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
     private void adjustViewForKeyboard() {
         makeViewVisible(mEditText, (mBase != null && mBase.isShowing()) ? mDetailContainer : mDropdown);
     }
+    
+    @Override
+	public void updateNavBar(final String titleString, boolean fragmentTitle) {
+
+    	if (!mPopped && mNavView.getVisibility() == View.VISIBLE) {
+    		mRoot.post(new Runnable() {
+				
+				@Override
+				public void run() {
+
+		    		mNavView.pushNav(titleString);
+				}
+			});
+    	}
+    	
+    	mPopped = false;
+	}
+    
+    @Override
+	public void popBackStack() {
+    	super.popBackStack();
+
+        UiUtils.hideKeyboard(this, mContainer);
+        
+    	mPopped = true;
+    	
+    	mNavView.popNav();
+    }
+
+	@Override
+	public void onNavigationPopped() {
+		popBackStack();
+	}
 }

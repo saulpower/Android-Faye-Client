@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 
-import com.moneydesktop.finance.shared.DashboardBaseActivity;
+import com.moneydesktop.finance.shared.activity.DashboardBaseActivity;
 import com.moneydesktop.finance.util.UiUtils;
 
 import java.util.HashMap;

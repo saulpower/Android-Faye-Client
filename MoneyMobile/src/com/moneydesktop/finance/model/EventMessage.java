@@ -32,6 +32,7 @@ public class EventMessage {
     }
     
 	public class AuthEvent extends EventMessage {}
+	public class BackEvent extends EventMessage {}
     public class DatabaseSaveEvent extends EventMessage {
     	
     	private List<Class<?>> mClasses = new ArrayList<Class<?>>();
@@ -49,6 +50,7 @@ public class EventMessage {
     	}
     }
 	public class DefaultsEvent extends EventMessage {}
+	public class FeedbackEvent extends EventMessage {}
 	
 	public class FilterEvent extends EventMessage {
 	    
@@ -77,6 +79,24 @@ public class EventMessage {
 		public LockType getType() {
 			return mType;
 		}
+	}
+	
+	public class MenuEvent extends EventMessage {
+	    
+	    private int mGroupPosition, mChildPosition;
+	    
+	    public MenuEvent(int groupPosition, int childPosition) {
+	    	mGroupPosition = groupPosition;
+	    	mChildPosition = childPosition;
+	    }
+	    
+	    public int getGroupPosition() {
+	        return mGroupPosition;
+	    }
+	    
+	    public int getChildPosition() {
+	        return mChildPosition;
+	    }
 	}
 	
 	public class NavigationEvent extends EventMessage {

@@ -12,9 +12,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.util.Fonts;
 
 
@@ -37,6 +38,11 @@ public class AccountSettingsTabletFragment extends BaseFragment{
 	@Override
 	public boolean onBackPressed() {
 		return false;
+	}
+
+	@Override
+	public FragmentType getType() {
+		return null;
 	}
 	
 	@Override

@@ -5,28 +5,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.shared.fragment.BaseFragment;
 
 public class BudgetSummaryHandsetFragment extends BaseFragment {
 
     private static BudgetSummaryHandsetFragment sFragment;
     
-	public static BudgetSummaryHandsetFragment getInstance(FragmentType type) {
+	public static BudgetSummaryHandsetFragment getInstance() {
 		
 	    if (sFragment != null) {
 	        return sFragment;
 	    }
 	    
 	    sFragment = new BudgetSummaryHandsetFragment();
-	    sFragment.setType(type);
         sFragment.setRetainInstance(true);
 		
         Bundle args = new Bundle();
         sFragment.setArguments(args);
         
         return sFragment;
+	}
+
+	@Override
+	public FragmentType getType() {
+		return FragmentType.ACCOUNT_SUMMARY;
 	}
 	
 	@Override

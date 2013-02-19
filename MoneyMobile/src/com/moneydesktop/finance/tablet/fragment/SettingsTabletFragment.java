@@ -10,12 +10,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.model.EventMessage;
+import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
-import com.moneydesktop.finance.util.EmailUtils;
 import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.SettingButton;
 
@@ -28,15 +27,19 @@ public class SettingsTabletFragment extends BaseFragment {
     
 	private SettingButton mLock, mFeedback, mLogout;
 	
-	public static SettingsTabletFragment newInstance(FragmentType type) {
+	public static SettingsTabletFragment newInstance() {
 
 	    SettingsTabletFragment fragment = new SettingsTabletFragment();
-	    fragment.setType(type);
 		
         Bundle args = new Bundle();
         fragment.setArguments(args);
         
         return fragment;
+	}
+
+	@Override
+	public FragmentType getType() {
+		return FragmentType.SETTINGS;
 	}
 	
 	@Override
@@ -105,7 +108,7 @@ public class SettingsTabletFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 
-			    EmailUtils.sendEmail(mActivity, mActivity.getString(R.string.feedback_subject), "", new String[] { mActivity.getString(R.string.feedback_email) });
+	            ((DashboardTabletActivity) mActivity).showDropdownFragment(FragmentType.FEEDBACK);
 			}
 		});
 

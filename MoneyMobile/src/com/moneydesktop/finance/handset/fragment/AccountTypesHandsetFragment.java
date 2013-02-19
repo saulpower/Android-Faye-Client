@@ -1,9 +1,11 @@
 package com.moneydesktop.finance.handset.fragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,15 +13,12 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnGroupClickListener;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.data.Enums.FragmentType;
@@ -27,17 +26,13 @@ import com.moneydesktop.finance.data.Enums.SlideFrom;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.handset.adapter.AccountTypesHandsetAdapter;
 import com.moneydesktop.finance.handset.adapter.BankOptionsAdapter;
+import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.SlidingView;
 import com.moneydesktop.finance.views.UltimateListView;
-
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AccountTypesHandsetFragment extends BaseFragment {
     
@@ -46,10 +41,9 @@ public class AccountTypesHandsetFragment extends BaseFragment {
     private View mBankOptionsView;
     private SlidingView mSliderView;
     
-    public static AccountTypesHandsetFragment getInstance(FragmentType type) {
+    public static AccountTypesHandsetFragment getInstance() {
 
         AccountTypesHandsetFragment fragment = new AccountTypesHandsetFragment();
-        fragment.setType(type);
         fragment.setRetainInstance(true);
 
         Bundle args = new Bundle();
@@ -60,7 +54,7 @@ public class AccountTypesHandsetFragment extends BaseFragment {
 
     @Override
     public String getFragmentTitle() {
-        return getString(R.string.account_types_title);
+        return getString(R.string.account_types_title).toUpperCase();
     }
 
     @Override
@@ -137,7 +131,9 @@ public class AccountTypesHandsetFragment extends BaseFragment {
             bankImage.setLayoutParams(layoutParams);
             bankImage.setPadding(10, 10, 10, 10);
             
-            BankLogoManager.getBankImage(bankImage, bank.getBankAccounts().get(0).getInstitutionId());
+            if (bank.getBankAccounts().size() > 0) {
+            	BankLogoManager.getBankImage(bankImage, bank.getBankAccounts().get(0).getInstitutionId());
+            }
             
             bankImage.setOnClickListener(new View.OnClickListener() {
                 
@@ -185,5 +181,10 @@ public class AccountTypesHandsetFragment extends BaseFragment {
             mBanksContainer.addView(bankImage);
         }
     }
+
+	@Override
+	public FragmentType getType() {
+		return FragmentType.ACCOUNT_TYPES;
+	}
 
 }

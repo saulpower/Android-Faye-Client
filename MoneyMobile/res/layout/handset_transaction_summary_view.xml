@@ -1,242 +1,265 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
-    
-    <RelativeLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center" >
+
+    <RelativeLayout
+        android:id="@+id/root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="20dp"
-    	android:background="@drawable/box">
+        android:layout_height="match_parent" >
+
         <LinearLayout
-    	    android:id="@+id/account_summary_fragment_handset_view" 
-    	    android:layout_width="match_parent"
-    		android:layout_height="match_parent"
-   			android:orientation="vertical" 
-    		android:background="@color/white">
+            android:id="@+id/account_summary_fragment_handset_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical" >
 
-    		   <TextView
-    		       android:id="@+id/label_transactions_view"
-    		       android:layout_width="fill_parent"
-    		       android:layout_height="0dp"
-    		       android:layout_marginLeft="10dp"
-    		       android:layout_weight=".06"
-    		       android:gravity="center_vertical"
-    		       android:text="@string/label_transactions"
-    		       android:textColor="@color/gray4" />
+            <TextView
+                android:id="@+id/label_transactions_view"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="2dp"
+                android:layout_weight=".06"
+                android:gravity="left|bottom"
+                android:text="@string/label_transactions"
+                android:textColor="@color/gray4" />
 
-               <com.moneydesktop.finance.views.LineView
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        app:lineColor="@color/gray2"
-			    app:lineStrokeWidth="3dp"
-			    app:isVertical="false"/> 
-               <LinearLayout 
-                   android:id="@+id/income_balance_summary_view"
-                   android:layout_width="wrap_content"
-                   android:layout_height="0dp"
-                   android:layout_weight=".15"
-                   android:gravity="center_vertical"
-                   android:orientation="horizontal">
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:isVertical="false"
+                app:lineColor="@color/gray2"
+                app:lineStrokeWidth="2dp" />
 
-                   <TextView
-                       android:id="@+id/income_balance_icon"
-                       android:layout_width="match_parent"
-                       android:layout_height="match_parent"
-                       android:text="@string/icon_smile"
-                       android:gravity="center_vertical"
-                       android:layout_margin="10dp"
-                       android:textColor="@color/budgetColorGreenBackground" />
+            <LinearLayout
+                android:id="@+id/income_balance_summary_view"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight=".15"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
 
-                   <LinearLayout
-                       android:id="@+id/income_balance_text"
-                       android:layout_width="wrap_content"
-                       android:layout_height="match_parent"
-                       android:gravity="center_vertical"
-                       android:orientation="vertical" >
-
-                       		<TextView
-                       		    android:id="@+id/income_balance"
-                       		    android:layout_height="wrap_content"
-                       		    android:layout_width="match_parent"/>
-                       		<TextView
-                       		    android:id="@+id/income_balance_label"
-                       		    android:text="@string/label_income"
-                       		    android:layout_height="wrap_content"
-                       		    android:layout_width="match_parent"
-                       		    android:textColor="@color/gray4"/>
-                   </LinearLayout>
-               </LinearLayout>
-               <com.moneydesktop.finance.views.LineView
+                <TextView
+                    android:id="@+id/income_balance_icon"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:lineColor="@color/gray2"
-                    app:lineStrokeWidth="3dp"
-                    app:isVertical="false"
-                    app:isDashed="true"
-                    app:dashLength="4dp" />
-               <LinearLayout 
-                   android:id="@+id/expense_balance_summary_view"
-                   android:layout_width="wrap_content"
-                   android:layout_height="0dp"
-                   android:layout_weight=".15"
-                   android:gravity="center_vertical"
-                   android:orientation="horizontal">
-                   <TextView
-                       android:id="@+id/expense_balance_icon"
-                       android:layout_height="match_parent"
-                       android:layout_width="wrap_content"
-                       android:textColor="@color/debts"
-                       android:gravity="center_vertical"
-                       android:layout_margin="10dp"
-                       android:text="@string/icon_frown"/>
-                   <LinearLayout
-                   		android:id="@+id/expense_balance_text"
-                   		android:orientation="vertical"
-                   		android:gravity="center_vertical"
-                   		android:layout_height="match_parent"
-                   		android:layout_width="wrap_content">
-                       		<TextView
-                       		    android:id="@+id/expense_balance"
-                       		    android:layout_width="match_parent"
-                       			android:layout_height="wrap_content"  />
-                       		<TextView
-                       		    android:id="@+id/expense_balance_label"
-                       		    android:layout_width="match_parent"
-                       			android:layout_height="wrap_content"
-                       			android:text="@string/label_expense"
-                       			android:textColor="@color/gray4"/>
-                   </LinearLayout>
-               </LinearLayout>
-               <com.moneydesktop.finance.views.LineView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:lineColor="@color/gray2"
-                    app:lineStrokeWidth="3dp"
-                    app:isVertical="false"
-                    app:isDashed="true" 
-                    app:dashLength="4dp"/>
-               <LinearLayout
-                   android:id="@+id/daily_spending_summary"
-                   android:orientation="vertical"
-                   android:layout_height="0dp"
-                   android:layout_width="match_parent"
-                   android:layout_margin="10dp"
-                   android:layout_weight=".23">
-		               <TextView
-		                   android:id="@+id/daily_spending_text"
-		                   android:text="@string/label_daily_spending"
-		                   android:layout_width="match_parent"
-		                   android:layout_height="wrap_content"
-		                   android:textColor="@color/gray4"
-		                   android:layout_marginBottom="10dp"
-		                   />
-		              <LinearLayout
-		                  android:id="@+id/daily_spending_graph"
-		                  android:orientation="horizontal"
-		                  android:layout_height="0dp"
-		                  android:layout_width="match_parent"
-		                  android:layout_weight=".77"/>
-               </LinearLayout>
-               <com.moneydesktop.finance.views.LineView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:lineColor="@color/gray2"
-                    app:lineStrokeWidth="3dp"
-                    app:isVertical="false"
-                    app:isDashed="true"
-                    app:dashLength="4dp" />
-               <LinearLayout 
-                   android:id="@+id/transactions_category_view"
-                   android:orientation="horizontal"
-                   android:layout_width="match_parent"
-                   android:layout_height="0dp"
-                   android:layout_weight=".19">
-                   <LinearLayout
-                       android:id="@+id/new_transactions_view"
-                       android:orientation="vertical"
-                       android:layout_width="0dp"
-                       android:layout_height="match_parent"
-                       android:gravity="center_vertical"
-                       android:layout_margin="10dp"
-                       android:layout_weight="1">
-                       <TextView
-                           android:id="@+id/new_transactions_number"
-                           android:layout_width="match_parent"
-                           android:layout_height="wrap_content"/>
-                       <TextView
-                           android:id="@+id/new_transactions_label"
-                           android:layout_width="match_parent"
-                           android:layout_height="wrap_content"
-                           android:text="@string/label_new_transactions"
-                           android:textColor="@color/gray4"/>
-                   </LinearLayout>
-               <com.moneydesktop.finance.views.LineView
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/icon_smile"
+                    android:textColor="@color/budgetColorGreenBackground" />
+
+                <LinearLayout
+                    android:id="@+id/income_balance_text"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    app:lineColor="@color/gray2"
-                    app:lineStrokeWidth="3dp"
-                    app:isVertical="true"
-                    app:isDashed="true"
-                    app:dashLength="4dp" />
-                    <LinearLayout
-                       android:id="@+id/top_category_view"
-                       android:orientation="vertical"
-                       android:layout_width="0dp"
-                       android:layout_height="match_parent"
-                       android:gravity="center_vertical"
-                       android:layout_margin="10dp"
-                       android:layout_weight="1">
-                       <TextView
-                           android:id="@+id/top_category_text"
-                           android:layout_width="match_parent"
-                           android:layout_height="wrap_content"
-                           android:text="@string/label_top_category"
-                           android:textColor="@color/gray4"
-                           android:layout_marginBottom="10dp"/>
-                       <TextView
-                           android:id="@+id/top_category_icon"
-                           android:layout_width="match_parent"
-                           android:layout_height="wrap_content"
-                           android:textColor="@color/debts"/>
-                   </LinearLayout>                 
-               </LinearLayout>
-               <com.moneydesktop.finance.views.LineView
+                    android:gravity="center_vertical"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/income_balance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/income_balance_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_income"
+                        android:textColor="@color/gray4" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:dashLength="2dp"
+                app:isDashed="true"
+                app:isVertical="false"
+                app:lineColor="@color/gray2"
+                app:lineStrokeWidth="2dp" />
+
+            <LinearLayout
+                android:id="@+id/expense_balance_summary_view"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight=".15"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/expense_balance_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/icon_frown"
+                    android:textColor="@color/debts" />
+
+                <LinearLayout
+                    android:id="@+id/expense_balance_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/expense_balance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/expense_balance_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_expense"
+                        android:textColor="@color/gray4" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:dashLength="2dp"
+                app:isDashed="true"
+                app:isVertical="false"
+                app:lineColor="@color/gray2"
+                app:lineStrokeWidth="2dp" />
+
+            <LinearLayout
+                android:id="@+id/daily_spending_summary"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="10dp"
+                android:layout_weight=".23"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/daily_spending_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:lineColor="@color/gray2"
-                    app:lineStrokeWidth="3dp"
-                    app:isVertical="false"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/label_daily_spending"
+                    android:textColor="@color/gray4" />
+
+                <com.moneydesktop.finance.views.BarGraphView
+                    android:id="@+id/daily_spending_graph"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight=".77"
+                    android:orientation="horizontal" />
+            </LinearLayout>
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:dashLength="2dp"
+                app:isDashed="true"
+                app:isVertical="false"
+                app:lineColor="@color/gray2"
+                app:lineStrokeWidth="2dp" />
+
+            <LinearLayout
+                android:id="@+id/transactions_category_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight=".19"
+                android:orientation="horizontal" >
+
+                <LinearLayout
+                    android:id="@+id/new_transactions_view"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/new_transactions_number"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/new_transactions_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_new_transactions"
+                        android:textColor="@color/gray4" />
+                </LinearLayout>
+
+                <com.moneydesktop.finance.views.LineView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    app:dashLength="2dp"
                     app:isDashed="true"
-                    app:dashLength="4dp" />
-               <LinearLayout
-                   android:id="@+id/uncategorized_transaction_view"
-                   android:orientation="horizontal"
-                   android:layout_width="match_parent"
-                   android:layout_height="0dp"
-                   android:gravity="center_vertical"
-                   android:layout_weight=".17">
-                   <TextView
-                       android:id="@+id/uncategorized_transaction_icon"
-                       android:layout_width="wrap_content"
-                       android:layout_height="match_parent"
-                       android:text="@string/icon_qmark"       
-                       android:textColor="@color/debts"
-                       android:gravity="center_vertical"
-                       android:layout_margin="10dp"            
-                       />
-                   <TextView
-                       android:id="@+id/uncategorized_transaction_text"
-                       android:layout_width="wrap_content"
-                       android:layout_height="match_parent"
-                       android:gravity="center_vertical"
-                       android:layout_margin="5dp"
-                       android:textColor="@color/gray5"/>
-               </LinearLayout>
-    	</LinearLayout>
-    		
+                    app:isVertical="true"
+                    app:lineColor="@color/gray2"
+                    app:lineStrokeWidth="2dp" />
+
+                <LinearLayout
+                    android:id="@+id/top_category_view"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/top_category_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:text="@string/label_top_category"
+                        android:textColor="@color/gray4" />
+
+                    <TextView
+                        android:id="@+id/top_category_icon"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/debts" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:dashLength="2dp"
+                app:isDashed="true"
+                app:isVertical="false"
+                app:lineColor="@color/gray2"
+                app:lineStrokeWidth="2dp" />
+
+            <LinearLayout
+                android:id="@+id/uncategorized_transaction_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight=".17"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/uncategorized_transaction_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/icon_qmark"
+                    android:textColor="@color/debts" />
+
+                <TextView
+                    android:id="@+id/uncategorized_transaction_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/gray5" />
+            </LinearLayout>
+        </LinearLayout>
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

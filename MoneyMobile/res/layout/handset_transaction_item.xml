@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    android:id="@+id/item_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/primary_to_white" >
+	    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+	    android:layout_below="@+id/cell"
+        android:layout_marginTop="-2dp"
+        android:background="@color/white" />
+
+    <include
+        android:id="@+id/header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/handset_item_transaction_header" />
+    
+	<LinearLayout
+	    android:id="@id/cell"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/header"
+	    android:layout_marginLeft="10dp"
+    	android:background="@drawable/transaction_item" 
+	    android:orientation="vertical" >
+	    
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="28dp"
+	        android:orientation="horizontal" >
+	        
+		    <TextView
+		        android:id="@+id/title"
+		        android:layout_width="0dp"
+		        android:layout_weight="65"
+		        android:layout_height="match_parent"
+		        android:paddingLeft="8dp"
+		        android:gravity="center_vertical|left"
+	            android:text="@string/default_title"
+				android:textColor="@drawable/gray7_to_white"
+				android:textSize="16sp"
+				android:singleLine="true"
+				android:ellipsize="end" />
+	        
+		    <TextView
+		        android:id="@+id/dollar_sign"
+		        android:layout_width="wrap_content"
+		        android:layout_height="match_parent"
+		        android:paddingRight="3dp"
+		        android:gravity="center"
+	            android:text="@string/dollar_sign"
+				android:textColor="@drawable/gray3_to_white_text"
+				android:textSize="10sp" />
+		        
+	        <com.moneydesktop.finance.views.LineView
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            app:lineColor="@drawable/gray3_to_white_text"
+	            app:isDashed="true"
+	            app:dashLength="2dp"
+	            app:lineStrokeWidth="2dp"
+	            app:isVertical="true" />
+		    
+		    <TextView
+		        android:id="@+id/amount"
+		        android:layout_width="0dp"
+		        android:layout_weight="45"
+		        android:layout_height="match_parent"
+		        android:paddingRight="8dp"
+		        android:gravity="center_vertical|right"
+	            android:text="@string/default_price"
+				android:textColor="@drawable/gray7_to_white"
+				android:textStyle="bold"
+				android:textSize="16sp"
+				android:singleLine="true"
+				android:ellipsize="end" />
+	        
+	    </LinearLayout>
+		        
+        <com.moneydesktop.finance.views.LineView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:lineColor="@drawable/gray3_to_white_text"
+            app:isDashed="true"
+            app:dashLength="2dp"
+            app:lineStrokeWidth="2dp" />
+	    
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="20dp"
+	        android:orientation="horizontal" >
+	    
+		    <TextView
+		        android:id="@+id/category"
+		        android:layout_width="0dp"
+		        android:layout_weight="45"
+		        android:layout_height="match_parent"
+		        android:paddingLeft="8dp"
+		        android:gravity="center_vertical|left"
+	            android:text="@string/default_category"
+				android:textColor="@drawable/gray3_to_white_text"
+				android:textSize="10sp"
+				android:singleLine="true"
+				android:ellipsize="end" />
+		        
+	        <com.moneydesktop.finance.views.LineView
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            app:lineColor="@drawable/gray3_to_white_text"
+	            app:isDashed="true"
+	            app:dashLength="2dp"
+	            app:lineStrokeWidth="2dp"
+	            app:isVertical="true" />
+		    
+		    <TextView
+		        android:id="@+id/bottom"
+		        android:layout_width="0dp"
+		        android:layout_weight="55"
+		        android:layout_height="match_parent"
+		        android:paddingRight="8dp"
+		        android:gravity="center_vertical|right"
+				android:textColor="@drawable/gray7_to_white"
+				android:singleLine="true"
+				android:ellipsize="end" />
+	    
+	    </LinearLayout>
+		        
+        <com.moneydesktop.finance.views.LineView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:lineColor="@color/gray3"
+            app:lineStrokeWidth="2dp" />
+	    
+    </LinearLayout>
+
+</RelativeLayout>

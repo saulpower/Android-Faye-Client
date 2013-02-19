@@ -9,10 +9,10 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.moneydesktop.finance.BaseActivity;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.shared.activity.BaseActivity;
 
 public class AccountTypeGroupView extends FrameLayout {
     

@@ -16,9 +16,9 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
-import com.moneydesktop.finance.BaseActivity;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
+import com.moneydesktop.finance.shared.activity.BaseActivity;
 import com.moneydesktop.finance.tablet.fragment.IntroTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.FixedSpeedScroller;

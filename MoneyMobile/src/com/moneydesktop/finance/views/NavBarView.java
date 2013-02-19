@@ -6,12 +6,16 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.animation.LinearInterpolator;
 import android.widget.TextView;
 
+import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
@@ -30,6 +34,8 @@ public class NavBarView extends TextView {
 	private boolean mIsRefresh = false;
 	private float mAdjustment = 0;
 	private Handler mHandler;
+	
+	private Paint paint;
 	
 	public float getRotation() {
 		return mRotation;
@@ -57,21 +63,22 @@ public class NavBarView extends TextView {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 		
 		init();
-			
-		String text = getText().toString();
-		
-		getPaint().getTextBounds(text, 0, text.length(), mTextBounds);
-		
-		mTextBounds.bottom = Math.abs(mTextBounds.bottom);
-		mTextBounds.top = Math.abs(mTextBounds.top);
 	}
 	
 	private void init() {
 		
+		paint = new Paint();
+		paint.setColor(Color.BLACK);
+		paint.setStyle(Style.STROKE);
+		paint.setStrokeWidth(2);
+		
 		mHandler = new Handler();
 		
-		mAdjustment = UiUtils.getDynamicPixels(getContext(), 1.6f);
-		mIsRefresh = getText().toString().equals(getContext().getString(R.string.icon_refresh));
+		if (ApplicationContext.isTablet()) {
+			mAdjustment = UiUtils.getDynamicPixels(getContext(), 1.6f);
+		}
+		
+		mIsRefresh = (getText().toString().equals(getContext().getString(R.string.icon_refresh)) || getText().toString().equals(getContext().getString(R.string.nav_icon_refresh)));
 		
 		if (!mIsRefresh) return;
 		
@@ -152,8 +159,17 @@ public class NavBarView extends TextView {
 	protected void onDraw(Canvas canvas) {
 		
 		canvas.save();
+
+		String text = getText().toString();
+		getPaint().getTextBounds(text, 0, text.length(), mTextBounds);
+
+		float x = mTextBounds.exactCenterX() + mAdjustment;
+		float y = (getHeight() - mTextBounds.height()) + mTextBounds.height() / 2;
 		
-		canvas.rotate(mRotation, mTextBounds.centerX() + mAdjustment, getHeight() / 2 + mAdjustment);
+		if (ApplicationContext.isTablet()) y = getHeight() / 2 + mAdjustment;
+		
+		canvas.rotate(mRotation, x, y);
+		
 		super.onDraw(canvas);
 		
 		canvas.restore();

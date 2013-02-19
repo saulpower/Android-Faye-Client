@@ -2,101 +2,72 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
-    
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="20dp"
-    	android:background="@drawable/box" >
-        
-	    <TextView
-	        android:id="@+id/title"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_marginTop="5dp"
-	        android:gravity="center"
-	        android:textStyle="bold"
-	        android:textSize="48sp"
-	        android:textColor="@color/gray7"
-	        android:text="@string/title_activity_settings" />
-	    
-	    <LinearLayout 
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_centerInParent="true"
-	        android:orientation="vertical">
-	    
-		    <LinearLayout 
-	            android:id="@+id/lock"
-		        android:layout_width="90dp"
-		        android:layout_height="90dp"
-	            style="@style/setting_button" >
-		        
-		        <TextView
-		            android:id="@+id/lock_icon"
-		            android:layout_width="55dp"
-		            android:layout_height="55dp"
-		            android:text="@string/icon_lock"
-	            	style="@style/text_button" />
-		        
-		        <TextView
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:text="@string/label_app_lock"
-		            style="@style/text_label" />
-		            		        
-	        </LinearLayout>
-	    
-		    <LinearLayout 
-	            android:id="@+id/feedback"
-		        android:layout_width="90dp"
-		        android:layout_height="90dp"
-	        	android:layout_marginTop="10dp"
-	            style="@style/setting_button" >
-	        
-		        <TextView
-		            android:id="@+id/feedback_icon"
-		            android:layout_width="55dp"
-		            android:layout_height="55dp"
-		            android:layout_marginTop="-15dp"
-		            android:text="@string/icon_feedback"
-	            	style="@style/text_button" />
-		        
-		        <TextView
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:text="@string/label_feedback"
-		            style="@style/text_label" />
-		        
-	        </LinearLayout>
-	    
-		    <LinearLayout 
-	            android:id="@+id/logout"
-		        android:layout_width="90dp"
-		        android:layout_height="90dp"
-	        	android:layout_marginTop="10dp"
-	            style="@style/setting_button" >
-		    	        
-		        <TextView
-		            android:id="@+id/logout_icon"
-		            android:layout_width="55dp"
-		            android:layout_height="55dp"
-		            android:layout_marginTop="-10dp"
-		            android:text="@string/icon_logout"
-	            	style="@style/text_button" />
-		        
-		        <TextView
-		            android:id="@+id/logout_label"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:text="@string/label_unlink"
-		            style="@style/text_label" />
-		        
-	        </LinearLayout>
-	        
-	    </LinearLayout>
-        
-    </RelativeLayout>
+    android:orientation="vertical"
+    android:gravity="center" >
+
+    <LinearLayout
+        android:id="@+id/lock"
+        style="@style/setting_button"
+        android:layout_width="90dp"
+        android:layout_height="90dp" >
+
+        <TextView
+            android:id="@+id/lock_icon"
+            style="@style/text_button"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:text="@string/icon_lock" />
+
+        <TextView
+            style="@style/text_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_app_lock" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/feedback"
+        style="@style/setting_button"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="10dp" >
+
+        <TextView
+            android:id="@+id/feedback_icon"
+            style="@style/text_button"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-15dp"
+            android:text="@string/icon_feedback" />
+
+        <TextView
+            style="@style/text_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_feedback" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/logout"
+        style="@style/setting_button"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="10dp" >
+
+        <TextView
+            android:id="@+id/logout_icon"
+            style="@style/text_button"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-10dp"
+            android:text="@string/icon_logout" />
+
+        <TextView
+            android:id="@+id/logout_label"
+            style="@style/text_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_unlink" />
+    </LinearLayout>
 
 </LinearLayout>

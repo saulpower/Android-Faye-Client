@@ -1,6 +1,10 @@
 
 package com.moneydesktop.finance.handset.fragment;
 
+import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.List;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,32 +12,33 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BankAccountDao;
+import com.moneydesktop.finance.shared.fragment.GrowFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.AccountBalanceItemView;
 
-import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.List;
-
-public class AccountSummaryHandsetFragment extends BaseFragment {
+public class AccountSummaryHandsetFragment extends GrowFragment {
     private HashMap<String, Object> mAccountInfo;
 
-    public static AccountSummaryHandsetFragment getInstance(FragmentType type) {
+    public static AccountSummaryHandsetFragment getInstance(int position) {
 
         AccountSummaryHandsetFragment fragment = new AccountSummaryHandsetFragment();
-        fragment.setType(type);
         fragment.setRetainInstance(true);
 
         Bundle args = new Bundle();
+        args.putInt(POSITION, position);
         fragment.setArguments(args);
 
         return fragment;
     }
+
+	@Override
+	public FragmentType getType() {
+		return FragmentType.ACCOUNT_SUMMARY;
+	}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,6 +46,15 @@ public class AccountSummaryHandsetFragment extends BaseFragment {
         BankAccountDao banks = ApplicationContext.getDaoSession().getBankAccountDao();
         List<BankAccount> mBankList = banks.loadAll();
         mRoot = inflater.inflate(R.layout.handset_account_summary_fragment_view, (ViewGroup) mRoot);
+        mRoot.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                
+                 mActivity.showFragment(FragmentType.ACCOUNT_TYPES, true);
+                
+            }
+            
+        });
         setupView(mBankList, mRoot);
 
         return mRoot;
@@ -60,7 +74,7 @@ public class AccountSummaryHandsetFragment extends BaseFragment {
         mAccountInfo = getAccountValues(bankList);
         TextView label = (TextView) v.findViewById(R.id.label_balance_view);
         label.setText(getResources().getString(R.string.label_balances));
-        Fonts.applySecondaryItalicFont(label, 12);
+        Fonts.applySecondaryItalicFont(label, 10);
         AccountBalanceItemView cashAccounts = (AccountBalanceItemView) v
                 .findViewById(R.id.account_balance_cash);
         cashAccounts.setAccountStatus(makeAccountsString((Integer) mAccountInfo

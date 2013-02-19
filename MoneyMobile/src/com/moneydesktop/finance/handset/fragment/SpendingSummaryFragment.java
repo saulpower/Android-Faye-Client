@@ -5,28 +5,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.shared.fragment.BaseFragment;
 
 public class SpendingSummaryFragment extends BaseFragment {
 
     private static SpendingSummaryFragment sFragment;
     
-	public static SpendingSummaryFragment getInstance(FragmentType type) {
+	public static SpendingSummaryFragment getInstance() {
 		
 	    if (sFragment != null) {
 	        return sFragment;
 	    }
 	    
 	    sFragment = new SpendingSummaryFragment();
-	    sFragment.setType(type);
         sFragment.setRetainInstance(true);
 		
         Bundle args = new Bundle();
         sFragment.setArguments(args);
         
         return sFragment;
+	}
+
+	@Override
+	public FragmentType getType() {
+		return null;
 	}
 	
 	@Override

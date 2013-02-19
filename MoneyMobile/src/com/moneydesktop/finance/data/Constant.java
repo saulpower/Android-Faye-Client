@@ -1,6 +1,12 @@
 
 package com.moneydesktop.finance.data;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.DataState;
 import com.moneydesktop.finance.database.Bank;
@@ -13,10 +19,6 @@ import com.moneydesktop.finance.database.Tag;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 public class Constant {
     
     /*******************************************************************
@@ -24,7 +26,7 @@ public class Constant {
      *******************************************************************/
 
     public static final String EXTRA_ACCOUNT_ID = "account_id";
-    public static final String EXTRA_BOB_ID = "bod_id";
+    public static final String EXTRA_ID = "bod_id";
     public static final String EXTRA_CATEGORY_ID = "category_id";
     public static final String EXTRA_FRAGMENT = "fragment";
     public static final String EXTRA_POSITION = "position";
@@ -76,6 +78,7 @@ public class Constant {
     public static final String KEY_GUID = "guid";
     public static final String KEY_HAS_BEEN_VIEWED = "has_been_viewed";
     public static final String KEY_HAS_PREVIOUS = "has_previous";
+    public static final String KEY_ID = "id";
     public static final String KEY_INCOME = "income";
     public static final String KEY_INSTITUTION = "institution";
     public static final String KEY_INSTITUTION_GUID = "institution_guid";
@@ -169,7 +172,10 @@ public class Constant {
     public static final String QUERY_TOP_SPENDING_CATEGORY = "SELECT CATEGORY_ID, Sum(AMOUNT) As AMOUNT FROM TRANSACTIONS WHERE DATE BETWEEN ? AND ? GROUP BY CATEGORY_ID ORDER BY AMOUNT desc ";
     public static final String QUERY_DATED_TRANSACTIONS = "SELECT * FROM TRANSACTIONS WHERE DATE BETWEEN ? AND ? ORDER BY DATE ASC";
     public static final String QUERY_UNVIEWED_TRANSACTIONS = "SELECT COUNT(IS_PROCESSED) As UnProcessedTrans FROM TRANSACTIONS WHERE IS_PROCESSED='0' AND DATE BETWEEN ? AND ? ";
-    public static final String QUERY_DAILY_TRANSACTIONS = "SELECT DAY_NUMBER, SUM(AMOUNT) AS Amount FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER, MONTH_NUMBER, DAY_NUMBER ORDER BY DATE ASC";
+    public static final String QUERY_DAILY_TRANSACTIONS = "SELECT DATE, SUM(AMOUNT) AS Amount FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER, MONTH_NUMBER, DAY_NUMBER ORDER BY DATE ASC";
+    public static final String QUERY_MONTHLY_TRANSACTIONS = "SELECT DATE, SUM(AMOUNT) AS Amount FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER, MONTH_NUMBER ORDER BY DATE ASC";
+    public static final String QUERY_QUARTERLY_TRANSACTIONS = "SELECT DATE, SUM(AMOUNT) AS Amount, QUARTER_NUMBER FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER, QUARTER_NUMBER ORDER BY DATE ASC";
+    public static final String QUERY_YEARLY_TRANSACTIONS = "SELECT DATE, SUM(AMOUNT) AS Amount FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER ORDER BY DATE ASC";
     /*******************************************************************
      * VALUES
      *******************************************************************/
@@ -223,6 +229,16 @@ public class Constant {
             R.string.folder_flag_sub, 
             R.string.folder_clear_sub
         };
+    
+    public static final List<int[]> MENU_ITEMS;
+    static {
+    	List<int[]> items = new ArrayList<int[]>();
+    	items.add(new int[] { R.string.icon_home, R.string.title_activity_handset_dashboard });
+    	items.add(new int[] { R.string.icon_accounts, R.string.title_activity_accounts });
+    	items.add(new int[] { R.string.icon_transaction, R.string.title_activity_transactions });
+    	items.add(new int[] { R.string.icon_settings, R.string.title_activity_settings });
+    	MENU_ITEMS = Collections.unmodifiableList(items);
+    }
 	
 	public static final Map<String, DataState> OPERATIONS;
     static {

@@ -8,8 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.moneydesktop.finance.BaseFragment;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.util.Fonts;
 
 public class IntroTabletFragment extends BaseFragment {
@@ -40,15 +41,18 @@ public class IntroTabletFragment extends BaseFragment {
         return view;
     }
 
+	@Override
+	public FragmentType getType() {
+		return null;
+	}
+
     @Override
     public String getFragmentTitle() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public boolean onBackPressed() {
-        // TODO Auto-generated method stub
         return false;
     }
 }

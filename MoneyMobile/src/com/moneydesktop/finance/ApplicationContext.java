@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 
 import com.crittercism.app.Crittercism;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -25,14 +23,13 @@ import com.moneydesktop.finance.exception.CustomExceptionHandler;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.AuthEvent;
 import com.moneydesktop.finance.model.EventMessage.LoginEvent;
+import com.moneydesktop.finance.shared.activity.BaseActivity;
 
 import de.greenrobot.event.EventBus;
 
 public class ApplicationContext extends Application {
 	
 	public final String TAG = "ApplicationContext";
-
-	final static String WAKE_TAG = "wake_lock";
 
 	private static ApplicationContext sInstance;
 	
@@ -41,8 +38,6 @@ public class ApplicationContext extends Application {
     private static SQLiteDatabase sDb;
     private static DaoMaster sDaoMaster;
     private static DaoSession sDaoSession;
-	
-	private static WakeLock sWl;
 	
 	private static boolean sScreenOn = true;
 	private static boolean sIsTablet = false;
@@ -86,7 +81,6 @@ public class ApplicationContext extends Application {
         getObjectMapper();
 
     	registerScreenLock();
-		acquireWakeLock();
 	}
 	
 	@Override
@@ -96,7 +90,6 @@ public class ApplicationContext extends Application {
 		EventBus.getDefault().unregister(this);
 		
 		unregisterReceiver(sScreenLock);
-		releaseWakeLock();
 	}
 	
 	private void initializeDatabase() {
@@ -197,24 +190,4 @@ public class ApplicationContext extends Application {
     public static void setLockShowing(boolean sLockShowing) {
         ApplicationContext.sLockShowing = sLockShowing;
     }
-	
-	/*********************************************************************************
-	 * Misc.
-	 *********************************************************************************/
-
-	public void acquireWakeLock() {
-			
-		PowerManager pm = (PowerManager) ApplicationContext.getContext().getSystemService(Context.POWER_SERVICE);
-		sWl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, WAKE_TAG);
-		sWl.acquire();
-	}
-
-	private void releaseWakeLock() {
-		
-		if (sWl != null) {
-			
-			sWl.release();
-			sWl = null;
-		}
-	}
 }

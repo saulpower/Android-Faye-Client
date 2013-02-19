@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/gray7">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/description"
+        android:src="@drawable/phone_logo_small" />
+		        
+    <com.moneydesktop.finance.views.LineView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:lineColor="@color/gray2"
+        app:isDashed="true"
+        app:dashLength="2dp"
+        app:lineStrokeWidth="2dp" />
+    
+    <ListView 
+        android:id="@+id/menu_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:dividerHeight="0dp"
+        android:divider="@null" />
+    
+</LinearLayout>
