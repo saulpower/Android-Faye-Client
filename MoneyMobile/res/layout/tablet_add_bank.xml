@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gray_border" >
+
+    <ViewFlipper
+           android:id="@+id/add_bank_flipper"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent">
+           
+           <include layout="@layout/tablet_add_bank_select_method" android:id="@+id/view1"/>
+           <include layout="@layout/tablet_add_bank_select_institution" android:id="@+id/view2"/>
+           <include layout="@layout/tablet_add_bank_connect" android:id="@+id/view3"/>
+           <include layout="@layout/tablet_add_bank_manually_account_types" android:id="@+id/view4"/>
+           <include layout="@layout/tablet_add_bank_manually_save_screen" android:id="@+id/view5"/>
+           
+	</ViewFlipper>
+
+</RelativeLayout>

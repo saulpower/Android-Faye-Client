@@ -65,6 +65,7 @@ public class Constant {
     public static final String KEY_CREATED = "created";
     public static final String KEY_CREDENTIALS = "credentials";
     public static final String KEY_CREDIT_LIMIT = "credit_limit";
+    public static final String KEY_CUSTOM_FIELDS = "custom_fields";
     public static final String KEY_BALANCE = "balance";
     public static final String KEY_DATE = "date";
     public static final String KEY_DAY_DUE = "day_due";
@@ -95,6 +96,7 @@ public class Constant {
     public static final String KEY_IS_REIMBURSABLE = "is_reimbursable";
     public static final String KEY_IS_VOID = "is_void";
     public static final String KEY_JSON = "json";
+    public static final String KEY_LABEL = "label";
     public static final String KEY_LAST_JOB = "last_job_status";
     public static final String KEY_LAST_UPDATE = "last_update_time";
     public static final String KEY_LOGIN_TOKEN = "login_token";

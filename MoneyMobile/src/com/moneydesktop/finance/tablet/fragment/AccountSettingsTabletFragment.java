@@ -90,8 +90,7 @@ public class AccountSettingsTabletFragment extends BaseFragment{
 		mAccountName = intent.getExtras().getString(Constant.KEY_ACCOUNT_NAME);
 		mAccountId = intent.getExtras().getString(Constant.KEY_BANK_ACCOUNT_ID);
 		mAccountTypeName = intent.getExtras().getString(Constant.KEY_ACCOUNT_TYPE);
-	
-		
+			
         Bundle args = new Bundle();
         fragment.setArguments(args);
         
@@ -371,7 +370,7 @@ public class AccountSettingsTabletFragment extends BaseFragment{
 				ArrayAdapter<AccountType> listAdapter;   
 				UiUtils.hideKeyboard(mActivity, v);
 				
-				((DropDownTabletActivity)getActivity()).animateLabelsForward(mActivity.getResources().getString(R.string.label_account_type));
+				((DropDownTabletActivity)getActivity()).animateLabelsForward(mActivity.getResources().getString(R.string.label_account_type), true);
 				
 				
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

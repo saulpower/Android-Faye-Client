@@ -507,11 +507,8 @@ public class BankAccount extends BusinessObject  {
 
         if (bankAccount.isNew()) {
 
-            bankAccount
-                    .setExclusionFlags(AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES
-                            .index()
-                            | AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME
-                                    .index());
+            bankAccount.setExclusionFlags(AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES.index()
+                            | AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME.index());
             bankAccount.setIsHolding(false);
 
             if (json.has(Constant.KEY_MEMBER_GUID)) {

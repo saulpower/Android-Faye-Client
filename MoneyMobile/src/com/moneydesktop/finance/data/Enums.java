@@ -1,5 +1,7 @@
 package com.moneydesktop.finance.data;
 
+import android.support.v4.app.Fragment;
+
 public class Enums {
     
     public enum TabletFragments {
@@ -35,7 +37,45 @@ public class Enums {
         }
         
     };
+
     
+   
+    public enum AddBankFragments {
+        
+        SELECT_METHOD (0),
+        SELECT_INSTITUTION (1),
+        LOGIN (2);
+        
+        private int index;
+        
+        AddBankFragments(int index) {
+            this.index = index;
+        }
+        
+        public static AddBankFragments fromInteger(Integer value) {
+            
+            switch(value) {
+            case 1:
+                return SELECT_METHOD;
+            case 2:
+                return SELECT_INSTITUTION;
+            case 3:
+                return LOGIN;
+            }
+            return null;
+        }
+        
+        public int index() {
+            return index;
+        }        
+        public static int size() {
+			return 3;
+        }
+
+    };
+    
+    
+   
     
     public enum BankRefreshStatus {
         
@@ -117,7 +157,11 @@ public class Enums {
         SPENDING_SUMMARY(15),
         BUDGET_SUMMARY(16),
         TRANSACTION_SUMMARY(17),
-        ACCOUNT_SETTINGS(18);
+        ACCOUNT_SETTINGS(18),
+        ADD_BANK(19),
+        FIX_BANK(20),
+        SHOW_HIDE_DATA(21),
+        UPDATE_USERNAME_PASSWORD(22);
         
         private final int index;
         
@@ -154,8 +198,15 @@ public class Enums {
                 return TRANSACTION_SUMMARY;
             case 18:
                 return ACCOUNT_SETTINGS;
-            }
-            
+            case 19:
+            	return ADD_BANK;
+	        case 20:
+	        	return FIX_BANK;
+	        case 21:
+	        	return SHOW_HIDE_DATA;
+	        case 22:
+	        	return UPDATE_USERNAME_PASSWORD;
+	        }
             return null;
         }
         

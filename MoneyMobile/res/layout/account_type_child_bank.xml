@@ -59,7 +59,7 @@
                 android:layout_height="55dip"
                 android:layout_marginLeft="20dip"
                 android:gravity="center_vertical"
-                app:dashLength="4dp"
+                app:dashLength="2dp"
                 app:isDashed="true"
                 app:isVertical="true"
                 app:lineColor="@color/primaryColor"

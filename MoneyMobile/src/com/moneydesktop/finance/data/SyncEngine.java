@@ -164,13 +164,14 @@ public class SyncEngine {
 					for (int i = updatingCopy.size() -1; i >= 0; i--) {
 						
 						Bank bank = updatingCopy.get(i);
-						
+
 						JSONObject json = DataBridge.sharedInstance().getBankStatus(bank.getBankId());
 						bank.updateStatus(json);
-						
-						if (bank.getProcessStatus().intValue()  >= 3)
+
+						if (bank.getProcessStatus().intValue()  >= 3){
 							banksUpdating.remove(i);
 						    eventBus.post(new EventMessage().new BankStatusUpdateEvent(bank));
+						}
 					}
 					
 					if (banksUpdating.size() == 0) {

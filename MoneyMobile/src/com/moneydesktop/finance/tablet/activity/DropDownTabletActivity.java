@@ -30,8 +30,12 @@ import com.moneydesktop.finance.shared.TransactionDetailController;
 import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
 import com.moneydesktop.finance.tablet.activity.DialogBaseActivity.OnKeyboardStateChangeListener;
 import com.moneydesktop.finance.tablet.fragment.AccountSettingsTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.AddBankTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.FixBankTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.ShowHideDataTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionTotalsFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.UpdateUsernamePassowrdTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment.onBackPressedListener;
 import com.moneydesktop.finance.tablet.fragment.TransactionsPageTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
@@ -69,9 +73,10 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
         }
     }
     
-    public void animateLabelsForward(String subLabel) {
+    public void animateLabelsForward(String subLabel, boolean isFirstForwardAction) {
 
-    	mLabelDetails.setText(subLabel);
+
+    		
     	ValueAnimator animationY = ObjectAnimator.ofFloat(mLabel, "translationY", -((mLabel.getY() - mArrow.getY()) + (mArrow.getHeight()/3) ));
     	ValueAnimator animationSide = ObjectAnimator.ofFloat(mLabel, "translationX", mLabelSpacing);
     	ValueAnimator scaleDownX = ObjectAnimator.ofFloat(mLabel, "scaleX", 1f, 0.75f);
@@ -89,6 +94,11 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
     	
     	set.setDuration(500);
     	set.start();
+    	mLabelDetails.setText(subLabel);
+    	
+
+    	
+    	mArrow.setVisibility(View.VISIBLE); 
     }
     
     public void animateLabelsReverse() {
@@ -110,6 +120,7 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
     	
     	set.setDuration(500);
     	set.start();
+    	mArrow.setVisibility(View.GONE);
     }
 
     @Override
@@ -311,6 +322,14 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
             	return AccountSettingsTabletFragment.newInstance(getIntent());
             case TRANSACTION_SUMMARY:
                 return TransactionTotalsFragment.newInstance(getIntent().getStringArrayExtra(Constant.EXTRA_VALUES));
+            case ADD_BANK:
+            	return AddBankTabletFragment.newInstance();
+            case FIX_BANK:
+            	return FixBankTabletFragment.newInstance(getIntent());
+            case SHOW_HIDE_DATA:
+            	return ShowHideDataTabletFragment.newInstance(getIntent());
+            case UPDATE_USERNAME_PASSWORD:
+            	return UpdateUsernamePassowrdTabletFragment.newInstance(getIntent());
             default:
                 finish();
         }
@@ -325,6 +344,12 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
      */
     private void configureDropdown(FragmentType type) {
         
+    	DisplayMetrics dm = new DisplayMetrics();
+	    getWindowManager().getDefaultDisplay().getMetrics(dm);
+	    double x = Math.pow(dm.widthPixels/dm.xdpi,2);
+	    double y = Math.pow(dm.heightPixels/dm.ydpi,2);
+	    double screenInches = Math.sqrt(x+y);
+    	
         switch (type) {
             case LOCK_SCREEN:
                 configureSize(0.4f, 0.65f);
@@ -339,11 +364,6 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
                 setupTransactionDetail();
                 break;
             case ACCOUNT_SETTINGS:
-            	DisplayMetrics dm = new DisplayMetrics();
-        	    getWindowManager().getDefaultDisplay().getMetrics(dm);
-        	    double x = Math.pow(dm.widthPixels/dm.xdpi,2);
-        	    double y = Math.pow(dm.heightPixels/dm.ydpi,2);
-        	    double screenInches = Math.sqrt(x+y);
         	    if (screenInches > 8) {
         	    	configureSize(0.6f, 0.7f);
         	    } else {
@@ -351,12 +371,44 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
         	    }
             	
                 mLabel.setVisibility(View.VISIBLE);
-                mArrow.setVisibility(View.VISIBLE);
+                mArrow.setVisibility(View.GONE); 
                 mLabelDetails.setVisibility(View.VISIBLE);
                 break;
             case TRANSACTION_SUMMARY:
                 mArrow.setVisibility(View.GONE);
                 configureSize(0.4f, 0.4f);
+                break;
+            case ADD_BANK:
+            	configureSize(0.6f, 0.8f);
+            	mLabel.setVisibility(View.VISIBLE);
+                mArrow.setVisibility(View.GONE);
+                mLabelDetails.setVisibility(View.VISIBLE);
+                break;
+            case FIX_BANK:
+            	configureSize(0.6f, 0.8f);
+            	mLabel.setVisibility(View.VISIBLE);
+                mArrow.setVisibility(View.GONE);
+                mLabelDetails.setVisibility(View.VISIBLE);
+                break;
+            case SHOW_HIDE_DATA:
+            	configureSize(0.6f, 0.8f);
+            	mLabel.setVisibility(View.VISIBLE);
+                mArrow.setVisibility(View.GONE);
+                mLabelDetails.setVisibility(View.VISIBLE);
+                break;
+            case UPDATE_USERNAME_PASSWORD:
+        	    if (screenInches > 8) {
+        	    	configureSize(0.5f, 0.7f);
+                	mLabel.setVisibility(View.VISIBLE);
+                    mArrow.setVisibility(View.GONE);
+                    mLabelDetails.setVisibility(View.VISIBLE);
+        	    } else {
+        	    	configureSize(0.6f, 0.8f);
+                	mLabel.setVisibility(View.VISIBLE);
+                    mArrow.setVisibility(View.GONE);
+                    mLabelDetails.setVisibility(View.VISIBLE);
+        	    }
+            	
                 break;
             default:
                 break;
