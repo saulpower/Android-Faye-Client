@@ -508,8 +508,7 @@ public class SyncEngine {
 		
 		start = System.currentTimeMillis();
 		
-		if (syncToken != null)
-			db.endSync(syncToken);
+		if (syncToken != null) db.endSync(syncToken);
 		
 		// Process updating account balances
 		BankAccount.buildAccountBalances();
