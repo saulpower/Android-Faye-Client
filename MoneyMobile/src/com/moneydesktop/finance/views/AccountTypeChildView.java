@@ -323,16 +323,18 @@ public class AccountTypeChildView extends FrameLayout {
     private void updateSpecificChildBanner(Bank bank) {
         int iterator = 0;
         for (final BankAccount account : mBankAccounts) {
-            if (bank.getBankName().equals(account.getBank().getBankName())){
+        	if (account.getBank() != null) {
+        		if (bank.getBankName().equals(account.getBank().getBankName())){
                 
-                View view = mBankAccountContainer.getChildAt(iterator);
-                mStatus = (ImageView)view.findViewById(R.id.account_type_child_banner);
-                
-                mStatus.setVisibility(View.VISIBLE);
-                mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_updating_banner));         
-                
-            }   
+	                View view = mBankAccountContainer.getChildAt(iterator);
+	                mStatus = (ImageView)view.findViewById(R.id.account_type_child_banner);
+	                
+	                mStatus.setVisibility(View.VISIBLE);
+	                mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_updating_banner));         
+	                
+	            }   
             iterator++;
+        	}
         }
     }
 
