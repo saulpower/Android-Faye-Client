@@ -1,27 +1,17 @@
 package com.moneydesktop.finance.views;
 
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
-import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.SlideFrom;
 import com.moneydesktop.finance.util.UiUtils;
-
-import java.util.List;
+import com.nineoldandroids.animation.ObjectAnimator;
 
 public class SlidingView extends FrameLayout{
 
@@ -34,6 +24,7 @@ public class SlidingView extends FrameLayout{
     int mScreenWidth;
     ViewGroup mParentView;
     View mSelectedView;
+    private boolean isVisible = false; 
     
     
     
@@ -48,7 +39,7 @@ public class SlidingView extends FrameLayout{
         mParentView = parentView;
         mSelectedView = selectedView;
         
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         infaltedView.setLayoutParams(params);
         
         mScreenHeight = UiUtils.getScreenHeight((Activity)mContext);
@@ -62,6 +53,7 @@ public class SlidingView extends FrameLayout{
 
     private void animateView() {     
     	   	
+    	isVisible = true;
         switch (mFrom) {
 	        case BOTTOM:
 	            ObjectAnimator animationBottom = ObjectAnimator.ofFloat(mInflatedView, "translationY", mScreenHeight, mY);
@@ -86,8 +78,13 @@ public class SlidingView extends FrameLayout{
         }
           
     }
+    
+    public boolean viewIsVisible() {
+    	return isVisible;
+    }
 
     public void dismiss() {
+    	isVisible = false;
         TranslateAnimation animation = translate();
         
         animation.setDuration(300); 
@@ -97,6 +94,7 @@ public class SlidingView extends FrameLayout{
     }
 
     public void dismiss(AnimationListener listener) {
+    	isVisible = false;
         TranslateAnimation animation = translate();
         
         animation.setDuration(300); 
@@ -119,7 +117,7 @@ public class SlidingView extends FrameLayout{
         	animation = new TranslateAnimation(mX, 0, 0, mScreenHeight);
             break;
         case RIGHT:
-        	animation = new TranslateAnimation(mScreenWidth, mX, 0, 0);
+        	animation = new TranslateAnimation(mParentView.getX(), mParentView.getWidth(), 0, 0);
             break;
         case TOP:
         	animation = new TranslateAnimation(0, 0, mScreenHeight, mY);

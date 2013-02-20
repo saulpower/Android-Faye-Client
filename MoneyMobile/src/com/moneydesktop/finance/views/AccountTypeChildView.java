@@ -131,6 +131,7 @@ public class AccountTypeChildView extends FrameLayout {
 									intent.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.ACCOUNT_SETTINGS);
 									intent.putExtra(Constant.KEY_ACCOUNT_TYPE, account.getAccountType().getAccountTypeName());
 									intent.putExtra(Constant.KEY_ACCOUNT_NAME, account.getAccountName());
+									intent.putExtra(Constant.KEY_BANK_ACCOUNT_ID, account.getAccountId());
 							        mActivity.startActivity(intent);
 								}
 							});
@@ -139,6 +140,10 @@ public class AccountTypeChildView extends FrameLayout {
 								@Override
 								public void onClick(View v) {
 									mPopup.fadeOutTransparency();
+			                        Intent i = new Intent(mActivity, DropDownTabletActivity.class);
+		                            i.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.SHOW_HIDE_DATA);
+		                            i.putExtra(Constant.KEY_BANK_ACCOUNT_ID, account.getAccountId());
+			                        mContext.startActivity(i);
 								}
 							});
 							
@@ -242,15 +247,17 @@ public class AccountTypeChildView extends FrameLayout {
         boolean updateListDataSet = false;
         AccountType accountToBeRemoved = new AccountType();
         for (final BankAccount account : mBankAccounts) {
-            if (account.getBank().getBankName().equals(deletedBank.getBankName())) { //TODO: null pointer here
-                View view = mBankAccountContainer.getChildAt(iterator);
-                mBankAccountContainer.removeView(view);      
-                
-                if (mBankAccountContainer.getChildCount() == 0) {
-                    updateListDataSet = true;
-                    accountToBeRemoved = AccountType.getAccountType(account.getAccountTypeId().toString());
-                }
-            }
+        	if (account.getBank() != null) {
+	            if (account.getBank().getBankName().equals(deletedBank.getBankName())) { //null pointer here sometimes when deleting multiple banks quickly
+	                View view = mBankAccountContainer.getChildAt(iterator);
+	                mBankAccountContainer.removeView(view);      
+	                
+	                if (mBankAccountContainer.getChildCount() == 0) {
+	                    updateListDataSet = true;
+	                    accountToBeRemoved = AccountType.getAccountType(account.getAccountTypeId().toString());
+	                }
+	            }
+        	}
         }
         if (updateListDataSet) {
             EventBus.getDefault().post(new EventMessage(). new RemoveAccountTypeEvent(accountToBeRemoved));
@@ -278,13 +285,13 @@ public class AccountTypeChildView extends FrameLayout {
                 
                 View view = mBankAccountContainer.getChildAt(iterator);
                 
-                if (view != null) {
+                if (view != null && account.getBank() != null) {
                 
                     mStatus = (ImageView)view.findViewById(R.id.account_type_child_banner);
                     
                     if (forceBanner){
                         mStatus.setVisibility(View.VISIBLE);
-                        mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+                        mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_updating_banner));
                     } else {
                         mStatus.setVisibility(View.VISIBLE);
 
@@ -292,7 +299,7 @@ public class AccountTypeChildView extends FrameLayout {
                             mStatus.setVisibility(View.GONE);
                             
                         } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_PENDING.index()) { //1
-                            mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+                            mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_updating_banner));
                             
                         } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_LOGIN_FAILED.index()) { //5
                             mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
@@ -301,7 +308,7 @@ public class AccountTypeChildView extends FrameLayout {
                             mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
                             
                         } else if (account.getBank().getProcessStatus().intValue() == BankRefreshStatus.STATUS_PROCESSING.index()) { //2
-                            mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+                            mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_updating_banner));
                             
                         } else {
                             mStatus.setVisibility(View.GONE);
@@ -316,16 +323,18 @@ public class AccountTypeChildView extends FrameLayout {
     private void updateSpecificChildBanner(Bank bank) {
         int iterator = 0;
         for (final BankAccount account : mBankAccounts) {
-            if (bank.getBankName().equals(account.getBank().getBankName())){
+        	if (account.getBank() != null) {
+        		if (bank.getBankName().equals(account.getBank().getBankName())){
                 
-                View view = mBankAccountContainer.getChildAt(iterator);
-                mStatus = (ImageView)view.findViewById(R.id.account_type_child_banner);
-                
-                mStatus.setVisibility(View.VISIBLE);
-                mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));         
-                
-            }   
+	                View view = mBankAccountContainer.getChildAt(iterator);
+	                mStatus = (ImageView)view.findViewById(R.id.account_type_child_banner);
+	                
+	                mStatus.setVisibility(View.VISIBLE);
+	                mStatus.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_updating_banner));         
+	                
+	            }   
             iterator++;
+        	}
         }
     }
 

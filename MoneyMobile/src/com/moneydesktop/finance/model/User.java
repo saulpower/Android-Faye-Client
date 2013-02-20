@@ -2,13 +2,13 @@ package com.moneydesktop.finance.model;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.util.Base64;
 import android.util.Log;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.data.Serialization;
+import com.moneydesktop.finance.util.Base64;
 import com.moneydesktop.finance.util.MacUtil;
 
 public class User {

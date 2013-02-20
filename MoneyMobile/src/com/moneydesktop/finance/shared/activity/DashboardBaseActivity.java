@@ -33,6 +33,8 @@ import com.moneydesktop.finance.views.GrowViewPager;
 public abstract class DashboardBaseActivity extends BaseActivity {
 
 	protected final String KEY_PAGER = "pager";
+	protected final String KEY_ON_HOME = "on_home";
+	protected final String KEY_NAVIGATION = "navigation";
 	
 	protected boolean mLoggingOut = false;
 	protected boolean mOnHome = true;

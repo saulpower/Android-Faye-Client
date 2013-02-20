@@ -1,5 +1,7 @@
 package com.moneydesktop.finance.data;
 
+import android.support.v4.app.Fragment;
+
 public class Enums {
     
     public enum TabletFragments {
@@ -35,6 +37,45 @@ public class Enums {
         }
         
     };
+
+    
+   
+    public enum AddBankFragments {
+        
+        SELECT_METHOD (0),
+        SELECT_INSTITUTION (1),
+        LOGIN (2);
+        
+        private int index;
+        
+        AddBankFragments(int index) {
+            this.index = index;
+        }
+        
+        public static AddBankFragments fromInteger(Integer value) {
+            
+            switch(value) {
+            case 1:
+                return SELECT_METHOD;
+            case 2:
+                return SELECT_INSTITUTION;
+            case 3:
+                return LOGIN;
+            }
+            return null;
+        }
+        
+        public int index() {
+            return index;
+        }        
+        public static int size() {
+			return 3;
+        }
+
+    };
+    
+    
+   
     
     public enum BankRefreshStatus {
         
@@ -115,9 +156,13 @@ public class Enums {
         SPENDING_SUMMARY(15),
         BUDGET_SUMMARY(16),
         TRANSACTION_SUMMARY(17),
-        TRANSACTIONS_SUMMARY_TABLET (18),
-        ACCOUNT_SETTINGS (19),
-        FEEDBACK(20);
+        ACCOUNT_SETTINGS(18),
+        FEEDBACK(19),
+        ADD_BANK(20),
+        FIX_BANK(21),
+        SHOW_HIDE_DATA(22),
+        UPDATE_USERNAME_PASSWORD(23);
+        
         private final int index;
         
         FragmentType(int index) {
@@ -151,8 +196,19 @@ public class Enums {
                 return BUDGET_SUMMARY;
             case 17:
                 return TRANSACTION_SUMMARY;
-            }
-            
+            case 18:
+                return ACCOUNT_SETTINGS;
+            case 19:
+                return FEEDBACK;
+            case 20:
+            	return ADD_BANK;
+	        case 21:
+	        	return FIX_BANK;
+	        case 22:
+	        	return SHOW_HIDE_DATA;
+	        case 23:
+	        	return UPDATE_USERNAME_PASSWORD;
+	        }
             return null;
         }
         

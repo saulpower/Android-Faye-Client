@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gray_border" >
+
+    <ViewFlipper
+           android:id="@+id/fix_bank_flipper"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent">
+           
+           <include layout="@layout/tablet_fix_bank_description" android:id="@+id/tablet_fix_bank_description"/>
+           <include layout="@layout/tablet_fix_bank_credentials" android:id="@+id/tablet_fix_bank_credentials"/>
+           <include layout="@layout/tablet_add_bank_connect" android:id="@+id/tablet_fix_bank_login_failed"/>
+           
+	</ViewFlipper>
+
+</RelativeLayout>

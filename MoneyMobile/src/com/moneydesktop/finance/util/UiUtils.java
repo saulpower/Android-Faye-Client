@@ -97,6 +97,8 @@ public class UiUtils {
             adjustment = Constant.XHDPI_SCALE;
         } else if (ApplicationContext.isLargeTablet()) {
             adjustment = Constant.LARGE_TABLET_SCALE;
+        } else if (dpi == DisplayMetrics.DENSITY_MEDIUM) {
+        	adjustment = 1.5f;
         }
         
         return adjustment;

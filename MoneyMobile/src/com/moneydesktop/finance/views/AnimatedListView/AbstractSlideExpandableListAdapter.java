@@ -17,6 +17,7 @@ import com.moneydesktop.finance.views.AccountTypeChildView;
 
 import de.greenrobot.event.EventBus;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -31,6 +32,7 @@ public abstract class AbstractSlideExpandableListAdapter extends BaseAdapter{
 	private ListAdapter wrapped;
 	private static Context mContext;
 	private static List<AccountType> mAccountTypesFiltered;	
+	private static HashMap<Integer, Boolean> mOpenState;
 
 	public AbstractSlideExpandableListAdapter(ListAdapter wrapped, Context context, List<AccountType> accountTypesFiltered) {
 		this.wrapped = wrapped;
@@ -136,12 +138,45 @@ public abstract class AbstractSlideExpandableListAdapter extends BaseAdapter{
 	 *  that can be collapsed and expanded
 	 */
 	public abstract View getExpandableView(View parent);
+	
+	private static void setOpenState(int position) {
+		if (mOpenState.containsKey(position)) {
+			boolean previousValue = mOpenState.get(position);
+			mOpenState.remove(position);
+			mOpenState.put(position, !previousValue);
+		} else {
+			mOpenState.put(position, true);
+		}
+	}
 
+	public static HashMap<Integer, Boolean> getOpenStateList () {
+		if (mOpenState == null) {
+			mOpenState = new HashMap<Integer, Boolean>();
+        	for (int i = 0; i < mAccountTypesFiltered.size(); i++) {
+    			mOpenState.put(i, true);
+    		}
+		}
+		
+		if (mOpenState.size() != mAccountTypesFiltered.size()) {
+			mOpenState = new HashMap<Integer, Boolean>();
+        	for (int i = 0; i < mAccountTypesFiltered.size(); i++) {
+    			mOpenState.put(i, true);
+    		}
+		}
+		return mOpenState;
+	}
+	
+	public void setOpenStateList (HashMap<Integer, Boolean> openState) {
+		mOpenState = openState;
+	}
+	
 	public void enableFor(View parent, int position) {
 		View toggleButton = getExpandToggleButton(parent);
 		
 		HorizontalScrollView horizontalScrollContainer = (HorizontalScrollView)getExpandableView(parent);
-        AccountTypeChildView accountTypeChildView = new AccountTypeChildView(mContext, mAccountTypesFiltered.get(position).getBankAccounts(), parent);
+		AccountType accountType = mAccountTypesFiltered.get(position);
+		accountType.resetBankAccounts(); //pulls fresh from the DB
+        AccountTypeChildView accountTypeChildView = new AccountTypeChildView(mContext, accountType.getBankAccounts(), parent);
         horizontalScrollContainer.addView(accountTypeChildView);
         
         if (User.getCurrentUser().getCanSync()) {
@@ -155,6 +190,7 @@ public abstract class AbstractSlideExpandableListAdapter extends BaseAdapter{
 	    button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
+				setOpenState(position);
 				view.setAnimation(null);
 				int type = horizontalScrollContainer.getVisibility() == View.VISIBLE ? ExpandCollapseAnimation.COLLAPSE : ExpandCollapseAnimation.EXPAND;
 				Animation anim = new ExpandCollapseAnimation(horizontalScrollContainer, 330, type);
@@ -166,7 +202,15 @@ public abstract class AbstractSlideExpandableListAdapter extends BaseAdapter{
 			}
 
 		});
-		// ensure the target is currently not visible
-	    horizontalScrollContainer.setVisibility(View.GONE);
+	    
+	    if (!mOpenState.containsKey(position)) {
+	    	getOpenStateList();
+	    }
+	    
+	    if (mOpenState.get(position)) {
+	    	horizontalScrollContainer.setVisibility(View.VISIBLE);
+	    } else {	
+	    	horizontalScrollContainer.setVisibility(View.GONE);
+	    }
 	}
 }

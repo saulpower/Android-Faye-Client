@@ -142,7 +142,6 @@
         <com.moneydesktop.finance.views.LineView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginBottom="-1dp"
             app:lineColor="@color/gray3"
             app:lineStrokeWidth="2dp" />
 

@@ -336,7 +336,7 @@ public class DataBridge {
 		return null;
 	}
 	
-	public JSONObject updateMfaQuestions(String bankId, JSONObject answers) {
+	public JSONObject updateMfaQuestions(String bankId, JSONArray answers) {
 		
 		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
 		
