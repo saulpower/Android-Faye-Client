@@ -80,7 +80,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
     public void onFragmentAttached(BaseFragment fragment) {
     	super.onFragmentAttached(fragment);
 
-        if (mFragmentCount > 2 && mOnHome) configureView(false);
+        if (mOnHome && mCurrentIndex != FragmentType.DASHBOARD) configureView(false);
     }
 	
 	@Override
@@ -89,6 +89,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 		if (mNavigation.isShowing()) {
 			
 			toggleNavigation();
+			return;
 			
 		} else if (mFragment != null && mFragment.onBackPressed()) {
 		    
@@ -97,13 +98,10 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         } else if (!mOnHome) {
 			
 			configureView(true);
-			
-		} else {
-			
-			Intent intent = new Intent(Intent.ACTION_MAIN);
-		    intent.addCategory(Intent.CATEGORY_HOME);
-		    startActivity(intent);
+			return;
 		}
+		
+		super.onBackPressed();
 	}
 
 	@Override
@@ -122,17 +120,30 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         mPager.setAdapter(mAdapter);
         mPager.setOffscreenPageLimit(5);
         
-        if (mPager != null && savedInstanceState != null) {
+        if (savedInstanceState != null) {
+        	
             mPager.setCurrentItem(savedInstanceState.getInt(KEY_PAGER));
+            mOnHome = savedInstanceState.getBoolean(KEY_ON_HOME);
+            mCurrentIndex = (FragmentType) savedInstanceState.getSerializable(KEY_NAVIGATION);
+            
+            mNavigation.post(new Runnable() {
+				
+				@Override
+				public void run() {
+
+		            mNavigation.setCurrentIndex(mCurrentIndex.index());
+				}
+			});
         }
+        
+        configureView(mOnHome);
     }
     
     @Override
     protected void onResume() {
         super.onResume();
         
-        // Only run if there are no fragments currently showing
-        if (mFragmentCount == 0) {
+        if (mOnHome) {
             
             updateNavBar(getActivityTitle(), false);
             
@@ -147,17 +158,20 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 		super.onSaveInstanceState(outState);
 		
 		outState.putInt(KEY_PAGER, mPager.getCurrentItem());
+		outState.putBoolean(KEY_ON_HOME, mOnHome);
+		outState.putSerializable(KEY_NAVIGATION, mCurrentIndex);
 	}
     
     public void configureView(final boolean home) {
 
+    	if (mFlipper == null) return;
+    	
         mOnHome = home;
         
-    	if (home) {
-    		
+    	if (home && mFlipper.getDisplayedChild() == 1) {
+        	
     		setupTitleBar();
     		
-    		mCurrentIndex = FragmentType.DASHBOARD;
     		mNavigation.setCurrentIndex(0);
 	        
 			mFlipper.setInAnimation(this, R.anim.in_down);
@@ -169,7 +183,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
             
             updateNavBar(getActivityTitle(), false);
 			
-    	} else {
+    	} else if (!home && mFlipper.getDisplayedChild() == 0) {
 	    	
 			EventBus.getDefault().post(new EventMessage().new ParentAnimationEvent(false, false));
             
@@ -220,13 +234,13 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         
         finish = new AnimationListener() {
             
-            public void onAnimationStart(Animation animation) {
-                navigateBack();
-            }
+            public void onAnimationStart(Animation animation) {}
             
             public void onAnimationRepeat(Animation animation) {}
             
-            public void onAnimationEnd(Animation animation) {}
+            public void onAnimationEnd(Animation animation) {
+        		clearBackStack();
+        	}
         };
         
         mOut = AnimationUtils.loadAnimation(this, R.anim.out_down);
@@ -275,7 +289,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
             public void onClick(View v) {
                 
                 if (!mOnHome) {
-                    configureView(true);
+                    showFragment(FragmentType.DASHBOARD, false);
                 }
             }
         });
@@ -307,7 +321,6 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(DashboardTabletActivity.this, "email " + mPager.getCurrentItem(), Toast.LENGTH_LONG).show();
 				sendEmail();
 			}
 		});
@@ -341,14 +354,12 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	
 	@Override
     public void showFragment(FragmentType fragmentType, boolean moveUp) {
-    	
-    	mOnFragment = true;
+	    
+		mCurrentIndex = fragmentType;
     	
     	BaseFragment fragment = getFragment(fragmentType);
     	
     	if (fragment != null) {
-    	    
-    		mCurrentIndex = fragmentType;
     		
 	        FragmentTransaction ft = mFm.beginTransaction();
 	        
@@ -359,6 +370,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	        }
 	        
 	        ft.replace(R.id.fragment, fragment);
+	        ft.addToBackStack(null);
 	        ft.commit();
 	        
             if (fragment instanceof FragmentVisibilityListener) {
@@ -399,8 +411,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	@Override
 	public void onNavigationChanged(int index) {
 		
-		if (mCurrentIndex.index() == index)
-			return;
+		if (mCurrentIndex.index() == index) return;
 		
 		showFragment(FragmentType.fromInteger(index), false);
 	}

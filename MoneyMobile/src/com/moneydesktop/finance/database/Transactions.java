@@ -1137,7 +1137,7 @@ public class Transactions extends BusinessObject  {
 
     	if (transactions.size() == 0) return byDate;
     	
-    	SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+    	SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
     	
     	String currentDate = sdf.format(transactions.get(0).getDate());
     	List<Transactions> tempList = new ArrayList<Transactions>();
@@ -1185,8 +1185,11 @@ public class Transactions extends BusinessObject  {
     	
     	if (getCategory().getCategoryId() != null) {
     		
-    		if (getCategory().getBusinessObjectBase().getDataStateEnum() == DataState.DATA_STATE_NEW)
+    		if (getCategory().getBusinessObjectBase().getDataStateEnum() == DataState.DATA_STATE_NEW) {
     			json.put(Constant.KEY_CATEGORY_GUID, getCategory().getExternalId());
+    		} else {
+    			json.put(Constant.KEY_CATEGORY_GUID, getCategory().getCategoryId());
+    		}
     	}
     	
     	if (getTransactionType() != null)
@@ -1213,7 +1216,7 @@ public class Transactions extends BusinessObject  {
     		json.put(Constant.KEY_HAS_BEEN_VIEWED, getIsProcessed());
     	
     	if (getIsBusiness() != null)
-    		json.put(Constant.KEY_IS_PERSONAL, getIsBusiness());
+    		json.put(Constant.KEY_IS_PERSONAL, !getIsBusiness());
     	
     	if (getIsCleared() != null)
     		json.put(Constant.KEY_IS_CLEARED, getIsCleared());

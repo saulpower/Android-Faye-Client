@@ -109,6 +109,7 @@ public class CaretDrawable extends Drawable {
         
         canvas.rotate(mDegrees, mPosition.x + mWidth/2, mPosition.y + mHeight/2);
         canvas.drawPath(mPath, mPaint);
+//        canvas.drawCircle(mPosition.x - 100, mPosition.y, 30, mPaint);
         
         canvas.restore();
     }
