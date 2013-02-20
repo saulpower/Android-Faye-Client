@@ -118,8 +118,12 @@ public class ShowHideDataTabletFragment extends BaseFragment {
     }
 
 	private void setupView() {
+		if (mBankAccount.getBank().getInstitution() == null) {
+			BankLogoManager.getBankImage(mBankLogo, mBankAccount.getBank().getBankId());
+		} else {
+			BankLogoManager.getBankImage(mBankLogo, mBankAccount.getBank().getInstitution().getInstitutionId());			
+		}
 		
-		BankLogoManager.getBankImage(mBankLogo, mBankAccount.getBank().getInstitution().getInstitutionId());
 		
 		mAccountName.setText(mBankAccount.getAccountName());
 		mBankName.setText(mBankAccount.getBank().getBankName());
