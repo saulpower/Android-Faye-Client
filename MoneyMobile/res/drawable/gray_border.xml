@@ -15,7 +15,7 @@
    </item>
    
    <item android:top="3dp" android:bottom="3dp" android:left="3dp" android:right="3dp"> 
-      <bitmap android:src="@drawable/tablet_wood"/>
+      <bitmap android:src="@drawable/tablet_wood" />
    </item>
    
 

@@ -24,6 +24,7 @@ public class SlidingView extends FrameLayout{
     int mScreenWidth;
     ViewGroup mParentView;
     View mSelectedView;
+    private boolean isVisible = false; 
     
     
     
@@ -52,6 +53,7 @@ public class SlidingView extends FrameLayout{
 
     private void animateView() {     
     	   	
+    	isVisible = true;
         switch (mFrom) {
 	        case BOTTOM:
 	            ObjectAnimator animationBottom = ObjectAnimator.ofFloat(mInflatedView, "translationY", mScreenHeight, mY);
@@ -76,8 +78,13 @@ public class SlidingView extends FrameLayout{
         }
           
     }
+    
+    public boolean viewIsVisible() {
+    	return isVisible;
+    }
 
     public void dismiss() {
+    	isVisible = false;
         TranslateAnimation animation = translate();
         
         animation.setDuration(300); 
@@ -87,6 +94,7 @@ public class SlidingView extends FrameLayout{
     }
 
     public void dismiss(AnimationListener listener) {
+    	isVisible = false;
         TranslateAnimation animation = translate();
         
         animation.setDuration(300); 
@@ -109,7 +117,7 @@ public class SlidingView extends FrameLayout{
         	animation = new TranslateAnimation(mX, 0, 0, mScreenHeight);
             break;
         case RIGHT:
-        	animation = new TranslateAnimation(mScreenWidth, mX, 0, 0);
+        	animation = new TranslateAnimation(mParentView.getX(), mParentView.getWidth(), 0, 0);
             break;
         case TOP:
         	animation = new TranslateAnimation(0, 0, mScreenHeight, mY);

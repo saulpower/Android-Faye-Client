@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -17,6 +18,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
@@ -30,14 +32,21 @@ import com.moneydesktop.finance.shared.fragment.FeedbackFragment;
 import com.moneydesktop.finance.shared.fragment.LockFragment;
 import com.moneydesktop.finance.tablet.activity.DialogBaseActivity.OnKeyboardStateChangeListener;
 import com.moneydesktop.finance.tablet.fragment.AccountSettingsTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.AddBankTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.FixBankTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.ShowHideDataTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionTotalsFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.UpdateUsernamePassowrdTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment.onBackPressedListener;
 import com.moneydesktop.finance.tablet.fragment.TransactionsPageTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.AnimatedNavView;
 import com.moneydesktop.finance.views.AnimatedNavView.NavigationListener;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.animation.ValueAnimator;
 
 import de.greenrobot.event.EventBus;
 
@@ -88,6 +97,7 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
         setContentView(R.layout.tablet_dropdown_view);
         
         setKeyboardStateChangeListener(this);
+        
         
         // Set dialog window to fill entire screen
         LayoutParams params = getWindow().getAttributes();
@@ -189,7 +199,7 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
         });
     }
     
-    private void setupNavView() {
+   private void setupNavView() {
     	
     	mNavView.setNavigationListener(this);
     	mNavView.setFontColor(Color.WHITE);
@@ -197,6 +207,7 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
     	mNavView.setTypeface(Fonts.getFont(Fonts.PRIMARY_SEMI_BOLD));
     }
     
+
     private void setupTransactionDetail() {
         
         ImageView fakeCell = (ImageView) mRoot.findViewById(R.id.cell);
@@ -264,6 +275,14 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
             	return FeedbackFragment.newInstance();
             case TRANSACTION_SUMMARY:
                 return TransactionTotalsFragment.newInstance(getIntent().getStringArrayExtra(Constant.EXTRA_VALUES));
+            case ADD_BANK:
+            	return AddBankTabletFragment.newInstance();
+            case FIX_BANK:
+            	return FixBankTabletFragment.newInstance(getIntent());
+            case SHOW_HIDE_DATA:
+            	return ShowHideDataTabletFragment.newInstance(getIntent());
+            case UPDATE_USERNAME_PASSWORD:
+            	return UpdateUsernamePassowrdTabletFragment.newInstance(getIntent());
             default:
                 finish();
         }
@@ -278,6 +297,12 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
      */
     private void configureDropdown(FragmentType type) {
         
+    	DisplayMetrics dm = new DisplayMetrics();
+	    getWindowManager().getDefaultDisplay().getMetrics(dm);
+	    double x = Math.pow(dm.widthPixels/dm.xdpi,2);
+	    double y = Math.pow(dm.heightPixels/dm.ydpi,2);
+	    double screenInches = Math.sqrt(x+y);
+    	
         switch (type) {
             case LOCK_SCREEN:
                 configureSize(0.4f, 0.65f);
@@ -291,7 +316,11 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
                 setupTransactionDetail();
                 break;
             case ACCOUNT_SETTINGS:
-            	configureSize(0.6f, 0.7f);
+        	    if (screenInches > 8) {
+        	    	configureSize(0.6f, 0.7f);
+        	    } else {
+        	    	configureSize(0.6f, 0.85f);
+        	    }
                 break;
             case FEEDBACK:
                 configureSize(0.6f, 0.7f);
@@ -300,6 +329,23 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
             case TRANSACTION_SUMMARY:
                 mNavView.setVisibility(View.GONE);
                 configureSize(0.4f, 0.4f);
+                break;
+            case ADD_BANK:
+            	configureSize(0.6f, 0.8f);
+                break;
+            case FIX_BANK:
+            	configureSize(0.6f, 0.8f);
+                break;
+            case SHOW_HIDE_DATA:
+            	configureSize(0.6f, 0.8f);
+                break;
+            case UPDATE_USERNAME_PASSWORD:
+        	    if (screenInches > 8) {
+        	    	configureSize(0.5f, 0.7f);
+        	    } else {
+        	    	configureSize(0.6f, 0.8f);
+        	    }
+            	
                 break;
             default:
                 break;

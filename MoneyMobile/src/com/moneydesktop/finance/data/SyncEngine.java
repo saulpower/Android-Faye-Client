@@ -164,13 +164,14 @@ public class SyncEngine {
 					for (int i = updatingCopy.size() -1; i >= 0; i--) {
 						
 						Bank bank = updatingCopy.get(i);
-						
+
 						JSONObject json = DataBridge.sharedInstance().getBankStatus(bank.getBankId());
 						bank.updateStatus(json);
-						
-						if (bank.getProcessStatus().intValue()  >= 3)
+
+						if (bank.getProcessStatus().intValue()  >= 3 || json == null){
 							banksUpdating.remove(i);
 						    eventBus.post(new EventMessage().new BankStatusUpdateEvent(bank));
+						}
 					}
 					
 					if (banksUpdating.size() == 0) {
@@ -222,7 +223,7 @@ public class SyncEngine {
 	    		
 	    		@Override
 	    		protected void onPostExecute(Boolean result) {
-
+	    			isRunning = false;
 	    			eventBus.post(new EventMessage().new SyncEvent(true));
 	    		}
 				
@@ -269,7 +270,6 @@ public class SyncEngine {
 		// Save the sync date to preferences
 		Preferences.saveLong(Preferences.KEY_LAST_SYNC, System.currentTimeMillis());
 		
-		isRunning = false;
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -423,11 +423,14 @@ public class SyncEngine {
 			
 			JSONObject result = results.optJSONObject(i);
 			String externalId = result.optString(Constant.KEY_EXTERNAL_ID);
+			String guid = result.optString(Constant.KEY_GUID).toString();
 			
+			if (externalId.equals("")) {
+				externalId = guid;
+			}
 			BusinessObject bo = null;
 			
 			for (Object object : objects) {
-				
 				if (((BusinessObject) object).getExternalId().equals(externalId)) {
 					bo = (BusinessObject) object;
 					break;

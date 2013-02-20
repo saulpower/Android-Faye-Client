@@ -35,10 +35,63 @@
 	        android:id="@+id/fragment"
 	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
-	        android:layout_below="@id/container"
+	        android:layout_marginTop="80dp"
 	        android:layout_marginLeft="20dp"
 	        android:layout_marginRight="20dp"
 	        android:layout_marginBottom="20dp" />
+	    
+	    <RelativeLayout
+	        android:id="@+id/container"
+	        android:layout_width="match_parent"
+	        android:layout_height="80dp"
+	        android:layout_marginLeft="10dp">
+	    
+		    <TextView
+		        android:id="@+id/arrow"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:gravity="top"
+		        android:text="@string/icon_left_arrow"
+		        android:textColor="@color/white"
+		        android:shadowColor="@color/black"
+		        android:layout_marginTop="10dip"
+		        android:layout_marginLeft="12dip"
+		        android:shadowDx="1"
+		        android:shadowDy="1"
+		        android:shadowRadius="3" />
+	        
+		    <TextView
+		        android:id="@+id/label"
+		        android:layout_width="wrap_content"
+		        android:layout_height="match_parent"
+		        android:gravity="bottom"
+		        android:textColor="@color/white"
+		        android:shadowColor="@color/black"
+		        android:shadowDx="1"
+		        android:shadowDy="1"
+		        android:layout_marginLeft="12dip"
+		        android:layout_marginTop="50dip"
+		        android:shadowRadius="3" />
+
+		    
+   		    <TextView
+		        android:id="@+id/label_details"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="50dip"
+		        android:layout_marginLeft="12dip"
+		        android:gravity="bottom"
+		        android:textColor="@color/white"
+		        android:shadowColor="@color/black"
+		        android:shadowDx="1"
+		        android:shadowDy="1"
+		        android:alpha="0"
+		        android:visibility="gone"
+		        android:layout_alignBottom="@id/label"
+		        android:shadowRadius="3" />		    
+	    
+	    </RelativeLayout>
+	    
 	
 	</RelativeLayout>
     

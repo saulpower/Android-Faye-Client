@@ -1,10 +1,13 @@
 package com.moneydesktop.finance.tablet.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -12,6 +15,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -22,6 +27,7 @@ import android.widget.Toast;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
+import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.data.Enums.FragmentType;
@@ -34,8 +40,10 @@ import com.moneydesktop.finance.database.BankDao;
 import com.moneydesktop.finance.database.BusinessObjectBaseDao;
 import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.database.PowerQuery;
+import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.CheckRemoveBankEvent;
+import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.model.EventMessage.RemoveAccountTypeEvent;
 import com.moneydesktop.finance.model.FragmentVisibilityListener;
 import com.moneydesktop.finance.model.User;
@@ -44,6 +52,7 @@ import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.shared.adapter.AccountsExpandableListAdapter;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
+import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.NavBarButtons;
@@ -54,6 +63,10 @@ import com.moneydesktop.finance.views.AnimatedListView.SlideExpandableListAdapte
 import de.greenrobot.event.EventBus;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -64,6 +77,8 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	private QueryProperty mBankAccountTable = new QueryProperty(BankAccountDao.TABLENAME, AccountTypeDao.Properties.BusinessObjectId, BankAccountDao.Properties.BusinessObjectId);
 	
 	private QueryProperty mWhereDataState = new QueryProperty(BusinessObjectBaseDao.TABLENAME, BusinessObjectBaseDao.Properties.DataState, "!= ?");
+	private QueryProperty mAccountTypeWhere = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName, "!= ?");
+	private QueryProperty mOrderBy = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName);
 	
     private ListView mListView;
     private static SlidingDrawerRightSide sRightDrawer;
@@ -77,6 +92,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
     private SlideExpandableListAdapter mAdapter;
     private AccountsExpandableListAdapter mAdapter1;
     private int mAccountCounter = 0;
+    private HashMap<Integer, Boolean> mOpenState;
 	
 	public static AccountTypesTabletFragment newInstance() {	
 		AccountTypesTabletFragment frag = new AccountTypesTabletFragment();
@@ -107,63 +123,99 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 		mFooter = inflater.inflate(R.layout.account_type_list_footer, null);
 		mListView = (ListView) mRoot.findViewById(R.id.accounts_expandable_list_view);
 		sRightDrawer = (SlidingDrawerRightSide) mRoot.findViewById(R.id.account_slider);
-		setupView();
+		sRightDrawer.open();
+		mOpenState = new HashMap<Integer, Boolean>();
+
+
+		setupView(false);
 		
 		mHandler = new Handler();
 		
 		return mRoot;
 	}
-
-    private void setupView() {
-	    setupTitleBar(mActivity);
-	    
+	
+    private void setupView(boolean updateListOnly) {
+		setupTitleBar((getActivity() != null) ? getActivity() : mActivity);
+		mActivity.updateNavBar(mActivity.getString(R.string.title_activity_accounts), true);
+    	
+    	//clears out any previous adapter it had
+    	mListView.setAdapter(null);
+    	
+    	if (mListView.getFooterViewsCount() > 0) {
+    		mListView.removeFooterView(mFooter);
+    	}
+    	
+    	ApplicationContext.getDaoSession().clear();
+    	
 	    mPanelLayoutHolder = (LinearLayout)mRoot.findViewById(R.id.panel_layout_holder);
         	    
 	    AccountTypeDao accountTypeDAO = ApplicationContext.getDaoSession().getAccountTypeDao();
-		BankAccountDao bankAccountDAO = ApplicationContext.getDaoSession().getBankAccountDao();
 			    
-	    List<AccountType> allAccountTypes = accountTypeDAO.loadAll();
-	    
+	    List<AccountType> allAccountTypes = new ArrayList<AccountType>();
+	    		
+	    //Get all account types in alphabetical order. Removing the "Unknown" Type. 
+		PowerQuery query = new PowerQuery(accountTypeDAO);	
+		query.where(mAccountTypeWhere, "Unknown")
+		.orderBy(mOrderBy, false);
+		
+		allAccountTypes = accountTypeDAO.queryRaw(query.toString(), query.getSelectionArgs());
+		
+		
         mAccountTypesFiltered = new ArrayList<AccountType>();
         
-        List<BankAccount> bankAccountList = bankAccountDAO.loadAll();
-        Set<AccountType> set = new HashSet<AccountType>();
-        
-	    if (bankAccountList.isEmpty()) {
-	    	allAccountTypes = new ArrayList<AccountType>() ;
-	    } else {
-	    	for (BankAccount bankAccount : bankAccountList) {
-	    		if (bankAccount.getAccountType() != null) {
-	    			set.add(bankAccount.getAccountType());
-	    		}
-	    	}
-	    }
-        
-        for (AccountType type : set) {  //This  could be optimized by throwing a "where" in the query builder
-        	if (!type.getBankAccounts().isEmpty() && !type.getAccountTypeName().equals("Unknown")) {
-        	    mAccountTypesFiltered.add(type);
+        //Create a new list of AccountTypes that have bank accounts
+        for (AccountType accountType : allAccountTypes) {
+        	if (!accountType.getBankAccounts().isEmpty() && !accountType.isDeleted()) {
+        		mAccountTypesFiltered.add(accountType);
         	}
         }
-            
-        if (!mAccountTypesFiltered.isEmpty()) {        	
+        
+        
+        //the next 3 lines and for loop can be removed if we make a PowerQuery that handles it all
+        List<AccountType> tempList = new ArrayList<AccountType>();
+        tempList = Arrays.asList(new AccountType[mAccountTypesFiltered.size()]);  
+        Collections.copy(tempList, mAccountTypesFiltered);
+        
+        for (AccountType accountType : tempList) {
+        	if (accountType.getBankAccounts().size() == 1) {
+        		if (accountType.getBankAccounts().get(0).getBank() == null){
+        			mAccountTypesFiltered.remove(accountType);
+        		}
+        	}
+        }
+        
+        
+        
+        
+        if (!mAccountTypesFiltered.isEmpty() && mAccountTypesFiltered != null) {        	
             mListView.addFooterView(mFooter);
             
             //This sets the GroupView
-            mAdapter1 = new AccountsExpandableListAdapter(getActivity(),  
+            mAdapter1 = new AccountsExpandableListAdapter((getActivity() != null) ? getActivity() : mActivity,  
                     R.layout.account_type_group, 
                     R.id.account_type_group_name, 
                     mAccountTypesFiltered);
-            
             
             mAdapter = new SlideExpandableListAdapter(
                     mAdapter1, 
                     R.id.account_type_group_container, 
                     R.id.expandable,
-                    getActivity(),
+                    (getActivity() != null) ? getActivity() : mActivity,
                     mAccountTypesFiltered); 
             
             //this animates and sets the ChildView
             mListView.setAdapter(mAdapter);
+            mAdapter1.notifyDataSetChanged();
+            
+            mOpenState = mAdapter.getOpenStateList();
+            
+            if (mOpenState.isEmpty()) {
+            	for (int i = 0; i < mAccountTypesFiltered.size(); i++) {
+        			mOpenState.put(i, true);
+        		}
+            	mAdapter.setOpenStateList(mOpenState);
+            }
+            
         } else {
         	Toast.makeText(mActivity, "No Accounts types that have bank accounts...show empty state", Toast.LENGTH_SHORT).show();
         }
@@ -176,7 +228,10 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 			}
 		});
         
-        prepPanel();
+        //don't update the panel if we are only trying to update the account types list
+        if (!updateListOnly){
+        	prepPanel();
+        }
 	}
 
 	private void prepPanel() {
@@ -195,11 +250,13 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	    
 	    ArrayList<OnClickListener> onClickListeners = new ArrayList<OnClickListener>();
 	    
-	    onClickListeners.add(new OnClickListener() {
+	    onClickListeners.add(new OnClickListener() { //add Bank
             @Override
             public void onClick(View v) {
-                if (User.getCurrentUser().getCanSync()){
-                    Toast.makeText(activity, "add", Toast.LENGTH_LONG).show();
+                if (User.getCurrentUser().getCanSync()){ 
+					Intent intent = new Intent(mActivity, DropDownTabletActivity.class);
+					intent.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.ADD_BANK);
+			        mActivity.startActivity(intent);
                 } else {
                    //Dialog....can't update data 
                     DialogUtils.alertDialog(getResources().getString(R.string.feature_not_available), getResources().getString(R.string.feature_not_available_message), getActivity());
@@ -210,17 +267,15 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         onClickListeners.add(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getActivity() != null) {
-                    if (User.getCurrentUser().getCanSync()){
-                        //start the sync
-                        Intent intent = new Intent(getActivity(), SyncService.class);
-                        getActivity().startService(intent);
-                        
-                        setAllBanksToUpdate();
-                    } else {
-                       //Dialog....can't update data 
-                        DialogUtils.alertDialog(getResources().getString(R.string.feature_not_available), getResources().getString(R.string.feature_not_available_message), getActivity());
-                    }
+                if (User.getCurrentUser().getCanSync()){
+                    //start the sync
+                    Intent intent = new Intent((getActivity() != null) ? getActivity() : mActivity, SyncService.class);
+                    ((getActivity() != null) ? getActivity() : mActivity).startService(intent);
+                    
+                    setAllBanksToUpdate();
+                } else {
+                   //Dialog....can't update data 
+                    DialogUtils.alertDialog(getResources().getString(R.string.feature_not_available), getResources().getString(R.string.feature_not_available_message), getActivity());
                 }
             }
 
@@ -249,19 +304,15 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 		mPanelLayoutHolder.addView(getPanelHeader());
 
 		List<Bank> bankList = new ArrayList<Bank>(mBankList);
-
 		for (Bank bank : bankList) {
-			if (bank.getBankAccounts().isEmpty()) {
+			if (bank.isDeleted()) {
 				mBankList.remove(bank);
 			}
 		}
 
         //For every bank that is attached, add it to the Drawer
         for (Bank bank : mBankList) {
-            //create the view to be attached to Drawer
-        	//if (!bank.getBankAccounts().isEmpty()) {
-        		mPanelLayoutHolder.addView(populateDrawerView(bank));
-        	//} 
+    		mPanelLayoutHolder.addView(populateDrawerView(bank));
         }
         if (User.getCurrentUser().getCanSync()) {
             updateAllBankStatus();
@@ -299,13 +350,11 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
             int i = 0;
             for (Bank bank : mBankList) {
                 i++;
-                if (!bank.getBankAccounts().isEmpty()) {
-	                View bankView = mPanelLayoutHolder.getChildAt(i); 
-	                ImageView status = (ImageView) bankView.findViewById(R.id.bank_status);
-	                setBanner(bank, status);
-            	}
+                View bankView = mPanelLayoutHolder.getChildAt(i); 
+                ImageView status = (ImageView) bankView.findViewById(R.id.bank_status);
+                setBanner(bank, status);
             }
-            updateAllBankStatus();
+            //updateAllBankStatus();
         }
     }
     
@@ -325,8 +374,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                 for (Bank bankIterator : mBankList) {
                     i++;
                     View bankView = mPanelLayoutHolder.getChildAt(i);
-                    
-                    if (bankIterator.getBankName().equals(bank.getBankName()) && !bank.getBankAccounts().isEmpty()) {
+                    if (bankIterator.getBankName().equals(bank.getBankName())) {
                         ImageView status = (ImageView) bankView.findViewById(R.id.bank_status);
                         
                         if (status != null) {
@@ -345,7 +393,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
      */
     private void updateAllBankStatus() {
         for (Bank bank : mBankList) {
-            SyncEngine.sharedInstance().beginBankStatusUpdate(bank);
+    		SyncEngine.sharedInstance().beginBankStatusUpdate(bank);
         }        
     }
     
@@ -367,7 +415,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         int i = 0;
         for (Bank bank : mBankList) {
 
-            if (!bank.isDeleted() && !bank.getBankAccounts().isEmpty()) {
+            if (!bank.isDeleted()) {
 
                 i++;
                 View bankView = mPanelLayoutHolder.getChildAt(i); 
@@ -408,17 +456,20 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
      * @return bank view 
      */
 	private View populateDrawerView (final Bank bank) {
-        LayoutInflater layoutInflater = getActivity().getLayoutInflater();
+        LayoutInflater layoutInflater = ((getActivity() != null) ? getActivity() : mActivity).getLayoutInflater();
         final View bankTypeAccountView = layoutInflater.inflate(R.layout.bank_account, null);
         ImageView bankImage = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_image);  
         final ImageView booklet = (ImageView)bankTypeAccountView.findViewById(R.id.bank_account_bankbook);
         
         String logoId = bank.getBankId();
         
+        ImageView status = (ImageView) bankTypeAccountView.findViewById(R.id.bank_status);
         if (bank.getInstitution() != null) {
             logoId = bank.getInstitution().getInstitutionId();
         }
         
+        status.setVisibility(View.VISIBLE);
+        setBanner(bank, status);
         BankLogoManager.getBankImage(bankImage, logoId);
         
         TextView bankName = (TextView)bankTypeAccountView.findViewById(R.id.account_bank_name);
@@ -430,9 +481,30 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 			
 			@Override
 			public void onClick(final View bankAccountView) {
+				
 				RelativeLayout parentView = (RelativeLayout)getActivity().findViewById(R.id.account_types_container);
 				
 				List<OnClickListener> onClickListeners = new ArrayList<View.OnClickListener>();
+				String[] titles = getActivity().getResources().getStringArray(R.array.bank_selection_popup);
+				
+				if (bank.getProcessStatus().equals(BankRefreshStatus.STATUS_MFA.index())
+						|| bank.getProcessStatus().equals(BankRefreshStatus.STATUS_UPDATE_REQUIRED.index())
+						|| bank.getProcessStatus().equals(BankRefreshStatus.STATUS_LOGIN_FAILED.index())) {
+					
+					titles = getActivity().getResources().getStringArray(R.array.fix_bank_selection_popup);
+					onClickListeners.add(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+						    if (User.getCurrentUser().getCanSync()){
+						        fixBank(bank);
+						    } else {
+						        DialogUtils.alertDialog(getResources().getString(R.string.feature_not_available), getResources().getString(R.string.feature_not_available_message), getActivity());
+						    }
+					        mPopup.fadeOutTransparency();
+						}
+
+					});
+				}
 				
 				onClickListeners.add(new OnClickListener() {
 					@Override
@@ -466,7 +538,10 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 					@Override
 					public void onClick(View v) {
 						if (User.getCurrentUser().getCanSync()) {
-						    Toast.makeText(getActivity(), "UPDATE USERNAME AND PASSWORD", Toast.LENGTH_SHORT).show();
+	                        Intent i = new Intent(mActivity, DropDownTabletActivity.class);
+                            i.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.UPDATE_USERNAME_PASSWORD);
+                            i.putExtra(Constant.KEY_BANK_ACCOUNT_ID, bank.getBankId());
+	                        mActivity.startActivity(i);
 						} else {
 						    DialogUtils.alertDialog(getResources().getString(R.string.feature_not_available), getResources().getString(R.string.feature_not_available_message), getActivity());
 						}
@@ -474,6 +549,8 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 					}
 				});
 				
+				
+				//Display popup with offset when bank is clicked
 				for (Bank bankIterator : mBankList) {
 				    if (bankIterator.getBankName().equals(bank.getBankName())) {
 				        
@@ -488,7 +565,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 		                        parentView, 
 		                        sRightDrawer.getLeft(), 
 		                        location[1] - topOffset, 
-		                        getActivity().getResources().getStringArray(R.array.bank_selection_popup), 
+		                        titles, 
 		                        onClickListeners, 
 		                        booklet);
 				    }
@@ -503,6 +580,10 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         
         status.setVisibility(View.VISIBLE);
         if (getActivity() != null) {
+        	if (bank.getProcessStatus() == null) {
+        		status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+        		return;
+        	}
             if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_SUCCEEDED.index()) {
                 status.setVisibility(View.GONE);
                 
@@ -527,12 +608,22 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         }
     }
 		
-
     private void refreshAccount(Bank bank) {
         setBankToUpdate(bank);
         updateBankStatus(bank); 
         EventBus.getDefault().post(new EventMessage().new RefreshAccountEvent(bank));
     }
+    
+	private void fixBank(Bank bank) {
+		
+		Context context = (getActivity() != null) ? getActivity() : mActivity;
+		
+		Intent intent = new Intent(mActivity, DropDownTabletActivity.class);
+		intent.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.FIX_BANK);
+		intent.putExtra(Constant.KEY_BANK_ACCOUNT_ID, bank.getBankId());
+		intent.putExtra(Constant.KEY_ACCOUNT_NAME, bank.getBankName());
+		context.startActivity(intent);
+	}
     
     private void deleteMemberAccount(final View v, final LinearLayout panelView, final Bank bank) {
             
@@ -569,6 +660,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 		    mBankList.remove(bank);
 		}
 		
+		
 		bank.softDeleteSingle();
 		
 		//start the sync
@@ -579,6 +671,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 		panelView.removeView(v);
 		
 		updateChildAccountsList(bank);
+		
 	}
    
     public void onEvent(RemoveAccountTypeEvent event) {        
@@ -616,11 +709,24 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         	
         }
     }
+    
+    public void onEvent(DatabaseSaveEvent event) {
+    	//only update screen if Bank or BankAccount Objects have been updated.
+    	if (event.getChangedClassesList().contains(Bank.class) || event.getChangedClassesList().contains(BankAccount.class) ) {
+	    	Handler refresh = new Handler(Looper.getMainLooper());
+	    	refresh.post(new Runnable() {
+	    	    public void run()
+	    	    {
+	    	    	if (mActivity != null) {
+	    	    		setupView(false);
+	    	    	}
+	    	    }
+	    	});
+    	}
+    }
 
 	private void deleteBankWithNoAccountsConfirmation(final Bank bank, final View bankView) {
-		
-		
-		
+	
         DialogUtils.alertDialog(String.format(getString(R.string.delete_bank_title), bank.getBankName()), 
                 getString(R.string.delete_bank_with_no_accounts_message), 
                 getString(R.string.label_yes).toUpperCase(), 
@@ -676,8 +782,8 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         final ViewGroup.LayoutParams drawerLayoutParams = sRightDrawer.getLayoutParams();
 
         //this is here so we can adjust for the handle on the panel...without it, sizing is a little off.
-        drawerLayoutParams.width = (int) (layoutParams.width + UiUtils.convertDpToPixel(7, getActivity()));
-        drawerLayoutParams.height = UiUtils.getScreenHeight(getActivity()) ;
+        drawerLayoutParams.width = (int) (layoutParams.width + UiUtils.convertDpToPixel(7, (getActivity() != null) ? getActivity() : mActivity));
+        drawerLayoutParams.height = UiUtils.getScreenHeight((getActivity() != null) ? getActivity() : mActivity) ;
         sRightDrawer.setLayoutParams(drawerLayoutParams);
 
         return sRightDrawer;

@@ -12,6 +12,12 @@
         <item>REMOVE</item>
         <item>UPDATE USERNAME AND PASSWORD</item>
     </string-array>
+    <string-array name="fix_bank_selection_popup">
+        <item>FIX BANK</item>
+        <item>REFRESH DATA</item>
+        <item>REMOVE</item>
+        <item>UPDATE USERNAME AND PASSWORD</item>
+    </string-array>
     <string-array name="account_types_bank_options">
         <item>@string/icon_lock</item>
         <item>@string/icon_trash</item>
@@ -29,11 +35,21 @@
     <string-array name="transactions_title_bar_icons">
         <item>@string/icon_help</item>
     </string-array>
-
+    
     <string name="account_types_indicator_hide">HIDE</string>
     <string name="account_types_indicator_show">SHOW</string>
     <string name="account_types_title">Accounts</string>
     <string name="action_menu">ACTION MENU</string>
+    <string name="add_account_automatically_title">AUTOMATICALLY DOWNLOAD TRANSACTIONS</string>
+    <string name="add_account_automatically_desc">Connect to your account online and let us automatically download your transactions. No data entry needed.</string>
+    <string name="add_account_institution">ADD AN INSTITUTION</string>
+    <string name="add_account_institution_connect">CONNECT TO %1$s</string>
+    <string name="add_account_label">ADDING A NEW ACCOUNT</string>
+    <string name="add_account_manually_title">MANUALLY MANAGE TRANSACTIONS</string>
+    <string name="add_account_manually_desc">Manage your transactions independent of your bank and reconcile between the two automatically, or not.</string>
+    <string name="add_account_search_box">ENTER YOUR INSTITUTION\'S NAME HERE</string>
+    <string name="add_account_enter_credentials">Please enter your online credentials</string>
+    <string name="account_transaction_type">these transactions are primarily:</string>
     <string name="all_accounts">All Accounts</string>
     <string name="app_name">MoneyMobile</string>
     <string name="at_app">Appliances</string>
@@ -61,6 +77,7 @@
     <string name="atg_inv">Investments</string>
     <string name="atg_od">Other Debt</string>
     <string name="atg_prop">Property</string>
+    <string name="business">Business</string>
     <string name="button_cancel">CANCEL</string>
     <string name="button_daily">BY DAY</string>
     <string name="button_demo">DEMO MODE</string>
@@ -75,7 +92,8 @@
     <string name="button_transactions">Tap to View Transactions</string>
     <string name="button_yearly">BY YEAR</string>
     <string name="category_search">Start typing to search for a category</string>
-    <string name="connecting">Connecting to bank</string>
+    <string name="connect">Connect</string>
+    <string name="connecting">Connecting to bank</string>    
     <string name="ct_asst">Asset</string>
     <string name="ct_bal">Balance</string>
     <string name="ct_equity">Equity</string>
@@ -107,7 +125,11 @@
     <string name="error_login_failed">YOUR LOGIN\nWAS UNSUCCESSFUL.</string>
     <string name="error_login_incomplete">Please complete the login fields</string>
     <string name="error_login_invalid">Did you know you need to setup\nyour mobile account before you\ncan use this app?</string>
-    <string name="error_title">Error</string>
+    <string name="error_title">Error</string>    
+    <string name="fix_bank_connect_instruction">Please answer the following:</string>
+    <string name="fix_bank_notification_label">Bank Connection Broken</string>
+    <string name="fix_bank_notification_title">Broken Bank</string>
+    <string name="fix_bank_notification_mfa_message">Multifactor Authentication Required. Click on the button below to give us these additional pieces of information.</string>
     <string name="feature_not_available">Feature Not Available</string>
     <string name="feature_not_available_message">This feature is not available in demo mode</string>
     <string name="feature_not_available_delete_title">Primary Institution: %1$s</string>
@@ -180,7 +202,13 @@
     <string name="intro_title_2">PRINT OR EMAIL</string>
     <string name="intro_title_3">BIZ/PERSONAL</string>
     <string name="intro_title_4">DID YOU KNOW?</string>
+    <string name="label_account_credit_limit">Credit Limit (Optional)</string>
+    <string name="label_account_current_balance">Current Balance</string>
+    <string name="label_account_due_day">Due Day (Optional)</string>
+    <string name="label_account_interest_rate">Interest Rate (Optional)</string>
     <string name="label_account_name">Account Name</string>
+    <string name="label_account_original_balance">Original Balance (Optional)</string>
+    <string name="label_account_property_type">Property Type</string>
 	<string name="label_account_type">Account Type</string>
     <string name="label_amount">Amount</string>
     <string name="label_app_lock">APP LOCK</string>
@@ -240,8 +268,13 @@
     <string name="new_tag">(Select to Add)</string>
     <string name="panel_title">MY INSTITUTIONS</string>
     <string name="plus">+</string>
+    <string name="personal">Personal</string>
+    <string name="press_here_to_continue">PRESS HERE TO CONTINUE</string>
+    <string name="question">QUESTION</string>
     <string name="save">Save</string>
     <string name="quarter">QUARTER</string>
+    <string name="setup_url">http://embed.moneydesktop.com/setup-instructions.html</string>
+    <string name="save_changes">Save Changes</string>
     <string name="setting_feedback_text">Tell us what we\'re doing wrong, or right. Don\'t hold back we can take it.</string>
     <string name="setting_feedback_title">Feedback</string>
     <string name="setting_lock_text">Enter a four-digit code to password protect your data.</string>
@@ -249,6 +282,9 @@
     <string name="setting_unlink_text">Unlink this device from your account and delete all the data from this device. (Your data is still stored on our servers.)</string>
     <string name="setting_unlink_title">Unlink</string>
     <string name="setup_url">http://embed.moneydesktop.com/setup-instructions.html</string>
+    <string name="show_hide_label">SHOW/HIDE ACCOUNT</string>
+    <string name="show_hide_exclude_transfers_from_income">EXCLUDE TRANSFERS FROM INCOME</string>
+    <string name="show_hide_exclude_transfers_from_expenses">EXCLUDE TRANSFERS FROM EXPENSES</string>
     <string name="signup_bank">Your Financial Institution</string>
     <string name="signup_email">Your Email</string>
     <string name="signup_name">Your Name</string>

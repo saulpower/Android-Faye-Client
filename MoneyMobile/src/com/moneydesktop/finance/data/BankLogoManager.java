@@ -3,6 +3,7 @@ package com.moneydesktop.finance.data;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.moneydesktop.finance.R;
@@ -28,7 +29,7 @@ public class BankLogoManager {
 				
 				String imageUrl = String.format("%s/%s_100x100.png", IMAGES_HD, guid);
 				String filePath = CacheUtils.cacheResource(imageUrl);
-				
+		
 				return filePath;
 			}
 			
@@ -36,6 +37,7 @@ public class BankLogoManager {
 			protected void onPostExecute(String filePath) {
 				
 				if (isCancelled()) return; 
+				
 				
 				Bitmap image = BitmapFactory.decodeFile(filePath);
 				

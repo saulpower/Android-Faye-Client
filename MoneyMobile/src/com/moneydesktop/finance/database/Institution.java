@@ -1,6 +1,7 @@
 package com.moneydesktop.finance.database;
 
 import android.util.Log;
+import android.util.Pair;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.data.Constant;
@@ -340,5 +341,18 @@ public class Institution extends BusinessObject  {
 		return loaded;
 	}
     // KEEP METHODS END
+
+    public static Pair<Boolean, List<Institution>> getRows(PowerQuery query) {
+        
+        InstitutionDao dao = (InstitutionDao) DataController.getDao(Institution.class);
+        
+        String queryString = query.toString();
+        
+        List<Institution>institutions = dao.queryRaw(queryString, query.getSelectionArgs());
+        
+        boolean more = (institutions.size() == Constant.QUERY_LIMIT);
+        
+        return new Pair<Boolean, List<Institution>>(more, institutions);
+    }
 
 }
