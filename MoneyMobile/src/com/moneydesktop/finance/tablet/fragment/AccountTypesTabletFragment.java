@@ -75,6 +75,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	
 	private QueryProperty mBusinessObjectBaseTable = new QueryProperty(BusinessObjectBaseDao.TABLENAME, BankDao.Properties.BusinessObjectId, BusinessObjectBaseDao.Properties.Id);
 	private QueryProperty mBankAccountTable = new QueryProperty(BankAccountDao.TABLENAME, AccountTypeDao.Properties.BusinessObjectId, BankAccountDao.Properties.BusinessObjectId);
+	
 	private QueryProperty mWhereDataState = new QueryProperty(BusinessObjectBaseDao.TABLENAME, BusinessObjectBaseDao.Properties.DataState, "!= ?");
 	private QueryProperty mAccountTypeWhere = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName, "!= ?");
 	private QueryProperty mOrderBy = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName);
@@ -659,6 +660,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 		    mBankList.remove(bank);
 		}
 		
+		
 		bank.softDeleteSingle();
 		
 		//start the sync
@@ -669,6 +671,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 		panelView.removeView(v);
 		
 		updateChildAccountsList(bank);
+		
 	}
    
     public void onEvent(RemoveAccountTypeEvent event) {        

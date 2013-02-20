@@ -464,7 +464,7 @@ public class AddBankTabletFragment extends BaseFragment{
     
     
     public void onEvent(BankStatusUpdateEvent event) {
-    	if (mSelectedInstitution != null) {
+    	//if (mSelectedInstitution != null) {
 			//start the sync for the purpose of getting account for new bank
 	    	//if we don't do the HasRetrievedAccounts check, we may end up in a endless sync
 	    	if (mSelectedInstitution.getInstitutionId().equals(event.getUpdatedBank().getInstitution().getInstitutionId()) && !mHasRetrievedAccounts) {
@@ -474,7 +474,7 @@ public class AddBankTabletFragment extends BaseFragment{
 		    		mHasRetrievedAccounts = true;
 	    		}
 	    	}
-    	}
+    //	}
     }
     
     public void onEvent(final SaveInstitutionFinished event) {   
