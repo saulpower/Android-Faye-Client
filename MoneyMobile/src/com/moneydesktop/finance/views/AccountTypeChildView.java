@@ -177,8 +177,8 @@ public class AccountTypeChildView extends FrameLayout {
     
 	private void deleteAccount(BankAccount account, View view) {
 		mBankAccountContainer.removeView(view);
-		account.softDeleteSingle();
 		removeInstancesOfAccount(account);
+		account.softDeleteSingle();
         mPopup.fadeOutTransparency();
 	}
     
@@ -263,8 +263,7 @@ public class AccountTypeChildView extends FrameLayout {
             EventBus.getDefault().post(new EventMessage(). new RemoveAccountTypeEvent(accountToBeRemoved));
         }
     }
-
-    
+  
     protected void removeInstancesOfAccount(BankAccount account) {        
         if (mBankAccountContainer.getChildCount() == 0) {
         	AccountType accountToBeRemoved = new AccountType();

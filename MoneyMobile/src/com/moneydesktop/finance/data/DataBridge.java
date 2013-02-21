@@ -8,11 +8,13 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.moneydesktop.communication.HttpRequest;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
+import com.moneydesktop.finance.model.EventMessage.LogoutEvent;
 import com.moneydesktop.finance.shared.activity.DebugActivity;
 
 import de.greenrobot.event.EventBus;
@@ -126,7 +128,11 @@ public class DataBridge {
 	        
 		} catch (Exception e) {
 
-			Log.e(TAG, "Error downloading sync", e);
+			if (e.getMessage().toLowerCase().equals("read timed out")) {
+				//do something to fix the timeout issue
+			} else {
+				Log.e(TAG, "Error downloading sync", e);
+			}
 			
 			return null;
 		}

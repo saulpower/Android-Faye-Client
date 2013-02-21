@@ -29,6 +29,8 @@ import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataBridge;
+import com.moneydesktop.finance.data.DataController;
+import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.data.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Bank;
@@ -82,6 +84,12 @@ public class FixBankTabletFragment extends BaseFragment{
         super.onAttach(activity);
         EventBus.getDefault().register(this);
         mActivity.onFragmentAttached(this);
+	}
+	
+    @Override
+	public void onPause() {
+    	super.onPause();
+    	EventBus.getDefault().unregister(this);
 	}
 
 	public static FixBankTabletFragment newInstance(Intent intent) {
@@ -300,8 +308,7 @@ public class FixBankTabletFragment extends BaseFragment{
 						public void run() {	
 							
 							JSONObject jsonResponse = DataBridge.sharedInstance().updateLoginFields(mBank.getBankId(), objectToSendToAddInstitution);
-							
-				    		Intent intent = new Intent(mActivity, SyncService.class);
+							Intent intent = new Intent(mActivity, SyncService.class);
 				    		mActivity.startService(intent);
 						}
 					}).start();
@@ -355,34 +362,9 @@ public class FixBankTabletFragment extends BaseFragment{
     	});
     }
         
-    public void onEvent(BankStatusUpdateEvent event) {
-    	
-		//start the sync for the purpose of getting account for new bank
-    	//if we don't do the HasRetrievedAccounts check, we may end up in a endless sync
-    	if (mBank.getBankId().equals(event.getUpdatedBank().getBankId()) && !mHasRetrievedAccounts) {
-    		if (event.getUpdatedBank().getProcessStatus() == BankRefreshStatus.STATUS_SUCCEEDED.index()) {
-	    		Intent intent = new Intent(mActivity, SyncService.class);
-	    		mActivity.startService(intent);
-	    		mHasRetrievedAccounts = true;
-    		}
-    	}
-    }
 
 	private void setupOnClickListeners() {
 		
-//		((DropDownTabletActivity)getActivity()).backArrowAction(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_left);
-//				Animation out = AnimationUtils.loadAnimation(getActivity(), R.anim.out_right);
-//				mFlipper.setInAnimation(in);
-//				mFlipper.setOutAnimation(out);
-//			//	((DropDownTabletActivity)getActivity()).animateLabelsReverse();
-//				mFlipper.showPrevious();	
-//
-//			}
-//		});	
-//		
 		mNotificationContinue.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -429,11 +411,16 @@ public class FixBankTabletFragment extends BaseFragment{
 				
 				new Thread(new Runnable() {			
 					public void run() {			
-						JSONObject jsonArray = DataBridge.sharedInstance().updateMfaQuestions(mBank.getBankId(), mJsonCredentialsArray);
-                		
-						//start the sync
+						JSONObject jsonObject = DataBridge.sharedInstance().updateMfaQuestions(mBank.getBankId(), mJsonCredentialsArray);
+						
+						JSONObject memberObject = jsonObject.optJSONObject(Constant.KEY_MEMBER);
+                		Bank.saveIncomingBank(memberObject, false);
+						
+                		DataController.save();
                 		Intent intent = new Intent(mActivity, SyncService.class);
-                		mActivity.startService(intent);
+			    		mActivity.startService(intent);
+						
+			    		EventBus.getDefault().post(new EventMessage().new UpdateSpecificBankStatus(mBank));
 						
 					}
 				}).start();

@@ -39,12 +39,15 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataBridge;
 import com.moneydesktop.finance.data.DataController;
+import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.data.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.database.BankDao;
+import com.moneydesktop.finance.database.BusinessObjectBaseDao;
 import com.moneydesktop.finance.database.Institution;
 import com.moneydesktop.finance.database.InstitutionDao;
 import com.moneydesktop.finance.database.PowerQuery;
@@ -87,12 +90,14 @@ public class AddBankTabletFragment extends BaseFragment{
 	private List<String> mLoginLabels;
 	private HashMap<String, String> mCredentialsHash = new HashMap<String, String>();
 	private boolean mHasRetrievedAccounts;
+	private static AddBankTabletFragment mFragment;
 	
-	private QueryProperty mWherePopularity = new QueryProperty(InstitutionDao.TABLENAME, InstitutionDao.Properties.Popularity, "!= ?");
-	
+	private QueryProperty mWherePopularity = new QueryProperty(InstitutionDao.TABLENAME, InstitutionDao.Properties.Popularity, "!= ?");	
 	private QueryProperty mAccountTypeWhere = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName, "!= ?");
 	private QueryProperty mAccountTypeAnd = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.ParentAccountTypeId, "= ?");
 	private QueryProperty mOrderBy = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName);
+	
+	private QueryProperty mWhereBankId = new QueryProperty(BankDao.TABLENAME, BankDao.Properties.BankId, "= ?");
 	
 	@Override
 	public String getFragmentTitle() {
@@ -112,12 +117,12 @@ public class AddBankTabletFragment extends BaseFragment{
 	}
 
 	public static AddBankTabletFragment newInstance() {
-		AddBankTabletFragment fragment = new AddBankTabletFragment();
+		mFragment = new AddBankTabletFragment();
 			
         Bundle args = new Bundle();
-        fragment.setArguments(args);
+        mFragment.setArguments(args);
         
-        return fragment;
+        return mFragment;
 	}
 
     @Override
@@ -280,7 +285,6 @@ public class AddBankTabletFragment extends BaseFragment{
 //				jsonRequest.putOpt(Constant.KEY_IS_MANUAL, value);
 				
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
@@ -452,7 +456,6 @@ public class AddBankTabletFragment extends BaseFragment{
 							
 							//Notify that request is finished and we are now ready to start populating the view.
 							EventBus.getDefault().post(new EventMessage().new SaveInstitutionFinished(jsonResponse));
-							
 						}
 					}).start();
 					
@@ -462,20 +465,6 @@ public class AddBankTabletFragment extends BaseFragment{
         }
     }
     
-    
-    public void onEvent(BankStatusUpdateEvent event) {
-    	//if (mSelectedInstitution != null) {
-			//start the sync for the purpose of getting account for new bank
-	    	//if we don't do the HasRetrievedAccounts check, we may end up in a endless sync
-	    	if (mSelectedInstitution.getInstitutionId().equals(event.getUpdatedBank().getInstitution().getInstitutionId()) && !mHasRetrievedAccounts) {
-	    		if (event.getUpdatedBank().getProcessStatus() == BankRefreshStatus.STATUS_SUCCEEDED.index()) {
-		    		Intent intent = new Intent(mActivity, SyncService.class);
-		    		mActivity.startService(intent);
-		    		mHasRetrievedAccounts = true;
-	    		}
-	    	}
-    //	}
-    }
     
     public void onEvent(final SaveInstitutionFinished event) {   
     	
@@ -489,12 +478,37 @@ public class AddBankTabletFragment extends BaseFragment{
     	
     	JSONObject json = event.getJsonResponse();
     	if (json != null) {
+    		
+    		JSONObject memberObject = json.optJSONObject(Constant.KEY_MEMBER);
+    		
     		//save to database
-    		Bank.saveIncomingBank(json.optJSONObject(Constant.KEY_MEMBER), false);
+    		Bank.saveIncomingBank(memberObject, false);
     		DataController.save();
+    		
+    		BankDao bankDAO = ApplicationContext.getDaoSession().getBankDao();
+    		
+    		PowerQuery query = new PowerQuery(bankDAO);
+    	    query.where(mWhereBankId, memberObject.optString(Constant.KEY_GUID));
+    	    	    
+    	    final List<Bank> bankList = bankDAO.queryRaw(query.toString(), query.getSelectionArgs());
+    		  		
+    	    Handler test = new Handler(Looper.getMainLooper());
+    	    test.post(new Runnable() {
+        	    public void run()
+        	    {
+        	    	SyncEngine.sharedInstance().beginBankStatusUpdate(bankList.get(0));
+        	    }
+        	});
+			
     	}
     }
     
+	@Override
+	public void onPause() {		
+		super.onPause();
+		EventBus.getDefault().unregister(this);
+	}
+
 	private void onClickListeners() {
     	//personal is selected by default.
     	mPersonal.setChecked(true);
@@ -560,19 +574,6 @@ public class AddBankTabletFragment extends BaseFragment{
 	
 	private void setupOnClickListeners() {
 		
-//		((DropDownTabletActivity)getActivity()).backArrowAction(new View.OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_left);
-//				Animation out = AnimationUtils.loadAnimation(getActivity(), R.anim.out_right);
-//				mFlipper.setInAnimation(in);
-//				mFlipper.setOutAnimation(out);
-//			//	((DropDownTabletActivity)getActivity()).animateLabelsReverse();
-//
-//				mFlipper.showPrevious();
-//			}
-//		});
 		
 		mAutomaticContainer.setOnClickListener(new View.OnClickListener() {
 			
@@ -584,7 +585,6 @@ public class AddBankTabletFragment extends BaseFragment{
 				Animation out = AnimationUtils.loadAnimation(getActivity(), R.anim.out_left);
 				mFlipper.setInAnimation(in);
 				mFlipper.setOutAnimation(out);
-			//	((DropDownTabletActivity)getActivity()).animateLabelsForward(getActivity().getString(R.string.add_account_institution), true);
 				mFlipper.showNext();
 			}
 		});
@@ -608,7 +608,6 @@ public class AddBankTabletFragment extends BaseFragment{
 
 	@Override
 	public FragmentType getType() {
-		// TODO Auto-generated method stub
 		return null;
 	}
    
