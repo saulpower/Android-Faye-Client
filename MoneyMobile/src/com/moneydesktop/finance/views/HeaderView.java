@@ -61,9 +61,7 @@ public class HeaderView extends TextView {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
-        if (mCaret == null) {
-            createCaret();
-        }
+        createCaret();
     }
     
     public void createCaret() {
@@ -152,8 +150,6 @@ public class HeaderView extends TextView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         
-        if (mIsShowing) {
-            mCaret.draw(canvas);
-        }
+        if (mIsShowing) mCaret.draw(canvas);
     }
 }

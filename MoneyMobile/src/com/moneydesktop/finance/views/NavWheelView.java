@@ -1,5 +1,8 @@
 package com.moneydesktop.finance.views;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorSet;
@@ -24,9 +27,6 @@ import com.moneydesktop.finance.model.PointEvaluator;
 import com.moneydesktop.finance.util.UiUtils;
 
 import de.greenrobot.event.EventBus;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @TargetApi(11)
 public class NavWheelView extends View {
@@ -308,8 +308,9 @@ public class NavWheelView extends View {
 		fade.setDuration(250);
 		fade.start();
 		
-		for (NavItemDrawable item : mDrawables)
+		for (NavItemDrawable item : mDrawables) {
 			item.playOutro(mCurrentIndex);
+		}
 		
 		// Timer to handle hide animations have completed
 		mHandler.postDelayed(mTask, 1200);
