@@ -116,6 +116,7 @@ public class Constant {
     public static final String KEY_POPULARITY = "popularity";
     public static final String KEY_POSTED_DATE = "posted_date";
     public static final String KEY_PROCESS_STATUS = "process_status";
+    public static final String KEY_PROPERTY = "property";
     public static final String KEY_PROPERTY_TYPE = "property_type";
     public static final String KEY_RECORDS = "records";
     public static final String KEY_REFERENCE = "reference";
@@ -264,4 +265,13 @@ public class Constant {
         aMap.put(KEY_MEMBERS, Bank.class);
         OBJECT_TYPES = Collections.unmodifiableMap(aMap);
     }
+
 }
+
+
+
+
+
+
+
+

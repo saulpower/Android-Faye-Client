@@ -28,6 +28,7 @@ public class DataBridge {
 	private static final String ENDPOINT_INSTITUTIONS = "institutions";
 	private static final String ENDPOINT_MEMBERS = "members";
 	private static final String ENDPOINT_SYNC = "sync";
+	private static final String ENDPOINT_ACCOUNTS = "accounts";
 	
 	private static DataBridge sharedInstance;
 	
@@ -173,6 +174,27 @@ public class DataBridge {
 			
 		} catch (Exception e) {
 			Log.e(TAG, "Error getting bank status", e);
+		}
+		
+		return null;
+	}
+	
+	public JSONObject saveManualAccount (JSONObject json) {
+		
+		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
+		
+		String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_ACCOUNTS);
+		
+		try {
+			
+			String response = HttpRequest.sendPost(url, getHeaders(), null, json.toString());
+			
+			JSONObject jsonResponse = new JSONObject(response);
+			
+			return jsonResponse;
+			
+		} catch (Exception e) {
+			Log.e(TAG, "Error saving manual bank account", e);
 		}
 		
 		return null;

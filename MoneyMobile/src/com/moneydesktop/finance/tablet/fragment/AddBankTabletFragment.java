@@ -4,6 +4,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,29 +33,25 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.SplashActivity;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataBridge;
 import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.SyncEngine;
-import com.moneydesktop.finance.data.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BankDao;
-import com.moneydesktop.finance.database.BusinessObjectBaseDao;
 import com.moneydesktop.finance.database.Institution;
 import com.moneydesktop.finance.database.InstitutionDao;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.model.EventMessage;
-import com.moneydesktop.finance.model.EventMessage.BankStatusUpdateEvent;
 import com.moneydesktop.finance.model.EventMessage.GetLogonCredentialsFinished;
 import com.moneydesktop.finance.model.EventMessage.SaveInstitutionFinished;
 import com.moneydesktop.finance.model.User;
@@ -61,6 +59,7 @@ import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.AddAccountManuallyAccountTypesAdapter;
+import com.moneydesktop.finance.tablet.adapter.AddAccountManuallyPropertyTypesAdapter;
 import com.moneydesktop.finance.tablet.adapter.AddNewInstitutionAdapter;
 import com.moneydesktop.finance.util.Fonts;
 
@@ -91,9 +90,12 @@ public class AddBankTabletFragment extends BaseFragment{
 	private HashMap<String, String> mCredentialsHash = new HashMap<String, String>();
 	private boolean mHasRetrievedAccounts;
 	private static AddBankTabletFragment mFragment;
+	private JSONObject mAddManualBankJsonRequest;
 	
-	private QueryProperty mWherePopularity = new QueryProperty(InstitutionDao.TABLENAME, InstitutionDao.Properties.Popularity, "!= ?");	
-	private QueryProperty mAccountTypeWhere = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName, "!= ?");
+	private QueryProperty mWherePopularity = new QueryProperty(InstitutionDao.TABLENAME, InstitutionDao.Properties.Popularity, "!= ?");
+	private QueryProperty mAccountTypeWhereID = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.ParentAccountTypeId, "= ?");
+	private QueryProperty mAccountTypeWhereName = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName, "= ?");
+	private QueryProperty mAccountTypeNotWhere = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName, "!= ?");
 	private QueryProperty mAccountTypeAnd = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.ParentAccountTypeId, "= ?");
 	private QueryProperty mOrderBy = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName);
 	
@@ -197,7 +199,6 @@ public class AddBankTabletFragment extends BaseFragment{
 				mFlipper.setInAnimation(in);
 				mFlipper.setOutAnimation(out);
 				mSelectedInstitution = (Institution)a.getItemAtPosition(position);
-			//	((DropDownTabletActivity)getActivity()).animateLabelsForward(String.format(getActivity().getString(R.string.add_account_institution_connect), mSelectedInstitution.getName()),false);
 				mFlipper.showNext();
 				setupConnectScreen();
 		    }
@@ -211,12 +212,11 @@ public class AddBankTabletFragment extends BaseFragment{
 		//get List of account types
 		AccountTypeDao accountTypeDao = ApplicationContext.getDaoSession().getAccountTypeDao();
 		
-	    
 	    List<AccountType> allAccountTypes = new ArrayList<AccountType>();
 	    		
 	    //Get all account types in alphabetical order. Removing the "Unknown" Type. 
 		PowerQuery query = new PowerQuery(accountTypeDao);	
-		query.where(mAccountTypeWhere, "Unknown")
+		query.where(mAccountTypeNotWhere, "Unknown")
 		.and().where(mAccountTypeAnd, "0")
 		.orderBy(mOrderBy, false);
 		
@@ -238,8 +238,44 @@ public class AddBankTabletFragment extends BaseFragment{
 					mFlipper.setOutAnimation(out);
 					mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view5)));
 				} else {
-				//	mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view6)));
+					setupProptertyTypeListScreen();
+					mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view6)));
 				}
+			}
+		});
+	}
+	
+	
+	private void setupProptertyTypeListScreen () {
+		ListView propertyTypesList = (ListView)mRoot.findViewById(R.id.tablet_add_bank_manually_property_type);
+
+		//get List of account types
+		AccountTypeDao accountTypeDao = ApplicationContext.getDaoSession().getAccountTypeDao();
+		
+	    List<AccountType> allPropertyTypes = new ArrayList<AccountType>();
+	    List<AccountType> propertyType = new ArrayList<AccountType>();
+	    
+	    PowerQuery propertyQuery = new PowerQuery(accountTypeDao);
+	    propertyQuery.where(mAccountTypeWhereName, "Property");
+	    
+	    propertyType = accountTypeDao.queryRaw(propertyQuery.toString(), propertyQuery.getSelectionArgs());
+	    		
+		PowerQuery query = new PowerQuery(accountTypeDao);	
+		query.where(mAccountTypeWhereID, propertyType.get(0).getId().toString())
+		.orderBy(mOrderBy, false);
+		
+		allPropertyTypes = accountTypeDao.queryRaw(query.toString(), query.getSelectionArgs());
+		
+		propertyTypesList.setAdapter(new AddAccountManuallyPropertyTypesAdapter(mActivity, R.layout.tablet_add_bank_manually_property_types_item, allPropertyTypes)); 
+		
+		propertyTypesList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> listView, View view, int position, long id) {
+				AccountType selectedAccountType= (AccountType)listView.getItemAtPosition(position);
+
+				setupSaveBankMaunuallyScreen(selectedAccountType);
+				mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view5)));
 			}
 		});
 	}
@@ -262,33 +298,48 @@ public class AddBankTabletFragment extends BaseFragment{
 			
 			@Override
 			public void onClick(View v) {
-				JSONObject jsonRequest = new JSONObject();
+				mAddManualBankJsonRequest = new JSONObject();
 
 				try {
-					jsonRequest.putOpt(Constant.KEY_ACCOUNT_TYPE, selectedAccountType.getAccountTypeId());
+					mAddManualBankJsonRequest.putOpt(Constant.KEY_ACCOUNT_TYPE, selectedAccountType.getAccountTypeId());
 				
-				jsonRequest.putOpt(Constant.KEY_USER_GUID, User.getCurrentUser().getUserId());
-				jsonRequest.putOpt(Constant.KEY_IS_HIDDEN, false);
-//				jsonRequest.putOpt(Constant.KEY_INTEREST_RATE, value);
-				jsonRequest.putOpt(Constant.KEY_BALANCE, mCurrentBalance.getText().toString());
-				jsonRequest.putOpt(Constant.KEY_ORG_BALANCE, mCurrentBalance.getText().toString());
-//				jsonRequest.putOpt(Constant.KEY_FLAGS, value);
-				jsonRequest.putOpt(Constant.KEY_IS_DELETED, false);
-//				jsonRequest.putOpt(Constant.KEY_MEMBER_GUID, value);
-//				jsonRequest.putOpt(Constant.KEY_CREDIT_LIMIT, value);
-//				jsonRequest.putOpt(Constant.KEY_MIN_PAYMENT, value);
-				jsonRequest.putOpt(Constant.KEY_NAME, mAccountName.getText().toString());
-//				jsonRequest.putOpt(Constant.KEY_EXTERNAL_ID, selectedAccountType.getExternalId());
-				jsonRequest.putOpt(Constant.KEY_USER_NAME, mAccountName.getText().toString());
-//				jsonRequest.putOpt(Constant.KEY_REVISION, value);
-//				jsonRequest.putOpt(Constant.KEY_IS_PERSONAL, value);
-//				jsonRequest.putOpt(Constant.KEY_IS_MANUAL, value);
+					mAddManualBankJsonRequest.putOpt(Constant.KEY_USER_GUID, User.getCurrentUser().getUserId());
+					mAddManualBankJsonRequest.putOpt(Constant.KEY_IS_HIDDEN, false);
+					mAddManualBankJsonRequest.putOpt(Constant.KEY_BALANCE, mCurrentBalance.getText().toString());
+					mAddManualBankJsonRequest.putOpt(Constant.KEY_ORG_BALANCE, mCurrentBalance.getText().toString());
+					mAddManualBankJsonRequest.putOpt(Constant.KEY_IS_DELETED, false);
+					mAddManualBankJsonRequest.putOpt(Constant.KEY_NAME, mAccountName.getText().toString());
+					mAddManualBankJsonRequest.putOpt(Constant.KEY_USER_NAME, mAccountName.getText().toString());
+					
+					//the "." means that its a subtype of the account type "Property"
+					if (selectedAccountType.getAccountTypeId().contains(".")) {
+						
+						String[] splitID = selectedAccountType.getAccountTypeId().split("\\.");
+						mAddManualBankJsonRequest.putOpt(Constant.KEY_PROPERTY_TYPE, splitID[1]);
+						
+					}
 				
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 				
-				//BankAccount.saveBankAccount(jsonRequest, false);
+				((DropDownTabletActivity)mActivity).dismissDropdown();
+				
+				new Thread(new Runnable() {			
+					public void run() {	
+						DataBridge.sharedInstance().saveManualAccount(mAddManualBankJsonRequest);
+						DataController.save();
+						
+						Handler test = new Handler(Looper.getMainLooper());
+			    	    test.post(new Runnable() {
+			        	    public void run()
+			        	    {
+								Intent intent = new Intent(mActivity, SyncService.class);
+					    		mActivity.startService(intent);
+			        	    }
+			        	});
+					}
+				}).start();
 			}
 		});
 	}
@@ -492,8 +543,8 @@ public class AddBankTabletFragment extends BaseFragment{
     	    	    
     	    final List<Bank> bankList = bankDAO.queryRaw(query.toString(), query.getSelectionArgs());
     		  		
-    	    Handler test = new Handler(Looper.getMainLooper());
-    	    test.post(new Runnable() {
+    	    Handler sync = new Handler(Looper.getMainLooper());
+    	    sync.post(new Runnable() {
         	    public void run()
         	    {
         	    	SyncEngine.sharedInstance().beginBankStatusUpdate(bankList.get(0));

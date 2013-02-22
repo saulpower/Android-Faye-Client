@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.AccountType;
+import com.moneydesktop.finance.util.Fonts;
 
 import android.app.Activity;
 import android.content.Context;
@@ -38,6 +39,8 @@ public class AccountSettingsTypesAdapter extends ArrayAdapter<AccountType> {
 		holder.txtTitle = (TextView)view.findViewById(R.id.account_type_settings_item);
 		
 		holder.txtTitle.setText(mAccountTypesList.get(position).getAccountTypeName());
+		
+		Fonts.applyPrimaryFont(holder.txtTitle, 12);
 		
 		return view;
 	}

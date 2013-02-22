@@ -78,6 +78,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	private QueryProperty mBankAccountTable = new QueryProperty(BankAccountDao.TABLENAME, AccountTypeDao.Properties.BusinessObjectId, BankAccountDao.Properties.BusinessObjectId);
 	
 	private QueryProperty mWhereDataState = new QueryProperty(BusinessObjectBaseDao.TABLENAME, BusinessObjectBaseDao.Properties.DataState, "!= ?");
+	private QueryProperty mWhereBankName = new QueryProperty(BankDao.TABLENAME, BankDao.Properties.BankName, "!= ?");
 	private QueryProperty mAccountTypeWhere = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName, "!= ?");
 	private QueryProperty mOrderBy = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName);
 	
@@ -315,7 +316,9 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 
         //For every bank that is attached, add it to the Drawer
         for (Bank bank : mBankList) {
-    		mPanelLayoutHolder.addView(populateDrawerView(bank));
+        	if (!bank.getBankName().toLowerCase().equals("manual institution")) {
+        		mPanelLayoutHolder.addView(populateDrawerView(bank));
+        	}
         }
         if (User.getCurrentUser().getCanSync() && mIsInitialization) {
             updateAllBankStatus();
@@ -327,7 +330,8 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 		BankDao bankDao = ApplicationContext.getDaoSession().getBankDao();
 		PowerQuery query = new PowerQuery(bankDao);
 	    
-	    query.join(mBusinessObjectBaseTable).where(mWhereDataState, "3");
+	    query.join(mBusinessObjectBaseTable)
+	    .where(mWhereDataState, "3");
 	    	    
 	    mBankList = bankDao.queryRaw(query.toString(), query.getSelectionArgs());
 	}
@@ -435,11 +439,12 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                 i++;
                 View bankView = mPanelLayoutHolder.getChildAt(i); 
             
-            
-                ImageView status = (ImageView) bankView.findViewById(R.id.bank_status);
-                
-                status.setVisibility(View.VISIBLE);
-                status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+                if (bankView != null) {
+	                ImageView status = (ImageView) bankView.findViewById(R.id.bank_status);
+	                
+	                status.setVisibility(View.VISIBLE);
+	                status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+                }
             }
         }
         
@@ -756,45 +761,57 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 
 	private void deleteBankWithNoAccountsConfirmation(final Bank bank, final View bankView) {
 	
-        DialogUtils.alertDialog(String.format(getString(R.string.delete_bank_title), bank.getBankName()), 
-                getString(R.string.delete_bank_with_no_accounts_message), 
-                getString(R.string.label_yes).toUpperCase(), 
-                getString(R.string.label_no).toUpperCase(), 
-                getActivity(), 
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {  
-                        
-                        switch (which) {
-                            case DialogInterface.BUTTON_POSITIVE:
-                                DialogUtils.dismissAlert();
-                                
-                        		mBanksForDeletion.add(bank);
-                        		if (mBanksForDeletion.contains(bank)) {
-                        		    mBankList.remove(bank);
-                        		}
-                        		
-                        		bank.softDeleteSingle();
-                            		
-                        		//start the sync
-                        		Intent intent = new Intent(getActivity(), SyncService.class);
-                        		getActivity().startService(intent);
-                        		
-                        		//remove bank from view
-                        		mPanelLayoutHolder.removeView(bankView);
-                                
-                                break;                                
-                            case DialogInterface.BUTTON_NEGATIVE:
-                                DialogUtils.dismissAlert();
-                                mPopup.fadeOutTransparency();
-                        		//start the sync
-                                Intent i = new Intent(mActivity, SyncService.class);
-                                mActivity.startService(i);
-                                break;
-                        }
-                }
-        }); 
-
+		if (bank.getBankName().toLowerCase().equals("manual institution")) {
+			mBanksForDeletion.add(bank);
+    		if (mBanksForDeletion.contains(bank)) {
+    		    mBankList.remove(bank);
+    		}
+    		
+    		bank.softDeleteSingle();
+        		
+    		//start the sync
+    		Intent intent = new Intent(getActivity(), SyncService.class);
+    		getActivity().startService(intent);
+		}else {
+	        DialogUtils.alertDialog(String.format(getString(R.string.delete_bank_title), bank.getBankName()), 
+	                getString(R.string.delete_bank_with_no_accounts_message), 
+	                getString(R.string.label_yes).toUpperCase(), 
+	                getString(R.string.label_no).toUpperCase(), 
+	                getActivity(), 
+	                new DialogInterface.OnClickListener() {
+	                    @Override
+	                    public void onClick(DialogInterface dialog, int which) {  
+	                        
+	                        switch (which) {
+	                            case DialogInterface.BUTTON_POSITIVE:
+	                                DialogUtils.dismissAlert();
+	                                
+	                        		mBanksForDeletion.add(bank);
+	                        		if (mBanksForDeletion.contains(bank)) {
+	                        		    mBankList.remove(bank);
+	                        		}
+	                        		
+	                        		bank.softDeleteSingle();
+	                            		
+	                        		//start the sync
+	                        		Intent intent = new Intent(getActivity(), SyncService.class);
+	                        		getActivity().startService(intent);
+	                        		
+	                        		//remove bank from view
+	                        		mPanelLayoutHolder.removeView(bankView);
+	                                
+	                                break;                                
+	                            case DialogInterface.BUTTON_NEGATIVE:
+	                                DialogUtils.dismissAlert();
+	                                mPopup.fadeOutTransparency();
+	                        		//start the sync
+	                                Intent i = new Intent(mActivity, SyncService.class);
+	                                mActivity.startService(i);
+	                                break;
+	                        }
+	                }
+	        });
+		}
 	}
     
 	protected void updateChildAccountsList(Bank bank) {

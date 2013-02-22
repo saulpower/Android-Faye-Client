@@ -122,6 +122,67 @@ public class Enums {
         }
         
     };
+    
+    
+  public enum PropertyTypes {
+	  	
+	  	REAL_ESTATE(0),
+	  	VEHICLE(1),
+        ART (2),
+        JEWELRY (3),
+        FURNITURE (4),
+        APPLIANCES (5),
+        COMPUTER (6),        
+        ELECTRONICS (7),
+        SPORTS_EQUIPMENT (8),
+        MISCELLANEOUS (9);
+                     
+        private int index;
+        
+        PropertyTypes(int index) {
+            this.index = index;
+        }
+        
+        public static PropertyTypes fromInteger(Integer value) {
+            
+            switch(value) {
+            case 0:
+                return REAL_ESTATE;
+            case 1:
+                return VEHICLE;
+            case 2:
+                return ART;
+            case 3:
+                return JEWELRY;
+            case 4:
+                return FURNITURE;
+            case 5:
+                return APPLIANCES;
+            case 6:
+                return COMPUTER;
+            case 7:
+                return ELECTRONICS;
+            case 8:
+                return SPORTS_EQUIPMENT;
+            case 9:
+                return MISCELLANEOUS;
+            }
+            
+            return null;
+        }
+        
+        public int index() {
+            return index;
+        }
+        
+        public static int size() {
+			return 10;
+        }
+         
+    };
+    
+    
+    
     public enum HandsetFragments {
         
     }

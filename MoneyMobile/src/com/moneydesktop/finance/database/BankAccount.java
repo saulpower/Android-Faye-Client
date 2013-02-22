@@ -1,6 +1,7 @@
 package com.moneydesktop.finance.database;
 
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.DataBridge;
 import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Enums.AccountExclusionFlags;
 import com.moneydesktop.finance.data.Enums.DataState;
@@ -13,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -606,6 +608,8 @@ public class BankAccount extends BusinessObject  {
 
         return bankAccount;
     }
+    
+    
 
     /**
      * Iterate through each Bank and then each Bank Account and create a bank
