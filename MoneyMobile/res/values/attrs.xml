@@ -5,6 +5,7 @@
         <attr name="labelColor" format="reference" />
         <attr name="labelSize" format="float" />
         <attr name="labelText" format="string" />
+        <attr name="android:paddingRight" />
     </declare-styleable>
     
     <declare-styleable name="ClearEditText">

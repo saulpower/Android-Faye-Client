@@ -3,7 +3,6 @@ package com.moneydesktop.finance.tablet.fragment;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -95,26 +94,6 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
         }
         
         return mRoot;
-    }
-    
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        
-        if (resultCode != Activity.RESULT_OK) {
-            return;
-        }
-        
-        switch (requestCode) {
-            
-            case Constant.CODE_CATEGORY_DETAIL:
-                
-                long categoryId = data.getLongExtra(Constant.EXTRA_CATEGORY_ID, -1);
-                
-                if (categoryId != -1) {
-                    updateTransactionCategory(categoryId);
-                }
-                break;
-        }
     }
     
     public void viewShowing() {
@@ -339,12 +318,12 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
 
         if (mTransaction == null) return;
         
-        configureTransactionView();
+        configureTransactionView(false);
     }
     
     @Override
-    public void configureTransactionView() {
-        super.configureTransactionView();
+    public void configureTransactionView(boolean isUpdate) {
+        super.configureTransactionView(isUpdate);
 
         if (mTransaction == null) return;
         

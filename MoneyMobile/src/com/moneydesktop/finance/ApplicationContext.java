@@ -23,6 +23,7 @@ import com.moneydesktop.finance.exception.CustomExceptionHandler;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.AuthEvent;
 import com.moneydesktop.finance.model.EventMessage.LoginEvent;
+import com.moneydesktop.finance.shared.Services.WebSocketService;
 import com.moneydesktop.finance.shared.activity.BaseActivity;
 
 import de.greenrobot.event.EventBus;
@@ -73,6 +74,9 @@ public class ApplicationContext extends Application {
         Crittercism.init(this, "50258d166c36f91a1b000004");
         Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler());
 
+        Intent intent = new Intent(this, WebSocketService.class);
+		startService(intent);
+        
         initializeDatabase();
 		DatabaseDefaults.ensureInstitutionsLoaded();
 		

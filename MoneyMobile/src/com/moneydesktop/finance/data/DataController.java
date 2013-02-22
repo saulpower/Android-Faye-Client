@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -331,9 +332,6 @@ public class DataController {
 	 * @throws JSONException
 	 */
 	public static void saveSyncData(JSONObject device, boolean fullSyncRequired) throws JSONException {
-
-		long start = System.currentTimeMillis();
-		int count = 0;
 		
 		JSONObject records = device.getJSONObject(Constant.KEY_RECORDS);
 		
@@ -358,8 +356,6 @@ public class DataController {
 							// parse based on object type
 							parseAndSave(data, type, delete);
 							
-							count++;
-							
 						} catch (JSONException ex) {
 							Log.e(TAG, "Could not save sync object", ex);
 						}
@@ -367,8 +363,6 @@ public class DataController {
 				}
 			}
 		}
-		
-		Log.i(TAG, "DB Parsed " + count + " records in " + (System.currentTimeMillis() - start) + " ms");
 		
 		save();
 	}
@@ -436,5 +430,40 @@ public class DataController {
 		Preferences.remove(Preferences.KEY_LAST_SYNC);
 		
 		DatabaseDefaults.resetDatabase();
+	}
+	
+	/**
+	 * Creates a random and unique guid for the given object class.
+	 * 
+	 * @param key The object class
+	 * @return a unique guid for the given object class
+	 */
+	public static Long createRandomGuid(Class<?> key) {
+		return createRandomGuid(key, null);
+	}
+	
+	/**
+	 * Ensures that the guid passed in is not currently being used.
+	 * If the guid is being used a random guid is generated.
+	 * 
+	 * @param key The object class
+	 * @param guid The current guid to be used
+	 * @return a unique guid for the given object class
+	 */
+	public static Long createRandomGuid(Class<?> key, Long guid) {
+
+		AbstractDao<?, Long> dao = DataController.getDao(key);
+		Random random = new Random();
+		Object object = null;
+		Long id = guid;
+		
+		if (id == null) random.nextLong();
+		
+		do {
+			object = dao.load(id);
+			id = random.nextLong();
+		} while (object != null);
+		
+		return id;
 	}
 }

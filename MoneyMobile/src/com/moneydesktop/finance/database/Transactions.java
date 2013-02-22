@@ -17,17 +17,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+import android.os.AsyncTask;
 import android.util.Pair;
+import android.widget.TextView;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Enums.DataState;
 import com.moneydesktop.finance.model.User;
+import com.moneydesktop.finance.views.AnimatedEditText;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
@@ -101,8 +102,6 @@ public class Transactions extends BusinessObject  {
     private List<Transactions> children;
 
     // KEEP FIELDS - put your custom fields here
-    private QueryProperty mTagInstance = new QueryProperty(TagInstanceDao.TABLENAME, TagDao.Properties.Id, TagInstanceDao.Properties.TagId);
-    private QueryProperty mBaseObjectId = new QueryProperty(TagInstanceDao.TABLENAME, TagInstanceDao.Properties.BaseObjectId);
     
     private String mCapitalizedTitle;
     
@@ -702,7 +701,7 @@ public class Transactions extends BusinessObject  {
     	JSONArray tags = json.optJSONArray(Constant.KEY_TAGS);
     	
     	if (tags != null && tags.length() > 0) {
-    		Tag.saveArrayOfTags(tags, transaction);
+    		Tag.saveArrayOfTags(tags, transaction.getBusinessObjectBase());
     	}
     	
     	if (!json.optString(Constant.KEY_PARENT_GUID).equals(Constant.VALUE_NULL)) {
@@ -1310,31 +1309,42 @@ public class Transactions extends BusinessObject  {
     	return false;
     }
     
-    public List<Tag> getTags() {
-        
-        TagDao tagDao = ApplicationContext.getDaoSession().getTagDao();
-
-        PowerQuery query = new PowerQuery(tagDao);
-        query.join(mTagInstance)
-            .where(mBaseObjectId, Long.toString(getBusinessObjectId()));
-        
-        return tagDao.queryRaw(query.toString(), query.getSelectionArgs());
-        
+    public void buildTagString(final TextView textView) {
+    	buildTagString(textView, false);
     }
     
-    public String buildTagString() {
+    public void buildTagString(final TextView textView, final boolean isUpdate) {
+
+    	new AsyncTask<Void, Void, String>() {
+    		
+			@Override
+			protected String doInBackground(Void... params) {
+
+				StringBuilder builder = new StringBuilder();
+		        
+		        for (Tag tag : getBusinessObjectBase().getTags()) {
+		        	builder.append(tag.getTagName() + ", ");
+		        }
+		        
+		        if (builder.length() == 0) {
+		            return "";
+		        }
+		        
+		        return builder.toString().substring(0, builder.length() - 2);
+			}
+    		
+    		@Override
+    		protected void onPostExecute(String tags) {
+    			
+    			if (textView instanceof AnimatedEditText && isUpdate) {
+    				((AnimatedEditText) textView).setAnimatedText(tags);
+    			} else {
+    				textView.setText(tags);
+    			}
+    		}
+			
+		}.execute();
         
-        StringBuilder builder = new StringBuilder();
-        
-        for (Tag tag : getTags()) {
-            builder.append(tag.getTagName() + ", ");
-        }
-        
-        if (builder.length() == 0) {
-            return "";
-        }
-        
-        return builder.toString().substring(0, builder.length() - 2);
     }
     
     public Double normalizedAmount() {
@@ -1362,13 +1372,25 @@ public class Transactions extends BusinessObject  {
     
     public static void setAllRead() {
     	
-    	SQLiteDatabase db = ApplicationContext.getDb();
-    	
-    	ContentValues values = new ContentValues();
-    	values.put(TransactionsDao.Properties.IsProcessed.columnName, 1);
-    	
-    	int updated = db.update(TransactionsDao.TABLENAME, values, null, null);
-    	Log.i(TAG, "Rows updated: " + updated);
+    	new AsyncTask<Void, Void, Boolean>() {
+    		
+			@Override
+			protected Boolean doInBackground(Void... params) {
+
+				TransactionsDao dao = (TransactionsDao) DataController.getDao(Transactions.class);
+				List<Transactions> transactions = dao.loadAll();
+				
+				for (Transactions transaction : transactions) {
+					transaction.setIsProcessed(true);
+					transaction.updateBatch();
+				}
+				
+				DataController.save();
+
+				return true;
+			}
+			
+		}.execute();
     }
     
     // KEEP METHODS END

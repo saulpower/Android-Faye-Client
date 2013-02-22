@@ -37,9 +37,7 @@ import com.moneydesktop.finance.model.FragmentVisibilityListener;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.shared.activity.DashboardBaseActivity;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
-import com.moneydesktop.finance.tablet.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.tablet.adapter.TabletGrowPagerAdapter;
-import com.moneydesktop.finance.tablet.fragment.AccountSettingsTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.SettingsTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsTabletFragment;
@@ -99,7 +97,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
             
         } else if (!mOnHome) {
 			
-			configureView(true);
+        	showFragment(FragmentType.DASHBOARD, false);
 			return;
 		}
 		
@@ -385,6 +383,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 
         switch (type) {
             case DASHBOARD:
+            	SyncEngine.sharedInstance().beginSync();
     			configureView(true);
             	return null;
             case ACCOUNT_TYPES:

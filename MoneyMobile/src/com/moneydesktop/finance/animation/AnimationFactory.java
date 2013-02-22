@@ -64,21 +64,21 @@ public class AnimationFactory {
         TOP_BOTTOM, 
         BOTTOM_TOP,
         IN_TOP_BOTTOM,
-        OUT_BOTTOM_TOP;
+        OUT_TOP_BOTTOM,
+        OUT_BOTTOM_TOP,
+        IN_BOTTOM_TOP;
 		
 		public float getStartDegreeForFirstView() {
 			
 		    int degrees = 0;
             
             switch(this) {
+            	case IN_BOTTOM_TOP:
                 case BOTTOM_TOP:
                     degrees = 90;
                     break;
                 case IN_TOP_BOTTOM:
                     degrees = -90;
-                    break;
-                case OUT_BOTTOM_TOP:
-                    degrees = 0;
                     break;
                 default:
                     break;
@@ -86,36 +86,12 @@ public class AnimationFactory {
 		    return degrees;
 		}
 		
-		public float getStartDegreeForSecondView() {
-		    
-            int degrees = 90;
-            
-			switch(this) {
-                case TOP_BOTTOM:
-    			case LEFT_RIGHT:
-                    degrees = -90;
-                    break;
-    			case RIGHT_LEFT:
-                    degrees = 90;
-                    break;
-                case IN_TOP_BOTTOM:
-                case BOTTOM_TOP:
-    			default:
-                    degrees = 0;
-                    break;
-			}
-			
-			return degrees;
-		}
-		
 		public float getEndDegreeForFirstView() {
 		    
-		    int degrees = 90;
+		    int degrees = 0;
 		    
 			switch(this) {
-    		    case IN_TOP_BOTTOM:
-    		        degrees = 0;
-    		        break;
+        		case OUT_TOP_BOTTOM:
                 case TOP_BOTTOM:
     			case LEFT_RIGHT:
     				degrees = 90;
@@ -124,10 +100,27 @@ public class AnimationFactory {
     			case RIGHT_LEFT:
     			    degrees = -90;
     			    break;
-                case BOTTOM_TOP:
-    			default:
-    			    degrees = 0;
-    			    break;
+				default:
+					break;
+			}
+			
+			return degrees;
+		}
+		
+		public float getStartDegreeForSecondView() {
+		    
+            int degrees = 0;
+            
+			switch(this) {
+                case TOP_BOTTOM:
+    			case LEFT_RIGHT:
+                    degrees = -90;
+                    break;
+    			case RIGHT_LEFT:
+                    degrees = 90;
+                    break;
+				default:
+					break;
 			}
 			
 			return degrees;
