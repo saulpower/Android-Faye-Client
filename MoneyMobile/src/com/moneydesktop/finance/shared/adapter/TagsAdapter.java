@@ -1,4 +1,3 @@
-
 package com.moneydesktop.finance.shared.adapter;
 
 import java.util.ArrayList;
@@ -20,7 +19,6 @@ import android.widget.TextView;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.BusinessObjectBase;
 import com.moneydesktop.finance.database.Tag;
-import com.moneydesktop.finance.database.TagInstance;
 import com.moneydesktop.finance.shared.TagViewHolder;
 import com.moneydesktop.finance.tablet.adapter.DeleteBaseAdapter;
 import com.moneydesktop.finance.util.Fonts;
@@ -61,10 +59,7 @@ public class TagsAdapter extends DeleteBaseAdapter<Tag> implements Filterable {
     private void updateObjectTagList() {
         
         mObjectTags.clear();
-        
-        for (TagInstance ti : mBusinessObject.getTagInstances()) {
-            mObjectTags.add(ti.getTag());
-        }
+        mObjectTags.addAll(mBusinessObject.getTags());
     }
     
     public void updateData(List<Tag> tags) {

@@ -71,8 +71,6 @@ public class DataBridge {
 	 */
 	public void authenticateUser(String userName, String password) throws Exception {
 		
-		long start = System.currentTimeMillis();
-		
 		AuthObject auth = new AuthObject(context, userName, password);
         String body = auth.toString();
         
@@ -93,8 +91,6 @@ public class DataBridge {
         	
         	EventBus.getDefault().post(new EventMessage().new AuthEvent());
         }
-        
-        Log.i(TAG, "Auth in " + (System.currentTimeMillis() - start) + " ms");
 	}
 	
 	/**
@@ -113,17 +109,10 @@ public class DataBridge {
         String url = String.format("%s://%s/%s", protocol, baseUrl, endpoint);
         
 		try {
-
-			Long start = System.currentTimeMillis();
 			
 			String response = HttpRequest.sendGet(url, getHeaders(), null);
 			
-			Log.i(TAG, "Sync Get: " + (System.currentTimeMillis() - start) + " ms");
-			start = System.currentTimeMillis();
-			
 			JSONObject json = new JSONObject(response);
-			
-	        Log.i(TAG, "Sync Parsed: " + (System.currentTimeMillis() - start) + " ms");
 			
 			return json;
 	        

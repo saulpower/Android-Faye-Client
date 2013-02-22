@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.util.Pair;
 import android.view.View;
 
@@ -46,22 +45,26 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 	public GrowPagerAdapter getPagerAdapter() {
 	    return mAdapter;
 	}
-
-	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        
-        super.onCreate(savedInstanceState);
-        
-        if (SyncEngine.sharedInstance().isSyncing()) {
-        	DialogUtils.showProgress(this, getString(R.string.text_syncing));
-        }
-    }
     
     @Override
     public void onFragmentAttached(BaseFragment fragment) {
     	super.onFragmentAttached(fragment);
     	
         setCurrentFragment(fragment);
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        
+    	SyncEngine.sharedInstance().beginSync();
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        
+    	SyncEngine.sharedInstance().beginSync();
     }
     
     public void setCurrentFragment(BaseFragment fragment) {

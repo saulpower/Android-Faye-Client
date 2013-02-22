@@ -8,4 +8,7 @@
         <ignore path="src/android/util/Base64.java" />
         <ignore path="src/com/moneydesktop/finance/crypto/StringEncrypter.java" />
     </issue>
+    <issue id="ViewConstructor">
+        <ignore path="src/com/moneydesktop/finance/shared/adapter/TagsAdapter.java" />
+    </issue>
 </lint>

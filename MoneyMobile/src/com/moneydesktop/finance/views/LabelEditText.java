@@ -12,13 +12,12 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
-import android.widget.EditText;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 
-public class LabelEditText extends EditText {
+public class LabelEditText extends AnimatedEditText {
     
     public final String TAG = this.getClass().getSimpleName();
     
@@ -33,14 +32,13 @@ public class LabelEditText extends EditText {
     private String mText = "", mCancel;
     private float mLabelHeight = 0;
     private float mTextHeight = 0;
-    private int mOrgRightPadding = 0;
+    private int mOrgRightPadding = -1;
     
     private boolean mIsPressed, mCancelShowing = false;
 
     public LabelEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
         
-        mPaddingRight = UiUtils.getDynamicPixels(getContext(), PADDING_RIGHT);
         init(attrs);
     }
     
@@ -128,6 +126,8 @@ public class LabelEditText extends EditText {
     }
 
     private void init(AttributeSet attrs) {
+    	
+        mPaddingRight = UiUtils.getDynamicPixels(getContext(), PADDING_RIGHT);
         
         makeLabelPaint();
         setupCancelButton();
@@ -137,10 +137,9 @@ public class LabelEditText extends EditText {
         mText = a.getString(R.styleable.LabelEditText_labelText);
         setLabelTextColors(a.getColorStateList(R.styleable.LabelEditText_labelColor));
         setLabelSize(a.getFloat(R.styleable.LabelEditText_labelSize, 10.0f));
+        mOrgRightPadding = a.getDimensionPixelSize(R.styleable.LabelEditText_android_paddingRight, 0);
         
         a.recycle();
-        
-        mOrgRightPadding = getPaddingRight();
         
         setGravity(Gravity.TOP);
     }
@@ -261,17 +260,17 @@ public class LabelEditText extends EditText {
     }
 
     @Override
-    public void onDraw(Canvas c) {
-        super.onDraw(c);
+    public void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
         
-        c.drawText(mText, getPaddingLeft() + getScrollX(), mLabelHeight, mLabelPaint);
+        canvas.drawText(mText, getPaddingLeft() + getScrollX(), mLabelHeight, mLabelPaint);
         
         if (mCancelShowing) {
             
             float left = getWidth() - (mCancelBounds.width() / 2) - (mPaddingRight * 2 / 3) + getScrollX();
             float top = (getHeight() - getPaddingBottom()) - (mTextHeight / 2) + (mCancelBounds.height() / 2);
             
-            c.drawText(mCancel, left, top, mCancelPaint);
+            canvas.drawText(mCancel, left, top, mCancelPaint);
         }
     }
 

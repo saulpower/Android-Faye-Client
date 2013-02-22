@@ -1,5 +1,12 @@
 package com.moneydesktop.finance.database;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONObject;
+
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Enums.DataState;
@@ -7,22 +14,14 @@ import com.moneydesktop.finance.database.CategoryDao.Properties;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
+import de.greenrobot.dao.Property;
 import de.greenrobot.dao.Query;
-
-import org.json.JSONObject;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-// TODO: Track when an object is changed and mark it's DataState so it is processed
-// 		 during a sync.
 
 public abstract class BusinessObject implements BusinessObjectInterface {
 	
 	public static final String TAG = "BusinessObject";
 
-	private static Map<Class<?>, Query<?>> queries = new HashMap<Class<?>, Query<?>>();
+	private static Map<Class<?>, Query<?>> sQueries = new HashMap<Class<?>, Query<?>>();
 	
 	protected DataState mDataStateEnum;
 	protected DataState mPreviousDataStateEnum;
@@ -41,10 +40,14 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 	public DataState getDataStateEnum() {
 		
 	    try {
-    		if (mDataStateEnum == null && getBusinessObjectBase() != null) {
+	    	if (getBusinessObjectBase() != null) {
     			mDataStateEnum = DataState.fromInteger(getBusinessObjectBase().getDataState());
-    		}
-	    } catch (DaoException ex) {}
+    		} else if (this instanceof BusinessObjectBase) {
+	    		mDataStateEnum = DataState.fromInteger(((BusinessObjectBase) this).getDataState());
+	    	}
+	    } catch (DaoException ex) {
+	    	mDataStateEnum = DataState.DATA_STATE_UNCHANGED;
+	    }
 		
 		return mDataStateEnum;
 	}
@@ -52,10 +55,14 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 	public void setDataStateEnum(DataState dataStateEnum) {
 		
 		this.mDataStateEnum = dataStateEnum;
-		
-		if (!(this instanceof BusinessObjectBase)) {
-		    getBusinessObjectBase().setDataState(dataStateEnum.index());
-		}
+
+	    try {
+			if (getBusinessObjectBase() != null) {
+			    getBusinessObjectBase().setDataState(dataStateEnum.index());
+			} else if (this instanceof BusinessObjectBase) {
+				((BusinessObjectBase) this).setDataState(dataStateEnum.index());
+			}
+	    } catch (DaoException ex) {}
 	}
 
 	public boolean isNew() {
@@ -97,8 +104,16 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 		
 		try {
 			
-			for (TagInstance ti : getBusinessObjectBase().getTagInstances()) {
-				ti.acceptChanges();
+			if (!(this instanceof TagInstance)) {
+				
+				for (TagInstance ti : getBusinessObjectBase().getTagInstances()) {
+					
+					if (ti.getDataStateEnum() == DataState.DATA_STATE_DELETED) {
+						ti.deleteBatch();
+					}
+				}
+				
+				getBusinessObjectBase().resetTagInstances();
 			}
 			
 		} catch (DaoException ex) {}
@@ -154,21 +169,6 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 	
 	public void suspendDataState() {
 		mSuspendChangeTracking = true;
-	}
-	
-	public boolean containsTag(String tagId) {
-		
-		try {
-			
-			for (TagInstance ti : getBusinessObjectBase().getTagInstances()) {
-				
-				if (ti.getTag().getTagId().equals(tagId))
-					return true;
-			}
-			
-		} catch (DaoException ex) {}
-		
-		return false;
 	}
 	
 	public void save() {
@@ -359,8 +359,8 @@ public abstract class BusinessObject implements BusinessObjectInterface {
     	
     	object = DataController.checkCache((key.getName() + guid));
 
-        if (object == null)
-        	object = getQuery(key, id).unique();
+        if (object == null) object = getQuery(key, id).unique();
+        if (object == null) object = getByExternalId(key, guid);
         
     	return object;
     }
@@ -373,16 +373,15 @@ public abstract class BusinessObject implements BusinessObjectInterface {
      * @param id
      * @return
      */
-	@SuppressWarnings("unchecked")
     private static Query<?> getQuery(Class<?> key, Long id) {
     		
-		Query<?> queryId = queries.get(key);
+		Query<?> queryId = sQueries.get(key);
 		
     	if (queryId == null) {
 
-    		AbstractDao<Object, Long> abDao = (AbstractDao<Object, Long>) DataController.getDao(key);
+    		AbstractDao<?, Long> abDao = DataController.getDao(key);
     		queryId = abDao.queryBuilder().where(Properties.Id.eq(id)).build();
-    		queries.put(key, queryId);
+    		sQueries.put(key, queryId);
     		
     	} else {
     		
@@ -391,4 +390,21 @@ public abstract class BusinessObject implements BusinessObjectInterface {
     	
     	return queryId;
     }
+	
+	public static Object getByExternalId(Class<?> key, String externalId) {
+		
+		AbstractDao<?, Long> dao = DataController.getDao(key);
+		PowerQuery query = new PowerQuery(dao);
+		
+		Property foreignKey = new Property(3, long.class, "businessObjectId", false, "BUSINESS_OBJECT_ID");;
+		
+		query.join(new QueryProperty(BusinessObjectBaseDao.TABLENAME, foreignKey, BusinessObjectBaseDao.Properties.Id));
+		query.where(new QueryProperty(BusinessObjectBaseDao.TABLENAME, BusinessObjectBaseDao.Properties.ExternalId), externalId);
+		
+		List<?> results = dao.queryRaw(query.toString(), query.getSelectionArgs());
+		
+		if (results.size() > 0) return results.get(0);
+		
+		return null;
+	}
 }

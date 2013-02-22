@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import net.simonvt.menudrawer.MenuDrawer;
@@ -72,7 +73,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     
     private Animation mLeftIn, mLeftOut, mRightIn, mRightOut;
 
-    protected SimpleDateFormat mDateFormatter = new SimpleDateFormat("MM.dd.yyyy '@' h:mma");
+    protected SimpleDateFormat mDateFormatter = new SimpleDateFormat("MM.dd.yyyy '@' h:mma", Locale.US);
     
     private Map<FragmentType, BaseFragment> mFragments = new HashMap<FragmentType, BaseFragment>();
 
@@ -388,6 +389,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     	
     	if (mOnHome) {
 
+        	SyncEngine.sharedInstance().beginSync();
             updateNavBar(getActivityTitle(), false);
     		
     	} else {

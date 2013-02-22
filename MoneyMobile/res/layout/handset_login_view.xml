@@ -124,6 +124,7 @@
                     android:layout_height="50dp"
                     android:inputType="textEmailAddress"
                     android:textSize="25sp"
+		            android:nextFocusDown="@+id/password_field"
                     app:labelColor="@drawable/gray3_to_white_text"
                     app:labelSize="8"
                     app:labelText="@string/label_email" />
@@ -137,7 +138,7 @@
 		            app:dashLength="2dp"  />
 
                 <com.moneydesktop.finance.views.LabelEditText
-                    android:id="@+id/password_field"
+                    android:id="@id/password_field"
                     style="@style/field"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -155,6 +156,7 @@
 		            app:lineStrokeWidth="2dp"
 		            app:isDashed="true"
 		            app:dashLength="2dp"  />
+		        
             </LinearLayout>
 
             <LinearLayout
@@ -311,6 +313,7 @@
 		            app:lineStrokeWidth="2dp"
 		            app:isDashed="true"
 		            app:dashLength="2dp"  />
+		        
             </LinearLayout>
 
             <LinearLayout

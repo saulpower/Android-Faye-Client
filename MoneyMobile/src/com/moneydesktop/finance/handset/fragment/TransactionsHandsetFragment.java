@@ -19,7 +19,6 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.TextView;
 
-import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
@@ -161,7 +160,7 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
     
     @Override
     public void dataLoaded(boolean invalidate) {
-        
+    	
         mLoaded = true;
         mAdapter.applyNewData();
     }
@@ -232,7 +231,6 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 		    	break;
 		    case 1:
 		    	Transactions.setAllRead();
-		    	ApplicationContext.startNewDatabaseSession();
 		    	for (Transactions t : mAdapter.getTransactions()) {
 		    		t.setIsProcessed(true);
 		    	}
@@ -245,6 +243,7 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 	    
 	    if (mFilterAdapter != null && event.didDatabaseChange()) {
 	        mFilterAdapter.reloadSections();
+    		refreshTransactionsList(false);
 	    }
 	}
 

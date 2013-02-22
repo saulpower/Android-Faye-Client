@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="DefaultLocale">
+        <ignore path="src/com/codebutler/android_websockets/FayeClient.java" />
+        <ignore path="src/com/saulpower/fayeclient/FayeClient.java" />
+    </issue>
+</lint>

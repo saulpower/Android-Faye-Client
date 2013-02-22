@@ -105,6 +105,9 @@ public class SyncEngine {
 			beginSync();
 	}
 
+	/**
+	 * This method performs a sync synchronously
+	 */
 	public void debugSync() {
 		
 		try {
@@ -199,6 +202,8 @@ public class SyncEngine {
 		}
 		
 		if (!isRunning) {
+			
+		    Log.i(TAG, "Sync Started");
 		    
 			isRunning = true;
 			
@@ -231,8 +236,6 @@ public class SyncEngine {
 	}
 	
 	private void performSync() throws JSONException {
-		
-	    Log.i(TAG, "Sync Started");
 	    
 		JSONObject data = null;
 		
@@ -248,7 +251,6 @@ public class SyncEngine {
 			
 		} else {
 			
-			// TODO: send sync end notification
 			return;
 		}
 		
@@ -264,11 +266,8 @@ public class SyncEngine {
 			shouldSync = true;
 		}
 		
-		// TODO: Sync ended notification
-		
 		// Save the sync date to preferences
 		Preferences.saveLong(Preferences.KEY_LAST_SYNC, System.currentTimeMillis());
-		
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -430,7 +429,7 @@ public class SyncEngine {
 			BusinessObject bo = null;
 			
 			for (Object object : objects) {
-				if (((BusinessObject) object).getExternalId().equals(externalId)) {
+				if (((BusinessObject) object).getExternalId() != null && ((BusinessObject) object).getExternalId().equals(externalId)) {
 					bo = (BusinessObject) object;
 					break;
 				}
@@ -484,8 +483,6 @@ public class SyncEngine {
 	}
 	
 	private void processSyncData(JSONObject data) throws JSONException {
-		
-		long start = System.currentTimeMillis();
 
 		DatabaseDefaults.ensureCategoryTypesLoaded();
 		DatabaseDefaults.ensureAccountTypeGroupsLoaded();
@@ -501,24 +498,15 @@ public class SyncEngine {
 		if (!isFullSync) {
 			syncToken = device.getString(Constant.KEY_SYNC_TOKEN);
 		}
-
-		Log.i(TAG, "DB initialization: " + (System.currentTimeMillis() - start) + " ms");
 		
 		// Process the data received from the sync request
 		preprocessSyncData(device);
 		DataController.saveSyncData(device, isFullSync);
 		
-		start = System.currentTimeMillis();
-		
-		if (syncToken != null)
-			db.endSync(syncToken);
+		if (syncToken != null) db.endSync(syncToken);
 		
 		// Process updating account balances
 		BankAccount.buildAccountBalances();
-		
-		Log.i(TAG, "DB Build Accounts: " + (System.currentTimeMillis() - start) + " ms");
-		
-		// TODO: Sync ended refresh data notification
 		
 		shouldSync = false;
 		setNeedsFullSync(false);

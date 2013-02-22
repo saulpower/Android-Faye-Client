@@ -2,8 +2,10 @@ package com.moneydesktop.finance.shared.fragment;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import android.app.Activity;
+import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.View;
@@ -25,10 +27,9 @@ import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.database.Tag;
-import com.moneydesktop.finance.database.TagInstance;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
-import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
+import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.LabelEditText;
@@ -40,7 +41,7 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
     public final String TAG = this.getClass().getSimpleName();
 
     private DecimalFormat mFormatter = new DecimalFormat("$#,##0.00;-$#,##0.00");
-    protected SimpleDateFormat mDateFormatter = new SimpleDateFormat("MM.dd.yyyy");
+    protected SimpleDateFormat mDateFormatter = new SimpleDateFormat("MM.dd.yyyy", Locale.US);
 
     protected TransactionsDao mDao;
     protected Transactions mTransaction;
@@ -50,6 +51,8 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
     protected LabelEditText mPayee, mMemo, mDate, mTags, mAmount, mStatement, mCategory;
     protected ImageView mBankIcon;
     protected ToggleButton mBusiness, mPersonal, mCleared, mFlagged;
+    
+    private Handler mHandler;
     
     protected Animation mShake;
     
@@ -65,6 +68,8 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         
+        mHandler = new Handler();
+        
         EventBus.getDefault().register(this);
     }
     
@@ -72,7 +77,7 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
     public void onResume() {
     	super.onResume();
 
-        configureTransactionView();
+        configureTransactionView(false);
     }
     
     @Override
@@ -82,12 +87,17 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
         EventBus.getDefault().unregister(this);
     }
     
-    public void onEvent(DatabaseSaveEvent event) {
+    public void onEvent(SyncEvent event) {
 
-    	if (event.didDatabaseChange()
-    			&& (event.getChangedClassesList().contains(Transactions.class)
-    			|| event.getChangedClassesList().contains(TagInstance.class))) {
-            configureTransactionView();
+    	if (event.isFinished()) {
+    		
+    		mHandler.postDelayed(new Runnable() {
+				
+				@Override
+				public void run() {
+		            configureTransactionView(true);
+				}
+			}, 300);
     	}
     }
     
@@ -316,36 +326,45 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
         mTransaction.getCategory();
     }
 
-    public void configureTransactionView() {
+    public void configureTransactionView(boolean isUpdate) {
 
         if (mTransaction == null) return;
-        
-        if (mTransaction.getBankAccount() != null) {
-            BankLogoManager.getBankImage(mBankIcon, mTransaction.getBankAccount().getInstitutionId());
-        }
-
-		boolean income = mTransaction.getTransactionType() == 1;
-		
-        mAccountName.setText(mTransaction.getBankAccount().getAccountName());
-        mBankName.setText(mTransaction.getBankAccount().getBank().getBankName());
-        mCategory.setText(mTransaction.getCategory().getCategoryName());
-        mTags.setText(mTransaction.buildTagString());
-        
-        mPayee.setText(mTransaction.getCapitalizedTitle());
-        mAmount.setText((income ? "(" : "") + mFormatter.format(mTransaction.normalizedAmount()) + (income ? ")" : ""));
-        mDate.setText(mDateFormatter.format(mTransaction.getDate()));
-        mMemo.setText(mTransaction.getMemo());
-        mStatement.setText(mTransaction.getOriginalTitle());
         
         mBusiness.setChecked(mTransaction.getIsBusiness());
         mPersonal.setChecked(!mTransaction.getIsBusiness());
         mCleared.setChecked(mTransaction.getIsCleared());
         mFlagged.setChecked(mTransaction.getIsFlagged());
-    }
-    
-    protected void refreshTag() {
         
-        mTags.setText(mTransaction.buildTagString());
+        if (isUpdate) {
+
+        	mCategory.setAnimatedText(mTransaction.getCategory().getCategoryName());
+	        mTransaction.buildTagString(mTags, true);
+	        
+	        mPayee.setAnimatedText(mTransaction.getCapitalizedTitle());
+	        mMemo.setAnimatedText(mTransaction.getMemo());
+	        
+	        return;
+	        
+        } else {
+        	
+        	boolean income = mTransaction.getTransactionType() == 1;
+        	
+	        mCategory.setText(mTransaction.getCategory().getCategoryName());
+	        mTransaction.buildTagString(mTags);
+	        
+	        mPayee.setText(mTransaction.getCapitalizedTitle());
+	        mAmount.setText((income ? "(" : "") + mFormatter.format(mTransaction.normalizedAmount()) + (income ? ")" : ""));
+	        mDate.setText(mDateFormatter.format(mTransaction.getDate()));
+	        mMemo.setText(mTransaction.getMemo());
+	        mStatement.setText(mTransaction.getOriginalTitle());
+        }
+        
+        if (mTransaction.getBankAccount() != null) {
+            BankLogoManager.getBankImage(mBankIcon, mTransaction.getBankAccount().getInstitutionId());
+        }
+
+        mAccountName.setText(mTransaction.getBankAccount().getAccountName());
+        mBankName.setText(mTransaction.getBankAccount().getBank().getBankName());
     }
     
     public void updateTransactionCategory(long categoryId) {
@@ -357,7 +376,7 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
         mTransaction.setCategoryId(categoryId);
         mTransaction.updateSingle();
         
-        configureTransactionView();
+        configureTransactionView(false);
     }
     
     protected void deleteTag(Tag tag) {

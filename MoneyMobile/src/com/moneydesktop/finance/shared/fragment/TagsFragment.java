@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,7 @@ import android.widget.TextView.OnEditorActionListener;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.database.BusinessObjectBase;
 import com.moneydesktop.finance.database.Tag;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.shared.adapter.TagsAdapter;
@@ -126,7 +128,7 @@ public class TagsFragment extends PopupFragment {
     
     public void onEvent(DatabaseSaveEvent event) {
         
-    	if (mAdapter != null && event.didDatabaseChange() && event.getChangedClassesList().contains(Tag.class)) {
+    	if (mAdapter != null && event.didDatabaseChange() && event.getChangedClassesList().contains(BusinessObjectBase.class)) {
     		setupTagList();
     	}
     }
@@ -232,16 +234,25 @@ public class TagsFragment extends PopupFragment {
                 }
                 
                 if (mAdapter == null) {
+                	
                 	long id = getArguments().getLong(Constant.KEY_ID);
+                	
+                	if (id == 0L) {
+                		Log.e(TAG, "No BusinessObject");
+                		dismissPopup();
+                	}
+                	
 	                mAdapter = new TagsAdapter(getActivity(), R.layout.tag_view, data, mTagsList, mSearch, id);
 	                mTagsList.setAdapter(mAdapter);
+	                
+	                mTagsList.setVisibility(View.VISIBLE);
+	                mTagsList.startAnimation(mFadeIn);
+	                mSpinner.startAnimation(mFadeOut);
+	                
                 } else {
+                	
                 	mAdapter.updateData(data);
                 }
-                
-                mTagsList.setVisibility(View.VISIBLE);
-                mTagsList.startAnimation(mFadeIn);
-                mSpinner.startAnimation(mFadeOut);
             }
 
         }.execute();

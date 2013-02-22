@@ -1,6 +1,6 @@
 package com.moneydesktop.finance.database;
 
-import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -39,9 +39,9 @@ public class Tag extends BusinessObject  {
     private List<TagInstance> tagInstances;
 
     // KEEP FIELDS - put your custom fields here
-    private static QueryProperty mBusinessObjectBase = new QueryProperty(BusinessObjectBaseDao.TABLENAME, TagDao.Properties.BusinessObjectId, BusinessObjectBaseDao.Properties.Id);
-    private static QueryProperty mDataState = new QueryProperty(BusinessObjectBaseDao.TABLENAME, BusinessObjectBaseDao.Properties.DataState, QueryProperty.NOT_EQUALS);
-    private static QueryProperty mTagName = new QueryProperty(TagDao.TABLENAME, TagDao.Properties.TagName);
+    private static QueryProperty sBusinessObjectBase = new QueryProperty(BusinessObjectBaseDao.TABLENAME, TagDao.Properties.BusinessObjectId, BusinessObjectBaseDao.Properties.Id);
+    private static QueryProperty sDataState = new QueryProperty(BusinessObjectBaseDao.TABLENAME, BusinessObjectBaseDao.Properties.DataState, QueryProperty.NOT_EQUALS);
+    private static QueryProperty sTagName = new QueryProperty(TagDao.TABLENAME, TagDao.Properties.TagName);
     // KEEP FIELDS END
 
     public Tag() {
@@ -174,8 +174,7 @@ public class Tag extends BusinessObject  {
         
         if (tagName == null || tagName.equals("")) return null;
 
-		SecureRandom random = new SecureRandom();
-		long id = random.nextLong();
+		long id = DataController.createRandomGuid(Tag.class);
 		
         Tag tag = new Tag(id);
         tag.setTagName(tagName);
@@ -187,13 +186,10 @@ public class Tag extends BusinessObject  {
     
     public void tagObject(BusinessObjectBase base) {
         
-        TagInstance ti = new TagInstance();
+        TagInstance ti = TagInstance.addTagInstance(base, this);
         ti.setBaseObjectId(base.getId());
         ti.setTag(this);
 
-        ti.insertBatch();
-        ti.acceptChanges();
-        
         base.updateBatch();
         base.resetTagInstances();
         
@@ -213,7 +209,7 @@ public class Tag extends BusinessObject  {
         }
         
         if (remove != null) {
-            remove.deleteSingle();
+            remove.softDeleteSingle();
             base.resetTagInstances();
             base.updateSingle();
         }
@@ -231,7 +227,7 @@ public class Tag extends BusinessObject  {
             public void run() {
                 
                 for (TagInstance ti : tag.getTagInstances()) {
-                    ti.deleteBatch();
+                    ti.softDeleteBatch();
                 }
                 
                 DataController.save();
@@ -256,7 +252,14 @@ public class Tag extends BusinessObject  {
     	return tag;
     }
     
-    public static void saveArrayOfTags(JSONArray tags, BusinessObject object) {
+    public static void saveArrayOfTags(JSONArray tags, BusinessObjectBase bob) {
+    	
+    	
+    	List<TagInstance> existingInstances = new ArrayList<TagInstance>();
+    	
+    	if (bob.hasSession()) {
+    		existingInstances = bob.getTagInstances();
+    	}
     	
     	for (int i = 0; i < tags.length(); i++) {
     		
@@ -266,17 +269,27 @@ public class Tag extends BusinessObject  {
     			
     			String tagId = data.optString(Constant.KEY_GUID);
     			
-    			if (!object.containsTag(tagId)) {
+    			TagInstance ti = null;
+    			
+    			if (!bob.hasSession() || !bob.containsTag(tagId)) {
     				
     				Tag tag = (Tag) getObject(Tag.class, tagId);
     				
     				if (tag != null) {
     					
-    					TagInstance tagInstance = TagInstance.createTagInstance(object.getBusinessObjectBase(), tag);
-    					tagInstance.acceptChanges();
+    					ti = TagInstance.addTagInstance(bob, tag);
+    					existingInstances.remove(ti);
     				}
+    				
+    			} else if ((ti = TagInstance.getTagInstance(bob, tagId)) != null) {
+    				
+    				existingInstances.remove(ti);
     			}
     		}
+    	}
+    	
+    	for (TagInstance ti : existingInstances) {
+    		ti.deleteBatch();
     	}
     }
     
@@ -313,9 +326,9 @@ public class Tag extends BusinessObject  {
     public static List<Tag> loadAll() {
         TagDao tagDao = (TagDao) DataController.getDao(Tag.class);
         PowerQuery query = new PowerQuery(tagDao);
-        query.join(mBusinessObjectBase)
-            .where(mDataState, Integer.toString(DataState.DATA_STATE_DELETED.index()))
-            .orderBy(mTagName, false);
+        query.join(sBusinessObjectBase)
+            .where(sDataState, Integer.toString(DataState.DATA_STATE_DELETED.index()))
+            .orderBy(sTagName, false);
         
         return tagDao.queryRaw(query.toString(), query.getSelectionArgs());
     }
