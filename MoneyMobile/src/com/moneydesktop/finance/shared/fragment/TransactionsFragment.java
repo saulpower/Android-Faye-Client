@@ -210,7 +210,7 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
     
     public void onEvent(DatabaseSaveEvent event) {
         
-    	if (mAdapter != null && event.didDatabaseChange() && event.getChangedClassesList().contains(Transactions.class)) {
+    	if (mAdapter != null && event.didDatabaseChange()) {
     		refreshTransactionsList(false);
     	}
     }

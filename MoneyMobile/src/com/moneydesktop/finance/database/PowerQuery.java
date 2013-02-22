@@ -10,6 +10,8 @@ import java.util.Map;
 
 public class PowerQuery {
 
+	private AbstractDao<?, Long> mDao;
+	
     private int mCount = 0;
     private Map<String, String> mTableMap = new HashMap<String, String>();
     
@@ -36,6 +38,7 @@ public class PowerQuery {
     }
     
     public PowerQuery(AbstractDao<?, Long> dao) {
+    	mDao = dao;
         mTableMap.put(dao.getTablename(), "T");
     }
     
@@ -262,6 +265,19 @@ public class PowerQuery {
         }
         
         return false;
+    }
+    
+    public Object unique() {
+    	
+    	List<?> results = mDao.queryRaw(toString(), getSelectionArgs());
+    	
+    	if (results.size() == 1) return results.get(0);
+    	
+    	return null;
+    }
+    
+    public List<?> list() {
+    	return mDao.queryRaw(toString(), getSelectionArgs());
     }
     
     public static PowerQuery where(boolean group, QueryProperty field, String value) {

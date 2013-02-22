@@ -149,8 +149,6 @@
                     app:labelColor="@drawable/gray3_to_white_text"
                     app:labelSize="8"
                     app:labelText="@string/label_password" />
-
-                <requestFocus />
         
 		        <com.moneydesktop.finance.views.LineView
 		            android:layout_width="450dp"
@@ -297,8 +295,6 @@
                     app:labelColor="@drawable/gray3_to_white_text"
                     app:labelSize="8"
                     app:labelText="@string/signup_bank" />
-
-                <requestFocus />
         
 		        <com.moneydesktop.finance.views.LineView
 		            android:layout_width="550dp"

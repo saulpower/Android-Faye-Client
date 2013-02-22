@@ -21,6 +21,7 @@ import android.widget.ViewFlipper;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.database.Category;
 import com.moneydesktop.finance.shared.CategoryViewHolder;
 import com.moneydesktop.finance.shared.fragment.CategoriesFragment;
@@ -276,8 +277,11 @@ public class CategoryAdapter extends UltimateAdapter implements Filterable {
     private void createSubCategory(String name, Category parent) {
         
         if (name == null || name.equals("") || parent == null || parent.getId() == null) return;
-        
-        Category cat = new Category();
+
+		long id = DataController.createRandomGuid(Category.class);
+		
+        Category cat = new Category(id);
+        cat.setCategoryId(String.valueOf(id));
         cat.setCategoryName(name);
         cat.setImageName(parent.getImageName());
         cat.setParent(parent);

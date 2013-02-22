@@ -8,6 +8,7 @@ import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.animation.LinearInterpolator;
 import android.widget.TextView;
 
@@ -32,6 +33,8 @@ public class NavBarView extends TextView {
 	private boolean mIsRefresh = false;
 	private float mAdjustment = 0;
 	private Handler mHandler;
+	
+	private boolean mIsRegistered = false;
 	
 	private Paint paint;
 	
@@ -143,14 +146,20 @@ public class NavBarView extends TextView {
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
 		
-		EventBus.getDefault().register(this);
+		if (!mIsRegistered) {
+			EventBus.getDefault().register(this);
+			mIsRegistered = true;
+		}
 	}
 	
 	@Override
 	protected void onDetachedFromWindow() {
 		super.onDetachedFromWindow();
 		
-		EventBus.getDefault().unregister(this);
+		if (mIsRegistered) {
+			EventBus.getDefault().unregister(this);
+			mIsRegistered = false;
+		}
 	}
 	
 	@Override
