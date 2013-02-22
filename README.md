@@ -1,6 +1,6 @@
 # Faye Client for Android
 
-A simple Faye client for Android.
+A simple Faye client for Android. Supports Android 2.1 (Eclair / API 7) and up.  There is a bug in Android 2.1/2.2 that causes issues with SSL connections. 
 
 ## Credits
 
