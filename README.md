@@ -1,14 +1,21 @@
-# Faye client for Android
+# Faye Client for Android
 
 A simple Faye client for Android.
 
 ## Credits
 
-The hybi parser is based on code from the [faye project](https://github.com/faye/faye-websocket-node). Faye is Copyright (c) 2009-2012 James Coglan. Many thanks for the great open-source library!
+### Faye
+Faye is a simple JSON based Pub-Sub server which has support for node.js and Ruby (using Rack).
+
+Check out the Faye project [here](http://faye.jcoglan.com)
+
+### Android Websockets
+The hybi parser is based on code from the [faye project](https://github.com/faye/faye-websocket-node).
 
 Websockets ported from JavaScript to Java by [Eric Butler](https://twitter.com/codebutler) <eric@codebutler.com>.
 
-Faye client ported from Objective-C to Java by [Saul Howard](https://twitter.com/Saul_Howard) <saulpower1@gmail.com>.
+### FayeObjC
+Faye client ported from Paul Crawford's [FayeObjC](https://github.com/pcrawfor/FayeObjC) to Java by [Saul Howard](saulpower1@gmail.com).
 
 ## Usage
 
