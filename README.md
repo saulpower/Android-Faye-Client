@@ -34,9 +34,6 @@ Here is a some sample code to create the client as a service in Android:
 	
 		@Override
 		protected void onHandleIntent(Intent intent) {
-	
-			// SSL bug in pre-Gingerbread devices makes websockets currently unusable
-			if (android.os.Build.VERSION.SDK_INT <= 8) return;
 			
 			Log.i(TAG, "Starting Web Socket");
 			
