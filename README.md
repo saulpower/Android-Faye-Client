@@ -7,12 +7,12 @@ A simple Faye client for Android.
 ### Faye
 Faye is a simple JSON based Pub-Sub server which has support for node.js and Ruby (using Rack).
 
-Check out the Faye project [here](http://faye.jcoglan.com)
+Check out the [Faye project](http://faye.jcoglan.com) for more information.
 
 ### Android Websockets
 The hybi parser is based on code from the [faye project](https://github.com/faye/faye-websocket-node).
 
-Websockets ported from JavaScript to Java by [Eric Butler](https://twitter.com/codebutler) <eric@codebutler.com>.
+Websockets ported from JavaScript to Java by [Eric Butler](eric@codebutler.com).
 
 ### FayeObjC
 Faye client ported from Paul Crawford's [FayeObjC](https://github.com/pcrawfor/FayeObjC) to Java by [Saul Howard](saulpower1@gmail.com).
