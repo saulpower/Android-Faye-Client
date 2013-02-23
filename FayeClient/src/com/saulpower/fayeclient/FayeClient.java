@@ -126,6 +126,13 @@ public class FayeClient implements Listener {
 		return mHandler;
 	}
     
+	/**
+	 * Creates a new Faye Client for communicating with a Faye server at the
+	 * provided URL and the specified channel.
+	 * 
+	 * @param fayeUrl The URL of the FayeServer
+	 * @param channel The channel to subscribe to
+	 */
     public FayeClient(URI fayeUrl, String channel) {
     	
     	mFayeUrl = fayeUrl;
