@@ -454,15 +454,13 @@ public class DataController {
 
 		AbstractDao<?, Long> dao = DataController.getDao(key);
 		Random random = new Random();
-		Object object = null;
 		Long id = guid;
 		
 		if (id == null) random.nextLong();
 		
-		do {
-			object = dao.load(id);
+		while (dao.load(id) != null) {
 			id = random.nextLong();
-		} while (object != null);
+		}
 		
 		return id;
 	}
