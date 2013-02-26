@@ -62,11 +62,12 @@ import com.moneydesktop.finance.tablet.adapter.AddAccountManuallyAccountTypesAda
 import com.moneydesktop.finance.tablet.adapter.AddAccountManuallyPropertyTypesAdapter;
 import com.moneydesktop.finance.tablet.adapter.AddNewInstitutionAdapter;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.views.AnimatedNavView.NavigationListener;
 
 import de.greenrobot.event.EventBus;
 
 
-public class AddBankTabletFragment extends BaseFragment{
+public class AddBankTabletFragment extends BaseFragment implements NavigationListener{
 
 	private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();
 	private LinearLayout mAutomaticContainer;
@@ -100,6 +101,7 @@ public class AddBankTabletFragment extends BaseFragment{
 	private QueryProperty mOrderBy = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName);
 	
 	private QueryProperty mWhereBankId = new QueryProperty(BankDao.TABLENAME, BankDao.Properties.BankId, "= ?");
+	private int viewPostion = 0; 
 	
 	@Override
 	public String getFragmentTitle() {
@@ -108,7 +110,12 @@ public class AddBankTabletFragment extends BaseFragment{
 
 	@Override
 	public boolean onBackPressed() {
-		return false;
+		if (viewPostion == 1 || viewPostion == 0) {
+			((DropDownTabletActivity)mActivity).dismissDropdown();
+		} else {
+			((DropDownTabletActivity)mActivity).getAnimatedNavView().popNav();
+		}
+		return true;
 	}
 	
 	@Override
@@ -131,6 +138,7 @@ public class AddBankTabletFragment extends BaseFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         
+        ((DropDownTabletActivity)mActivity).getAnimatedNavView().setNavigationListener(this);
         mRoot = inflater.inflate(R.layout.tablet_add_bank, null);
         mFlipper = (ViewFlipper)mRoot.findViewById(R.id.add_bank_flipper);
         mSelectImportMethodScreen = (RelativeLayout)mRoot.findViewById(R.id.view1);
@@ -160,6 +168,8 @@ public class AddBankTabletFragment extends BaseFragment{
 		 automaticDownloadDesc.setText(getActivity().getString(R.string.add_account_automatically_desc));
 		 manualDownloadTitle.setText(getActivity().getString(R.string.add_account_manually_title));
 		 manualDownloadDesc.setText(getActivity().getString(R.string.add_account_manually_desc));
+		 
+		 viewPostion = 1;
 		 
          mSaveInstitution = (Button)mConnectScreen.findViewById(R.id.add_account_save_button);
          TextView title = (TextView)mConnectScreen.findViewById(R.id.add_account_title);
@@ -194,12 +204,17 @@ public class AddBankTabletFragment extends BaseFragment{
 		    @Override
 		    public void onItemClick(AdapterView<?> a, View v,int position, long id) 
 		    {
+				((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(String.format(getString(R.string.add_account_institution_connect), ((Institution)a.getItemAtPosition(position)).getName()));
+				viewPostion = 3;
+				
+				
 				Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_right);
 				Animation out = AnimationUtils.loadAnimation(getActivity(), R.anim.out_left);
 				mFlipper.setInAnimation(in);
 				mFlipper.setOutAnimation(out);
 				mSelectedInstitution = (Institution)a.getItemAtPosition(position);
 				mFlipper.showNext();
+				
 				setupConnectScreen();
 		    }
 		});
@@ -231,6 +246,9 @@ public class AddBankTabletFragment extends BaseFragment{
 				AccountType selectedAccountType= (AccountType)listView.getItemAtPosition(position);
 				
 				if (!selectedAccountType.getAccountTypeName().toUpperCase().equals("PROPERTY")) {
+					((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(String.format(getString(R.string.add_account_new_account), selectedAccountType.getAccountTypeName().toUpperCase()));
+					
+					viewPostion = 5;
 					setupSaveBankMaunuallyScreen(selectedAccountType);
 					Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_right);
 					Animation out = AnimationUtils.loadAnimation(getActivity(), R.anim.out_left);
@@ -238,14 +256,16 @@ public class AddBankTabletFragment extends BaseFragment{
 					mFlipper.setOutAnimation(out);
 					mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view5)));
 				} else {
+					((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(getString(R.string.add_account_type_of_property));
+					
+					viewPostion = 6;
 					setupProptertyTypeListScreen();
 					mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view6)));
 				}
 			}
 		});
 	}
-	
-	
+		
 	private void setupProptertyTypeListScreen () {
 		ListView propertyTypesList = (ListView)mRoot.findViewById(R.id.tablet_add_bank_manually_property_type);
 
@@ -274,6 +294,8 @@ public class AddBankTabletFragment extends BaseFragment{
 			public void onItemClick(AdapterView<?> listView, View view, int position, long id) {
 				AccountType selectedAccountType= (AccountType)listView.getItemAtPosition(position);
 
+				((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(String.format(getString(R.string.add_account_new_account), selectedAccountType.getAccountTypeName().toUpperCase()));
+				
 				setupSaveBankMaunuallyScreen(selectedAccountType);
 				mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view5)));
 			}
@@ -370,7 +392,6 @@ public class AddBankTabletFragment extends BaseFragment{
 		
 	}
 
-	
     public void onEvent(final GetLogonCredentialsFinished event) {        
         if (event.isAddedForFistTime()) {
         	
@@ -467,6 +488,7 @@ public class AddBankTabletFragment extends BaseFragment{
 				
 				@Override
 				public void onClick(View v) {
+					v.setClickable(false);
 					objectToSendToAddInstitution = new JSONObject();
 					JSONArray jsonArray = new JSONArray();
 					
@@ -515,8 +537,7 @@ public class AddBankTabletFragment extends BaseFragment{
        	
         }
     }
-    
-    
+        
     public void onEvent(final SaveInstitutionFinished event) {   
     	
     	Handler updateFields = new Handler(Looper.getMainLooper());
@@ -524,7 +545,7 @@ public class AddBankTabletFragment extends BaseFragment{
     	    public void run()
     	    {
 		    	((DropDownTabletActivity)mActivity).dismissDropdown();
-    	    }
+		    }
     	});
     	
     	JSONObject json = event.getJsonResponse();
@@ -624,12 +645,14 @@ public class AddBankTabletFragment extends BaseFragment{
 	}
 	
 	private void setupOnClickListeners() {
-		
-		
+				
 		mAutomaticContainer.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
+				((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(getString(R.string.add_account_institution));
+				
+				viewPostion = 2;
 				setupInstitutionScreen();
 				
 				Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_right);
@@ -639,12 +662,14 @@ public class AddBankTabletFragment extends BaseFragment{
 				mFlipper.showNext();
 			}
 		});
-
 		
 		mManualContainer.setOnClickListener(new View.OnClickListener() {
 				
 			@Override
 			public void onClick(View v) {
+				((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(getString(R.string.add_account_type_to_add));
+				
+				viewPostion = 4;
 				setupAccountTypeListScreen();
 				
 				Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_right);
@@ -660,6 +685,33 @@ public class AddBankTabletFragment extends BaseFragment{
 	@Override
 	public FragmentType getType() {
 		return null;
+	}
+
+	
+	@Override
+	public void onNavigationPopped() {
+		animateBackToPrevious();
+	}
+
+	private void animateBackToPrevious() {
+		Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_left);
+		Animation out = AnimationUtils.loadAnimation(getActivity(), R.anim.out_right);
+		mFlipper.setInAnimation(in);
+		mFlipper.setOutAnimation(out);
+		
+		if (viewPostion <= 3) {
+			viewPostion--;
+			mFlipper.showPrevious();
+		} else if (viewPostion == 4) {
+			mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view1)));
+			viewPostion = 1;
+		} else if (viewPostion == 5 ) {
+			viewPostion--;
+			mFlipper.showPrevious();
+		} else if (viewPostion == 6) {
+			viewPostion = 4;
+			mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view4)));	
+		}
 	}
    
 }

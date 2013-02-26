@@ -58,6 +58,7 @@ public class BankAccount extends BusinessObject  {
     private long businessObjectId;
     private Long accountTypeId;
     private Long subAccountTypeId;
+	private static int mExclusion;
 
     /** Used to resolve relations */
     private transient DaoSession daoSession;
@@ -493,6 +494,57 @@ public class BankAccount extends BusinessObject  {
     public String getExternalId() {
         return getAccountId();
     }
+    
+    public static List<AccountExclusionFlags> getExclusionsForAccount(BankAccount account) {
+		mExclusion = account.getExclusionFlags();
+		
+		List<AccountExclusionFlags> exclusionFlags = new ArrayList<AccountExclusionFlags>();
+
+		for (int i = 0; i <= AccountExclusionFlags.size(); i++) {
+			AccountExclusionFlags flag = getShowHideOptions();
+			if (flag != null) {
+				exclusionFlags.add(flag);
+			}
+		}
+			
+    	return exclusionFlags;    	
+    }
+    
+	private static AccountExclusionFlags getShowHideOptions() {
+		AccountExclusionFlags flag = null;
+		if (mExclusion != 0) {
+			if (mExclusion == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ALL.index()) {
+				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ALL.index();
+				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ALL;
+				
+			} else if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES.index()) {
+				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES.index();
+				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES;
+				
+			} else if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME.index()) {
+				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME.index();
+				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME;
+				
+			} else if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_BUDGETS.index()) {
+				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_BUDGETS.index();
+				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_BUDGETS;
+				
+			} else if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ACCOUNT_LIST.index()) {
+				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ACCOUNT_LIST.index();
+				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ACCOUNT_LIST;
+				
+			} else if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_REPORTS.index()) {
+				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_REPORTS.index();
+				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_REPORTS;
+				
+			} else if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSACTION_LIST.index()) {
+				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSACTION_LIST.index();
+				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSACTION_LIST;
+			}
+		}
+		
+		return flag;
+	}
 
     public static BankAccount saveBankAccount(JSONObject json, boolean delete) {
 

@@ -181,6 +181,19 @@ public class Constant {
     public static final String QUERY_MONTHLY_TRANSACTIONS = "SELECT DATE, SUM(AMOUNT) AS Amount FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER, MONTH_NUMBER ORDER BY DATE ASC";
     public static final String QUERY_QUARTERLY_TRANSACTIONS = "SELECT DATE, SUM(AMOUNT) AS Amount, QUARTER_NUMBER FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER, QUARTER_NUMBER ORDER BY DATE ASC";
     public static final String QUERY_YEARLY_TRANSACTIONS = "SELECT DATE, SUM(AMOUNT) AS Amount FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER ORDER BY DATE ASC";
+    
+    
+    /*******************************************************************
+     * Preferences
+     *******************************************************************/
+    public static final String PREFS_EXCLUSIONS_ACCOUNTS_LIST = "accountsList";
+    public static final String PREFS_EXCLUSIONS_ALL = "all";
+    public static final String PREFS_EXCLUSIONS_BUDGETS = "budgets";
+    public static final String PREFS_EXCLUSIONS_REPORTS = "reports";
+    public static final String PREFS_EXCLUSIONS_TRANSACTIONS_LIST = "transactionsList";
+    public static final String PREFS_EXCLUSIONS_TRANSFERS_FROM_EXPENSES = "transfersFromExpenses";
+    public static final String PREFS_EXCLUSIONS_TRANSFERS_FROM_INCOME = "transfersFromIncome";
+    
     /*******************************************************************
      * VALUES
      *******************************************************************/

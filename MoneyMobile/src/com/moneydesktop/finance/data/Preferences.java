@@ -1,5 +1,7 @@
 package com.moneydesktop.finance.data;
 
+import java.util.Set;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -74,6 +76,15 @@ public class Preferences {
 		SharedPreferences prefs = getPrefs();
 		Editor edit = prefs.edit();
 		edit.putBoolean(key, value);
+		
+		return edit.commit();
+	}
+	
+	public static boolean saveStringSet(String key, Set<String> value) {
+		
+		SharedPreferences prefs = getPrefs();
+		Editor edit = prefs.edit();
+		edit.putStringSet(key, value);
 		
 		return edit.commit();
 	}

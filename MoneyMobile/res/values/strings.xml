@@ -49,6 +49,9 @@
     <string name="add_account_manually_desc">Manage your transactions independent of your bank and reconcile between the two automatically, or not.</string>
     <string name="add_account_search_box">ENTER YOUR INSTITUTION\'S NAME HERE</string>
     <string name="add_account_enter_credentials">Please enter your online credentials</string>
+    <string name="add_account_new_account">NEW %1$s ACCOUNT</string>
+    <string name="add_account_type_to_add">ACCOUNT TYPE TO ADD?</string>
+    <string name="add_account_type_of_property">TYPE OF PROPERTY</string>
     <string name="account_transaction_type">these transactions are primarily:</string>
     <string name="all_accounts">All Accounts</string>
     <string name="app_name">MoneyMobile</string>

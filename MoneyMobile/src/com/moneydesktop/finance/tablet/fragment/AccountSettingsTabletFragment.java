@@ -3,14 +3,11 @@ package com.moneydesktop.finance.tablet.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,19 +17,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
-import com.moneydesktop.finance.data.Enums.PropertyTypes;
 import com.moneydesktop.finance.data.Enums.SlideFrom;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BankAccountDao;
-import com.moneydesktop.finance.database.BankDao;
 import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
@@ -82,8 +76,7 @@ public class AccountSettingsTabletFragment extends BaseFragment{
 	public FragmentType getType() {
 		return null;
 	}
-	
-	
+		
 	@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -105,7 +98,6 @@ public class AccountSettingsTabletFragment extends BaseFragment{
         return fragment;
 	}
 
-	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -320,12 +312,15 @@ public class AccountSettingsTabletFragment extends BaseFragment{
 	                
 	                mSlidingView = new SlidingView(getActivity(), 0, 0, (ViewGroup)mRoot, inflatedView, SlideFrom.RIGHT, v);
 			
+	                ((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(getString(R.string.label_account_property_type));
+	                
+	                
 					accountTypesListView.setOnItemClickListener(new OnItemClickListener() {
 							@Override
 							public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 								mSlidingView.dismiss();
-								//((DropDownTabletActivity)getActivity()).animateLabelsReverse();
 								
+								((DropDownTabletActivity)mActivity).getAnimatedNavView().popNav();
 								AccountType mSelectedPropertyType = ((AccountType)accountTypesListView.getItemAtPosition(position));
 								
 								mSelectedPropertyTypeName = mSelectedPropertyType.getAccountTypeName();
@@ -358,6 +353,8 @@ public class AccountSettingsTabletFragment extends BaseFragment{
 				ArrayAdapter<AccountType> listAdapter;   
 				UiUtils.hideKeyboard(mActivity, v);
 				
+				((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(getString(R.string.label_account_type));
+				
                 LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 final View inflatedView = inflater.inflate(R.layout.tablet_account_type_settings, null);
                 final ListView accountTypesListView = (ListView)inflatedView.findViewById(R.id.account_type_settings_list);
@@ -372,7 +369,7 @@ public class AccountSettingsTabletFragment extends BaseFragment{
 						@Override
 						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 							mSlidingView.dismiss();
-							
+							((DropDownTabletActivity)mActivity).getAnimatedNavView().popNav();
 							mSelectedAccountType = ((AccountType)accountTypesListView.getItemAtPosition(position));
 							
 							mSelectedAccountTypeName = mSelectedAccountType.getAccountTypeName();

@@ -376,19 +376,19 @@ public class Enums {
 	
 	public enum AccountExclusionFlags {
 		
-	    ACCOUNT_EXCLUSION_FLAGS_TRANSACTION_LIST        (1 << 0),
-	    ACCOUNT_EXCLUSION_FLAGS_REPORTS               	(1 << 1),
-	    ACCOUNT_EXCLUSION_FLAGS_ACCOUNT_LIST            (1 << 2),
-	    ACCOUNT_EXCLUSION_FLAGS_BUDGETS                	(1 << 3),
-	    ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME	(1 << 4),
-	    ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES	(1 << 5),
+	    ACCOUNT_EXCLUSION_FLAGS_TRANSACTION_LIST        (1 << 0), //1
+	    ACCOUNT_EXCLUSION_FLAGS_REPORTS               	(1 << 1), //2
+	    ACCOUNT_EXCLUSION_FLAGS_ACCOUNT_LIST            (1 << 2), //4
+	    ACCOUNT_EXCLUSION_FLAGS_BUDGETS                	(1 << 3), //8
+	    ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME	(1 << 4), //16
+	    ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES	(1 << 5), //32
 	    ACCOUNT_EXCLUSION_FLAGS_ALL						(1 << 0
 											    		|1 << 1
 											    		|1 << 2
 											    		|1 << 3
 											    		|1 << 4
-											    		|1 << 5);
-	    
+											    		|1 << 5); //63
+	    	    
 	    private final int index;
 	    
 	    AccountExclusionFlags(int index) {
@@ -397,6 +397,9 @@ public class Enums {
 	    
 	    public int index() {
 	    	return index;
+	    }
+	    public static int size() {
+	    	return 7;
 	    }
 	};
 	

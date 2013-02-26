@@ -14,6 +14,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -189,10 +192,27 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	        		}
 	        	}
 	        }
+	        
+	        //remove any account types where all children have a bank == null
+	        //this will also delete any bank accounts that don't have a BANK. Without a bank, many issues (NPE) come up. 
+	        //This issue can happen when a user deletes a bank that in being sync'ed for the first time
+	        for (AccountType accountType : tempList) {
+	        	int counter = 0;
+	        	for (BankAccount bankAccount : accountType.getBankAccounts()) {	        		
+	        		if (bankAccount.getBank() == null) {
+	        			counter++;
+	        			bankAccount.softDeleteSingle(); 
+	        		}
+	        	}
+	        	if (counter == accountType.getBankAccounts().size()) {
+	        		mAccountTypesFiltered.remove(accountType);
+	        	}
+	        	
+	        }
         } else {
         	mAccountTypesFiltered.clear();
         }
-             
+        
         
         if (!mAccountTypesFiltered.isEmpty() && mAccountTypesFiltered != null) {        	
             mListView.addFooterView(mFooter);
@@ -313,13 +333,26 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 				mBankList.remove(bank);
 			}
 		}
-
-        //For every bank that is attached, add it to the Drawer
-        for (Bank bank : mBankList) {
-        	if (!bank.getBankName().toLowerCase().equals("manual institution")) {
-        		mPanelLayoutHolder.addView(populateDrawerView(bank));
+		
+		
+        //the next 3 lines and for loop can be removed if we make a PowerQuery that handles it all
+        List<Bank> tempList = new ArrayList<Bank>();
+        tempList = Arrays.asList(new Bank[mBankList.size()]);  
+        Collections.copy(tempList, mBankList);
+		
+        //remove any manual institutions from the panel...not doing so messes up the banks status.
+        for (Bank bank : tempList) {
+        	if (bank.getBankName().toLowerCase().equals("manual institution")) {
+        		mBankList.remove(bank);
         	}
         }
+
+        //For every bank that is attached, add it to the Drawer
+        for (Bank bank : mBankList) {       	
+    		View v = populateDrawerView(bank);     		
+    		mPanelLayoutHolder.addView(v);	    		        	
+        }
+        
         if (User.getCurrentUser().getCanSync() && mIsInitialization) {
             updateAllBankStatus();
             mIsInitialization = false;
@@ -359,16 +392,18 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
             for (final Bank bank : mBankList) {
                 i++;
                 View bankView = mPanelLayoutHolder.getChildAt(i); 
-                ImageView status = (ImageView) bankView.findViewById(R.id.bank_status);
-                setBanner(bank, status);
-                if (bank.getProcessStatus() < 3) {
-                	Handler updateStatus = new Handler(Looper.getMainLooper());
-                	updateStatus.post(new Runnable() {
-                	    public void run()
-                	    {
-                	    	updateBankStatus(bank);
-                	    }
-                	});
+                if (bankView != null) {
+                	ImageView status = (ImageView) bankView.findViewById(R.id.bank_status);
+	                setBanner(bank, status);
+	                if (bank.getProcessStatus() < 3) {
+	                	Handler updateStatus = new Handler(Looper.getMainLooper());
+	                	updateStatus.post(new Runnable() {
+	                	    public void run()
+	                	    {
+	                	    	updateBankStatus(bank);
+	                	    }
+	                	});
+	                }
                 }
             }
         }
@@ -395,12 +430,14 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
                 for (Bank bankIterator : mBankList) {
                     i++;
                     View bankView = mPanelLayoutHolder.getChildAt(i);
-                    if (bankIterator.getBankName().equals(bank.getBankName())) {
-                        ImageView status = (ImageView) bankView.findViewById(R.id.bank_status);
-                        
-                        if (status != null) {
-                            setBanner(bank, status);
-                        }
+                    if (bankView != null) {
+	                    if (bankIterator.getBankName().equals(bank.getBankName())) {
+	                        ImageView status = (ImageView) bankView.findViewById(R.id.bank_status);
+	                        
+	                        if (status != null) {
+	                            setBanner(bank, status);
+	                        }
+	                    }
                     }
                 }                
             }
@@ -460,10 +497,12 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 
                 View bankView = mPanelLayoutHolder.getChildAt(i); 
             
-                ImageView status = (ImageView) bankView.findViewById(R.id.bank_status);
-                
-                status.setVisibility(View.VISIBLE);
-                status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+                if (bankView != null) {
+	                ImageView status = (ImageView) bankView.findViewById(R.id.bank_status);
+	                
+	                status.setVisibility(View.VISIBLE);
+	                status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+                }
             }
         }
     }
@@ -582,7 +621,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 				        
 				        mPopup = new PopupWindowAtLocation(getActivity(), 
 		                        parentView, 
-		                        sRightDrawer.getLeft(), 
+		                        sRightDrawer.getLeft() + mPanelLayoutHolder.getWidth(), 
 		                        location[1] - topOffset, 
 		                        titles, 
 		                        onClickListeners, 
@@ -601,31 +640,31 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
     	refreshBanner.post(new Runnable() {
     	    public void run()
     	    {
-		        if (getActivity() != null) {
+		        if (mActivity != null) {
 		        	if (bank.getProcessStatus() == null) {
-		        		status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+		        		status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
 		        		return;
 		        	}
 		            if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_SUCCEEDED.index()) {
 		                status.setVisibility(View.GONE);
 		                
 		            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_PENDING.index()) {
-		                status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+		                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
 		                
 		            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_MFA.index()) {
-		                status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_more_info_banner));
+		                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_more_info_banner));
 		                
 		            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_LOGIN_FAILED.index()) {
-		                status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
+		                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
 		                
 		            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_UPDATE_REQUIRED.index()) {
-		                status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_more_info_banner));
+		                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_more_info_banner));
 		                
 		            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_EXCEPTION.index()) {
-		                status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
+		                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
 		                
 		            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_PROCESSING.index()) {
-		                status.setImageDrawable(getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+		                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
 		            }
 		        }
     	    }
@@ -683,7 +722,32 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 		if (mBanksForDeletion.contains(bank)) {
 		    mBankList.remove(bank);
 		}
-				
+
+        Animation outRight = AnimationUtils.loadAnimation(mActivity, R.anim.out_right);
+        outRight.setAnimationListener(new AnimationListener() {
+			
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+			
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+			
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				//remove bank from view
+				 new Handler().post(new Runnable() {
+				        public void run() {
+							panelView.removeView(v);
+							updateChildAccountsList(bank);
+				        }
+				 });
+			}
+		});
+        v.startAnimation(outRight);
+		
+		
 		for (BankAccount account : bank.getBankAccounts()) {
 			account.softDeleteBatch();
 		}
@@ -693,11 +757,8 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 		//start the sync
 		Intent intent = new Intent(getActivity(), SyncService.class);
 		getActivity().startService(intent);
+
 		
-		//remove bank from view
-		panelView.removeView(v);
-		
-		updateChildAccountsList(bank);
 	}
    
     public void onEvent(RemoveAccountTypeEvent event) {        

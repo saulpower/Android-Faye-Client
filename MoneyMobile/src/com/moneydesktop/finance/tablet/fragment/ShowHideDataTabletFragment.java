@@ -64,7 +64,7 @@ public class ShowHideDataTabletFragment extends BaseFragment {
 	private CheckBox mExcludeFromIncomeCheckbox, mExcludeFromExpensesCheckbox;
 	
 	@Override
-	public String getFragmentTitle() {
+ 	public String getFragmentTitle() {
 		return getString(R.string.show_hide_label);
 	}
 
@@ -118,12 +118,12 @@ public class ShowHideDataTabletFragment extends BaseFragment {
     }
 
 	private void setupView() {
+		
 		if (mBankAccount.getBank().getInstitution() == null) {
 			BankLogoManager.getBankImage(mBankLogo, mBankAccount.getBank().getBankId());
 		} else {
 			BankLogoManager.getBankImage(mBankLogo, mBankAccount.getBank().getInstitution().getInstitutionId());			
 		}
-		
 		
 		mAccountName.setText(mBankAccount.getAccountName());
 		mBankName.setText(mBankAccount.getBank().getBankName());
@@ -137,15 +137,28 @@ public class ShowHideDataTabletFragment extends BaseFragment {
         Fonts.applyPrimaryBoldFont(mBankName, 10);
         Fonts.applyPrimaryBoldFont(mAccountSum, 14);
         Fonts.applySecondaryItalicFont(mBankRefreshStatus, 8);
-        
         Fonts.applyPrimaryBoldFont(mExcludeFromIncomeTxt, 12);
-        Fonts.applyPrimaryBoldFont(mExcludeFromExpensesTxt, 12);
-        
+        Fonts.applyPrimaryBoldFont(mExcludeFromExpensesTxt, 12);        
         Fonts.applyPrimaryBoldFont(mSaveChanges, 18);
         
-        
+                
+        List<AccountExclusionFlags> exclusionFlags = BankAccount.getExclusionsForAccount(mBankAccount);
+		
+		for (AccountExclusionFlags flag : exclusionFlags) {
+			if (flag.equals(AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ALL)) {
+				mExcludeFromExpensesCheckbox.setChecked(true);
+				mExcludeFromIncomeCheckbox.setChecked(true);
+			} else if (flag.equals(AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES)) {
+				mExcludeFromExpensesCheckbox.setChecked(true);
+			} else if (flag.equals(AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME)) {
+				mExcludeFromIncomeCheckbox.setChecked(true);
+			}
+		}
+		
         setupOnClickListeners();		
 	}
+
+
 
 	private void setupOnClickListeners() {
 		
