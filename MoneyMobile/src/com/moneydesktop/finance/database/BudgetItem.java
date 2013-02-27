@@ -124,32 +124,42 @@ public class BudgetItem extends BusinessObject  {
 
     /** To-one relationship, resolved on first access. */
     public Category getCategory() {
-        if (category__resolvedKey == null || !category__resolvedKey.equals(categoryId)) {
+        Long __key = this.categoryId;
+        if (category__resolvedKey == null || !category__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             CategoryDao targetDao = daoSession.getCategoryDao();
-            category = targetDao.load(categoryId);
-            category__resolvedKey = categoryId;
+            Category categoryNew = targetDao.load(__key);
+            synchronized (this) {
+                category = categoryNew;
+            	category__resolvedKey = __key;
+            }
         }
         return category;
     }
 
     public void setCategory(Category category) {
-        this.category = category;
-        categoryId = category == null ? null : category.getId();
-        category__resolvedKey = categoryId;
+        synchronized (this) {
+            this.category = category;
+            categoryId = category == null ? null : category.getId();
+            category__resolvedKey = categoryId;
+        }
     }
 
     /** To-one relationship, resolved on first access. */
     public BusinessObjectBase getBusinessObjectBase() {
-        if (businessObjectBase__resolvedKey == null || !businessObjectBase__resolvedKey.equals(businessObjectId)) {
+        long __key = this.businessObjectId;
+        if (businessObjectBase__resolvedKey == null || !businessObjectBase__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             BusinessObjectBaseDao targetDao = daoSession.getBusinessObjectBaseDao();
-            businessObjectBase = targetDao.load(businessObjectId);
-            businessObjectBase__resolvedKey = businessObjectId;
+            BusinessObjectBase businessObjectBaseNew = targetDao.load(__key);
+            synchronized (this) {
+                businessObjectBase = businessObjectBaseNew;
+            	businessObjectBase__resolvedKey = __key;
+            }
         }
         return businessObjectBase;
     }
@@ -158,9 +168,11 @@ public class BudgetItem extends BusinessObject  {
         if (businessObjectBase == null) {
             throw new DaoException("To-one property 'businessObjectId' has not-null constraint; cannot set to-one to null");
         }
-        this.businessObjectBase = businessObjectBase;
-        businessObjectId = businessObjectBase.getId();
-        businessObjectBase__resolvedKey = businessObjectId;
+        synchronized (this) {
+            this.businessObjectBase = businessObjectBase;
+            businessObjectId = businessObjectBase.getId();
+            businessObjectBase__resolvedKey = businessObjectId;
+        }
     }
 
     /** Convenient call for {@link AbstractDao#delete(Object)}. Entity must attached to an entity context. */

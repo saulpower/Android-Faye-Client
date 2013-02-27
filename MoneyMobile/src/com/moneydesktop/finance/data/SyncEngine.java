@@ -198,7 +198,7 @@ public class SyncEngine {
 	
 	public void beginSync() {
 		
-		if (!User.getCurrentUser().getCanSync()) {
+		if (User.getCurrentUser() == null || !User.getCurrentUser().getCanSync()) {
 			return;
 		}
 		

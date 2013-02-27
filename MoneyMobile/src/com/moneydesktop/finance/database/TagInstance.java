@@ -100,13 +100,17 @@ public class TagInstance extends BusinessObject  {
 
     /** To-one relationship, resolved on first access. */
     public Tag getTag() {
-        if (tag__resolvedKey == null || !tag__resolvedKey.equals(tagId)) {
+        long __key = this.tagId;
+        if (tag__resolvedKey == null || !tag__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             TagDao targetDao = daoSession.getTagDao();
-            tag = targetDao.load(tagId);
-            tag__resolvedKey = tagId;
+            Tag tagNew = targetDao.load(__key);
+            synchronized (this) {
+                tag = tagNew;
+            	tag__resolvedKey = __key;
+            }
         }
         return tag;
     }
@@ -115,20 +119,26 @@ public class TagInstance extends BusinessObject  {
         if (tag == null) {
             throw new DaoException("To-one property 'tagId' has not-null constraint; cannot set to-one to null");
         }
-        this.tag = tag;
-        tagId = tag.getId();
-        tag__resolvedKey = tagId;
+        synchronized (this) {
+            this.tag = tag;
+            tagId = tag.getId();
+            tag__resolvedKey = tagId;
+        }
     }
 
     /** To-one relationship, resolved on first access. */
     public BusinessObjectBase getBusinessObject() {
-        if (businessObject__resolvedKey == null || !businessObject__resolvedKey.equals(baseObjectId)) {
+        long __key = this.baseObjectId;
+        if (businessObject__resolvedKey == null || !businessObject__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             BusinessObjectBaseDao targetDao = daoSession.getBusinessObjectBaseDao();
-            businessObject = targetDao.load(baseObjectId);
-            businessObject__resolvedKey = baseObjectId;
+            BusinessObjectBase businessObjectNew = targetDao.load(__key);
+            synchronized (this) {
+                businessObject = businessObjectNew;
+            	businessObject__resolvedKey = __key;
+            }
         }
         return businessObject;
     }
@@ -137,20 +147,26 @@ public class TagInstance extends BusinessObject  {
         if (businessObject == null) {
             throw new DaoException("To-one property 'baseObjectId' has not-null constraint; cannot set to-one to null");
         }
-        this.businessObject = businessObject;
-        baseObjectId = businessObject.getId();
-        businessObject__resolvedKey = baseObjectId;
+        synchronized (this) {
+            this.businessObject = businessObject;
+            baseObjectId = businessObject.getId();
+            businessObject__resolvedKey = baseObjectId;
+        }
     }
 
     /** To-one relationship, resolved on first access. */
     public BusinessObjectBase getBusinessObjectBase() {
-        if (businessObjectBase__resolvedKey == null || !businessObjectBase__resolvedKey.equals(businessObjectId)) {
+        long __key = this.businessObjectId;
+        if (businessObjectBase__resolvedKey == null || !businessObjectBase__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             BusinessObjectBaseDao targetDao = daoSession.getBusinessObjectBaseDao();
-            businessObjectBase = targetDao.load(businessObjectId);
-            businessObjectBase__resolvedKey = businessObjectId;
+            BusinessObjectBase businessObjectBaseNew = targetDao.load(__key);
+            synchronized (this) {
+                businessObjectBase = businessObjectBaseNew;
+            	businessObjectBase__resolvedKey = __key;
+            }
         }
         return businessObjectBase;
     }
@@ -159,9 +175,11 @@ public class TagInstance extends BusinessObject  {
         if (businessObjectBase == null) {
             throw new DaoException("To-one property 'businessObjectId' has not-null constraint; cannot set to-one to null");
         }
-        this.businessObjectBase = businessObjectBase;
-        businessObjectId = businessObjectBase.getId();
-        businessObjectBase__resolvedKey = businessObjectId;
+        synchronized (this) {
+            this.businessObjectBase = businessObjectBase;
+            businessObjectId = businessObjectBase.getId();
+            businessObjectBase__resolvedKey = businessObjectId;
+        }
     }
 
     /** Convenient call for {@link AbstractDao#delete(Object)}. Entity must attached to an entity context. */

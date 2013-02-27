@@ -23,6 +23,7 @@ import com.moneydesktop.finance.exception.CustomExceptionHandler;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.AuthEvent;
 import com.moneydesktop.finance.model.EventMessage.LoginEvent;
+import com.moneydesktop.finance.model.EventMessage.LogoutEvent;
 import com.moneydesktop.finance.shared.Services.WebSocketService;
 import com.moneydesktop.finance.shared.activity.BaseActivity;
 
@@ -129,6 +130,15 @@ public class ApplicationContext extends Application {
 		
 		SyncEngine.sharedInstance().setNeedsFullSync(true);
 		SyncEngine.sharedInstance().beginSync();
+		
+        Intent intent = new Intent(this, WebSocketService.class);
+		startService(intent);
+	}
+	
+	public void onEvent(LogoutEvent event) {
+
+        Intent intent = new Intent(this, WebSocketService.class);
+		stopService(intent);
 	}
 	
 	public void onEvent(AuthEvent event) {

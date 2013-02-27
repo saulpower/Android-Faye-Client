@@ -1,7 +1,5 @@
 package com.moneydesktop.finance.data;
 
-import android.support.v4.app.Fragment;
-
 public class Enums {
     
     public enum TabletFragments {

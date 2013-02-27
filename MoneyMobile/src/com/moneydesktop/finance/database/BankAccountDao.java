@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.Property;
-import de.greenrobot.dao.SqlUtils;
-import de.greenrobot.dao.Query;
-import de.greenrobot.dao.QueryBuilder;
+import de.greenrobot.dao.internal.SqlUtils;
+import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 
 import com.moneydesktop.finance.database.BankAccount;
 
@@ -350,27 +350,31 @@ public class BankAccountDao extends AbstractDao<BankAccount, Long> {
     }
     
     /** Internal query to resolve the "bankAccounts" to-many relationship of Bank. */
-    public synchronized List<BankAccount> _queryBank_BankAccounts(Long bankAccountId) {
-        if (bank_BankAccountsQuery == null) {
-            QueryBuilder<BankAccount> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.BankAccountId.eq(bankAccountId));
-            bank_BankAccountsQuery = queryBuilder.build();
-        } else {
-            bank_BankAccountsQuery.setParameter(0, bankAccountId);
+    public List<BankAccount> _queryBank_BankAccounts(Long bankAccountId) {
+        synchronized (this) {
+            if (bank_BankAccountsQuery == null) {
+                QueryBuilder<BankAccount> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.BankAccountId.eq(null));
+                bank_BankAccountsQuery = queryBuilder.build();
+            }
         }
-        return bank_BankAccountsQuery.list();
+        Query<BankAccount> query = bank_BankAccountsQuery.forCurrentThread();
+        query.setParameter(0, bankAccountId);
+        return query.list();
     }
 
     /** Internal query to resolve the "bankAccounts" to-many relationship of AccountType. */
-    public synchronized List<BankAccount> _queryAccountType_BankAccounts(Long accountTypeId) {
-        if (accountType_BankAccountsQuery == null) {
-            QueryBuilder<BankAccount> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.AccountTypeId.eq(accountTypeId));
-            accountType_BankAccountsQuery = queryBuilder.build();
-        } else {
-            accountType_BankAccountsQuery.setParameter(0, accountTypeId);
+    public List<BankAccount> _queryAccountType_BankAccounts(Long accountTypeId) {
+        synchronized (this) {
+            if (accountType_BankAccountsQuery == null) {
+                QueryBuilder<BankAccount> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.AccountTypeId.eq(null));
+                accountType_BankAccountsQuery = queryBuilder.build();
+            }
         }
-        return accountType_BankAccountsQuery.list();
+        Query<BankAccount> query = accountType_BankAccountsQuery.forCurrentThread();
+        query.setParameter(0, accountTypeId);
+        return query.list();
     }
 
     private String selectDeep;

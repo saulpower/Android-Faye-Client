@@ -1,5 +1,6 @@
 package com.moneydesktop.finance.views;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -9,9 +10,15 @@ import android.graphics.PixelFormat;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 
+import com.moneydesktop.finance.util.UiUtils;
+
 public class CaretDrawable extends Drawable {
     
     public final String TAG = this.getClass().getSimpleName();
+    
+    private static final int STROKE_WIDTH = 3;
+    
+    private Context mContext;
     
     private int mColor = Color.BLUE;
     private float mWidth = 10;
@@ -19,11 +26,14 @@ public class CaretDrawable extends Drawable {
     private PointF mPosition;
 
     private Paint mPaint;
+    private Paint mShadowPaint;
     
     private PointF mPoint1;        
     private PointF mPoint2;    
     private PointF mPoint3;
     private Path mPath;
+    
+    private boolean mShadow = false;
     
     private float mDegrees = 0.0f;
     
@@ -75,6 +85,20 @@ public class CaretDrawable extends Drawable {
         return mDegrees;
     }
     
+    public CaretDrawable(Context context, PointF position, float width, float height) {
+    	this(position, width, height);
+    	
+    	mContext = context;
+        
+    	mShadow = true;
+    	
+        mShadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mShadowPaint.setColor(Color.BLACK);
+        mShadowPaint.setStyle(Paint.Style.STROKE);
+        mShadowPaint.setStrokeWidth(UiUtils.getDynamicPixels(mContext, STROKE_WIDTH));
+        mShadowPaint.setAlpha(50);
+    }
+    
     public CaretDrawable(PointF position, float width, float height) {
         
         mPosition = position;
@@ -108,8 +132,12 @@ public class CaretDrawable extends Drawable {
         canvas.save();
         
         canvas.rotate(mDegrees, mPosition.x + mWidth/2, mPosition.y + mHeight/2);
+        
+        if (mShadow) {
+            canvas.drawPath(mPath, mShadowPaint);
+        }
+        
         canvas.drawPath(mPath, mPaint);
-//        canvas.drawCircle(mPosition.x - 100, mPosition.y, 30, mPaint);
         
         canvas.restore();
     }

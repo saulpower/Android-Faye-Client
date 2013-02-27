@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.Property;
-import de.greenrobot.dao.SqlUtils;
-import de.greenrobot.dao.Query;
-import de.greenrobot.dao.QueryBuilder;
+import de.greenrobot.dao.internal.SqlUtils;
+import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 
 import com.moneydesktop.finance.database.Bank;
 
@@ -250,15 +250,17 @@ public class BankDao extends AbstractDao<Bank, Long> {
     }
     
     /** Internal query to resolve the "banks" to-many relationship of Institution. */
-    public synchronized List<Bank> _queryInstitution_Banks(Long institutionId) {
-        if (institution_BanksQuery == null) {
-            QueryBuilder<Bank> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.InstitutionId.eq(institutionId));
-            institution_BanksQuery = queryBuilder.build();
-        } else {
-            institution_BanksQuery.setParameter(0, institutionId);
+    public List<Bank> _queryInstitution_Banks(Long institutionId) {
+        synchronized (this) {
+            if (institution_BanksQuery == null) {
+                QueryBuilder<Bank> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.InstitutionId.eq(null));
+                institution_BanksQuery = queryBuilder.build();
+            }
         }
-        return institution_BanksQuery.list();
+        Query<Bank> query = institution_BanksQuery.forCurrentThread();
+        query.setParameter(0, institutionId);
+        return query.list();
     }
 
     private String selectDeep;

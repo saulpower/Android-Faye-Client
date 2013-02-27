@@ -1,5 +1,7 @@
 package com.moneydesktop.finance.util;
 
+import java.util.Random;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -51,6 +53,22 @@ public class UiUtils {
     public static float convertDpToPixel(float dp, Context context){
         float px = dp * getDensityRatio(context);
         return px;
+    }
+    
+    /**
+     * This method converts device specific pixels to device independent pixels.
+     * 
+     * @param px A value in px (pixels) unit. Which we need to convert into db
+     * @param context Context to get resources and device specific display metrics
+     * @return An int value to represent dp equivalent of px value
+     */
+    public static int convertPixelsToDp(float px,Context context) {
+    	
+        DisplayMetrics metrics = getDisplayMetrics(context);
+        int dp = (int) (px / metrics.density + 0.5);
+        
+        return dp;
+
     }
 
     /**

@@ -104,10 +104,11 @@ public class DataBridge {
         String baseUrl = Preferences.getString(Preferences.KEY_SYNC_HOST, DebugActivity.PROD_SYNC_HOST);
         		
         String url = String.format("%s://%s/%s", protocol, baseUrl, endpoint);
+        String response = "";
         
 		try {
 			
-			String response = HttpRequest.sendGet(url, getHeaders(), null);
+			response = HttpRequest.sendGet(url, getHeaders(), null);
 			
 			JSONObject json = new JSONObject(response);
 			
@@ -116,6 +117,7 @@ public class DataBridge {
 		} catch (Exception e) {
 
 			Log.e(TAG, "Error downloading sync", e);
+			Log.e(TAG, "Server Response: " + response);
 			
 			return null;
 		}

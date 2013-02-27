@@ -219,32 +219,42 @@ public class Bank extends BusinessObject  {
 
     /** To-one relationship, resolved on first access. */
     public Institution getInstitution() {
-        if (institution__resolvedKey == null || !institution__resolvedKey.equals(institutionId)) {
+        Long __key = this.institutionId;
+        if (institution__resolvedKey == null || !institution__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             InstitutionDao targetDao = daoSession.getInstitutionDao();
-            institution = targetDao.load(institutionId);
-            institution__resolvedKey = institutionId;
+            Institution institutionNew = targetDao.load(__key);
+            synchronized (this) {
+                institution = institutionNew;
+            	institution__resolvedKey = __key;
+            }
         }
         return institution;
     }
 
     public void setInstitution(Institution institution) {
-        this.institution = institution;
-        institutionId = institution == null ? null : institution.getId();
-        institution__resolvedKey = institutionId;
+        synchronized (this) {
+            this.institution = institution;
+            institutionId = institution == null ? null : institution.getId();
+            institution__resolvedKey = institutionId;
+        }
     }
 
     /** To-one relationship, resolved on first access. */
     public BusinessObjectBase getBusinessObjectBase() {
-        if (businessObjectBase__resolvedKey == null || !businessObjectBase__resolvedKey.equals(businessObjectId)) {
+        long __key = this.businessObjectId;
+        if (businessObjectBase__resolvedKey == null || !businessObjectBase__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             BusinessObjectBaseDao targetDao = daoSession.getBusinessObjectBaseDao();
-            businessObjectBase = targetDao.load(businessObjectId);
-            businessObjectBase__resolvedKey = businessObjectId;
+            BusinessObjectBase businessObjectBaseNew = targetDao.load(__key);
+            synchronized (this) {
+                businessObjectBase = businessObjectBaseNew;
+            	businessObjectBase__resolvedKey = __key;
+            }
         }
         return businessObjectBase;
     }
@@ -253,19 +263,26 @@ public class Bank extends BusinessObject  {
         if (businessObjectBase == null) {
             throw new DaoException("To-one property 'businessObjectId' has not-null constraint; cannot set to-one to null");
         }
-        this.businessObjectBase = businessObjectBase;
-        businessObjectId = businessObjectBase.getId();
-        businessObjectBase__resolvedKey = businessObjectId;
+        synchronized (this) {
+            this.businessObjectBase = businessObjectBase;
+            businessObjectId = businessObjectBase.getId();
+            businessObjectBase__resolvedKey = businessObjectId;
+        }
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
-    public synchronized List<BankAccount> getBankAccounts() {
+    public List<BankAccount> getBankAccounts() {
         if (bankAccounts == null) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             BankAccountDao targetDao = daoSession.getBankAccountDao();
-            bankAccounts = targetDao._queryBank_BankAccounts(id);
+            List<BankAccount> bankAccountsNew = targetDao._queryBank_BankAccounts(id);
+            synchronized (this) {
+                if(bankAccounts == null) {
+                    bankAccounts = bankAccountsNew;
+                }
+            }
         }
         return bankAccounts;
     }
@@ -276,13 +293,18 @@ public class Bank extends BusinessObject  {
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
-    public synchronized List<Location> getLocations() {
+    public List<Location> getLocations() {
         if (locations == null) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             LocationDao targetDao = daoSession.getLocationDao();
-            locations = targetDao._queryBank_Locations(id);
+            List<Location> locationsNew = targetDao._queryBank_Locations(id);
+            synchronized (this) {
+                if(locations == null) {
+                    locations = locationsNew;
+                }
+            }
         }
         return locations;
     }

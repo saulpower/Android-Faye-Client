@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.Property;
-import de.greenrobot.dao.SqlUtils;
-import de.greenrobot.dao.Query;
-import de.greenrobot.dao.QueryBuilder;
+import de.greenrobot.dao.internal.SqlUtils;
+import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 
 import com.moneydesktop.finance.database.Category;
 
@@ -224,27 +224,31 @@ public class CategoryDao extends AbstractDao<Category, Long> {
     }
     
     /** Internal query to resolve the "categories" to-many relationship of CategoryType. */
-    public synchronized List<Category> _queryCategoryType_Categories(Long categoryTypeId) {
-        if (categoryType_CategoriesQuery == null) {
-            QueryBuilder<Category> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.CategoryTypeId.eq(categoryTypeId));
-            categoryType_CategoriesQuery = queryBuilder.build();
-        } else {
-            categoryType_CategoriesQuery.setParameter(0, categoryTypeId);
+    public List<Category> _queryCategoryType_Categories(Long categoryTypeId) {
+        synchronized (this) {
+            if (categoryType_CategoriesQuery == null) {
+                QueryBuilder<Category> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.CategoryTypeId.eq(null));
+                categoryType_CategoriesQuery = queryBuilder.build();
+            }
         }
-        return categoryType_CategoriesQuery.list();
+        Query<Category> query = categoryType_CategoriesQuery.forCurrentThread();
+        query.setParameter(0, categoryTypeId);
+        return query.list();
     }
 
     /** Internal query to resolve the "children" to-many relationship of Category. */
-    public synchronized List<Category> _queryCategory_Children(Long parentCategoryId) {
-        if (category_ChildrenQuery == null) {
-            QueryBuilder<Category> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.ParentCategoryId.eq(parentCategoryId));
-            category_ChildrenQuery = queryBuilder.build();
-        } else {
-            category_ChildrenQuery.setParameter(0, parentCategoryId);
+    public List<Category> _queryCategory_Children(Long parentCategoryId) {
+        synchronized (this) {
+            if (category_ChildrenQuery == null) {
+                QueryBuilder<Category> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.ParentCategoryId.eq(null));
+                category_ChildrenQuery = queryBuilder.build();
+            }
         }
-        return category_ChildrenQuery.list();
+        Query<Category> query = category_ChildrenQuery.forCurrentThread();
+        query.setParameter(0, parentCategoryId);
+        return query.list();
     }
 
     private String selectDeep;

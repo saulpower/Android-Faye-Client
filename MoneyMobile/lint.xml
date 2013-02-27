@@ -10,5 +10,6 @@
     </issue>
     <issue id="ViewConstructor">
         <ignore path="src/com/moneydesktop/finance/shared/adapter/TagsAdapter.java" />
+        <ignore path="src/com/moneydesktop/finance/views/chart/PieSliceView.java" />
     </issue>
 </lint>

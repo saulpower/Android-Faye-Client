@@ -30,7 +30,7 @@ public class WebSocketService extends IntentService implements FayeListener {
     protected void onHandleIntent(Intent intent) {
 
     	// SSL bug in pre-Gingerbread devices makes websockets currently unusable
-    	if (android.os.Build.VERSION.SDK_INT <= 8) return;
+    	if (android.os.Build.VERSION.SDK_INT <= 8 || User.getCurrentUser() == null || !User.getCurrentUser().getCanSync()) return;
     	
     	Log.i(TAG, "Starting Web Socket");
     	
@@ -56,7 +56,6 @@ public class WebSocketService extends IntentService implements FayeListener {
         super.onCreate();
     }
 
-
     @Override
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
@@ -66,6 +65,15 @@ public class WebSocketService extends IntentService implements FayeListener {
     public int onStartCommand(Intent intent, int flags, int startId) {
         return super.onStartCommand(intent, flags, startId);
     }
+    
+    @Override
+    public void onDestroy() {
+    	super.onDestroy();
+    	
+    	if (mClient != null) {
+    		mClient.disconnect();
+    	}
+    }
 
 	@Override
 	public void connectedToServer() {
@@ -74,12 +82,12 @@ public class WebSocketService extends IntentService implements FayeListener {
 
 	@Override
 	public void disconnectedFromServer() {
-		Log.i(TAG, "Disonnected to Server");
+		Log.i(TAG, "Disonnected from Server");
 	}
 
 	@Override
 	public void subscribedToChannel(String subscription) {
-//		Log.i(TAG, String.format("Subscribed to channel %s on Faye", subscription));
+		Log.i(TAG, String.format("Subscribed to channel %s on Faye", subscription));
 	}
 
 	@Override

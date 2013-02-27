@@ -15,7 +15,7 @@ import com.moneydesktop.finance.database.CategoryDao.Properties;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.Property;
-import de.greenrobot.dao.Query;
+import de.greenrobot.dao.query.Query;
 
 public abstract class BusinessObject implements BusinessObjectInterface {
 	

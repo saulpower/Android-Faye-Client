@@ -150,13 +150,17 @@ public class AccountType extends BusinessObject  {
 
     /** To-one relationship, resolved on first access. */
     public BusinessObjectBase getBusinessObjectBase() {
-        if (businessObjectBase__resolvedKey == null || !businessObjectBase__resolvedKey.equals(businessObjectId)) {
+        long __key = this.businessObjectId;
+        if (businessObjectBase__resolvedKey == null || !businessObjectBase__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             BusinessObjectBaseDao targetDao = daoSession.getBusinessObjectBaseDao();
-            businessObjectBase = targetDao.load(businessObjectId);
-            businessObjectBase__resolvedKey = businessObjectId;
+            BusinessObjectBase businessObjectBaseNew = targetDao.load(__key);
+            synchronized (this) {
+                businessObjectBase = businessObjectBaseNew;
+            	businessObjectBase__resolvedKey = __key;
+            }
         }
         return businessObjectBase;
     }
@@ -165,57 +169,76 @@ public class AccountType extends BusinessObject  {
         if (businessObjectBase == null) {
             throw new DaoException("To-one property 'businessObjectId' has not-null constraint; cannot set to-one to null");
         }
-        this.businessObjectBase = businessObjectBase;
-        businessObjectId = businessObjectBase.getId();
-        businessObjectBase__resolvedKey = businessObjectId;
+        synchronized (this) {
+            this.businessObjectBase = businessObjectBase;
+            businessObjectId = businessObjectBase.getId();
+            businessObjectBase__resolvedKey = businessObjectId;
+        }
     }
 
     /** To-one relationship, resolved on first access. */
     public AccountTypeGroup getAccountTypeGroup() {
-        if (accountTypeGroup__resolvedKey == null || !accountTypeGroup__resolvedKey.equals(accountTypeGroupId)) {
+        Long __key = this.accountTypeGroupId;
+        if (accountTypeGroup__resolvedKey == null || !accountTypeGroup__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             AccountTypeGroupDao targetDao = daoSession.getAccountTypeGroupDao();
-            accountTypeGroup = targetDao.load(accountTypeGroupId);
-            accountTypeGroup__resolvedKey = accountTypeGroupId;
+            AccountTypeGroup accountTypeGroupNew = targetDao.load(__key);
+            synchronized (this) {
+                accountTypeGroup = accountTypeGroupNew;
+            	accountTypeGroup__resolvedKey = __key;
+            }
         }
         return accountTypeGroup;
     }
 
     public void setAccountTypeGroup(AccountTypeGroup accountTypeGroup) {
-        this.accountTypeGroup = accountTypeGroup;
-        accountTypeGroupId = accountTypeGroup == null ? null : accountTypeGroup.getId();
-        accountTypeGroup__resolvedKey = accountTypeGroupId;
+        synchronized (this) {
+            this.accountTypeGroup = accountTypeGroup;
+            accountTypeGroupId = accountTypeGroup == null ? null : accountTypeGroup.getId();
+            accountTypeGroup__resolvedKey = accountTypeGroupId;
+        }
     }
 
     /** To-one relationship, resolved on first access. */
     public AccountType getParent() {
-        if (parent__resolvedKey == null || !parent__resolvedKey.equals(parentAccountTypeId)) {
+        Long __key = this.parentAccountTypeId;
+        if (parent__resolvedKey == null || !parent__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             AccountTypeDao targetDao = daoSession.getAccountTypeDao();
-            parent = targetDao.load(parentAccountTypeId);
-            parent__resolvedKey = parentAccountTypeId;
+            AccountType parentNew = targetDao.load(__key);
+            synchronized (this) {
+                parent = parentNew;
+            	parent__resolvedKey = __key;
+            }
         }
         return parent;
     }
 
     public void setParent(AccountType parent) {
-        this.parent = parent;
-        parentAccountTypeId = parent == null ? null : parent.getId();
-        parent__resolvedKey = parentAccountTypeId;
+        synchronized (this) {
+            this.parent = parent;
+            parentAccountTypeId = parent == null ? null : parent.getId();
+            parent__resolvedKey = parentAccountTypeId;
+        }
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
-    public synchronized List<BankAccount> getBankAccounts() {
+    public List<BankAccount> getBankAccounts() {
         if (bankAccounts == null) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             BankAccountDao targetDao = daoSession.getBankAccountDao();
-            bankAccounts = targetDao._queryAccountType_BankAccounts(id);
+            List<BankAccount> bankAccountsNew = targetDao._queryAccountType_BankAccounts(id);
+            synchronized (this) {
+                if(bankAccounts == null) {
+                    bankAccounts = bankAccountsNew;
+                }
+            }
         }
         return bankAccounts;
     }
@@ -226,13 +249,18 @@ public class AccountType extends BusinessObject  {
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
-    public synchronized List<AccountType> getChildren() {
+    public List<AccountType> getChildren() {
         if (children == null) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             AccountTypeDao targetDao = daoSession.getAccountTypeDao();
-            children = targetDao._queryAccountType_Children(id);
+            List<AccountType> childrenNew = targetDao._queryAccountType_Children(id);
+            synchronized (this) {
+                if(children == null) {
+                    children = childrenNew;
+                }
+            }
         }
         return children;
     }

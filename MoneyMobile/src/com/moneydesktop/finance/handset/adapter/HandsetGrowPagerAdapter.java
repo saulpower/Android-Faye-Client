@@ -8,7 +8,7 @@ import com.moneydesktop.finance.tablet.adapter.GrowPagerAdapter;
 
 public class HandsetGrowPagerAdapter extends GrowPagerAdapter {
     
-    private final int COUNT = 2;
+    private final int COUNT = 3;
 
 	public HandsetGrowPagerAdapter(FragmentManager fm) {
 		super(fm);

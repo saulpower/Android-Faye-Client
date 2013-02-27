@@ -7,7 +7,7 @@ import com.moneydesktop.finance.handset.fragment.DashboardFragmentFactory;
 
 public class TabletGrowPagerAdapter extends GrowPagerAdapter {
     
-    private final int COUNT = 2;
+    private final int COUNT = 3;
 
 	public TabletGrowPagerAdapter(FragmentManager fm) {
 		super(fm);
