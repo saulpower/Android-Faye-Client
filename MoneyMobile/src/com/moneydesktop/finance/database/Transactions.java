@@ -28,6 +28,7 @@ import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Enums.DataState;
 import com.moneydesktop.finance.model.User;
+import com.moneydesktop.finance.util.DateRange;
 import com.moneydesktop.finance.views.AnimatedEditText;
 
 import de.greenrobot.dao.AbstractDao;
@@ -1344,17 +1345,9 @@ public class Transactions extends BusinessObject  {
     			cat = (Category) BusinessObject.getObject(Category.class, null, getCategoryId());
     		}
     		
-    		if (cat == null)
-    			return false;
+    		if (cat == null) return false;
     		
-    		try {
-	    		if (cat.getCategoryName().equalsIgnoreCase(Constant.INCOME) ||
-	    				(cat.getParent() != null && cat.getParent().getCategoryName().equalsIgnoreCase(Constant.INCOME))) {
-	    			return true;
-	    		}
-    		} catch (Exception ex) {
-    			return false;
-    		}
+	    	return cat.isIncome();
     	}
     	
     	return false;
@@ -1467,12 +1460,12 @@ public class Transactions extends BusinessObject  {
 		}.execute();
     }
     
-    public static float getAllTransactionsTotal() {
+    public static float getTransactionsTotal(String query, DateRange dateRange) {
     	
     	float total = 0;
     	
         SQLiteDatabase db = ApplicationContext.getDb();
-        Cursor cursor = db.rawQuery(Constant.QUERY_TRANSACTIONS_TOTAL, new String[] {});
+        Cursor cursor = db.rawQuery(query, new String[] {dateRange.getStartDateString(), dateRange.getEndDateString()});
 
         cursor.moveToFirst();
         

@@ -2,8 +2,10 @@ package com.moneydesktop.finance.views.chart;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
@@ -13,19 +15,19 @@ public class PieSliceDrawable extends Drawable {
     
     public final String TAG = this.getClass().getSimpleName();
 
-    private final int DEFAULT_STROKE_WIDTH = 4;
+    private final int DEFAULT_STROKE_WIDTH = 2;
     
 	private float mDegreeOffset;
 	private float mPercent;
 	private RectF mBounds = new RectF();
 
-	private Paint mPaint;
+	private Paint mPaint, mStrokePaint;
 	
 	private Context mContext;
 	
-	private float mShiftX, mShiftY;
-	
 	private float mStrokeWidth;
+	
+	private Path mPathRight, mPathLeft;
 
 	public float getPercent() {
 		return mPercent;
@@ -91,18 +93,13 @@ public class PieSliceDrawable extends Drawable {
 		setCallback(cb);
 		mContext = context;
 		
+		mStrokeWidth = UiUtils.getDynamicPixels(mContext, DEFAULT_STROKE_WIDTH);
+		
 		init();
 		
 		mDegreeOffset = degreeOffset;
 		setPercent(percent);
 		setSliceColor(color);
-		
-		mStrokeWidth = UiUtils.getDynamicPixels(mContext, DEFAULT_STROKE_WIDTH);
-		
-		double radians = Math.toRadians(getSliceCenter());
-		
-		mShiftX = (float) Math.cos(radians) * mStrokeWidth;
-		mShiftY = (float) Math.sin(radians) * mStrokeWidth;
 	}
 	
 	/**
@@ -111,6 +108,11 @@ public class PieSliceDrawable extends Drawable {
 	private void init() {
 
 		mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+		mStrokePaint = new Paint(mPaint);
+		mStrokePaint.setStyle(Paint.Style.STROKE);
+		mStrokePaint.setStrokeWidth(mStrokeWidth);
+		mStrokePaint.setColor(Color.WHITE);
 	}
 	
 	@Override
@@ -124,24 +126,44 @@ public class PieSliceDrawable extends Drawable {
 		
 		// Updates the drawing bounds so the slice is sized correctly given the
 		// stroke width
-		mBounds.left = mStrokeWidth;
-		mBounds.top = mStrokeWidth;
-		mBounds.right = getBounds().width() - mStrokeWidth;
-		mBounds.bottom = getBounds().height() - mStrokeWidth;
+		mBounds.left = getBounds().left + mStrokeWidth;
+		mBounds.top = getBounds().top + mStrokeWidth;
+		mBounds.right = getBounds().right - mStrokeWidth;
+		mBounds.bottom = getBounds().bottom - mStrokeWidth;
+		
+		double radians = Math.toRadians(mDegreeOffset + getDegrees());
+		float radius = mBounds.width() / 2;
+		float x = (float) (radius * Math.cos(radians));
+		float y = (float) (radius * Math.sin(radians));
+		
+		mPathRight = createPath(x, y);
+		
+		radians = Math.toRadians(mDegreeOffset);
+		x = (float) (radius * Math.cos(radians));
+		y = (float) (radius * Math.sin(radians));
+		
+		mPathLeft = createPath(x, y);
 		
 		invalidateSelf();
+	}
+	
+	private Path createPath(float x, float y) {
+
+		Path path = new Path();
+		path.moveTo(mBounds.centerX(), mBounds.centerY());
+		path.lineTo(mBounds.centerX() + x, mBounds.centerY() + y);
+		path.close();
+		
+		return path;
 	}
 
 	@Override
 	public void draw(Canvas canvas) {
 		
-		canvas.save();
-		canvas.translate(mShiftX, mShiftY);
-		
 		// Draw and stroke the pie slice
 		canvas.drawArc(mBounds, mDegreeOffset, getDegrees(), true, mPaint);
-		
-		canvas.restore();
+		canvas.drawPath(mPathRight, mStrokePaint);
+		canvas.drawPath(mPathLeft, mStrokePaint);
 	}
 
 	@Override

@@ -6,68 +6,82 @@ import java.util.List;
 import android.os.AsyncTask;
 import android.util.Pair;
 
+import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.database.Category;
 import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.util.DateRange;
 
 public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
+    
+    public final String TAG = this.getClass().getSimpleName();
 	
-	private AsyncTask<Integer, Void, List<Pair<Float, List<Float>>>> mBackgroundTask;
+	private AsyncTask<Integer, Void, List<Pair<Category, List<Category>>>> mBackgroundTask;
 
-	private List<Pair<Float, List<Float>>> mCategories;
+	private List<Pair<Category, List<Category>>> mCategories;
 	
 	public CategoryPieChartAdapter() {
-		mCategories = new ArrayList<Pair<Float, List<Float>>>();
+		mCategories = new ArrayList<Pair<Category, List<Category>>>();
 		loadCategories();
 	}
 	
 	private void loadCategories() {
 		
-		mBackgroundTask = new AsyncTask<Integer, Void, List<Pair<Float, List<Float>>>>() {
+		mBackgroundTask = new AsyncTask<Integer, Void, List<Pair<Category, List<Category>>>>() {
             
             @Override
-            protected List<Pair<Float, List<Float>>> doInBackground(Integer... params) {
+            protected List<Pair<Category, List<Category>>> doInBackground(Integer... params) {
             	
-            	List<Pair<Float, List<Float>>> percents = new ArrayList<Pair<Float, List<Float>>>();
-            	List<Float> others = new ArrayList<Float>();
-            	float othersTotal = 0;
+            	DateRange range = DateRange.forCurrentMonth();
             	
-            	float total = Transactions.getAllTransactionsTotal();
+            	List<Pair<Category, List<Category>>> percents = new ArrayList<Pair<Category, List<Category>>>();
             	
-            	List<Pair<Category, List<Category>>> categories = Category.loadCategoryData();
+            	List<Category> others = new ArrayList<Category>();
+            	
+            	Category other = new Category();
+            	other.setCategoryName("Other");
+            	other.setPercent(0f);
+            	
+            	float total = Transactions.getTransactionsTotal(Constant.QUERY_SPENDING_TOTAL, range);
+            	
+            	List<Pair<Category, List<Category>>> categories = Category.loadCategoryData(true);
                 
         		for (Pair<Category, List<Category>> parent : categories) {
         			
-        			float categoryTotal = Category.getTotalForCategory(parent.first);
+        			float categoryTotal = Category.getTotalForCategory(parent.first, range);
         			float categoryPercent = categoryTotal / total;
         			
-        			// Compile all categories under 6% of the total into
+        			parent.first.setPercent(categoryPercent);
+        			
+        			// Compile all categories under 3% of the total into
         			// an "Other" category
-        			if (categoryPercent < 0.06f) {
+        			if (categoryPercent <= 0.03f && categoryPercent > 0) {
         				
-        				others.add(categoryPercent);
-        				othersTotal += categoryPercent;
+        				others.add(parent.first);
+        				other.setPercent(other.getPercent() + categoryPercent);
+        				
+        				continue;
+        				
+        			} else if (categoryPercent == 0) {
         				
         				continue;
         			}
         			
-        			List<Float> children = new ArrayList<Float>();
-        			
         			for (Category category : parent.second) {
         				
-        				float childPercent = Category.getTotalForCategory(category) / categoryTotal;
-        				children.add(childPercent);
+        				float childPercent = Category.getTotalForCategory(category, range) / categoryTotal;
+        				category.setPercent(childPercent);
         			}
         			
-        			percents.add(new Pair<Float, List<Float>>(categoryPercent, children));
+        			percents.add(new Pair<Category, List<Category>>(parent.first, parent.second));
         		}
         		
-    			percents.add(new Pair<Float, List<Float>>(othersTotal, others));
+    			percents.add(new Pair<Category, List<Category>>(other, others));
         		
                 return percents;
             }
 
             @Override
-            protected void onPostExecute(List<Pair<Float, List<Float>>> categories) {
+            protected void onPostExecute(List<Pair<Category, List<Category>>> categories) {
 
                 if (isCancelled()) {
                     return;
@@ -125,16 +139,16 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
 	@Override
 	public float getChildAmount(int groupPosition, int childPosition) {
 		
-		float percent = (Float) getChild(groupPosition, childPosition);
+		Category category = (Category) getChild(groupPosition, childPosition);
 		
-		return percent;
+		return category.getPercent();
 	}
 
 	@Override
 	public float getGroupAmount(int groupPosition) {
 		
-		float percent = (Float) getGroup(groupPosition);
+		Category category = (Category) getGroup(groupPosition);
 		
-		return percent;
+		return category.getPercent();
 	}
 }

@@ -15,6 +15,7 @@ import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Enums.DataState;
 import com.moneydesktop.finance.model.User;
+import com.moneydesktop.finance.util.DateRange;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
@@ -64,6 +65,9 @@ public class Category extends BusinessObject  {
     // KEEP FIELDS - put your custom fields here
     
 	public static final String TAG = "Category";
+	
+	private float mPercent;
+	
     // KEEP FIELDS END
 
     public Category() {
@@ -378,6 +382,32 @@ public class Category extends BusinessObject  {
     	return getCategoryId();
     }
     
+    public float getPercent() {
+		return mPercent;
+	}
+
+	public void setPercent(float mPercent) {
+		this.mPercent = mPercent;
+	}
+
+	public boolean isIncome() {
+    	try {
+        	return (getCategoryName().equalsIgnoreCase(Constant.INCOME) ||
+        			(getParent() != null && getParent().getCategoryName().equalsIgnoreCase(Constant.INCOME)));
+		} catch (Exception ex) {
+			return false;
+		}
+    }
+
+	public boolean isTransfer() {
+    	try {
+        	return (getCategoryName().equalsIgnoreCase(Constant.TRANSFER) ||
+        			(getParent() != null && getParent().getCategoryName().equalsIgnoreCase(Constant.TRANSFER)));
+		} catch (Exception ex) {
+			return false;
+		}
+    }
+    
     public static Category saveCategory(JSONObject json, boolean delete) {
     	
     	Category category = (Category) saveObject(json, Category.class, delete);
@@ -599,8 +629,12 @@ public class Category extends BusinessObject  {
         
         return ret;
     }
-    
+
     public static List<Pair<Category, List<Category>>> loadCategoryData() {
+    	return loadCategoryData(false);
+    }
+    
+    public static List<Pair<Category, List<Category>>> loadCategoryData(boolean onlySpending) {
         
         List<Pair<Category, List<Category>>> data = new ArrayList<Pair<Category, List<Category>>>();
         
@@ -612,25 +646,29 @@ public class Category extends BusinessObject  {
         
         for (Category category : sections) {
             
-            List<Category> items = categoryDao.queryBuilder()
-                    .where(CategoryDao.Properties.ParentCategoryId.eq(category.getId()))
-                    .orderAsc(CategoryDao.Properties.CategoryName)
-                    .list();
-            
-            data.add(new Pair<Category, List<Category>>(category, items));
+        	if (!onlySpending || (!category.isIncome() && !category.isTransfer())) {
+	            List<Category> items = categoryDao.queryBuilder()
+	                    .where(CategoryDao.Properties.ParentCategoryId.eq(category.getId()))
+	                    .orderAsc(CategoryDao.Properties.CategoryName)
+	                    .list();
+	            
+	            data.add(new Pair<Category, List<Category>>(category, items));
+        	}
         }
         
         return data;
     }
     
-    public static float getTotalForCategory(Category category) {
+    public static float getTotalForCategory(Category category, DateRange range) {
 
     	float total = 0;
     	
     	String catId = Long.toString(category.getId());
     	
         SQLiteDatabase db = ApplicationContext.getDb();
-        Cursor cursor = db.rawQuery(Constant.QUERY_CATEGORY_TOTAL, new String[] { catId, catId });
+        Cursor cursor = db.rawQuery(Constant.QUERY_CATEGORY_TOTAL, new String[] {
+        		catId, catId, range.getStartDateString(), range.getEndDateString()
+        });
 
         cursor.moveToFirst();
         

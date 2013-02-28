@@ -12,7 +12,7 @@
         android:layout_centerInParent="true"
     	android:background="@color/white" >
         
-	    <com.moneydesktop.finance.views.chart.PieChartView
+	    <com.moneydesktop.finance.views.chart.ExpandablePieChartView
 	        android:id="@+id/chart"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"

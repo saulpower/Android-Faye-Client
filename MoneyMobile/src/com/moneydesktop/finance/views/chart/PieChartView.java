@@ -27,6 +27,7 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.animation.AnimationUtils;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 
 import com.moneydesktop.finance.util.UiUtils;
@@ -60,8 +61,9 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     	CACHE_READY,
     	SNAP_TO
     };
-    
-    private static final int STROKE_WIDTH = 3;
+
+    private static final int SUB_STROKE_WIDTH = 1;
+    private static final int INFO_STROKE_WIDTH = 3;
 
     /** Unit used for the velocity tracker */
     private static final int PIXELS_PER_SECOND = 1000;
@@ -140,6 +142,10 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     /** The current degrees of rotation of the chart */
 	private float mRotationDegree = 0;
 	
+	private float mChartScale = 1.0f;
+	
+	private OnPieChartChangeListener mOnPieChartChangeListener;
+
 	/** The current snapped-to index */
 	private int mCurrentIndex;
 	
@@ -150,6 +156,8 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	private OnItemLongClickListener mOnItemLongClickListener;
 	
 	private DrawThread mDrawThread;
+	
+	private float mStrokeWidth;
 
     /**
      * The listener that receives notifications when an item is clicked.
@@ -165,6 +173,8 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	private Paint mPaint;
 	private Paint mStrokePaint;
 	private CaretDrawable mCaret;
+	
+	private boolean mShowInfo = false;
 	
 	public Bitmap getDrawingCache() {
 		return mDrawingCache;
@@ -215,6 +225,23 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 		return mRotationDegree;
 	}
 	
+	public float getChartScale() {
+		return mChartScale;
+	}
+
+	public void setChartScale(float mChartScale) {
+		this.mChartScale = mChartScale;
+	}
+
+	public OnPieChartChangeListener getOnPieChartChangeListener() {
+		return mOnPieChartChangeListener;
+	}
+
+	public void setOnPieChartChangeListener(
+			OnPieChartChangeListener mOnPieChartChangeListener) {
+		this.mOnPieChartChangeListener = mOnPieChartChangeListener;
+	}
+	
 	public int getCurrentIndex() {
 		return mCurrentIndex;
 	}
@@ -222,6 +249,10 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	public void setCurrentIndex(int index) {
 		mCurrentIndex = index;
 		mCoverCache = null;
+		
+		if (mOnPieChartChangeListener != null) {
+			mOnPieChartChangeListener.onSelectionChanged(index);
+		}
 	}
 	
 	public void setSnapToAnchor(PieChartAnchor anchor) {
@@ -252,6 +283,15 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 
 	public void setOnItemClickListener(OnItemClickListener mOnItemClickListener) {
 		this.mOnItemClickListener = mOnItemClickListener;
+	}
+	
+	public void showInfo() {
+		mShowInfo = true;
+		mChartScale = 0f;
+	}
+	
+	public void hideInfo() {
+		mShowInfo = false;
 	}
 	
 	public void setSelection(int index) {
@@ -292,9 +332,11 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 		
 		mStrokePaint = new Paint(mPaint);
 		mStrokePaint.setStyle(Paint.Style.STROKE);
-		mStrokePaint.setStrokeWidth(UiUtils.getDynamicPixels(context, STROKE_WIDTH));
+		mStrokePaint.setStrokeWidth(UiUtils.getDynamicPixels(context, INFO_STROKE_WIDTH));
 		mStrokePaint.setColor(Color.BLACK);
 		mStrokePaint.setAlpha(50);
+		
+		mStrokeWidth = UiUtils.getDynamicPixels(context, SUB_STROKE_WIDTH);
 	}
 
     @Override
@@ -374,12 +416,15 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 		
 		int width = MeasureSpec.getSize(widthMeasureSpec);
 		int height = MeasureSpec.getSize(heightMeasureSpec);
-        
+		
         boolean useHeight = height < width;
+        
         mChartDiameter = useHeight ? (height - (getPaddingTop() + getPaddingBottom()))
         		: (width - (getPaddingLeft() + getPaddingRight()));
 		
-		mInfoRadius = getChartRadius() * 2 / 5;
+		mInfoRadius = getChartRadius() / 2;
+		
+		Log.i(TAG, "Diameter: " + mChartDiameter + " InfoRadius: " + mInfoRadius);
 		
         int size = useHeight ? height : width;
         
@@ -395,15 +440,9 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
             return;
         }
         
-        if (changed) {
-
-    		final int itemHeight = (int) (getHeight() / 2);
-            final int itemWidth = (int) (getWidth() / 2);
-            
-			// Get the center coordinates of the view
-			mCenter.x = (float) itemWidth;
-			mCenter.y = (float) itemHeight;
-        }
+		// Get the center coordinates of the view
+		mCenter.x = (float) Math.abs(left - right) / 2;
+		mCenter.y = (float) Math.abs(top - bottom) / 2;
 	}
 
     /**
@@ -411,12 +450,10 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
      */
     private void addPieSlices() {
     	
-    	mDrawables.clear();
-    	
     	float offset = 0;
     	
-        int left = getLeft() + getPaddingLeft();
-        int top = getTop() + getPaddingTop();
+        int left = (int) (mCenter.x - getChartRadius());
+        int top = (int) (mCenter.y - getChartRadius());
     	
         for (int index = 0; index < mAdapter.getCount(); index++) {
             
@@ -639,6 +676,19 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     	rotate.start();
     }
     
+    public void toggleChart() {
+    	
+    	mDrawingCache = null;
+    	
+    	final float start = getChartScale();
+    	final float end = start == 1f ? 0f : 1f;
+    	
+    	ObjectAnimator scale = ObjectAnimator.ofFloat(this, "chartScale", start, end);
+    	scale.setDuration(400);
+    	scale.setInterpolator(new OvershootInterpolator());
+    	scale.start();
+    }
+    
     /**
      * Rotate the chart based on a given (x,y) coordinate
      * 
@@ -763,6 +813,8 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     
     private boolean inInfoCircle(final int x, final int y) {
     	
+    	if (!mShowInfo) return false;
+    	
         double dx = (x - mCenter.x) * (x - mCenter.x);
         double dy = (y - mCenter.y) * (y - mCenter.y);
 
@@ -852,7 +904,16 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 			return;
 		}
 		
+		resetChart();
+		
 		mAdapter = adapter;
+	}
+	
+	private void resetChart() {
+		
+		synchronized (getHolder()) {
+			mDrawables.clear();
+		}
 	}
 	
 	private boolean validAdapter(BasePieChartAdapter adapter) {
@@ -863,7 +924,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 			total += adapter.getPercent(i);
 		}
 		
-		return total % 1f < 0.0001f;
+		return 1f - total < 0.0001f;
 	}
 
 	@Override
@@ -873,7 +934,6 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		Log.i(TAG, "surfaceCreated");
 		
 		if (mDrawThread.getState() == Thread.State.TERMINATED) {
 			
@@ -890,7 +950,6 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		Log.i(TAG, "surfaceDestroyed");
 		
 		boolean retry = true;
 		
@@ -932,12 +991,16 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     		
     		PieChartView chart = mPieChartView.get();
     		
+    		if (chart == null) return;
+    		
     		switch (type) {
 	    		case SNAP_TO:
 	    			chart.snapTo();
 	    			break;
 	    		case CACHE_READY:
-	    			chart.mCoverView.setImageBitmap(chart.getCoverCache());
+	    			if (chart.getCoverView() != null) {
+	    				chart.getCoverView().setImageBitmap(chart.getCoverCache());
+	    			}
 	    			break;
     		}
         }
@@ -968,15 +1031,12 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 		@Override
 		public void run() {
 			
-			Log.i(TAG, "Drawing started");
-			
 			Canvas c;
 			
 			while (isRunning) {
 
 				if (mDrawables.size() == 0 && mAdapter != null) {
 					addPieSlices();
-
 					sendMessage(MessageType.SNAP_TO);
 				}
 				
@@ -1047,8 +1107,13 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 			canvas.drawColor(0, PorterDuff.Mode.CLEAR);
 			
 			canvas.save();
+			canvas.scale(mChartScale, mChartScale, mCenter.x, mCenter.y);
 			canvas.rotate(mRotationDegree, mCenter.x, mCenter.y);
 	    	canvas.translate(getPaddingLeft(), getPaddingTop());
+			
+			if (mShowInfo) {
+				canvas.drawCircle(mCenter.x, mCenter.y, getChartRadius() + mStrokeWidth, mPaint);
+			}
 	    	
 	        for (PieSliceDrawable slice : mDrawables) {
 	        	slice.draw(canvas);
@@ -1056,11 +1121,14 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	        
 	        canvas.restore();
 	        
-			createCaret();
-
-	        canvas.drawCircle(mCenter.x, mCenter.y, getChartRadius() * 2 / 5, mStrokePaint);
-	        mCaret.draw(canvas);
-	        canvas.drawCircle(mCenter.x, mCenter.y, getChartRadius() * 2 / 5, mPaint);
+	        if (mShowInfo) {
+	        	
+				createCaret();
+	
+		        canvas.drawCircle(mCenter.x, mCenter.y, mInfoRadius, mStrokePaint);
+		        mCaret.draw(canvas);
+		        canvas.drawCircle(mCenter.x, mCenter.y, mInfoRadius, mPaint);
+	        }
 		}
 	}
 }
