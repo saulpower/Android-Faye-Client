@@ -1,27 +1,46 @@
 package com.moneydesktop.finance.views.chart;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.PointF;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.SoundEffectConstants;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.animation.AnimationUtils;
-import android.widget.Adapter;
-import android.widget.AdapterView;
+import android.widget.ImageView;
 
 import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.CaretDrawable;
 import com.moneydesktop.finance.views.Dynamics;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.Animator.AnimatorListener;
 import com.nineoldandroids.animation.ObjectAnimator;
 
-public class PieChartView extends AdapterView<Adapter> {
+public class PieChartView extends SurfaceView implements SurfaceHolder.Callback {
     
     public final String TAG = this.getClass().getSimpleName();
+    
+    private static final String MESSAGE = "message";
 
     public enum PieChartAnchor {
     	
@@ -36,15 +55,25 @@ public class PieChartView extends AdapterView<Adapter> {
             this.degrees = degrees;
         }
     };
+    
+    private enum MessageType {
+    	CACHE_READY,
+    	SNAP_TO
+    };
+    
+    private static final int STROKE_WIDTH = 3;
 
     /** Unit used for the velocity tracker */
     private static final int PIXELS_PER_SECOND = 1000;
 
     /** Tolerance for the velocity */
-    private static final float VELOCITY_TOLERANCE = 10f;
+    private static final float VELOCITY_TOLERANCE = 40f;
 
     /** Represents an invalid child index */
     private static final int INVALID_INDEX = -1;
+
+    /** Represents a touch to the info circle */
+    private static final int INFO_INDEX = -2;
 	
 	/** User is not touching the list */
     private static final int TOUCH_STATE_RESTING = 0;
@@ -99,6 +128,8 @@ public class PieChartView extends AdapterView<Adapter> {
     
     /** The diameter of the chart */
     private int mChartDiameter;
+	
+	private float mInfoRadius;
     
     /** The pixel density of the current device */
     private float mPixelDensity;
@@ -112,9 +143,46 @@ public class PieChartView extends AdapterView<Adapter> {
 	/** The current snapped-to index */
 	private int mCurrentIndex;
 	
-	Bitmap mSource;
+	private List<PieSliceDrawable> mDrawables;
+	
+	private Bitmap mSource;
+	
+	private OnItemLongClickListener mOnItemLongClickListener;
+	
+	private DrawThread mDrawThread;
 
     /**
+     * The listener that receives notifications when an item is clicked.
+     */
+    private OnItemClickListener mOnItemClickListener;
+	
+	private Bitmap mDrawingCache, mCoverCache;
+	
+	private MessageHandler mHandler;
+	
+	private ImageView mCoverView;
+	
+	private Paint mPaint;
+	private Paint mStrokePaint;
+	private CaretDrawable mCaret;
+	
+	public Bitmap getDrawingCache() {
+		return mDrawingCache;
+	}
+	
+	public Bitmap getCoverCache() {
+		return mCoverCache;
+	}
+	
+	public void setCoverView(ImageView coverView) {
+		mCoverView = coverView;
+	}
+	
+	public ImageView getCoverView() {
+		return mCoverView;
+	}
+
+	/**
      * Set the dynamics object used for fling and snap behavior.
      * 
      * @param dynamics The dynamics object
@@ -141,8 +209,6 @@ public class PieChartView extends AdapterView<Adapter> {
 		
 		// Keep rotation degree between 0 - 360
 		mRotationDegree = rotationDegree % 360;
-		
-		invalidate();
 	}
 	
 	public float getRotationDegree() {
@@ -151,6 +217,11 @@ public class PieChartView extends AdapterView<Adapter> {
 	
 	public int getCurrentIndex() {
 		return mCurrentIndex;
+	}
+	
+	public void setCurrentIndex(int index) {
+		mCurrentIndex = index;
+		mCoverCache = null;
 	}
 	
 	public void setSnapToAnchor(PieChartAnchor anchor) {
@@ -166,6 +237,31 @@ public class PieChartView extends AdapterView<Adapter> {
 		return mChartDiameter / 2f;
 	}
 
+    public OnItemLongClickListener getOnItemLongClickListener() {
+		return mOnItemLongClickListener;
+	}
+
+	public void setOnItemLongClickListener(
+			OnItemLongClickListener mOnItemLongClickListener) {
+		this.mOnItemLongClickListener = mOnItemLongClickListener;
+	}
+
+    public OnItemClickListener getOnItemClickListener() {
+		return mOnItemClickListener;
+	}
+
+	public void setOnItemClickListener(OnItemClickListener mOnItemClickListener) {
+		this.mOnItemClickListener = mOnItemClickListener;
+	}
+	
+	public void setSelection(int index) {
+		animateTo(index);
+	}
+	
+	public DrawThread getDrawThread() {
+		return mDrawThread;
+	}
+
 	public PieChartView(Context context) {
 		this(context, null);
 	}
@@ -177,37 +273,34 @@ public class PieChartView extends AdapterView<Adapter> {
 	public PieChartView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		
+		mHandler = new MessageHandler(this);
+		
+        getHolder().addCallback(this);
+		
+		setZOrderOnTop(true);
+        getHolder().setFormat(PixelFormat.TRANSPARENT);
+        
+        mDrawThread = new DrawThread(getHolder(), mHandler);
+		
 		mScrollThreshold = ViewConfiguration.get(context).getScaledTouchSlop();
 		mPixelDensity = UiUtils.getDisplayMetrics(context).density;
 		
-		setDrawingCacheEnabled(true);
+		mDrawables = new ArrayList<PieSliceDrawable>();
+		
+		mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		mPaint.setColor(Color.WHITE);
+		
+		mStrokePaint = new Paint(mPaint);
+		mStrokePaint.setStyle(Paint.Style.STROKE);
+		mStrokePaint.setStrokeWidth(UiUtils.getDynamicPixels(context, STROKE_WIDTH));
+		mStrokePaint.setColor(Color.BLACK);
+		mStrokePaint.setAlpha(50);
 	}
-
-    @Override
-    public boolean onInterceptTouchEvent(final MotionEvent event) {
-    	
-    	if (!inCircle((int) event.getX(), (int) event.getY()) && mTouchState == TOUCH_STATE_RESTING) return false;
-    	
-        switch (event.getAction()) {
-        
-            case MotionEvent.ACTION_DOWN:
-                startTouch(event);
-                return false;
-
-            case MotionEvent.ACTION_MOVE:
-                return startScrollIfNeeded(event);
-
-            default:
-                endTouch(event.getX(), event.getY(), 0);
-                return false;
-        }
-    }
 
     @Override
     public boolean onTouchEvent(final MotionEvent event) {
     	
-        if (getChildCount() == 0 || 
-        		(!inCircle((int) event.getX(), (int) event.getY()) && 
+        if ((!inCircle((int) event.getX(), (int) event.getY()) && 
 				mTouchState == TOUCH_STATE_RESTING)) {
         	return false;
         }
@@ -259,40 +352,6 @@ public class PieChartView extends AdapterView<Adapter> {
         return true;
     }
 	
-	@Override
-	public void onLayout(boolean changed, int left, int top, int right, int bottom) {
-		super.onLayout(changed, left, top, right, bottom);
-		
-		// if we don't have an adapter, we don't need to do anything
-        if (mAdapter == null) {
-            return;
-        }
-        
-        if (changed) {
-
-			final int itemHeight = (int) (getHeight() / 2);
-	        final int itemWidth = (int) (getWidth() / 2);
-	        
-	        boolean useHeight = itemHeight < itemWidth;
-	        mChartDiameter = useHeight ? (getHeight() - (getPaddingTop() + getPaddingBottom()))
-	        		: (getWidth() - (getPaddingLeft() + getPaddingRight()));
-	        
-			// Get the center coordinates of the view
-			mCenter.x = (float) itemWidth;
-			mCenter.y = (float) itemHeight;
-			
-			invalidate();
-        }
-		
-		if (getChildCount() == 0) {
-			
-			addPieSlices();
-			snapTo();
-		}
-        
-    	buildDrawingCache();
-	}
-	
 	/**
 	 * Calculates the overall vector velocity given both the x and y
 	 * velocities and normalized to be pixel independent.
@@ -308,6 +367,75 @@ public class PieChartView extends AdapterView<Adapter> {
         float velocity = (float) Math.sqrt(velocityX * velocityX + velocityY * velocityY) * direction / 2;
         
         return velocity;
+	}
+	
+	@Override
+	public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		
+		int width = MeasureSpec.getSize(widthMeasureSpec);
+		int height = MeasureSpec.getSize(heightMeasureSpec);
+        
+        boolean useHeight = height < width;
+        mChartDiameter = useHeight ? (height - (getPaddingTop() + getPaddingBottom()))
+        		: (width - (getPaddingLeft() + getPaddingRight()));
+		
+		mInfoRadius = getChartRadius() * 2 / 5;
+		
+        int size = useHeight ? height : width;
+        
+		setMeasuredDimension(size, size);
+	}
+	
+	@Override
+	public void onLayout(boolean changed, int left, int top, int right, int bottom) {
+		super.onLayout(changed, left, top, right, bottom);
+		
+		// if we don't have an adapter, we don't need to do anything
+        if (mAdapter == null) {
+            return;
+        }
+        
+        if (changed) {
+
+    		final int itemHeight = (int) (getHeight() / 2);
+            final int itemWidth = (int) (getWidth() / 2);
+            
+			// Get the center coordinates of the view
+			mCenter.x = (float) itemWidth;
+			mCenter.y = (float) itemHeight;
+        }
+	}
+
+    /**
+     * Starts at 0 degrees and adds each pie slice
+     */
+    private void addPieSlices() {
+    	
+    	mDrawables.clear();
+    	
+    	float offset = 0;
+    	
+        int left = getLeft() + getPaddingLeft();
+        int top = getTop() + getPaddingTop();
+    	
+        for (int index = 0; index < mAdapter.getCount(); index++) {
+            
+            final PieSliceDrawable childSlice = mAdapter.getSlice(this, index, offset);
+            
+            childSlice.setBounds(left, top, left + mChartDiameter, top + mChartDiameter);
+            mDrawables.add(childSlice);
+            
+            offset += childSlice.getDegrees();
+        }
+    }
+	
+	private void createCaret() {
+		
+		if (mCaret == null) {
+			PointF position = new PointF(mCenter.x - mInfoRadius / 2, mCenter.y + mInfoRadius / 3);
+	        mCaret = new CaretDrawable(getContext(), position, mInfoRadius, mInfoRadius);
+	        mCaret.setColor(Color.WHITE);
+		}
 	}
 
     /**
@@ -376,7 +504,7 @@ public class PieChartView extends AdapterView<Adapter> {
                     if (!mDynamics.isAtRest(VELOCITY_TOLERANCE)) {
                     	
                         // the list is not at rest, so schedule a new frame
-                        postDelayed(this, 16);
+                        postDelayed(this, 8);
                         
                     } else {
 
@@ -437,13 +565,13 @@ public class PieChartView extends AdapterView<Adapter> {
      */
     private void snapTo() {
     	
-    	for (int index = 0; index < getChildCount(); index++) {
+    	for (int index = 0; index < mDrawables.size(); index++) {
         	
-            final View childView = getChildAt(index);
+            final PieSliceDrawable slice = mDrawables.get(index);
             
-            if (childView instanceof PieSliceView && ((PieSliceView) childView).containsDegree(mRotationDegree, mSnapToDegree)) {
+            if (slice.containsDegree(mRotationDegree, mSnapToDegree)) {
             	
-            	animateTo((PieSliceView) childView, index);
+            	animateTo(slice, index);
             	
             	break;
             }
@@ -465,13 +593,10 @@ public class PieChartView extends AdapterView<Adapter> {
      * @param slice the PieSliceView to rotate to
      * @param index the index of the PieSliceView
      */
-    private void animateTo(PieSliceView slice, int index) {
-    	
-    	// Update current index
-    	mCurrentIndex = index;
+    private void animateTo(PieSliceDrawable slice, final int index) {
     	
     	if (slice == null) {
-    		slice = (PieSliceView) getChildAt(index);
+    		slice = mDrawables.get(index);
     	}
     	
         float degree = slice.getSliceCenter();
@@ -495,6 +620,22 @@ public class PieChartView extends AdapterView<Adapter> {
     	
     	ObjectAnimator rotate = ObjectAnimator.ofFloat(this, "rotationDegree", start, degree);
     	rotate.setDuration(300);
+    	rotate.addListener(new AnimatorListener() {
+			
+			@Override
+			public void onAnimationStart(Animator animation) {}
+			
+			@Override
+			public void onAnimationRepeat(Animator animation) {}
+			
+			@Override
+			public void onAnimationEnd(Animator animation) {
+				setCurrentIndex(index);
+			}
+			
+			@Override
+			public void onAnimationCancel(Animator animation) {}
+		});
     	rotate.start();
     }
     
@@ -577,6 +718,8 @@ public class PieChartView extends AdapterView<Adapter> {
      */
     private int getContainingChildIndex(final int x, final int y) {
     	
+    	if (inInfoCircle(x, y)) return INFO_INDEX;
+    	
     	if (!inCircle(x, y)) return INVALID_INDEX;
     	
         final Bitmap viewBitmap = getDrawingCache();
@@ -594,11 +737,11 @@ public class PieChartView extends AdapterView<Adapter> {
         // Grab the color pixel at the point touched and compare it with the children
         int pixel = mSource.getPixel(x, y);
         
-        for (int index = 0; index < getChildCount(); index++) {
+        for (int index = 0; index < mDrawables.size(); index++) {
         	
-            final View childView = getChildAt(index);
+            final PieSliceDrawable slice = mDrawables.get(index);
             
-            if (childView instanceof PieSliceView && ((PieSliceView) childView).getSliceColor() == pixel) {
+            if (slice.getSliceColor() == pixel) {
                 return index;
             }
         }
@@ -612,6 +755,18 @@ public class PieChartView extends AdapterView<Adapter> {
         double dy = (y - mCenter.y) * (y - mCenter.y);
 
         if ((dx + dy) < ((mChartDiameter / 2) * (mChartDiameter / 2))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    private boolean inInfoCircle(final int x, final int y) {
+    	
+        double dx = (x - mCenter.x) * (x - mCenter.x);
+        double dy = (y - mCenter.y) * (y - mCenter.y);
+
+        if ((dx + dy) < (mInfoRadius * mInfoRadius)) {
             return true;
         } else {
             return false;
@@ -631,9 +786,13 @@ public class PieChartView extends AdapterView<Adapter> {
     	
         final int index = getContainingChildIndex(x, y);
         
-        if (index != INVALID_INDEX) {
+        if (index == INFO_INDEX) {
         	
-            final PieSliceView sliceView = (PieSliceView) getChildAt(index);
+        	Log.i(TAG, "Info clicked");
+        	
+        } else if (index != INVALID_INDEX) {
+        	
+            final PieSliceDrawable sliceView = mDrawables.get(index);
             final long id = mAdapter.getItemId(index);
             
             if (getCurrentIndex() != index) {
@@ -645,90 +804,42 @@ public class PieChartView extends AdapterView<Adapter> {
     }
 
     /**
+     * Call the OnItemClickListener, if it is defined.
+     *
+     * @param view The drawable within the View that was clicked.
+     * @param position The position of the view in the adapter.
+     * @param id The row id of the item that was clicked.
+     * @return True if there was an assigned OnItemClickListener that was
+     *         called, false otherwise is returned.
+     */
+    public boolean performItemClick(PieSliceDrawable view, int position, long id) {
+    	
+        if (mOnItemClickListener != null) {
+        	
+            playSoundEffect(SoundEffectConstants.CLICK);
+            mOnItemClickListener.onItemClick(this, view, position, id);
+            
+            return true;
+        }
+
+        return false;
+    }
+
+	/**
      * Calls the item long click listener for the child with the specified index
      * 
      * @param index Child index
      */
     private void longClickChild(final int index) {
     	
-        final View itemView = getChildAt(index);
+        final PieSliceDrawable slice = mDrawables.get(index);
         final long id = mAdapter.getItemId(index);
         final OnItemLongClickListener listener = getOnItemLongClickListener();
         
         if (listener != null) {
-            listener.onItemLongClick(this, itemView, index, id);
+            listener.onItemLongClick(null, slice, index, id);
         }
     }
-
-    /**
-     * Starts at 0 degrees and adds each pie slice
-     */
-    private void addPieSlices() {
-    	
-    	float offset = 0;
-    	
-        int left = (getWidth() - mChartDiameter) / 2;
-        int top = (getHeight() - mChartDiameter) / 2;
-    	
-        for (int index = 0; index < mAdapter.getCount(); index++) {
-            
-            final PieSliceView childSlice = mAdapter.getSlice(index, offset, this);
-            
-            addAndMeasureChild(childSlice, index);
-            childSlice.layout(left, top, left + mChartDiameter, top + mChartDiameter);
-            
-            offset += childSlice.getDegrees();
-        }
-    }
-
-    /**
-     * Adds a view as a child view and takes care of measuring it
-     * 
-     * @param child The view to add
-     * @param index The index of the child to be added
-     */
-    private void addAndMeasureChild(final View child, final int index) {
-    	
-        LayoutParams params = child.getLayoutParams();
-        if (params == null) {
-            params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        }
-        
-//        child.setDrawingCacheEnabled(true);
-        addViewInLayout(child, index, params, false);
-        
-        child.measure(MeasureSpec.EXACTLY | mChartDiameter, MeasureSpec.EXACTLY | mChartDiameter);
-    }
-    
-    @Override
-    protected void dispatchDraw(Canvas canvas) {
-    	
-    	canvas.save();
-		canvas.rotate(mRotationDegree, getWidth() / 2, getHeight() / 2);
-
-        super.dispatchDraw(canvas);
-    	
-        canvas.restore();
-    }
-
-	@Override
-	public Adapter getAdapter() {
-		throw new RuntimeException(
-				"For PieChart, use getPieChartAdapter() instead of "
-						+ "getAdapter()");
-	}
-
-	@Override
-	public View getSelectedView() {
-        throw new UnsupportedOperationException("Not supported");
-	}
-
-	@Override
-	public void setAdapter(Adapter adapter) {
-		throw new RuntimeException(
-				"For PieChart, use setAdapter(PieChartAdapter) instead of "
-						+ "setAdapter(Adapter)");
-	}
 	
 	public BasePieChartAdapter getPieChartAdapter() {
 		return mAdapter;
@@ -742,8 +853,6 @@ public class PieChartView extends AdapterView<Adapter> {
 		}
 		
 		mAdapter = adapter;
-        removeAllViewsInLayout();
-        requestLayout();
 	}
 	
 	private boolean validAdapter(BasePieChartAdapter adapter) {
@@ -754,15 +863,204 @@ public class PieChartView extends AdapterView<Adapter> {
 			total += adapter.getPercent(i);
 		}
 		
-		return total == 1;
+		return total % 1f < 0.0001f;
 	}
 
 	@Override
-	public void setSelection(int position) {
-        animateTo(position);
+	public void surfaceChanged(SurfaceHolder holder, int format, int width,
+			int height) {
+	}
+
+	@Override
+	public void surfaceCreated(SurfaceHolder holder) {
+		Log.i(TAG, "surfaceCreated");
+		
+		if (mDrawThread.getState() == Thread.State.TERMINATED) {
+			
+			mDrawThread = new DrawThread(getHolder(), mHandler);
+			mDrawThread.setRunning(true);
+			mDrawThread.start();
+			
+        } else {
+        	
+        	mDrawThread.setRunning(true);
+        	mDrawThread.start();
+        }
+	}
+
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		Log.i(TAG, "surfaceDestroyed");
+		
+		boolean retry = true;
+		
+		mDrawThread.setRunning(false);
+		
+		while (retry) {
+			try {
+				mDrawThread.join();
+				retry = false;
+			} catch (InterruptedException e) {
+			}
+		}
 	}
 	
 	public interface OnPieChartChangeListener {
 		public void onSelectionChanged(int index);
+	}
+	
+	public interface OnItemClickListener {
+		public void onItemClick(View parent, Drawable drawable, int position, long id);
+	}
+	
+	public interface OnItemLongClickListener {
+		public void onItemLongClick(View parent, Drawable drawable, int position, long id);
+	}
+	
+	static class MessageHandler extends Handler {
+		
+		private final WeakReference<PieChartView> mPieChartView; 
+
+		MessageHandler(PieChartView pieChartView) {
+	    	mPieChartView = new WeakReference<PieChartView>(pieChartView);
+	    }
+	    
+		@Override
+        public void handleMessage(Message m) {
+
+    		MessageType type = (MessageType) m.getData().getSerializable(MESSAGE);
+    		
+    		PieChartView chart = mPieChartView.get();
+    		
+    		switch (type) {
+	    		case SNAP_TO:
+	    			chart.snapTo();
+	    			break;
+	    		case CACHE_READY:
+	    			chart.mCoverView.setImageBitmap(chart.getCoverCache());
+	    			break;
+    		}
+        }
+	}
+	
+	protected class DrawThread extends Thread {
+
+        /** Message handler used by thread to interact with UI */
+        private Handler mHandler;
+		
+		private SurfaceHolder surfaceHolder;
+		private boolean isRunning;
+
+		public DrawThread(SurfaceHolder surfaceHolder, Handler handler) {
+			this.surfaceHolder = surfaceHolder;
+            mHandler = handler;
+			isRunning = false;
+		}
+
+		public void setRunning(boolean run) {
+			isRunning = run;
+		}
+		
+		public boolean isRunning() {
+			return isRunning;
+		}
+		
+		@Override
+		public void run() {
+			
+			Log.i(TAG, "Drawing started");
+			
+			Canvas c;
+			
+			while (isRunning) {
+
+				if (mDrawables.size() == 0 && mAdapter != null) {
+					addPieSlices();
+
+					sendMessage(MessageType.SNAP_TO);
+				}
+				
+				if (mDrawingCache == null) {
+					createDrawingCache();
+				}
+				
+				if (mCoverCache == null) {
+					createCoverCache();
+				}
+				
+				c = null;
+				
+				try {
+					
+					c = surfaceHolder.lockCanvas(null);
+					
+					synchronized (surfaceHolder) {
+				    	doDraw(c);
+					}
+					
+				} finally {
+					// do this in a finally so that if an exception is thrown
+					// during the above, we don't leave the Surface in an
+					// inconsistent state
+					if (c != null) {
+						surfaceHolder.unlockCanvasAndPost(c);
+					}
+				}
+			}
+		}
+		
+		private void createDrawingCache() {
+			
+			if (mDrawingCache == null) {
+				mDrawingCache = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+			}
+			
+			Canvas cache = new Canvas(mDrawingCache);
+			doDraw(cache);
+		}
+		
+		private void createCoverCache() {
+			
+			if (mCoverCache == null) {
+				mCoverCache = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+			}
+			
+			Canvas cache = new Canvas(mCoverCache);
+			doDraw(cache);
+			
+			sendMessage(MessageType.CACHE_READY);
+		}
+		
+		private void sendMessage(MessageType type) {
+
+            Message msg = mHandler.obtainMessage();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(MESSAGE, type);
+            msg.setData(bundle);
+            mHandler.sendMessage(msg);
+		}
+		
+		private void doDraw(Canvas canvas) {
+			
+			if (canvas == null) return;
+			
+			canvas.drawColor(0, PorterDuff.Mode.CLEAR);
+			
+			canvas.save();
+			canvas.rotate(mRotationDegree, mCenter.x, mCenter.y);
+	    	canvas.translate(getPaddingLeft(), getPaddingTop());
+	    	
+	        for (PieSliceDrawable slice : mDrawables) {
+	        	slice.draw(canvas);
+	        }
+	        
+	        canvas.restore();
+	        
+			createCaret();
+
+	        canvas.drawCircle(mCenter.x, mCenter.y, getChartRadius() * 2 / 5, mStrokePaint);
+	        mCaret.draw(canvas);
+	        canvas.drawCircle(mCenter.x, mCenter.y, getChartRadius() * 2 / 5, mPaint);
+		}
 	}
 }

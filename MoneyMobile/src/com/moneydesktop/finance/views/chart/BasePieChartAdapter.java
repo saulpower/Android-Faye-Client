@@ -18,6 +18,6 @@ public abstract class BasePieChartAdapter extends BaseAdapter {
 						+ "getView(int position, View convertView, ViewGroup parent)");
 	}
 	
-	public abstract PieSliceView getSlice(int position, float offset, ViewGroup parent);
+	public abstract PieSliceDrawable getSlice(View view, int position, float offset);
 	public abstract float getPercent(int position);
 }

@@ -6,8 +6,11 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
+import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Enums.DataState;
@@ -619,6 +622,28 @@ public class Category extends BusinessObject  {
         
         return data;
     }
+    
+    public static float getTotalForCategory(Category category) {
+
+    	float total = 0;
+    	
+    	String catId = Long.toString(category.getId());
+    	
+        SQLiteDatabase db = ApplicationContext.getDb();
+        Cursor cursor = db.rawQuery(Constant.QUERY_CATEGORY_TOTAL, new String[] { catId, catId });
+
+        cursor.moveToFirst();
+        
+        while (cursor.isAfterLast() == false) {
+        	total = cursor.getFloat(0);
+            cursor.moveToNext();
+        }
+        
+        cursor.close();
+        
+    	return total;
+    }
+    
     // KEEP METHODS END
 
 }

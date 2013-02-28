@@ -2,11 +2,12 @@ package com.moneydesktop.finance.shared.fragment;
 
 import android.annotation.TargetApi;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.tablet.adapter.GrowPagerAdapter;
+import com.moneydesktop.finance.shared.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.util.UiUtils;
 
 public abstract class GrowFragment extends BaseFragment {
@@ -20,8 +21,18 @@ public abstract class GrowFragment extends BaseFragment {
 
 	private boolean mInit = false;
 	private RelativeLayout mBackground, mCover;
-	private GrowPagerAdapter mAdapter;
+	protected GrowPagerAdapter mAdapter;
+	private ViewPager mPager;
+
 	private int mCurrentPosition = 0;
+	
+	public ViewPager getmPager() {
+		return mPager;
+	}
+
+	public void setmPager(ViewPager mPager) {
+		this.mPager = mPager;
+	}
 
 	@Override
 	public void onViewStateRestored(Bundle savedInstanceState) {

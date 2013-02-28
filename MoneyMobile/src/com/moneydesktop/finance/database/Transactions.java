@@ -1306,6 +1306,12 @@ public class Transactions extends BusinessObject  {
         }
     }
 
+    /**
+     * Is the passed in category income
+     * 
+     * @param c
+     * @return
+     */
     public static boolean isCategoryIncome(Category c) {
         if (c.getCategoryName().equalsIgnoreCase(Constant.INCOME)) {
             return true;
@@ -1321,6 +1327,11 @@ public class Transactions extends BusinessObject  {
         }
     }
 
+    /**
+     * Is this transaction categorized as income
+     * 
+     * @return True if the transaction is income
+     */
     public boolean isIncome() {
     	
     	if (getCategoryId() != null) {
@@ -1353,6 +1364,16 @@ public class Transactions extends BusinessObject  {
     	buildTagString(textView, false);
     }
     
+    /**
+     * Creates a string containing all of the tags associated with
+     * this particular transaction and sets the string to the passed
+     * in view.  This method is run asynchronously via AsyncTask so
+     * not to slow the UI down.
+     * 
+     * @param textView The text view the tag string should be applied to
+     * @param isUpdate Should the tag string be applied animated through
+     * 			an AnimatedEditText
+     */
     public void buildTagString(final TextView textView, final boolean isUpdate) {
 
     	new AsyncTask<Void, Void, String>() {
@@ -1387,6 +1408,11 @@ public class Transactions extends BusinessObject  {
         
     }
     
+    /**
+     * Get the normalized amount
+     * 
+     * @return the normalized amount
+     */
     public Double normalizedAmount() {
         
         if (normalizedAmount == null) {
@@ -1401,6 +1427,11 @@ public class Transactions extends BusinessObject  {
         return normalizedAmount;
     }
     
+    /**
+     * Capitalize the title string
+     * 
+     * @return A string with capital words
+     */
     public String getCapitalizedTitle() {
         
         if (mCapitalizedTitle == null || !mCapitalizedTitle.equalsIgnoreCase(getTitle())) {
@@ -1410,6 +1441,9 @@ public class Transactions extends BusinessObject  {
         return mCapitalizedTitle;
     }
     
+    /**
+     * Set all transactions processed flag to true
+     */
     public static void setAllRead() {
     	
     	new AsyncTask<Void, Void, Boolean>() {
@@ -1432,6 +1466,26 @@ public class Transactions extends BusinessObject  {
 			
 		}.execute();
     }
+    
+    public static float getAllTransactionsTotal() {
+    	
+    	float total = 0;
+    	
+        SQLiteDatabase db = ApplicationContext.getDb();
+        Cursor cursor = db.rawQuery(Constant.QUERY_TRANSACTIONS_TOTAL, new String[] {});
+
+        cursor.moveToFirst();
+        
+        while (cursor.isAfterLast() == false) {
+        	total = cursor.getFloat(0);
+            cursor.moveToNext();
+        }
+        
+        cursor.close();
+        
+    	return total;
+    }
+    
     // KEEP METHODS END
 
 }

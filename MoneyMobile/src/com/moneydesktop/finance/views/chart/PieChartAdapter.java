@@ -3,7 +3,7 @@ package com.moneydesktop.finance.views.chart;
 import java.util.List;
 
 import android.content.Context;
-import android.view.ViewGroup;
+import android.view.View;
 
 import com.moneydesktop.finance.data.Constant;
 
@@ -29,13 +29,13 @@ public class PieChartAdapter extends BasePieChartAdapter {
 	}
 
 	@Override
-	public PieSliceView getSlice(int position, float offset, ViewGroup parent) {
+	public PieSliceDrawable getSlice(View view, int position, float offset) {
 		
 		Float percent = (Float) getItem(position);
 		
 		position = position > 15 ? position % 16 : position;
 
-		PieSliceView sliceView = new PieSliceView(mContext, offset, percent, getColor(Constant.RANDOM_COLORS[position]));
+		PieSliceDrawable sliceView = new PieSliceDrawable(view, mContext, offset, percent, getColor(Constant.RANDOM_COLORS[position]));
 		
 		return sliceView;
 	}

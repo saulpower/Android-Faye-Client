@@ -4,15 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.drawable.Drawable;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.View.MeasureSpec;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 
@@ -55,6 +59,17 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 	private CaretDrawable mCaret;
 	
 	private float mInfoRadius;
+	
+	private List<Float> mBaseSlices = new ArrayList<Float>();
+	private List<Float> mSubSlices = new ArrayList<Float>();
+	
+	private BaseExpandablePieChartAdapter mAdapter;
+	
+	private AdapterDataSetObserver mDataSetObserver;
+	
+	private boolean mDataChanged = false;
+	
+	private int mGroupCount = 0;
 
 	public ExpandablePieChartView(Context context) {
 		this(context, null);
@@ -78,7 +93,7 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 		mStrokePaint.setColor(Color.BLACK);
 		mStrokePaint.setAlpha(50);
 		
-//		setDrawingCacheEnabled(true);
+		setDrawingCacheEnabled(true);
 	}
 
     @Override
@@ -191,16 +206,36 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
         
         return false;
     }
+	
+	@Override
+	public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		
+		int width = MeasureSpec.getSize(widthMeasureSpec);
+		int height = MeasureSpec.getSize(heightMeasureSpec);
+        
+        boolean useHeight = height < width;
+        int size = useHeight ? height : width;
+        
+		setMeasuredDimension(size, size);
+	}
 
 	@Override
 	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
 		super.onLayout(changed, left, top, right, bottom);
 		
+		// if we don't have an adapter, we don't need to do anything
+        if (mAdapter == null) {
+        	resetChart();
+            return;
+        }
+        
+        if (mGroupCount == 0) {
+        	resetChart();
+        }
+        
 		if (getChildCount() == 0) {
 			
 			addPieCharts();
-			
-			mSubChart.setVisibility(View.INVISIBLE);
 
 			mInfoRadius = mBaseChart.getChartRadius() * 2 / 5;
 			
@@ -210,6 +245,13 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 			
 			createCaret();
 		}
+	}
+	
+	private void resetChart() {
+		
+		removeAllViewsInLayout();
+		mDataChanged = false;
+		invalidate();
 	}
     
     private boolean inCircle(final int x, final int y) {
@@ -227,28 +269,35 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 	private void addPieCharts() {
 
 		mBaseChart = new PieChartView(getContext());
-		mBaseChart.setOnItemClickListener(new OnItemClickListener() {
-
+		mBaseChart.setOnItemClickListener(new PieChartView.OnItemClickListener() {
+			
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int index, long id) {
-				mSubChart.setVisibility(mSubChart.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
+			public void onItemClick(View parent, Drawable drawable, int position, long id) {
+				
+				Log.i(TAG, "Item " + position + " clickd");
+				
+//				mSubChart.setVisibility(mSubChart.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);	
 			}
 		});
 		
-		mSubChart = new PieChartView(getContext());
+//		mSubChart = new PieChartView(getContext());
 		
-		addDummyData(mBaseChart);
-		addDummyData(mSubChart);
+		initializeBaseChartData();
+//		initializeSubChartData();
 		
 		addAndMeasureChart(mBaseChart, 0, getWidth(), getHeight());
 		mBaseChart.layout(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(), getHeight() - getPaddingBottom());
 		
-		int subChartSize = (int) (mBaseChart.getChartDiameter() * 7 / 10);
-		int left = getWidth() / 2 - subChartSize / 2;
-		int top = getHeight() / 2 - subChartSize / 2;
+		mBaseChart.setVisibility(View.GONE);
 		
-		addAndMeasureChart(mSubChart, 1, subChartSize, subChartSize);
-		mSubChart.layout(left, top, left + subChartSize, top + subChartSize);
+//		int subChartSize = (int) (mBaseChart.getChartDiameter() * 7 / 10);
+//		int left = getWidth() / 2 - subChartSize / 2;
+//		int top = getHeight() / 2 - subChartSize / 2;
+//		
+//		addAndMeasureChart(mSubChart, 1, subChartSize, subChartSize);
+//		mSubChart.layout(left, top, left + subChartSize, top + subChartSize);
+//		
+//		mSubChart.setVisibility(View.INVISIBLE);
 	}
 
     /**
@@ -269,22 +318,62 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
         chart.measure(MeasureSpec.EXACTLY | width, MeasureSpec.EXACTLY | height);
     }
 	
-	private void addDummyData(PieChartView chart) {
+	private void initializeBaseChartData() {
 		
-		List<Float> slices = new ArrayList<Float>();
-		slices.add(0.1f);
-		slices.add(0.05f);
-		slices.add(0.2f);
-		slices.add(0.15f);
-		slices.add(0.3f);
-		slices.add(0.15f);
-		slices.add(0.05f);
+		mBaseSlices.clear();
+		final float total = getGroupTotal();
 		
-		PieChartAdapter adapter = new PieChartAdapter(getContext(), slices);
-
-		chart.setDynamics(new FrictionDynamics(0.95f));
-		chart.setSnapToAnchor(PieChartAnchor.BOTTOM);
-		chart.setAdapter(adapter);
+		for (int i = 0; i < mAdapter.getGroupCount(); i++) {
+			mBaseSlices.add(mAdapter.getGroupAmount(i) / total);
+		}
+		
+		PieChartAdapter adapter = new PieChartAdapter(getContext(), mBaseSlices);
+		
+		mBaseChart.setDynamics(new FrictionDynamics(0.95f));
+		mBaseChart.setSnapToAnchor(PieChartAnchor.BOTTOM);
+		mBaseChart.setAdapter(adapter);
+	}
+	
+	private void initializeSubChartData() {
+		
+		if (mAdapter.getGroupCount() < 1) return;
+		
+		int groupPosition = 0;
+		
+		mSubSlices.clear();
+		final float total = getChildTotal(groupPosition);
+		
+		for (int i = 0; i < mAdapter.getChildrenCount(groupPosition); i++) {
+			mSubSlices.add(mAdapter.getChildAmount(groupPosition, i) / total);
+		}
+		
+		PieChartAdapter adapter = new PieChartAdapter(getContext(), mSubSlices);
+		
+		mSubChart.setDynamics(new FrictionDynamics(0.95f));
+		mSubChart.setSnapToAnchor(PieChartAnchor.BOTTOM);
+		mSubChart.setAdapter(adapter);
+	}
+	
+	private float getGroupTotal() {
+		
+		float total = 0;
+		
+		for (int i = 0; i < mAdapter.getGroupCount(); i++) {
+			total += mAdapter.getGroupAmount(i);
+		}
+		
+		return total;
+	}
+	
+	private float getChildTotal(int groupPosition) {
+		
+		float total = 0;
+		
+		for (int i = 0; i < mAdapter.getChildrenCount(groupPosition); i++) {
+			total += mAdapter.getChildAmount(groupPosition, i);
+		}
+		
+		return total;
 	}
     
     @Override
@@ -305,25 +394,92 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 
 	@Override
 	public Adapter getAdapter() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException(
+				"For ExpandablePieChart, use getExpandablePieChartAdapter() instead of "
+						+ "getAdapter()");
 	}
 
 	@Override
 	public View getSelectedView() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("Not Supported");
 	}
 
 	@Override
 	public void setAdapter(Adapter adapter) {
-		// TODO Auto-generated method stub
+		throw new RuntimeException(
+				"For ExpandablePieChart, use setAdapter(ExpandablePieChartAdapter) instead of "
+						+ "setAdapter(Adapter)");
 		
 	}
 
 	@Override
 	public void setSelection(int position) {
-		// TODO Auto-generated method stub
+		throw new RuntimeException("Not Supported");
+	}
+	
+	public BaseExpandablePieChartAdapter getPieChartAdapter() {
+		return mAdapter;
+	}
+
+	public void setAdapter(BaseExpandablePieChartAdapter adapter) {
 		
+		if (mAdapter != null && mDataSetObserver != null) {
+			mAdapter.unregisterDataSetObserver(mDataSetObserver);
+		}
+		
+		resetChart();
+		
+		mAdapter = adapter;
+		
+		if (mAdapter != null) {
+			mDataSetObserver = new AdapterDataSetObserver();
+			mAdapter.registerDataSetObserver(mDataSetObserver);
+		}
+		
+        removeAllViewsInLayout();
+        requestLayout();
+	}
+	
+	class AdapterDataSetObserver extends DataSetObserver {
+
+		private Parcelable mInstanceState = null;
+
+		@Override
+		public void onChanged() {
+			
+			mDataChanged = true;
+			mGroupCount = getPieChartAdapter().getGroupCount();
+			
+			// Detect the case where a cursor that was previously invalidated
+			// has been re-populated with new data.
+			if (ExpandablePieChartView.this.getPieChartAdapter().hasStableIds() && mInstanceState != null) {
+				
+				ExpandablePieChartView.this.onRestoreInstanceState(mInstanceState);
+				mInstanceState = null;
+			}
+			
+			requestLayout();
+		}
+
+		@Override
+		public void onInvalidated() {
+			
+			mDataChanged = true;
+
+			if (ExpandablePieChartView.this.getPieChartAdapter().hasStableIds()) {
+				
+				// Remember the current state for the case where our hosting
+				// activity is being stopped and later restarted
+				mInstanceState = ExpandablePieChartView.this.onSaveInstanceState();
+			}
+			
+			mGroupCount = 0;
+
+			requestLayout();
+		}
+
+		public void clearSavedState() {
+			mInstanceState = null;
+		}
 	}
 }
