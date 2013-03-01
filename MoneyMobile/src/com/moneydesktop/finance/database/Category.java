@@ -66,7 +66,8 @@ public class Category extends BusinessObject  {
     
 	public static final String TAG = "Category";
 	
-	private float mPercent;
+	private float mChildPercent;
+	private float mParentPercent;
 	
     // KEEP FIELDS END
 
@@ -381,13 +382,21 @@ public class Category extends BusinessObject  {
     public String getExternalId() {
     	return getCategoryId();
     }
-    
-    public float getPercent() {
-		return mPercent;
+	
+	public float getChildPercent() {
+		return mChildPercent;
 	}
-
-	public void setPercent(float mPercent) {
-		this.mPercent = mPercent;
+	
+	public void setChildPercent(float percent) {
+		mChildPercent = percent;
+	}
+	
+	public float getParentPercent() {
+		return mParentPercent;
+	}
+	
+	public void setParentPercent(float percent) {
+		mParentPercent = percent;
 	}
 
 	public boolean isIncome() {
@@ -660,15 +669,35 @@ public class Category extends BusinessObject  {
     }
     
     public static float getTotalForCategory(Category category, DateRange range) {
-
-    	float total = 0;
     	
     	String catId = Long.toString(category.getId());
     	
-        SQLiteDatabase db = ApplicationContext.getDb();
-        Cursor cursor = db.rawQuery(Constant.QUERY_CATEGORY_TOTAL, new String[] {
+    	String query = Constant.QUERY_CATEGORY_TOTAL;
+    	String[] selectionArgs = new String[] {
         		catId, catId, range.getStartDateString(), range.getEndDateString()
-        });
+        };
+        
+    	return getTotal(query, selectionArgs);
+    }
+    
+    public static float getTotalForChildCategory(Category category, DateRange range) {
+
+    	String catId = Long.toString(category.getId());
+    	
+    	String query = Constant.QUERY_CATEGORY_CHILD_TOTAL;
+    	String[] selectionArgs = new String[] {
+        		catId, range.getStartDateString(), range.getEndDateString()
+        };
+        
+    	return getTotal(query, selectionArgs);
+    }
+    
+    private static float getTotal(String query, String[] selectionArgs) {
+
+    	float total = 0;
+    	
+    	SQLiteDatabase db = ApplicationContext.getDb();
+        Cursor cursor = db.rawQuery(query, selectionArgs);
 
         cursor.moveToFirst();
         

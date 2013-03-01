@@ -83,13 +83,13 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 				
 				@Override
 				public void run() {
-					mChartImage.setVisibility(View.GONE);
+//					mChartImage.setVisibility(View.GONE);
 				}
 			});
 			
 		} else if (ViewPager.SCROLL_STATE_IDLE != state) {
 
-			mChartImage.setVisibility(View.VISIBLE);
+//			mChartImage.setVisibility(View.VISIBLE);
 			mChart.setVisibility(View.GONE);
 		}
 	}

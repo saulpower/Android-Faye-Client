@@ -6,6 +6,7 @@ import java.util.Date;
 public class DateRange {
 	
 	private Calendar mCalendar;
+	private Date mToday;
 	
 	private Date mStartDate;
 	private Date mEndDate;
@@ -44,19 +45,42 @@ public class DateRange {
 	
 	public DateRange() {
 
+		mToday = new Date();
+		
 		mCalendar = Calendar.getInstance();
+	}
+	
+	private void resetCalendar() {
+		mCalendar.setTime(mToday);
+		mCalendar.set(Calendar.HOUR_OF_DAY, 0);
+		mCalendar.set(Calendar.MINUTE, 0);
+		mCalendar.set(Calendar.SECOND, 0);
+		mCalendar.set(Calendar.MILLISECOND, 0);
 	}
 	
 	public void getCurrentMonth() {
 		
-		mCalendar.setTime(new Date());
+		resetCalendar();
+		
 		mCalendar.set(Calendar.DAY_OF_MONTH, 1);
 		
 		setStartDate(mCalendar.getTime());
 		
 		mCalendar.add(Calendar.MONTH, 1);
 		mCalendar.add(Calendar.DAY_OF_MONTH, -1);
+		mCalendar.set(Calendar.HOUR_OF_DAY, 24);
+		mCalendar.set(Calendar.MINUTE, 59);
 		
 		setEndDate(mCalendar.getTime());
+	}
+	
+	public void addMonthsToStart(int months) {
+		
+		resetCalendar();
+		
+		mCalendar.set(Calendar.DAY_OF_MONTH, 1);
+		mCalendar.add(Calendar.MONTH, months);
+		
+		setStartDate(mCalendar.getTime());
 	}
 }

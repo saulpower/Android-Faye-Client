@@ -6,9 +6,7 @@ import java.util.List;
 import android.os.AsyncTask;
 import android.util.Pair;
 
-import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.database.Category;
-import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.util.DateRange;
 
 public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
@@ -39,25 +37,40 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
             	
             	Category other = new Category();
             	other.setCategoryName("Other");
-            	other.setPercent(0f);
+            	other.setParentPercent(0f);
             	
-            	float total = Transactions.getTransactionsTotal(Constant.QUERY_SPENDING_TOTAL, range);
+            	float total = 0f;
+            	int count = -1;
             	
             	List<Pair<Category, List<Category>>> categories = Category.loadCategoryData(true);
-                
+
+            	while (total == 0f) {
+            		
+            		for (Pair<Category, List<Category>> parent : categories) {
+                		total += Category.getTotalForCategory(parent.first, range);
+                	}
+            		
+            		if (total == 0f) {
+            			total = 0f;
+            			range.addMonthsToStart(count);
+            			count--;
+            		}
+            	}
+            	
         		for (Pair<Category, List<Category>> parent : categories) {
         			
         			float categoryTotal = Category.getTotalForCategory(parent.first, range);
         			float categoryPercent = categoryTotal / total;
         			
-        			parent.first.setPercent(categoryPercent);
+        			parent.first.setParentPercent(categoryPercent);
+        			parent.second.add(parent.first);
         			
         			// Compile all categories under 3% of the total into
         			// an "Other" category
         			if (categoryPercent <= 0.03f && categoryPercent > 0) {
         				
         				others.add(parent.first);
-        				other.setPercent(other.getPercent() + categoryPercent);
+        				other.setParentPercent(other.getParentPercent() + categoryPercent);
         				
         				continue;
         				
@@ -68,8 +81,8 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
         			
         			for (Category category : parent.second) {
         				
-        				float childPercent = Category.getTotalForCategory(category, range) / categoryTotal;
-        				category.setPercent(childPercent);
+        				float childPercent = Category.getTotalForChildCategory(category, range) / categoryTotal;
+        				category.setChildPercent(childPercent);
         			}
         			
         			percents.add(new Pair<Category, List<Category>>(parent.first, parent.second));
@@ -90,7 +103,7 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
                 mCategories.clear();
                 mCategories.addAll(categories);
 				
-                notifyDataSetInvalidated();
+                notifyDataSetChanged();
             }
 
         }.execute();
@@ -141,7 +154,7 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
 		
 		Category category = (Category) getChild(groupPosition, childPosition);
 		
-		return category.getPercent();
+		return category.getChildPercent();
 	}
 
 	@Override
@@ -149,6 +162,6 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
 		
 		Category category = (Category) getGroup(groupPosition);
 		
-		return category.getPercent();
+		return category.getParentPercent();
 	}
 }

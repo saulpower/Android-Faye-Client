@@ -58,7 +58,6 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     };
     
     private enum MessageType {
-    	CACHE_READY,
     	SNAP_TO
     };
 
@@ -84,7 +83,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     private static final int TOUCH_STATE_CLICK = 1;
 
     /** User is scrolling the list */
-    private static final int TOUCH_STATE_SCROLL = 2;
+    private static final int TOUCH_STATE_ROTATE = 2;
     
     /** Default degree to snap to */
     private static final float DEFAULT_SNAP_DEGREE = 0f;
@@ -163,8 +162,10 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
      * The listener that receives notifications when an item is clicked.
      */
     private OnItemClickListener mOnItemClickListener;
-	
-	private Bitmap mDrawingCache, mCoverCache;
+    
+    private OnRotationStateChangeListener mOnRotationStateChangeListener;
+
+	private Bitmap mDrawingCache;
 	
 	private MessageHandler mHandler;
 	
@@ -178,10 +179,6 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	
 	public Bitmap getDrawingCache() {
 		return mDrawingCache;
-	}
-	
-	public Bitmap getCoverCache() {
-		return mCoverCache;
 	}
 	
 	public void setCoverView(ImageView coverView) {
@@ -248,11 +245,19 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	
 	public void setCurrentIndex(int index) {
 		mCurrentIndex = index;
-		mCoverCache = null;
 		
 		if (mOnPieChartChangeListener != null) {
 			mOnPieChartChangeListener.onSelectionChanged(index);
 		}
+	}
+	
+	public OnRotationStateChangeListener getOnRotationStateChangeListener() {
+		return mOnRotationStateChangeListener;
+	}
+
+	public void setOnRotationStateChangeListener(
+			OnRotationStateChangeListener mOnRotationStateChangeListener) {
+		this.mOnRotationStateChangeListener = mOnRotationStateChangeListener;
 	}
 	
 	public void setSnapToAnchor(PieChartAnchor anchor) {
@@ -359,7 +364,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
                     startScrollIfNeeded(event);
                 }
                 
-                if (mTouchState == TOUCH_STATE_SCROLL) {
+                if (mTouchState == TOUCH_STATE_ROTATE) {
                     mVelocityTracker.addMovement(event);
                     rotateChart(event.getX(), event.getY());
                 }
@@ -374,7 +379,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
                 	
                     clickChildAt((int) event.getX(), (int) event.getY());
                     
-                } else if (mTouchState == TOUCH_STATE_SCROLL) {
+                } else if (mTouchState == TOUCH_STATE_ROTATE) {
                 	
                     mVelocityTracker.addMovement(event);
                     mVelocityTracker.computeCurrentVelocity(PIXELS_PER_SECOND);
@@ -424,8 +429,6 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 		
 		mInfoRadius = getChartRadius() / 2;
 		
-		Log.i(TAG, "Diameter: " + mChartDiameter + " InfoRadius: " + mInfoRadius);
-		
         int size = useHeight ? height : width;
         
 		setMeasuredDimension(size, size);
@@ -434,11 +437,6 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	@Override
 	public void onLayout(boolean changed, int left, int top, int right, int bottom) {
 		super.onLayout(changed, left, top, right, bottom);
-		
-		// if we don't have an adapter, we don't need to do anything
-        if (mAdapter == null) {
-            return;
-        }
         
 		// Get the center coordinates of the view
 		mCenter.x = (float) Math.abs(left - right) / 2;
@@ -564,6 +562,10 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 
         // reset touch state
         mTouchState = TOUCH_STATE_RESTING;
+
+        if (mOnRotationStateChangeListener != null) {
+        	mOnRotationStateChangeListener.onRotationStateChange(TOUCH_STATE_RESTING);
+        }
     }
 
     /**
@@ -587,7 +589,11 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
             // we've moved far enough for this to be a scroll
             removeCallbacks(mLongPressRunnable);
             
-            mTouchState = TOUCH_STATE_SCROLL;
+            mTouchState = TOUCH_STATE_ROTATE;
+            
+            if (mOnRotationStateChangeListener != null) {
+            	mOnRotationStateChangeListener.onRotationStateChange(TOUCH_STATE_ROTATE);
+            }
             
             mRotationStart = (float) Math.toDegrees(Math.atan2(mCenter.y - yPos, mCenter.x - xPos));
             
@@ -678,15 +684,29 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     
     public void toggleChart() {
     	
-    	mDrawingCache = null;
-    	
     	final float start = getChartScale();
     	final float end = start == 1f ? 0f : 1f;
     	
     	ObjectAnimator scale = ObjectAnimator.ofFloat(this, "chartScale", start, end);
     	scale.setDuration(400);
-    	scale.setInterpolator(new OvershootInterpolator());
+    	if (end == 1) {
+    		scale.setInterpolator(new OvershootInterpolator());
+    	}
     	scale.start();
+    }
+    
+    public void hideChart() {
+    	
+    	if (mChartScale == 1f) {
+    		toggleChart();
+    	}
+    }
+    
+    public void showChart() {
+    	
+    	if (mChartScale == 0f) {
+    		toggleChart();
+    	}
     }
     
     /**
@@ -774,11 +794,11 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     	
         final Bitmap viewBitmap = getDrawingCache();
         
-        // Rotate the drawing cache bitmap so it reflects the current state of the chart
         if (mSource == null) {
         	mSource = Bitmap.createBitmap(viewBitmap.getWidth(), viewBitmap.getHeight(), viewBitmap.getConfig());
         }
-        
+
+        // Rotate the drawing cache bitmap so it reflects the current state of the chart
     	Canvas canvas = new Canvas(mSource);
         Matrix matrix = new Matrix();
         matrix.postRotate(mRotationDegree, viewBitmap.getWidth()/2, viewBitmap.getHeight()/2);
@@ -800,6 +820,8 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     }
     
     private boolean inCircle(final int x, final int y) {
+    	
+    	if (mChartScale == 0f && !inInfoCircle(x, y)) return false;
     	
         double dx = (x - mCenter.x) * (x - mCenter.x);
         double dy = (y - mCenter.y) * (y - mCenter.y);
@@ -846,12 +868,15 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
         	
             final PieSliceDrawable sliceView = mDrawables.get(index);
             final long id = mAdapter.getItemId(index);
+            boolean secondTap = false;
             
             if (getCurrentIndex() != index) {
             	animateTo(sliceView, index);
+            } else {
+            	secondTap = true;
             }
             
-            performItemClick(sliceView, index, id);
+            performItemClick(secondTap, sliceView, index, id);
         }
     }
 
@@ -864,12 +889,12 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
      * @return True if there was an assigned OnItemClickListener that was
      *         called, false otherwise is returned.
      */
-    public boolean performItemClick(PieSliceDrawable view, int position, long id) {
+    public boolean performItemClick(boolean secondTap, PieSliceDrawable view, int position, long id) {
     	
         if (mOnItemClickListener != null) {
         	
             playSoundEffect(SoundEffectConstants.CLICK);
-            mOnItemClickListener.onItemClick(this, view, position, id);
+            mOnItemClickListener.onItemClick(secondTap, this, view, position, id);
             
             return true;
         }
@@ -924,7 +949,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 			total += adapter.getPercent(i);
 		}
 		
-		return 1f - total < 0.0001f;
+		return (1f - total) < 0.0001f;
 	}
 
 	@Override
@@ -969,11 +994,15 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	}
 	
 	public interface OnItemClickListener {
-		public void onItemClick(View parent, Drawable drawable, int position, long id);
+		public void onItemClick(boolean secondTap, View parent, Drawable drawable, int position, long id);
 	}
 	
 	public interface OnItemLongClickListener {
 		public void onItemLongClick(View parent, Drawable drawable, int position, long id);
+	}
+	
+	public interface OnRotationStateChangeListener {
+		public void onRotationStateChange(int state);
 	}
 	
 	static class MessageHandler extends Handler {
@@ -996,11 +1025,6 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     		switch (type) {
 	    		case SNAP_TO:
 	    			chart.snapTo();
-	    			break;
-	    		case CACHE_READY:
-	    			if (chart.getCoverView() != null) {
-	    				chart.getCoverView().setImageBitmap(chart.getCoverCache());
-	    			}
 	    			break;
     		}
         }
@@ -1036,16 +1060,10 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 			while (isRunning) {
 
 				if (mDrawables.size() == 0 && mAdapter != null) {
+					
 					addPieSlices();
-					sendMessage(MessageType.SNAP_TO);
-				}
-				
-				if (mDrawingCache == null) {
 					createDrawingCache();
-				}
-				
-				if (mCoverCache == null) {
-					createCoverCache();
+					sendMessage(MessageType.SNAP_TO);
 				}
 				
 				c = null;
@@ -1055,7 +1073,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 					c = surfaceHolder.lockCanvas(null);
 					
 					synchronized (surfaceHolder) {
-				    	doDraw(c);
+				    	doDraw(c, mRotationDegree, mChartScale, mShowInfo);
 					}
 					
 				} finally {
@@ -1076,19 +1094,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 			}
 			
 			Canvas cache = new Canvas(mDrawingCache);
-			doDraw(cache);
-		}
-		
-		private void createCoverCache() {
-			
-			if (mCoverCache == null) {
-				mCoverCache = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
-			}
-			
-			Canvas cache = new Canvas(mCoverCache);
-			doDraw(cache);
-			
-			sendMessage(MessageType.CACHE_READY);
+			doDraw(cache, 0f, 1f, false);
 		}
 		
 		private void sendMessage(MessageType type) {
@@ -1100,18 +1106,18 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
             mHandler.sendMessage(msg);
 		}
 		
-		private void doDraw(Canvas canvas) {
+		private void doDraw(Canvas canvas, float rotationDegree, float scale, boolean showInfo) {
 			
-			if (canvas == null) return;
+			if (canvas == null || mAdapter == null) return;
 			
 			canvas.drawColor(0, PorterDuff.Mode.CLEAR);
 			
 			canvas.save();
-			canvas.scale(mChartScale, mChartScale, mCenter.x, mCenter.y);
-			canvas.rotate(mRotationDegree, mCenter.x, mCenter.y);
+			canvas.scale(scale, scale, mCenter.x, mCenter.y);
+			canvas.rotate(rotationDegree, mCenter.x, mCenter.y);
 	    	canvas.translate(getPaddingLeft(), getPaddingTop());
 			
-			if (mShowInfo) {
+			if (showInfo) {
 				canvas.drawCircle(mCenter.x, mCenter.y, getChartRadius() + mStrokeWidth, mPaint);
 			}
 	    	
@@ -1121,7 +1127,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	        
 	        canvas.restore();
 	        
-	        if (mShowInfo) {
+	        if (showInfo) {
 	        	
 				createCaret();
 	

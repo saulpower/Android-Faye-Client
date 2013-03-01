@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import com.moneydesktop.finance.database.Category;
 import com.moneydesktop.finance.views.FrictionDynamics;
 import com.moneydesktop.finance.views.chart.PieChartView.OnPieChartChangeListener;
+import com.moneydesktop.finance.views.chart.PieChartView.OnRotationStateChangeListener;
 import com.moneydesktop.finance.views.chart.PieChartView.PieChartAnchor;
 
 public class ExpandablePieChartView extends AdapterView<Adapter> {
@@ -53,6 +54,14 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 		@Override
 		public void onSelectionChanged(int index) {
 			Log.i(TAG, "SubChartChange: " + index);
+		}
+	};
+	
+	private OnRotationStateChangeListener mBaseRotationListener = new OnRotationStateChangeListener() {
+		
+		@Override
+		public void onRotationStateChange(int state) {
+			mSubChart.hideChart();
 		}
 	};
 
@@ -124,16 +133,21 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 	private void addPieCharts() {
 
 		mBaseChart = new PieChartView(getContext());
+		mBaseChart.setDynamics(new FrictionDynamics(0.95f));
+		mBaseChart.setSnapToAnchor(PieChartAnchor.BOTTOM);
+		mBaseChart.setOnRotationStateChangeListener(mBaseRotationListener);
 		mBaseChart.setOnPieChartChangeListener(mBaseListener);
 		mBaseChart.setOnItemClickListener(new PieChartView.OnItemClickListener() {
 			
 			@Override
-			public void onItemClick(View parent, Drawable drawable, int position, long id) {
+			public void onItemClick(boolean secondTap, View parent, Drawable drawable, int position, long id) {
 				
 				Category cat = (Category) mAdapter.getGroup(position);
-				Log.i(TAG, "Item " + cat.getCategoryName() + " " + cat.getPercent() + " clicked");
+				Log.i(TAG, "Item " + cat.getCategoryName() + " " + cat.getParentPercent() + " clicked");
 				
-				mSubChart.toggleChart();
+				if (secondTap) {
+					mSubChart.toggleChart();
+				}
 			}
 		});
 		
@@ -181,16 +195,12 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 	private void initializeBaseChartData() {
 		
 		mBaseSlices.clear();
-		final float total = getGroupTotal();
 		
 		for (int i = 0; i < mAdapter.getGroupCount(); i++) {
-			mBaseSlices.add(mAdapter.getGroupAmount(i) / total);
+			mBaseSlices.add(mAdapter.getGroupAmount(i));
 		}
 		
 		PieChartAdapter adapter = new PieChartAdapter(getContext(), mBaseSlices);
-		
-		mBaseChart.setDynamics(new FrictionDynamics(0.95f));
-		mBaseChart.setSnapToAnchor(PieChartAnchor.BOTTOM);
 		mBaseChart.setAdapter(adapter);
 	}
 	
@@ -199,36 +209,13 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 		if (mAdapter.getGroupCount() <= groupPosition) return;
 		
 		mSubSlices.clear();
-		final float total = getChildTotal(groupPosition);
 		
 		for (int i = 0; i < mAdapter.getChildrenCount(groupPosition); i++) {
-			mSubSlices.add(mAdapter.getChildAmount(groupPosition, i) / total);
+			mSubSlices.add(mAdapter.getChildAmount(groupPosition, i));
 		}
 		
 		PieChartAdapter adapter = new PieChartAdapter(getContext(), mSubSlices);
 		mSubChart.setAdapter(adapter);
-	}
-	
-	private float getGroupTotal() {
-		
-		float total = 0;
-		
-		for (int i = 0; i < mAdapter.getGroupCount(); i++) {
-			total += mAdapter.getGroupAmount(i);
-		}
-		
-		return total;
-	}
-	
-	private float getChildTotal(int groupPosition) {
-		
-		float total = 0;
-		
-		for (int i = 0; i < mAdapter.getChildrenCount(groupPosition); i++) {
-			total += mAdapter.getChildAmount(groupPosition, i);
-		}
-		
-		return total;
 	}
 
 	@Override
@@ -286,8 +273,12 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 		@Override
 		public void onChanged() {
 			
+			Log.i(TAG, "onChanged");
+			
 			mDataChanged = true;
 			mGroupCount = getPieChartAdapter().getGroupCount();
+			
+			initializeBaseChartData();
 			
 			// Detect the case where a cursor that was previously invalidated
 			// has been re-populated with new data.
@@ -296,8 +287,6 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 				ExpandablePieChartView.this.onRestoreInstanceState(mInstanceState);
 				mInstanceState = null;
 			}
-			
-			requestLayout();
 		}
 
 		@Override
