@@ -2,9 +2,11 @@ package com.moneydesktop.finance.views.chart;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -17,6 +19,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -28,7 +31,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.animation.AnimationUtils;
 import android.view.animation.OvershootInterpolator;
-import android.widget.ImageView;
 
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.CaretDrawable;
@@ -150,6 +152,8 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	
 	private List<PieSliceDrawable> mDrawables;
 	
+	private LinkedList<PieSliceDrawable> mRecycledDrawables;
+	
 	private Bitmap mSource;
 	
 	private OnItemLongClickListener mOnItemLongClickListener;
@@ -169,24 +173,16 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	
 	private MessageHandler mHandler;
 	
-	private ImageView mCoverView;
-	
 	private Paint mPaint;
 	private Paint mStrokePaint;
 	private CaretDrawable mCaret;
 	
 	private boolean mShowInfo = false;
 	
+	private AdapterDataSetObserver mDataSetObserver;
+	
 	public Bitmap getDrawingCache() {
 		return mDrawingCache;
-	}
-	
-	public void setCoverView(ImageView coverView) {
-		mCoverView = coverView;
-	}
-	
-	public ImageView getCoverView() {
-		return mCoverView;
 	}
 
 	/**
@@ -306,6 +302,18 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	public DrawThread getDrawThread() {
 		return mDrawThread;
 	}
+	
+	public PieSliceDrawable getSlice(int index) {
+		
+		synchronized(mDrawables) {
+			
+			if (mDrawables.size() > index) {
+				return mDrawables.get(index);
+			}
+		}
+		
+		return null;
+	}
 
 	public PieChartView(Context context) {
 		this(context, null);
@@ -331,6 +339,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 		mPixelDensity = UiUtils.getDisplayMetrics(context).density;
 		
 		mDrawables = new ArrayList<PieSliceDrawable>();
+		mRecycledDrawables = new LinkedList<PieSliceDrawable>();
 		
 		mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		mPaint.setColor(Color.WHITE);
@@ -455,13 +464,22 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     	
         for (int index = 0; index < mAdapter.getCount(); index++) {
             
-            final PieSliceDrawable childSlice = mAdapter.getSlice(this, index, offset);
+        	PieSliceDrawable recycled = getCachedView();
+        	
+            final PieSliceDrawable childSlice = mAdapter.getSlice(this, recycled, index, offset);
             
             childSlice.setBounds(left, top, left + mChartDiameter, top + mChartDiameter);
             mDrawables.add(childSlice);
             
             offset += childSlice.getDegrees();
         }
+    }
+    
+    private PieSliceDrawable getCachedView() {
+        if (mRecycledDrawables.size() != 0) {
+            return mRecycledDrawables.removeFirst();
+        }
+        return null;
     }
 	
 	private void createCaret() {
@@ -924,24 +942,36 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 
 	public void setAdapter(BasePieChartAdapter adapter) {
 		
-		if (!validAdapter(adapter)) {
-			Log.e(TAG, "PieChart adapter items must sum to 1");
+		if (mAdapter != null && mDataSetObserver != null) {
+			mAdapter.unregisterDataSetObserver(mDataSetObserver);
+		}
+		
+		float total = validAdapter(adapter);
+		
+		if ((1f - total) > 0.0001f) {
+			Log.e(TAG, "PieChart adapter items must sum to 1 (" + total + ")");
 			return;
 		}
 		
 		resetChart();
 		
 		mAdapter = adapter;
+		
+		if (mAdapter != null) {
+			mDataSetObserver = new AdapterDataSetObserver();
+			mAdapter.registerDataSetObserver(mDataSetObserver);
+		}
 	}
 	
 	private void resetChart() {
 		
-		synchronized (getHolder()) {
+		synchronized(mDrawables) {
+			mRecycledDrawables.addAll(mDrawables);
 			mDrawables.clear();
 		}
 	}
 	
-	private boolean validAdapter(BasePieChartAdapter adapter) {
+	private float validAdapter(BasePieChartAdapter adapter) {
 		
 		float total = 0;
 		
@@ -949,7 +979,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 			total += adapter.getPercent(i);
 		}
 		
-		return (1f - total) < 0.0001f;
+		return total;
 	}
 
 	@Override
@@ -1003,6 +1033,42 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	
 	public interface OnRotationStateChangeListener {
 		public void onRotationStateChange(int state);
+	}
+	
+	class AdapterDataSetObserver extends DataSetObserver {
+
+		private Parcelable mInstanceState = null;
+
+		@Override
+		public void onChanged() {
+
+        	resetChart();
+			
+			// Detect the case where a cursor that was previously invalidated
+			// has been re-populated with new data.
+			if (PieChartView.this.getPieChartAdapter().hasStableIds() && mInstanceState != null) {
+				
+				PieChartView.this.onRestoreInstanceState(mInstanceState);
+				mInstanceState = null;
+			}
+		}
+
+		@Override
+		public void onInvalidated() {
+
+			if (PieChartView.this.getPieChartAdapter().hasStableIds()) {
+				
+				// Remember the current state for the case where our hosting
+				// activity is being stopped and later restarted
+				mInstanceState = PieChartView.this.onSaveInstanceState();
+			}
+
+        	resetChart();
+		}
+
+		public void clearSavedState() {
+			mInstanceState = null;
+		}
 	}
 	
 	static class MessageHandler extends Handler {
@@ -1121,9 +1187,11 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 				canvas.drawCircle(mCenter.x, mCenter.y, getChartRadius() + mStrokeWidth, mPaint);
 			}
 	    	
-	        for (PieSliceDrawable slice : mDrawables) {
-	        	slice.draw(canvas);
-	        }
+			synchronized (mDrawables) {
+		        for (PieSliceDrawable slice : mDrawables) {
+		        	slice.draw(canvas);
+		        }
+			}
 	        
 	        canvas.restore();
 	        

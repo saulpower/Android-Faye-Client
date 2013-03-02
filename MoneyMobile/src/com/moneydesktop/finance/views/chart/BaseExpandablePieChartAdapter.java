@@ -17,6 +17,9 @@ public abstract class BaseExpandablePieChartAdapter extends BaseExpandableListAd
 			View convertView, ViewGroup parent) {
 		throw new RuntimeException("No group view required");
 	}
+	
+	public abstract PieSliceDrawable getChildSlice(PieChartView parent, PieSliceDrawable convertDrawable, int groupPosition, int childPosition, float offset);
+	public abstract PieSliceDrawable getGroupSlice(PieChartView parent, PieSliceDrawable convertDrawable, int groupPosition, float offset);
 
 	public abstract float getChildAmount(int groupPosition, int childPosition);
 	public abstract float getGroupAmount(int groupPosition);

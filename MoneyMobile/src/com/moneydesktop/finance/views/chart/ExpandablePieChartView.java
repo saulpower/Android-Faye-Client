@@ -1,20 +1,15 @@
 package com.moneydesktop.finance.views.chart;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 
-import com.moneydesktop.finance.database.Category;
 import com.moneydesktop.finance.views.FrictionDynamics;
 import com.moneydesktop.finance.views.chart.PieChartView.OnPieChartChangeListener;
 import com.moneydesktop.finance.views.chart.PieChartView.OnRotationStateChangeListener;
@@ -29,23 +24,15 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
     
     private PieChartView mBaseChart, mSubChart;
 	
-	private List<Float> mBaseSlices = new ArrayList<Float>();
-	private List<Float> mSubSlices = new ArrayList<Float>();
-	
-	private BaseExpandablePieChartAdapter mAdapter;
+	private PieChartBridgeAdapter mBridgeAdapter;
 	
 	private AdapterDataSetObserver mDataSetObserver;
-	
-	private boolean mDataChanged = false;
-	
-	private int mGroupCount = 0;
 	
 	private OnPieChartChangeListener mBaseListener = new OnPieChartChangeListener() {
 
 		@Override
 		public void onSelectionChanged(int index) {
-			Log.i(TAG, "BaseChartChange: " + index);
-			initializeSubChartData(index);
+			mBridgeAdapter.setGroupPosition(index);
 		}
 	};
 	
@@ -53,7 +40,7 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 
 		@Override
 		public void onSelectionChanged(int index) {
-			Log.i(TAG, "SubChartChange: " + index);
+			
 		}
 	};
 	
@@ -82,9 +69,9 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 	@Override
 	protected void onVisibilityChanged(View changedView, int visibility) {
 		super.onVisibilityChanged(changedView, visibility);
-		
-		mBaseChart.setVisibility(visibility);
+
 		mSubChart.setVisibility(visibility);
+		mBaseChart.setVisibility(visibility);
 	}
 	
 	@Override
@@ -104,13 +91,9 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 		super.onLayout(changed, left, top, right, bottom);
 		
 		// if we don't have an adapter, we don't need to do anything
-        if (mAdapter == null) {
+        if (mBridgeAdapter == null) {
         	resetChart();
             return;
-        }
-        
-        if (mGroupCount == 0) {
-        	resetChart();
         }
         
 		if (getChildCount() == 0) {
@@ -126,7 +109,6 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 	private void resetChart() {
 		
 		removeAllViewsInLayout();
-		mDataChanged = false;
 		invalidate();
 	}
 	
@@ -142,9 +124,6 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 			@Override
 			public void onItemClick(boolean secondTap, View parent, Drawable drawable, int position, long id) {
 				
-				Category cat = (Category) mAdapter.getGroup(position);
-				Log.i(TAG, "Item " + cat.getCategoryName() + " " + cat.getParentPercent() + " clicked");
-				
 				if (secondTap) {
 					mSubChart.toggleChart();
 				}
@@ -157,8 +136,7 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 		mSubChart.setSnapToAnchor(PieChartAnchor.BOTTOM);
 		mSubChart.showInfo();
 		
-		initializeBaseChartData();
-		initializeSubChartData(0);
+		initializeChartData();
 		
 		int width = getWidth() - getPaddingLeft() - getPaddingRight();
 		int height = getHeight() - getPaddingTop() - getPaddingBottom();
@@ -192,30 +170,9 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
         chart.measure(MeasureSpec.EXACTLY | width, MeasureSpec.EXACTLY | height);
     }
 	
-	private void initializeBaseChartData() {
-		
-		mBaseSlices.clear();
-		
-		for (int i = 0; i < mAdapter.getGroupCount(); i++) {
-			mBaseSlices.add(mAdapter.getGroupAmount(i));
-		}
-		
-		PieChartAdapter adapter = new PieChartAdapter(getContext(), mBaseSlices);
-		mBaseChart.setAdapter(adapter);
-	}
-	
-	private void initializeSubChartData(int groupPosition) {
-		
-		if (mAdapter.getGroupCount() <= groupPosition) return;
-		
-		mSubSlices.clear();
-		
-		for (int i = 0; i < mAdapter.getChildrenCount(groupPosition); i++) {
-			mSubSlices.add(mAdapter.getChildAmount(groupPosition, i));
-		}
-		
-		PieChartAdapter adapter = new PieChartAdapter(getContext(), mSubSlices);
-		mSubChart.setAdapter(adapter);
+	private void initializeChartData() {
+		mBaseChart.setAdapter(mBridgeAdapter.getGroupAdapter());
+		mSubChart.setAdapter(mBridgeAdapter.getChildAdapter());
 	}
 
 	@Override
@@ -244,22 +201,22 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 	}
 	
 	public BaseExpandablePieChartAdapter getPieChartAdapter() {
-		return mAdapter;
+		return mBridgeAdapter.getExpandableAdapter();
 	}
 
 	public void setAdapter(BaseExpandablePieChartAdapter adapter) {
 		
-		if (mAdapter != null && mDataSetObserver != null) {
-			mAdapter.unregisterDataSetObserver(mDataSetObserver);
+		if (mBridgeAdapter != null && mBridgeAdapter.getExpandableAdapter() != null && mDataSetObserver != null) {
+			mBridgeAdapter.getExpandableAdapter().unregisterDataSetObserver(mDataSetObserver);
 		}
 		
 		resetChart();
 		
-		mAdapter = adapter;
+		mBridgeAdapter = new PieChartBridgeAdapter(adapter);
 		
-		if (mAdapter != null) {
+		if (mBridgeAdapter.getExpandableAdapter() != null) {
 			mDataSetObserver = new AdapterDataSetObserver();
-			mAdapter.registerDataSetObserver(mDataSetObserver);
+			mBridgeAdapter.getExpandableAdapter().registerDataSetObserver(mDataSetObserver);
 		}
 		
         removeAllViewsInLayout();
@@ -273,12 +230,7 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 		@Override
 		public void onChanged() {
 			
-			Log.i(TAG, "onChanged");
-			
-			mDataChanged = true;
-			mGroupCount = getPieChartAdapter().getGroupCount();
-			
-			initializeBaseChartData();
+			initializeChartData();
 			
 			// Detect the case where a cursor that was previously invalidated
 			// has been re-populated with new data.
@@ -291,8 +243,6 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 
 		@Override
 		public void onInvalidated() {
-			
-			mDataChanged = true;
 
 			if (ExpandablePieChartView.this.getPieChartAdapter().hasStableIds()) {
 				
@@ -300,8 +250,8 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 				// activity is being stopped and later restarted
 				mInstanceState = ExpandablePieChartView.this.onSaveInstanceState();
 			}
-			
-			mGroupCount = 0;
+
+        	resetChart();
 
 			requestLayout();
 		}

@@ -46,7 +46,7 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 		mRoot = inflater.inflate(R.layout.tablet_spending_summary_view, null);
 		mChartImage = (ImageView) mRoot.findViewById(R.id.chart_image);
 		
-		CategoryPieChartAdapter adapter = new CategoryPieChartAdapter();
+		CategoryPieChartAdapter adapter = new CategoryPieChartAdapter(getActivity());
 		
 		mChart = (ExpandablePieChartView) mRoot.findViewById(R.id.chart);
 		mChart.setAdapter(adapter);

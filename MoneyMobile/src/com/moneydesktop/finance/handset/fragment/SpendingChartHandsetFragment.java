@@ -51,7 +51,7 @@ public class SpendingChartHandsetFragment extends GrowFragment implements OnScro
 		
 		mRoot = inflater.inflate(R.layout.handset_spending_summary_view, null);
 		
-		CategoryPieChartAdapter adapter = new CategoryPieChartAdapter();
+		CategoryPieChartAdapter adapter = new CategoryPieChartAdapter(getActivity());
 		
 		mChart = (ExpandablePieChartView) mRoot.findViewById(R.id.chart);
 		mChart.setAdapter(adapter);

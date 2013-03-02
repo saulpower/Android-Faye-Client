@@ -28,6 +28,14 @@ public class PieSliceDrawable extends Drawable {
 	private float mStrokeWidth;
 	
 	private Path mPathRight, mPathLeft;
+	
+	public float getDegreeOffset() {
+		return mDegreeOffset;
+	}
+
+	public void setDegreeOffset(float mDegreeOffset) {
+		this.mDegreeOffset = mDegreeOffset;
+	}
 
 	public float getPercent() {
 		return mPercent;
@@ -88,7 +96,7 @@ public class PieSliceDrawable extends Drawable {
 	 * @param percent the percent the slice covers
 	 * @param color the color of the slice
 	 */
-	public PieSliceDrawable(Callback cb, Context context, float degreeOffset, float percent, int color) {
+	public PieSliceDrawable(Callback cb, Context context) {
 		
 		setCallback(cb);
 		mContext = context;
@@ -96,12 +104,8 @@ public class PieSliceDrawable extends Drawable {
 		mStrokeWidth = UiUtils.getDynamicPixels(mContext, DEFAULT_STROKE_WIDTH);
 		
 		init();
-		
-		mDegreeOffset = degreeOffset;
-		setPercent(percent);
-		setSliceColor(color);
 	}
-	
+
 	/**
 	 * Initialize our paints and such
 	 */

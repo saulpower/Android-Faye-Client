@@ -3,28 +3,34 @@ package com.moneydesktop.finance.views.chart;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Pair;
 
+import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.database.Category;
 import com.moneydesktop.finance.util.DateRange;
 
 public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
     
     public final String TAG = this.getClass().getSimpleName();
-	
-	private AsyncTask<Integer, Void, List<Pair<Category, List<Category>>>> mBackgroundTask;
+    
+	private Context mContext;
 
 	private List<Pair<Category, List<Category>>> mCategories;
 	
-	public CategoryPieChartAdapter() {
+	public CategoryPieChartAdapter(Context context) {
+		
+		mContext = context;
+		
 		mCategories = new ArrayList<Pair<Category, List<Category>>>();
 		loadCategories();
 	}
 	
 	private void loadCategories() {
 		
-		mBackgroundTask = new AsyncTask<Integer, Void, List<Pair<Category, List<Category>>>>() {
+		new AsyncTask<Integer, Void, List<Pair<Category, List<Category>>>>() {
             
             @Override
             protected List<Pair<Category, List<Category>>> doInBackground(Integer... params) {
@@ -67,7 +73,7 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
         			
         			// Compile all categories under 3% of the total into
         			// an "Other" category
-        			if (categoryPercent <= 0.03f && categoryPercent > 0) {
+        			if (parent.second.size() == 0 || (categoryPercent <= 0.03f && categoryPercent > 0)) {
         				
         				others.add(parent.first);
         				other.setParentPercent(other.getParentPercent() + categoryPercent);
@@ -79,14 +85,29 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
         				continue;
         			}
         			
+        			List<Category> remove = new ArrayList<Category>();
+        			
         			for (Category category : parent.second) {
         				
         				float childPercent = Category.getTotalForChildCategory(category, range) / categoryTotal;
         				category.setChildPercent(childPercent);
+        				
+        				if (childPercent == 0) {
+        					remove.add(category);
+        				}
         			}
+        			
+        			// remove any category with 0%
+        			parent.second.removeAll(remove);
         			
         			percents.add(new Pair<Category, List<Category>>(parent.first, parent.second));
         		}
+        		
+        		for (Category category : others) {
+    				
+    				float childPercent = category.getParentPercent() / other.getParentPercent();
+    				category.setChildPercent(childPercent);
+    			}
         		
     			percents.add(new Pair<Category, List<Category>>(other, others));
         		
@@ -163,5 +184,69 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
 		Category category = (Category) getGroup(groupPosition);
 		
 		return category.getParentPercent();
+	}
+
+	@Override
+	public PieSliceDrawable getChildSlice(PieChartView parent, PieSliceDrawable convertDrawable, int groupPosition, int childPosition, float offset) {
+		
+		PieSliceDrawable sliceDrawable = convertDrawable;
+		
+		if (sliceDrawable == null) {
+			sliceDrawable = new PieSliceDrawable(parent, mContext);
+		}
+
+		Float percent = getChildAmount(groupPosition, childPosition);
+		
+		int color = adjustColor(groupPosition, childPosition);
+		
+		if (groupPosition == getGroupCount() - 1) {
+			color = getRandomColor(getGroupCount() + childPosition);
+		}
+		
+		sliceDrawable.setDegreeOffset(offset);
+		sliceDrawable.setPercent(percent);
+		sliceDrawable.setSliceColor(color);
+		
+		return sliceDrawable;
+	}
+
+	@Override
+	public PieSliceDrawable getGroupSlice(PieChartView parent, PieSliceDrawable convertDrawable, int groupPosition, float offset) {
+
+		PieSliceDrawable sliceDrawable = convertDrawable;
+		
+		if (sliceDrawable == null) {
+			sliceDrawable = new PieSliceDrawable(parent, mContext);
+		}
+
+		Float percent = getGroupAmount(groupPosition);
+		
+		sliceDrawable.setDegreeOffset(offset);
+		sliceDrawable.setPercent(percent);
+		sliceDrawable.setSliceColor(getRandomColor(groupPosition));
+		
+		return sliceDrawable;
+	}
+	
+	private int getRandomColor(int position) {
+		
+		position = position > 15 ? position % 16 : position;
+		
+		return mContext.getResources().getColor(Constant.RANDOM_COLORS[position]);
+	}
+	
+	private int adjustColor(int groupPosition, int childPosition) {
+		
+		int parentColor = getRandomColor(groupPosition);
+
+		if (childPosition == 0) {
+			return parentColor;
+		}
+		
+	     float[] pixelHSV = new float[3];
+		Color.colorToHSV(parentColor, pixelHSV);
+		pixelHSV[2] -= (0.08f * childPosition);
+		
+		return Color.HSVToColor(pixelHSV);
 	}
 }
