@@ -12,7 +12,7 @@ public abstract class GrowPagerAdapter extends FragmentPagerAdapter implements O
     public final String TAG = this.getClass().getSimpleName();
     
     public static final float BASE_SIZE = 0.8f;
-    public static final float BASE_ALPHA = 0.8f;
+    public static final float BASE_ALPHA = 0.95f;
     
     private int mCurrentPage = 0;
     private boolean mScrollingLeft;

@@ -72,7 +72,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         }
     };
 	
-	private Animation mIn, mOut;
+	private Animation mIn, mOut, mInHome;
 	
 	private FragmentType mCurrentIndex = FragmentType.DASHBOARD;
     
@@ -169,12 +169,12 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         mOnHome = home;
         
     	if (home && mFlipper.getDisplayedChild() == 1) {
-        	
+    		
     		setupTitleBar();
     		
     		mNavigation.setCurrentIndex(0);
 	        
-			mFlipper.setInAnimation(this, R.anim.in_down);
+			mFlipper.setInAnimation(mInHome);
 			mFlipper.setOutAnimation(mOut);
 			mFlipper.setDisplayedChild(0);
 
@@ -184,7 +184,11 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
             updateNavBar(getActivityTitle(), false);
 			
     	} else if (!home && mFlipper.getDisplayedChild() == 0) {
-	    	
+    		
+    		NavigationEvent navEvent = new EventMessage().new NavigationEvent();
+            navEvent.setMovingHome(home);
+            
+    		EventBus.getDefault().post(navEvent);
 			EventBus.getDefault().post(new EventMessage().new ParentAnimationEvent(false, false));
             
             mFlipper.setInAnimation(mIn);
@@ -211,7 +215,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
     
 	public void onEvent(NavigationEvent event) {
 		
-		if (event.isShowing() == null && event.getDirection() == null) {
+		if (event.getToggleNavigation() != null) {
 			toggleNavigation();
 		}
 	}
@@ -245,6 +249,23 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         
         mOut = AnimationUtils.loadAnimation(this, R.anim.out_down);
         mOut.setAnimationListener(finish);
+
+        finish = new AnimationListener() {
+            
+            public void onAnimationStart(Animation animation) {}
+            
+            public void onAnimationRepeat(Animation animation) {}
+            
+            public void onAnimationEnd(Animation animation) {
+            	
+            	NavigationEvent navEvent = new EventMessage().new NavigationEvent();
+                navEvent.setMovingHome(mOnHome);
+                EventBus.getDefault().post(navEvent);
+        	}
+        };
+        
+        mInHome = AnimationUtils.loadAnimation(this, R.anim.in_down);
+        mInHome.setAnimationListener(finish);
 	}
 
 	private void setupView() {

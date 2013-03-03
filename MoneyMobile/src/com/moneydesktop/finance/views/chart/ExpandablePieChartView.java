@@ -1,9 +1,14 @@
 package com.moneydesktop.finance.views.chart;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.DataSetObserver;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.PointF;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -11,16 +16,21 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 
 import com.moneydesktop.finance.views.FrictionDynamics;
+import com.moneydesktop.finance.views.chart.PieChartView.OnInfoClickListener;
 import com.moneydesktop.finance.views.chart.PieChartView.OnPieChartChangeListener;
+import com.moneydesktop.finance.views.chart.PieChartView.OnPieChartExpandListener;
 import com.moneydesktop.finance.views.chart.PieChartView.OnRotationStateChangeListener;
 import com.moneydesktop.finance.views.chart.PieChartView.PieChartAnchor;
 
-public class ExpandablePieChartView extends AdapterView<Adapter> {
+public class ExpandablePieChartView extends AdapterView<Adapter> implements OnInfoClickListener {
     
     public final String TAG = this.getClass().getSimpleName();
     
     /** The center point of the chart */
     private PointF mCenter = new PointF();
+
+	private Bitmap mDrawingCache;
+	BitmapDrawable mDrawableCache;
     
     private PieChartView mBaseChart, mSubChart;
 	
@@ -28,11 +38,22 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 	
 	private AdapterDataSetObserver mDataSetObserver;
 	
+	private OnExpandablePieChartChangeListener mExpandableChartChangeListener;
+	
+	private OnExpandablePieChartInfoClickListener mExpandablePieChartInfoClickListener;
+	
 	private OnPieChartChangeListener mBaseListener = new OnPieChartChangeListener() {
 
 		@Override
 		public void onSelectionChanged(int index) {
+			
+			// Propagate change listener to other listeners
+			if (mExpandableChartChangeListener != null) {
+				mExpandableChartChangeListener.onGroupChanged(index);
+			}
+			
 			mBridgeAdapter.setGroupPosition(index);
+			configureInfo();
 		}
 	};
 	
@@ -41,14 +62,98 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 		@Override
 		public void onSelectionChanged(int index) {
 			
+			// Propagate change listener to other listeners
+			if (mExpandableChartChangeListener != null) {
+				mExpandableChartChangeListener.onChildChanged(mBridgeAdapter.getGroupPosition(), index);
+			}
+						
+			configureInfo(index);
 		}
 	};
+	
+	private PieChartView.OnItemClickListener mOnGroupChartClicked = new PieChartView.OnItemClickListener() {
+		
+		@Override
+		public void onItemClick(boolean secondTap, View parent, Drawable drawable, int position, long id) {
+			
+			if (secondTap) {
+				
+				boolean hiding = mSubChart.toggleChart();
+				
+				if (!hiding) {
+					configureInfo(mSubChart.getCurrentIndex());
+					return;
+				}
+				
+				configureInfo();
+				return;
+			}
+
+			mSubChart.hideChart();
+		}
+	};
+	
+	private OnPieChartExpandListener mOnPieChartExpandListener = new OnPieChartExpandListener() {
+
+		@Override
+		public void onPieChartExpanded() {
+			
+			if (mExpandableChartChangeListener != null) {
+				mExpandableChartChangeListener.onGroupExpanded(mBridgeAdapter.getGroupPosition());
+			}
+		}
+
+		@Override
+		public void onPieChartCollapsed() {
+			
+			if (mExpandableChartChangeListener != null) {
+				mExpandableChartChangeListener.onGroupCollapsed(mBridgeAdapter.getGroupPosition());
+			}
+		}
+	};
+	
+	public void setExpandableChartChangeListener(
+			OnExpandablePieChartChangeListener mExpandableChartChangeListener) {
+		this.mExpandableChartChangeListener = mExpandableChartChangeListener;
+	}
+
+	public void setExpandablePieChartInfoClickListener(
+			OnExpandablePieChartInfoClickListener mExpandablePieChartInfoClickListener) {
+		this.mExpandablePieChartInfoClickListener = mExpandablePieChartInfoClickListener;
+	}
+
+	private void configureInfo() {
+		
+		int groupPosition = mBridgeAdapter.getGroupPosition();
+		InfoDrawable info = mSubChart.getInfoDrawable();
+		PieSliceDrawable slice = mBaseChart.getSlice(groupPosition);
+		
+		mBridgeAdapter.getExpandableAdapter().configureGroupInfo(info, slice, groupPosition);
+		updateCache();
+	}
+	
+	private void configureInfo(int childPosition) {
+		
+		int groupPosition = mBridgeAdapter.getGroupPosition();
+		InfoDrawable info = mSubChart.getInfoDrawable();
+		PieSliceDrawable slice = mSubChart.getSlice(childPosition);
+
+		mBridgeAdapter.getExpandableAdapter().configureChildInfo(info, slice, groupPosition, childPosition);
+		updateCache();
+	}
 	
 	private OnRotationStateChangeListener mBaseRotationListener = new OnRotationStateChangeListener() {
 		
 		@Override
 		public void onRotationStateChange(int state) {
-			mSubChart.hideChart();
+			
+			switch (state) {
+			
+			case PieChartView.TOUCH_STATE_ROTATE:
+				mSubChart.hideChart();
+				updateCache();
+				break;
+			}
 		}
 	};
 
@@ -62,28 +167,99 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 
 	public ExpandablePieChartView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		
-		setDrawingCacheEnabled(true);
 	}
 	
-	@Override
-	protected void onVisibilityChanged(View changedView, int visibility) {
-		super.onVisibilityChanged(changedView, visibility);
+	/**
+	 * Pause the SurfaceView thread from rendering so not
+	 * to impact UI thread performance.
+	 */
+	public void onPause() {
+		
+		if (mSubChart == null || mBaseChart == null) return;
+		
+		mBaseChart.getDrawThread().onPause();
+		mSubChart.getDrawThread().onPause();
+	}
+	
+	/**
+	 * Resume the SurfaceView thread to render
+	 * the Pie Charts.
+	 */
+	public void onResume() {
 
-		mSubChart.setVisibility(visibility);
-		mBaseChart.setVisibility(visibility);
+		if (mSubChart == null || mBaseChart == null) return;
+		
+		mBaseChart.getDrawThread().onResume();
+		mSubChart.getDrawThread().onResume();
 	}
 	
-	@Override
-	public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	public boolean isExpanded() {
 		
-		int width = MeasureSpec.getSize(widthMeasureSpec);
-		int height = MeasureSpec.getSize(heightMeasureSpec);
-        
-        boolean useHeight = height < width;
-        int size = useHeight ? height : width;
-        
-		setMeasuredDimension(size, size);
+		if (mSubChart == null) return false;
+		
+		return !mSubChart.isChartHidden();
+	}
+	
+	/**
+	 * Update the drawing cache with the latest changes
+	 * from the Pie Chart
+	 */
+	private void updateCache() {
+		
+		// Wait for the info panel transition
+		postDelayed(new Runnable() {
+			
+			@Override
+			public void run() {
+				createCache();
+			}
+		}, 400);
+	}
+	
+	/**
+	 * Create the background drawable for when
+	 * the chart is moved.
+	 */
+	private void createCache() {
+		
+		new AsyncTask<Void, Void, Boolean>() {
+    		
+			@Override
+			protected Boolean doInBackground(Void... params) {
+
+				if (mDrawingCache == null) {
+					mDrawingCache = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+				}
+
+				Canvas cache = new Canvas(mDrawingCache);
+				mBaseChart.getDrawThread().doDraw(cache);
+				mSubChart.getDrawThread().doDraw(cache);
+				
+				mDrawableCache = new BitmapDrawable(getResources(), mDrawingCache);
+
+				return true;
+			}
+    		
+    		@Override
+    		protected void onPostExecute(Boolean result) {
+
+				setCachedBackground(mDrawableCache);
+    		}
+			
+		}.execute();
+	}
+	
+	@SuppressWarnings("deprecation")
+	@SuppressLint("NewApi")
+	private void setCachedBackground(Drawable drawable) {
+		
+		int sdk = android.os.Build.VERSION.SDK_INT;
+		
+		if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+		    setBackgroundDrawable(drawable);
+		} else {
+		    setBackground(drawable);
+		}
 	}
 
 	@Override
@@ -119,18 +295,11 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 		mBaseChart.setSnapToAnchor(PieChartAnchor.BOTTOM);
 		mBaseChart.setOnRotationStateChangeListener(mBaseRotationListener);
 		mBaseChart.setOnPieChartChangeListener(mBaseListener);
-		mBaseChart.setOnItemClickListener(new PieChartView.OnItemClickListener() {
-			
-			@Override
-			public void onItemClick(boolean secondTap, View parent, Drawable drawable, int position, long id) {
-				
-				if (secondTap) {
-					mSubChart.toggleChart();
-				}
-			}
-		});
+		mBaseChart.setOnItemClickListener(mOnGroupChartClicked);
 		
 		mSubChart = new PieChartView(getContext());
+		mSubChart.setOnInfoClickListener(this);
+		mSubChart.setOnPieChartExpandListener(mOnPieChartExpandListener);
 		mSubChart.setOnPieChartChangeListener(mSubListener);
 		mSubChart.setDynamics(new FrictionDynamics(0.95f));
 		mSubChart.setSnapToAnchor(PieChartAnchor.BOTTOM);
@@ -148,8 +317,6 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 		
 		addAndMeasureChart(mSubChart, 1, subChartSize, subChartSize);
 		mSubChart.layout(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(), getHeight() - getPaddingBottom());
-		
-		buildDrawingCache();
 	}
 
     /**
@@ -197,7 +364,25 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 
 	@Override
 	public void setSelection(int position) {
-		throw new RuntimeException("Not Supported");
+		
+		if (mBaseChart != null) {
+			mBaseChart.setSelection(position);
+		}
+	}
+	
+	public void setGroupSelection(int groupPosition) {
+		setSelection(groupPosition);
+	}
+	
+	public int getSelectedGroup() {
+		return mBridgeAdapter.getGroupPosition();
+	}
+	
+	public void setChildSelection(int childPosition) {
+		
+		if (mSubChart != null) {
+			mSubChart.setSelection(childPosition);
+		}
 	}
 	
 	public BaseExpandablePieChartAdapter getPieChartAdapter() {
@@ -259,5 +444,45 @@ public class ExpandablePieChartView extends AdapterView<Adapter> {
 		public void clearSavedState() {
 			mInstanceState = null;
 		}
+	}
+
+	@Override
+	public void onInfoClicked(int index) {
+		
+		if (mExpandablePieChartInfoClickListener != null) {
+			mExpandablePieChartInfoClickListener.onInfoClicked(mBridgeAdapter.getGroupPosition(), index);
+		}
+	}
+	
+	public interface OnExpandablePieChartChangeListener {
+		
+		/**
+		 * Notify that the group chart has changed
+		 * 
+		 * @param groupPosition The currently selected groupPosition
+		 */
+		public void onGroupChanged(int groupPosition);
+		
+		/**
+		 * Notify that the child chart has changed
+		 * 
+		 * @param groupPosition The currently selected groupPosition
+		 * @param childPosition The currently selected childPosition
+		 */
+		public void onChildChanged(int groupPosition, int childPosition);
+		public void onGroupExpanded(int groupPosition);
+		public void onGroupCollapsed(int groupPosition);
+	}
+	
+	public interface OnExpandablePieChartInfoClickListener {
+		
+		/**
+		 * Notify the info panel has been clicked
+		 * 
+		 * @param groupPosition The currently selected groupPosition
+		 * @param childPosition The currently selected childPosition.  Will return
+		 * 			-1 if child chart is not currently showing.
+		 */
+		public void onInfoClicked(int groupPosition, int childPosition);
 	}
 }

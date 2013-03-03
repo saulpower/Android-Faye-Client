@@ -11,6 +11,14 @@ import android.graphics.drawable.Drawable;
 
 import com.moneydesktop.finance.util.UiUtils;
 
+/**
+ * The PieSliceDrawable provides drawing a specific slice of a Pie Chart
+ * given the starting degree offset from 0 degrees and the percent of
+ * the Pie Chart the slice covers, 0 - 1.
+ * 
+ * @author saulhoward
+ *
+ */
 public class PieSliceDrawable extends Drawable {
     
     public final String TAG = this.getClass().getSimpleName();

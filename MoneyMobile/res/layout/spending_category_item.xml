@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    android:layout_width="fill_parent"
+    android:layout_height="50dp"
+    android:background="@drawable/white_to_gray1" >
+
+    <View
+        android:id="@+id/color"
+        android:layout_width="5dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_alignParentLeft="true"
+        android:background="@color/primaryColor" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/color"
+        android:layout_margin="15dp"
+        android:orientation="horizontal"
+        android:weightSum="2" >
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|left"
+            android:text="@string/default_header"
+            android:textColor="@color/gray5" />
+
+        <TextView
+            android:id="@+id/amount"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|right"
+            android:text="@string/default_header"
+            android:textColor="@color/gray7" />
+        
+    </LinearLayout>
+
+    <com.moneydesktop.finance.views.LineView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:dashLength="2dp"
+        app:lineColor="@color/gray3"
+        app:lineStrokeWidth="2dp" />
+
+</RelativeLayout>

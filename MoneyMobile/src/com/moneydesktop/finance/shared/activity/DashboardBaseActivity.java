@@ -38,9 +38,13 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 	protected boolean mLoggingOut = false;
 	protected boolean mOnHome = true;
     
-    protected BaseFragment mFragment;
+	protected BaseFragment mFragment;
 	protected GrowViewPager mPager;
 	protected GrowPagerAdapter mAdapter;
+	
+    public boolean isOnHome() {
+		return mOnHome;
+	}
 
 	public GrowPagerAdapter getPagerAdapter() {
 	    return mAdapter;

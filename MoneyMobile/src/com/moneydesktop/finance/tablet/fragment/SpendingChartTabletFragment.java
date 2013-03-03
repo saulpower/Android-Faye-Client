@@ -2,23 +2,35 @@ package com.moneydesktop.finance.tablet.fragment;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.text.Layout.Alignment;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.AlignmentSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
 import com.moneydesktop.finance.shared.adapter.GrowPagerAdapter.OnScrollStateChangedListener;
-import com.moneydesktop.finance.views.chart.CategoryPieChartAdapter;
+import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.views.chart.ChartListBridge;
 import com.moneydesktop.finance.views.chart.ExpandablePieChartView;
+
+import de.greenrobot.event.EventBus;
 
 public class SpendingChartTabletFragment extends SummaryTabletFragment implements OnScrollStateChangedListener {
     
     public final String TAG = this.getClass().getSimpleName();
     
+    private ChartListBridge mBridge;
     private ExpandablePieChartView mChart;
-    private ImageView mChartImage;
+    private ListView mList;
+    
+    private TextView mTitle, mCategoryTitle, mTotal;
     
     private boolean mShowing = false;
 	
@@ -40,30 +52,52 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    	
+		
 		super.onCreateView(inflater, container, savedInstanceState);
 		
 		mRoot = inflater.inflate(R.layout.tablet_spending_summary_view, null);
-		mChartImage = (ImageView) mRoot.findViewById(R.id.chart_image);
 		
-		CategoryPieChartAdapter adapter = new CategoryPieChartAdapter(getActivity());
+		setupView();
 		
-		mChart = (ExpandablePieChartView) mRoot.findViewById(R.id.chart);
-		mChart.setAdapter(adapter);
+		mBridge = new ChartListBridge(getActivity(), mChart, mList, mTotal);
 		
 		return mRoot;
+	}
+	
+	private void setupView() {
+
+		mChart = (ExpandablePieChartView) mRoot.findViewById(R.id.chart);
+		mList = (ListView) mRoot.findViewById(R.id.list);
+		
+		mTitle = (TextView) mRoot.findViewById(R.id.title);
+		mCategoryTitle = (TextView) mRoot.findViewById(R.id.category_title);
+		mTotal = (TextView) mRoot.findViewById(R.id.total);
+		
+		Fonts.applySecondaryItalicFont(mTitle, 14);
+		Fonts.applyPrimaryBoldFont(mCategoryTitle, 12);
+		Fonts.applyPrimaryBoldFont(mTotal, 12);
+		
+		mCategoryTitle.setText(mCategoryTitle.getText().toString().toUpperCase());
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
 		
+		EventBus.getDefault().register(this);
 		mAdapter.setOnScrollStateChangedListener(this);
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		
+		EventBus.getDefault().unregister(this);
 	}
 
     @Override
     public String getTitleText() {
-        return "Account Balances";
+        return getString(R.string.title_fragment_spending_summary);
     }
 	
 	@Override
@@ -76,21 +110,35 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 	@Override
 	public void onScrollStateChanged(int state) {
 		
-		if (ViewPager.SCROLL_STATE_IDLE == state && mShowing && mChart.getVisibility() != View.VISIBLE) {
+		if (ViewPager.SCROLL_STATE_IDLE == state && mShowing) {
 
-			mChart.setVisibility(View.VISIBLE);
-			mChart.post(new Runnable() {
-				
-				@Override
-				public void run() {
-//					mChartImage.setVisibility(View.GONE);
-				}
-			});
+			configureChart(true);
 			
 		} else if (ViewPager.SCROLL_STATE_IDLE != state) {
 
-//			mChartImage.setVisibility(View.VISIBLE);
-			mChart.setVisibility(View.GONE);
+			configureChart(false);
+		}
+	}
+    
+	public void onEvent(NavigationEvent event) {
+		
+		if (event.isShowing() != null && event.getDirection() == null) {
+			
+			configureChart(!event.isShowing());
+			return;
+		}
+		
+		if (event.getMovingHome() != null) {
+			configureChart(event.getMovingHome());
+		}
+	}
+	
+	private void configureChart(boolean showChart) {
+		
+		if (showChart && mShowing && mActivity.isOnHome()) {
+			mChart.onResume();
+		} else {
+			mChart.onPause();
 		}
 	}
 }

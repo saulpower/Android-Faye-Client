@@ -6,6 +6,8 @@ public class PieChartBridgeAdapter {
 	private PieChartChildAdapter mChildAdapter;
 	private PieChartGroupAdapter mGroupAdapter;
 	
+	private int mGroupPosition = 0;
+	
 	public PieChartBridgeAdapter(BaseExpandablePieChartAdapter expandableAdapter) {
 		this(expandableAdapter, 0);
 	}
@@ -41,10 +43,16 @@ public class PieChartBridgeAdapter {
 	
 	public void setGroupPosition(int groupPosition) {
 		
+		mGroupPosition = groupPosition;
+		
 		if (mChildAdapter == null) {
 			mChildAdapter = new PieChartChildAdapter(mExpandableAdapter, groupPosition);
 		} else {
 			mChildAdapter.setGroupPosition(groupPosition);
 		}
+	}
+	
+	public int getGroupPosition() {
+		return mGroupPosition;
 	}
 }

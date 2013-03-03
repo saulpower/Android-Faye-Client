@@ -1,5 +1,6 @@
 package com.moneydesktop.finance.shared;
 
+import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -15,6 +16,9 @@ public class CategoryViewHolder {
     public TextView title;
     public TextView itemTitle;
     public TextView subCategory;
+    public TextView amount;
+    
+    public View color;
     
     public TextView cancel;
     public EditText newCategory;

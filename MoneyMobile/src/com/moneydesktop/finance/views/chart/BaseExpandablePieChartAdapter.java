@@ -21,6 +21,12 @@ public abstract class BaseExpandablePieChartAdapter extends BaseExpandableListAd
 	public abstract PieSliceDrawable getChildSlice(PieChartView parent, PieSliceDrawable convertDrawable, int groupPosition, int childPosition, float offset);
 	public abstract PieSliceDrawable getGroupSlice(PieChartView parent, PieSliceDrawable convertDrawable, int groupPosition, float offset);
 
+	public abstract void configureGroupInfo(InfoDrawable info, PieSliceDrawable slice, int groupPosition);
+	public abstract void configureChildInfo(InfoDrawable info, PieSliceDrawable slice, int groupPosition, int childPosition);
+	
 	public abstract float getChildAmount(int groupPosition, int childPosition);
 	public abstract float getGroupAmount(int groupPosition);
+	
+	public abstract int getChildColor(int groupPosition, int childPosition);
+	public abstract int getGroupColor(int groupPosition);
 }

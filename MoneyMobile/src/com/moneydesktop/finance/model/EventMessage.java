@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.json.JSONObject;
 
-import android.R.bool;
-
 import com.moneydesktop.finance.data.Enums.LockType;
 import com.moneydesktop.finance.data.Enums.NavDirection;
 import com.moneydesktop.finance.database.AccountType;
@@ -164,10 +162,20 @@ public class EventMessage {
 		
 		protected Boolean mShowing;
 		protected NavDirection mDirection;
+		protected Boolean mMovingHome;
+		protected Boolean mToggleNavigation;
 		
+		public Boolean getMovingHome() {
+			return mMovingHome;
+		}
+
+		public void setMovingHome(Boolean mMovingHome) {
+			this.mMovingHome = mMovingHome;
+			this.mToggleNavigation = null;
+		}
+
 		public NavigationEvent() {
-			this.mShowing = null;
-			this.mDirection = null;
+			this.mToggleNavigation = true;
 		}
 		
 		public NavigationEvent(boolean showing) {
@@ -182,6 +190,10 @@ public class EventMessage {
 		
 		public Boolean isShowing() {
 			return mShowing;
+		}
+		
+		public Boolean getToggleNavigation() {
+			return mToggleNavigation;
 		}
 		
 		public NavDirection getDirection() {

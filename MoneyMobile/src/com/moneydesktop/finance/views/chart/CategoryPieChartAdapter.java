@@ -1,25 +1,35 @@
 package com.moneydesktop.finance.views.chart;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Pair;
 
-import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.ApplicationContext;
+import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.Category;
 import com.moneydesktop.finance.util.DateRange;
+import com.moneydesktop.finance.util.UiUtils;
 
 public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
     
     public final String TAG = this.getClass().getSimpleName();
     
+	private DecimalFormat mFormatter = new DecimalFormat("$###,##0.00");
+    
 	private Context mContext;
+	
+	private float mTotal = 0f;
 
 	private List<Pair<Category, List<Category>>> mCategories;
 	
+	public float getTotal() {
+		return mTotal;
+	}
+
 	public CategoryPieChartAdapter(Context context) {
 		
 		mContext = context;
@@ -42,22 +52,21 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
             	List<Category> others = new ArrayList<Category>();
             	
             	Category other = new Category();
-            	other.setCategoryName("Other");
+            	other.setCategoryName(ApplicationContext.getContext().getString(R.string.label_others));
             	other.setParentPercent(0f);
             	
-            	float total = 0f;
             	int count = -1;
             	
             	List<Pair<Category, List<Category>>> categories = Category.loadCategoryData(true);
 
-            	while (total == 0f) {
+            	while (mTotal == 0f) {
             		
             		for (Pair<Category, List<Category>> parent : categories) {
-                		total += Category.getTotalForCategory(parent.first, range);
+            			mTotal += Category.getTotalForCategory(parent.first, range);
                 	}
             		
-            		if (total == 0f) {
-            			total = 0f;
+            		if (mTotal == 0f) {
+            			mTotal = 0f;
             			range.addMonthsToStart(count);
             			count--;
             		}
@@ -66,9 +75,10 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
         		for (Pair<Category, List<Category>> parent : categories) {
         			
         			float categoryTotal = Category.getTotalForCategory(parent.first, range);
-        			float categoryPercent = categoryTotal / total;
+        			float categoryPercent = categoryTotal / mTotal;
         			
         			parent.first.setParentPercent(categoryPercent);
+        			parent.first.setParentTotal(categoryTotal);
         			parent.second.add(parent.first);
         			
         			// Compile all categories under 3% of the total into
@@ -77,6 +87,7 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
         				
         				others.add(parent.first);
         				other.setParentPercent(other.getParentPercent() + categoryPercent);
+        				other.setParentTotal(other.getParentTotal() + categoryTotal);
         				
         				continue;
         				
@@ -89,8 +100,10 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
         			
         			for (Category category : parent.second) {
         				
-        				float childPercent = Category.getTotalForChildCategory(category, range) / categoryTotal;
+        				float childTotal = Category.getTotalForChildCategory(category, range);
+        				float childPercent = childTotal / categoryTotal;
         				category.setChildPercent(childPercent);
+        				category.setChildTotal(childTotal);
         				
         				if (childPercent == 0) {
         					remove.add(category);
@@ -107,6 +120,7 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
     				
     				float childPercent = category.getParentPercent() / other.getParentPercent();
     				category.setChildPercent(childPercent);
+    				category.setChildTotal(category.getParentTotal());
     			}
         		
     			percents.add(new Pair<Category, List<Category>>(other, others));
@@ -132,6 +146,9 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
 	
 	@Override
 	public Object getChild(int groupPosition, int childPosition) {
+		
+		if (getGroupCount() <= groupPosition || getChildrenCount(groupPosition) <= childPosition) return null;
+		
 		return mCategories.get(groupPosition).second.get(childPosition);
 	}
 
@@ -142,11 +159,17 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
 
 	@Override
 	public int getChildrenCount(int groupPosition) {
+		
+		if (mCategories.size() <= groupPosition) return 0;
+		
 		return mCategories.get(groupPosition).second.size();
 	}
 
 	@Override
 	public Object getGroup(int groupPosition) {
+		
+		if (getGroupCount() <= groupPosition) return null;
+		
 		return mCategories.get(groupPosition).first;
 	}
 
@@ -174,6 +197,8 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
 	public float getChildAmount(int groupPosition, int childPosition) {
 		
 		Category category = (Category) getChild(groupPosition, childPosition);
+
+		if (category == null) return 0f;
 		
 		return category.getChildPercent();
 	}
@@ -183,7 +208,18 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
 		
 		Category category = (Category) getGroup(groupPosition);
 		
+		if (category == null) return 0f;
+		
 		return category.getParentPercent();
+	}
+	
+	public float getGroupTotal(int groupPosition) {
+		
+		Category category = (Category) getGroup(groupPosition);
+		
+		if (category == null) return 0f;
+		
+		return category.getParentTotal();
 	}
 
 	@Override
@@ -197,15 +233,9 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
 
 		Float percent = getChildAmount(groupPosition, childPosition);
 		
-		int color = adjustColor(groupPosition, childPosition);
-		
-		if (groupPosition == getGroupCount() - 1) {
-			color = getRandomColor(getGroupCount() + childPosition);
-		}
-		
 		sliceDrawable.setDegreeOffset(offset);
 		sliceDrawable.setPercent(percent);
-		sliceDrawable.setSliceColor(color);
+		sliceDrawable.setSliceColor(getChildColor(groupPosition, childPosition));
 		
 		return sliceDrawable;
 	}
@@ -223,30 +253,42 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
 		
 		sliceDrawable.setDegreeOffset(offset);
 		sliceDrawable.setPercent(percent);
-		sliceDrawable.setSliceColor(getRandomColor(groupPosition));
+		sliceDrawable.setSliceColor(getGroupColor(groupPosition));
 		
 		return sliceDrawable;
 	}
-	
-	private int getRandomColor(int position) {
-		
-		position = position > 15 ? position % 16 : position;
-		
-		return mContext.getResources().getColor(Constant.RANDOM_COLORS[position]);
-	}
-	
-	private int adjustColor(int groupPosition, int childPosition) {
-		
-		int parentColor = getRandomColor(groupPosition);
 
-		if (childPosition == 0) {
-			return parentColor;
+	@Override
+	public void configureGroupInfo(InfoDrawable info, PieSliceDrawable slice, int groupPosition) {
+
+		Category cat = (Category) getGroup(groupPosition);
+		
+		info.animateTransition(mFormatter.format(cat.getParentTotal()), slice.getSliceColor(), cat.getCategoryName());
+	}
+
+	@Override
+	public void configureChildInfo(InfoDrawable info, PieSliceDrawable slice, int groupPosition, int childPosition) {
+
+		Category cat = (Category) getChild(groupPosition, childPosition);
+		
+		info.animateTransition(mFormatter.format(cat.getChildTotal()), slice.getSliceColor(), cat.getCategoryName());
+	}
+
+	@Override
+	public int getChildColor(int groupPosition, int childPosition) {
+
+		int color = UiUtils.getAdjustedColor(groupPosition, childPosition);
+		
+		if (groupPosition == getGroupCount() - 1) {
+			color = UiUtils.getRandomColor(getGroupCount() + childPosition);
 		}
 		
-	     float[] pixelHSV = new float[3];
-		Color.colorToHSV(parentColor, pixelHSV);
-		pixelHSV[2] -= (0.08f * childPosition);
-		
-		return Color.HSVToColor(pixelHSV);
+		return color;
+	}
+
+	@Override
+	public int getGroupColor(int groupPosition) {
+
+		return UiUtils.getRandomColor(groupPosition);
 	}
 }

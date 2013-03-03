@@ -26,7 +26,8 @@ public class PerformanceUtils {
 		sStart = System.currentTimeMillis();
 	}
 	
-	public static long finish() {
-		return sStart - System.currentTimeMillis();
+	public static void finish() {
+		long total = System.currentTimeMillis() - sStart;
+		Log.i(TAG, "Time: " + total);
 	}
 }

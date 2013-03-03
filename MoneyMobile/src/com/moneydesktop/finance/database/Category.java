@@ -68,6 +68,8 @@ public class Category extends BusinessObject  {
 	
 	private float mChildPercent;
 	private float mParentPercent;
+	private float mChildTotal;
+	private float mParentTotal;
 	
     // KEEP FIELDS END
 
@@ -397,6 +399,22 @@ public class Category extends BusinessObject  {
 	
 	public void setParentPercent(float percent) {
 		mParentPercent = percent;
+	}
+
+	public float getChildTotal() {
+		return mChildTotal;
+	}
+
+	public void setChildTotal(float mChildTotal) {
+		this.mChildTotal = mChildTotal;
+	}
+
+	public float getParentTotal() {
+		return mParentTotal;
+	}
+
+	public void setParentTotal(float mParentTotal) {
+		this.mParentTotal = mParentTotal;
 	}
 
 	public boolean isIncome() {

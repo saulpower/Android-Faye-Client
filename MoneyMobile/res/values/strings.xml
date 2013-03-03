@@ -233,6 +233,7 @@
     <string name="label_no_categories">No Categories Found</string>
     <string name="label_no_tags">No Tags Found</string>
     <string name="label_other">Other Markers</string>
+    <string name="label_others">Other</string>
     <string name="label_password">Password</string>
     <string name="label_payee">Payee</string>
     <string name="label_show_filters">Show Filters</string>
@@ -240,9 +241,11 @@
     <string name="label_sum">Sum</string>
     <string name="label_tags">Tags</string>
     <string name="label_top_category">Top Category</string>
+    <string name="label_total">TOTAL</string>
     <string name="label_transactions">Transaction Summary</string>
     <string name="label_unlink">UNLINK</string>
     <string name="label_update">Last Updated:</string>
+    <string name="label_view_trans">View Transactions</string>
     <string name="label_yes">yes</string>
     <string name="loading_app">Preparing the app&#8230;</string>
     <string name="loading_menu">Loading menu&#8230;</string>
@@ -320,6 +323,7 @@
     <string name="title_filters">FILTERS</string>
     <string name="title_fragment_transaction">Transaction</string>
     <string name="title_fragment_account_summary">Account Balances</string>
+    <string name="title_fragment_spending_summary">Spending By Category</string>
     <string name="title_fragment_transaction_summary">Recent Transactions</string>
     <string name="title_fragment_transaction_totals">Transaction Totals</string>
     <string name="transactions_list">TransactionsList</string>
