@@ -2,14 +2,11 @@ package com.moneydesktop.finance.tablet.fragment;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.text.Layout.Alignment;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.AlignmentSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
@@ -30,7 +27,8 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
     private ExpandablePieChartView mChart;
     private ListView mList;
     
-    private TextView mTitle, mCategoryTitle, mTotal;
+    private TextView mTitle, mCategoryTitle, mBackButton;
+    private TextSwitcher mTotalAmount;
     
     private boolean mShowing = false;
 	
@@ -59,7 +57,7 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 		
 		setupView();
 		
-		mBridge = new ChartListBridge(getActivity(), mChart, mList, mTotal);
+		mBridge = new ChartListBridge(getActivity(), mChart, mList, mTotalAmount, mBackButton);
 		
 		return mRoot;
 	}
@@ -71,11 +69,14 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 		
 		mTitle = (TextView) mRoot.findViewById(R.id.title);
 		mCategoryTitle = (TextView) mRoot.findViewById(R.id.category_title);
-		mTotal = (TextView) mRoot.findViewById(R.id.total);
+		mBackButton = (TextView) mRoot.findViewById(R.id.back_button);
+		TextView total = (TextView) mRoot.findViewById(R.id.total);
+		mTotalAmount = (TextSwitcher) mRoot.findViewById(R.id.total_amount);
 		
 		Fonts.applySecondaryItalicFont(mTitle, 14);
 		Fonts.applyPrimaryBoldFont(mCategoryTitle, 12);
-		Fonts.applyPrimaryBoldFont(mTotal, 12);
+		Fonts.applyPrimaryBoldFont(total, 12);
+		Fonts.applySecondaryItalicFont(mBackButton, 14);
 		
 		mCategoryTitle.setText(mCategoryTitle.getText().toString().toUpperCase());
 	}

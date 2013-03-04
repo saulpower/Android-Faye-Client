@@ -3,6 +3,7 @@ package com.moneydesktop.finance.shared;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -18,6 +19,7 @@ public class CategoryViewHolder {
     public TextView subCategory;
     public TextView amount;
     
+    public RelativeLayout item;
     public View color;
     
     public TextView cancel;

@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.util.Pair;
 
 import com.moneydesktop.finance.ApplicationContext;

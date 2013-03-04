@@ -214,6 +214,7 @@
     <string name="label_app_lock">APP LOCK</string>
     <string name="label_average">Average</string>
     <string name="label_balances">Account Balances as of Today</string>
+    <string name="label_back">Back</string>
     <string name="label_category">Category</string>
     <string name="label_change_lock">CHANGE LOCK CODE</string>
     <string name="label_count">Count</string>

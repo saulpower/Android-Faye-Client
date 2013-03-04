@@ -12,10 +12,8 @@ import android.graphics.drawable.Drawable;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.Animator.AnimatorListener;
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
+import com.moneydesktop.finance.views.chart.PieChartView.DrawThread;
+import com.moneydesktop.finance.views.chart.ThreadAnimator.AnimationListener;
 
 /**
  * 
@@ -26,6 +24,8 @@ public class InfoDrawable extends Drawable {
     
     public final String TAG = this.getClass().getSimpleName();
 	
+    private DrawThread mThread;
+    
 	private Paint mTitlePaint, mAmountPaint, mSubTitlePaint;
 	private float mOffsetX;
 	private float mRadius;
@@ -41,7 +41,7 @@ public class InfoDrawable extends Drawable {
 	private float mTitleOffset, mSubTitleOffset;
 	
 	private String mTitle = "", mAmount = "", mSubTitle = "";
-	
+
 	public float getOffsetX() {
 		return mOffsetX;
 	}
@@ -88,8 +88,9 @@ public class InfoDrawable extends Drawable {
 		invalidateSelf();
 	}
 	
-	public InfoDrawable(Context context, Rect bounds, float radius) {
+	public InfoDrawable(DrawThread thread, Context context, Rect bounds, float radius) {
 		
+		mThread = thread;
 		Resources resources = context.getResources();
 		setBounds(bounds);
 		mRadius = radius;
@@ -116,45 +117,30 @@ public class InfoDrawable extends Drawable {
 	
 	public void animateTransition(final String amount, final int amountColor, final String title) {
 		
-		ObjectAnimator inAlpha = ObjectAnimator.ofInt(this, "alpha", 0, 255);
+		final ThreadAnimator inAlpha = ThreadAnimator.ofInt(0, 255);
 		inAlpha.setDuration(200);
 		
-		ObjectAnimator outAlpha = ObjectAnimator.ofInt(this, "alpha", 255, 0);
+		ThreadAnimator outAlpha = ThreadAnimator.ofInt(255, 0);
 		outAlpha.setDuration(200);
-		outAlpha.addListener(new AnimatorListener() {
+		outAlpha.setAnimationListener(new AnimationListener() {
 			
 			@Override
-			public void onAnimationStart(Animator animation) {}
-			
-			@Override
-			public void onAnimationRepeat(Animator animation) {}
-			
-			@Override
-			public void onAnimationEnd(Animator animation) {
+			public void onAnimationEnded() {
 				setAmount(amount);
 				setAmountColor(amountColor);
 				setTitle(title);
+				mThread.setInfoAnimator(inAlpha);
 			}
-			
-			@Override
-			public void onAnimationCancel(Animator animation) {}
 		});
 		
-		AnimatorSet setIn = new AnimatorSet();
-		setIn.play(inAlpha).after(outAlpha);
-		setIn.start();
+		mThread.setInfoAnimator(outAlpha);
 	}
 
 	@Override
 	public void draw(Canvas canvas) {
-		
-		canvas.save();
-		canvas.translate(mOffsetX, 0);
 
 		canvas.drawText(mTitle, mTitlePoint.x, mTitlePoint.y, mTitlePaint);
 		canvas.drawText(mAmount, mAmountPoint.x, mAmountPoint.y, mAmountPaint);
-		
-		canvas.restore();
 		
 		canvas.drawText(mSubTitle, mSubTitlePoint.x, mSubTitlePoint.y, mSubTitlePaint);
 	}

@@ -3,12 +3,11 @@ package com.moneydesktop.finance.views.chart;
 import java.text.DecimalFormat;
 
 import android.app.Activity;
-import android.text.Layout.Alignment;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.AlignmentSpan;
+import android.graphics.Color;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -16,8 +15,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.widget.ViewSwitcher.ViewFactory;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.Category;
@@ -26,7 +30,7 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.chart.ExpandablePieChartView.OnExpandablePieChartChangeListener;
 import com.moneydesktop.finance.views.chart.ExpandablePieChartView.OnExpandablePieChartInfoClickListener;
 
-public class ChartListBridge extends BaseAdapter implements OnExpandablePieChartChangeListener, OnExpandablePieChartInfoClickListener, OnItemClickListener {
+public class ChartListBridge extends BaseAdapter implements OnExpandablePieChartChangeListener, OnExpandablePieChartInfoClickListener, OnItemClickListener, ViewFactory {
 
     public final String TAG = this.getClass().getSimpleName();
     
@@ -34,22 +38,28 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 	
 	private ExpandablePieChartView mChart;
 	private ListView mList;
-	private TextView mTotal;
+	private TextSwitcher mTotal;
+	private TextView mBackButton;
 	
 	private CategoryPieChartAdapter mAdapter;
 	private Activity mActivity;
 	
-	private Animation mIn, mOut;
+	private boolean mExpanded = false;
+	
+	private Animation mIn, mOut, mBackIn, mBackOut;
 	
 	private boolean mInit = false;
 	
-	public ChartListBridge(Activity activity, ExpandablePieChartView chart, ListView list, TextView total) {
+	public ChartListBridge(Activity activity, ExpandablePieChartView chart, ListView list, TextSwitcher total, TextView backButton) {
 		
 		mActivity = activity;
 		
 		mAdapter = new CategoryPieChartAdapter(mActivity);
 
 		mTotal = total;
+		mTotal.setFactory(this);
+		mTotal.setInAnimation(activity, R.anim.fade_in_fast);
+		mTotal.setOutAnimation(activity, R.anim.fade_out_fast);
 		
 		mChart = chart;
 		mChart.setExpandablePieChartInfoClickListener(this);
@@ -59,6 +69,19 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 		mList = list;
 		mList.setOnItemClickListener(this);
 		mList.setAdapter(this);
+		
+		mBackButton = backButton;
+		mBackButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				if (mChart.isExpanded()) {
+
+					mChart.toggleGroup();
+				}
+			}
+		});
 		
 		loadAnimations();
 	}
@@ -77,23 +100,37 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 			
 			@Override
 			public void onAnimationEnd(Animation animation) {
+				
 				mList.setVisibility(View.INVISIBLE);
+				
+				mExpanded = mChart.isExpanded();
 				notifyDataSetChanged();
+				
 				mList.setVisibility(View.VISIBLE);
 				mList.startAnimation(mIn);
+			}
+		});
+		
+		mBackIn = AnimationUtils.loadAnimation(mActivity, R.anim.in_left_fast);
+		mBackOut = AnimationUtils.loadAnimation(mActivity, R.anim.out_left_fast);
+		mBackOut.setAnimationListener(new AnimationListener() {
+			
+			@Override
+			public void onAnimationStart(Animation animation) {}
+			
+			@Override
+			public void onAnimationRepeat(Animation animation) {}
+			
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				mBackButton.setVisibility(View.GONE);
 			}
 		});
 	}
 	
 	private void updateTotal(float amount) {
-
-		String total = mActivity.getString(R.string.label_total);
-		String text = total + " " + mFormatter.format(amount);
-		SpannableString textSpan = new SpannableString(text);
-		textSpan.setSpan(new AlignmentSpan.Standard(Alignment.ALIGN_OPPOSITE), 
-				total.length(), text.length(), 
-				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		mTotal.setText(textSpan);
+		
+		mTotal.setText(mFormatter.format(amount));
 	}
 	
 	/**
@@ -102,10 +139,9 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 	
 	@Override
 	public int getCount() {
-		
 		int count = 0;
 		
-		if (mChart.isExpanded()) {
+		if (mExpanded) {
 			count = mAdapter.getChildrenCount(mChart.getSelectedGroup());
 		} else {
 			count = mAdapter.getGroupCount();
@@ -119,7 +155,7 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 		
 		Object object = null;
 		
-		if (mChart.isExpanded()) {
+		if (mExpanded) {
 			object = mAdapter.getChild(mChart.getSelectedGroup(), position);
 		} else {
 			object = mAdapter.getGroup(position);
@@ -154,15 +190,19 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
         
         float total = 0;
         int color;
+        boolean selected = false;
         
-        if (mChart.isExpanded()) {
+        if (mExpanded) {
         	total = category.getChildTotal();
         	color = mAdapter.getChildColor(mChart.getSelectedGroup(), position);
+        	selected = (mChart.getSelectedChild() == position);
         } else {
         	total = category.getParentTotal();
         	color = mAdapter.getGroupColor(position);
+        	selected = (mChart.getSelectedGroup() == position);
         }
         
+        viewHolder.item.setBackgroundResource(selected ? R.color.gray1 : R.drawable.white_to_gray1);
         viewHolder.title.setText(category.getCategoryName());
         viewHolder.amount.setText(mFormatter.format(total));
         viewHolder.color.setBackgroundColor(color);
@@ -174,6 +214,7 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 
         final CategoryViewHolder viewHolder = new CategoryViewHolder();
 
+        viewHolder.item = (RelativeLayout) cell.findViewById(R.id.item);
         viewHolder.color = cell.findViewById(R.id.color);
         viewHolder.title = (TextView) cell.findViewById(R.id.title);
         viewHolder.amount = (TextView) cell.findViewById(R.id.amount);
@@ -197,6 +238,8 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 
 	@Override
 	public void onGroupChanged(int groupPosition) {
+
+		notifyDataSetChanged();
 		
 		if (!mInit) {
 			mInit = true;
@@ -206,18 +249,21 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 
 	@Override
 	public void onChildChanged(int groupPosition, int childPosition) {
-		Log.i(TAG, "onChildChanged");
+		notifyDataSetChanged();
 	}
 
 	@Override
 	public void onGroupExpanded(int groupPosition) {
 		mList.startAnimation(mOut);
+		mBackButton.setVisibility(View.VISIBLE);
+		mBackButton.startAnimation(mBackIn);
 		updateTotal(mAdapter.getGroupTotal(groupPosition));
 	}
 
 	@Override
 	public void onGroupCollapsed(int groupPosition) {
 		mList.startAnimation(mOut);
+		mBackButton.startAnimation(mBackOut);
 		updateTotal(mAdapter.getTotal());
 	}
 
@@ -228,9 +274,36 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		
 		if (mChart.isExpanded()) {
+			
 			mChart.setChildSelection(position);
+			
 		} else {
+			
+			if (mChart.getSelectedGroup() == position) {
+				mChart.toggleGroup();
+				return;
+			}
+			
 			mChart.setGroupSelection(position);
 		}
+	}
+
+	/**
+	 * TextSwitcher factory
+	 */
+	
+	@Override
+	public View makeView() {
+		
+		TextView textView = new TextView(mActivity);
+	    FrameLayout.LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+	    textView.setLayoutParams(params);
+	    textView.setGravity(Gravity.RIGHT);
+	    textView.setTextColor(Color.WHITE);
+	    textView.setBackgroundColor(Color.TRANSPARENT);
+
+		Fonts.applyPrimaryBoldFont(textView, 12);
+		
+		return textView;
 	}
 }

@@ -47,13 +47,13 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 		@Override
 		public void onSelectionChanged(int index) {
 			
+			mBridgeAdapter.setGroupPosition(index);
+			configureInfo();
+			
 			// Propagate change listener to other listeners
 			if (mExpandableChartChangeListener != null) {
 				mExpandableChartChangeListener.onGroupChanged(index);
 			}
-			
-			mBridgeAdapter.setGroupPosition(index);
-			configureInfo();
 		}
 	};
 	
@@ -62,12 +62,12 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 		@Override
 		public void onSelectionChanged(int index) {
 			
+			configureInfo(index);
+			
 			// Propagate change listener to other listeners
 			if (mExpandableChartChangeListener != null) {
 				mExpandableChartChangeListener.onChildChanged(mBridgeAdapter.getGroupPosition(), index);
-			}
-						
-			configureInfo(index);
+			}		
 		}
 	};
 	
@@ -92,6 +92,18 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 			mSubChart.hideChart();
 		}
 	};
+	
+	public void toggleGroup() {
+		
+		boolean hiding = mSubChart.toggleChart();
+		
+		if (!hiding) {
+			configureInfo(mSubChart.getCurrentIndex());
+			return;
+		}
+		
+		configureInfo();
+	}
 	
 	private OnPieChartExpandListener mOnPieChartExpandListener = new OnPieChartExpandListener() {
 
@@ -376,6 +388,13 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 	
 	public int getSelectedGroup() {
 		return mBridgeAdapter.getGroupPosition();
+	}
+	
+	public int getSelectedChild() {
+		
+		if (!isExpanded()) return -1;
+		
+		return mSubChart.getCurrentIndex();
 	}
 	
 	public void setChildSelection(int childPosition) {
