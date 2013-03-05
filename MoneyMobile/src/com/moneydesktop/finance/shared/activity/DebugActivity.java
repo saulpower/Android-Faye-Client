@@ -11,13 +11,13 @@ import android.widget.Toast;
 
 public class DebugActivity extends ListActivity {
 
-	public static final String SAND_API_HOST = "sand-firefly1.moneydesktop.com";
-	public static final String SAND_SYNC_HOST = "sand-synchronicity1.moneydesktop.com";
-	public static final String SAND_FAYE_HOST = "sand-faye1.moneydesktop.com";
+	public static final String SAND_API_HOST = "sand-firefly.moneydesktop.com";
+	public static final String SAND_SYNC_HOST = "sand-synchronicity.moneydesktop.com";
+	public static final String SAND_FAYE_HOST = "sand-faye.moneydesktop.com";
 
-	public static final String QA_API_HOST = "qa-firefly1.moneydesktop.com";
-	public static final String QA_SYNC_HOST = "qa-synchronicity1.moneydesktop.com";
-	public static final String QA_FAYE_HOST = "qa-faye1.moneydesktop.com";
+	public static final String QA_API_HOST = "qa-firefly.moneydesktop.com";
+	public static final String QA_SYNC_HOST = "qa-synchronicity.moneydesktop.com";
+	public static final String QA_FAYE_HOST = "qa-faye.moneydesktop.com";
 
 	public static final String STAGE_API_HOST = "stage-firefly.moneydesktop.com";
 	public static final String STAGE_SYNC_HOST = "stage-synchronicity.moneydesktop.com";
