@@ -16,9 +16,9 @@ import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity.OnMenuChangeListener;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
+import com.moneydesktop.finance.shared.adapter.CategoryPieChartAdapter;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.views.chart.CategoryPieChartAdapter;
 import com.moneydesktop.finance.views.chart.ExpandablePieChartView;
 import com.moneydesktop.finance.views.chart.PieChartView.OnPieChartReadyListener;
 

@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.views.chart;
+package com.moneydesktop.finance.shared.adapter;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -14,6 +14,10 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.Category;
 import com.moneydesktop.finance.util.DateRange;
 import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.chart.BaseExpandablePieChartAdapter;
+import com.moneydesktop.finance.views.chart.InfoDrawable;
+import com.moneydesktop.finance.views.chart.PieChartView;
+import com.moneydesktop.finance.views.chart.PieSliceDrawable;
 
 public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
     

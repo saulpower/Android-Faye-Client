@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.views.chart;
+package com.moneydesktop.finance.views;
 
 import android.content.Context;
 import android.util.AttributeSet;

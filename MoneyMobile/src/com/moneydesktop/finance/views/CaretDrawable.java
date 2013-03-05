@@ -111,17 +111,17 @@ public class CaretDrawable extends Drawable {
     
     private void createPath() {
         
-        mPoint1 = new PointF(mPosition.x, mPosition.y + mHeight/4);  
-        mPoint2 = new PointF(mPosition.x + mWidth, mPosition.y + mHeight/4);    
-        mPoint3 = new PointF(mPosition.x + (mWidth/2), mPosition.y + (mHeight * 3 / 4));
+        mPoint1 = new PointF(mPosition.x, mPosition.y + mHeight / 4);  
+        mPoint2 = new PointF(mPosition.x + mWidth, mPosition.y + mHeight / 4);    
+        mPoint3 = new PointF(mPosition.x + (mWidth / 2), mPosition.y + (mHeight * 3 / 4));
 
         mPath = new Path();
         mPath.setFillType(Path.FillType.EVEN_ODD);
         
-        mPath.moveTo(mPoint1.x,mPoint1.y);
-        mPath.lineTo(mPoint2.x,mPoint2.y);
-        mPath.lineTo(mPoint3.x,mPoint3.y);
-        mPath.lineTo(mPoint1.x,mPoint1.y);
+        mPath.moveTo(mPoint1.x, mPoint1.y);
+        mPath.lineTo(mPoint2.x, mPoint2.y);
+        mPath.lineTo(mPoint3.x, mPoint3.y);
+        mPath.lineTo(mPoint1.x, mPoint1.y);
         
         mPath.close();
     }

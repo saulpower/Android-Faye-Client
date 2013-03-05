@@ -27,6 +27,7 @@ import android.widget.ViewSwitcher.ViewFactory;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.Category;
 import com.moneydesktop.finance.shared.CategoryViewHolder;
+import com.moneydesktop.finance.shared.adapter.CategoryPieChartAdapter;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.chart.ExpandablePieChartView.OnExpandablePieChartChangeListener;
 import com.moneydesktop.finance.views.chart.ExpandablePieChartView.OnExpandablePieChartInfoClickListener;
@@ -39,19 +40,24 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 	private DecimalFormat mFormatter = new DecimalFormat("$###,##0.00");
 	
 	private ExpandablePieChartView mChart;
+	
 	private ListView mList;
+	
 	private TextSwitcher mTotal;
+	
 	private TextView mBackButton;
 	
 	private CategoryPieChartAdapter mAdapter;
+	
 	private Activity mActivity;
 	
 	private boolean mExpanded = false;
+	
+	private boolean mInit = false;
+	
 	private int mSelection = 0;
 	
 	private Animation mIn, mOut, mBackIn, mBackOut;
-	
-	private boolean mInit = false;
 	
 	public ChartListBridge(Activity activity, ExpandablePieChartView chart, ListView list, TextSwitcher total, TextView backButton) {
 		
@@ -249,6 +255,18 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
         cell.setTag(viewHolder);
         
         return viewHolder;
+	}
+	
+	public void notifyDataSetChanged() {
+		super.notifyDataSetChanged();
+		
+		Log.i(TAG, "DataSetChanged");
+	}
+	
+	public void notifyDataSetInvalidated() {
+		super.notifyDataSetInvalidated();
+		
+		Log.i(TAG, "notifyDataSetInvalidated");
 	}
 	
 	/**
