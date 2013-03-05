@@ -221,6 +221,8 @@ public class SyncEngine {
 						
 					} catch (JSONException e) {
 						Log.e(TAG, "Could not perform sync", e);
+					} finally {
+						isRunning = false;
 					}
 
 					return true;
@@ -228,7 +230,6 @@ public class SyncEngine {
 	    		
 	    		@Override
 	    		protected void onPostExecute(Boolean result) {
-	    			isRunning = false;
 	    			eventBus.post(new EventMessage().new SyncEvent(true));
 	    		}
 				
