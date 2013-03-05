@@ -18,7 +18,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
@@ -37,16 +36,13 @@ import com.moneydesktop.finance.tablet.fragment.FixBankTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.ShowHideDataTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionTotalsFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
-import com.moneydesktop.finance.tablet.fragment.UpdateUsernamePassowrdTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment.onBackPressedListener;
 import com.moneydesktop.finance.tablet.fragment.TransactionsPageTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.UpdateUsernamePassowrdTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.AnimatedNavView;
 import com.moneydesktop.finance.views.AnimatedNavView.NavigationListener;
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.animation.ValueAnimator;
 
 import de.greenrobot.event.EventBus;
 

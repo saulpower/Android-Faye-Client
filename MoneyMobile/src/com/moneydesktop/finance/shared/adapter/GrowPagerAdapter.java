@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.tablet.adapter;
+package com.moneydesktop.finance.shared.adapter;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -12,15 +12,21 @@ public abstract class GrowPagerAdapter extends FragmentPagerAdapter implements O
     public final String TAG = this.getClass().getSimpleName();
     
     public static final float BASE_SIZE = 0.8f;
-    public static final float BASE_ALPHA = 0.8f;
+    public static final float BASE_ALPHA = 0.95f;
     
     private int mCurrentPage = 0;
     private boolean mScrollingLeft;
     
 	private GrowFragment[] mFragments;
 
+	private OnScrollStateChangedListener mOnScrollStateChangedListener;
+
 	public int getCurrentPage() {
 		return mCurrentPage;
+	}
+
+	public void setOnScrollStateChangedListener(OnScrollStateChangedListener mOnScrollStateChangedListener) {
+		this.mOnScrollStateChangedListener = mOnScrollStateChangedListener;
 	}
 
 	public void addFragment(GrowFragment fragment) {
@@ -34,7 +40,12 @@ public abstract class GrowPagerAdapter extends FragmentPagerAdapter implements O
 	}
 
     @Override
-    public void onPageScrollStateChanged(int state) {}
+    public void onPageScrollStateChanged(int state) {
+    	
+    	if (mOnScrollStateChangedListener != null) {
+    		mOnScrollStateChangedListener.onScrollStateChanged(state);
+    	}
+    }
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -93,5 +104,9 @@ public abstract class GrowPagerAdapter extends FragmentPagerAdapter implements O
 
         // Keep track of which direction we are scrolling
         mScrollingLeft = (oldl - l) < 0;
+    }
+    
+    public interface OnScrollStateChangedListener {
+    	public void onScrollStateChanged(int state);
     }
 }

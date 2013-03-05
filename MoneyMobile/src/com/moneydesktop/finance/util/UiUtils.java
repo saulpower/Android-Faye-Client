@@ -1,9 +1,12 @@
 package com.moneydesktop.finance.util;
 
+import java.util.Random;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
@@ -51,6 +54,22 @@ public class UiUtils {
     public static float convertDpToPixel(float dp, Context context){
         float px = dp * getDensityRatio(context);
         return px;
+    }
+    
+    /**
+     * This method converts device specific pixels to device independent pixels.
+     * 
+     * @param px A value in px (pixels) unit. Which we need to convert into db
+     * @param context Context to get resources and device specific display metrics
+     * @return An int value to represent dp equivalent of px value
+     */
+    public static int convertPixelsToDp(float px,Context context) {
+    	
+        DisplayMetrics metrics = getDisplayMetrics(context);
+        int dp = (int) (px / metrics.density + 0.5);
+        
+        return dp;
+
     }
 
     /**
@@ -133,4 +152,26 @@ public class UiUtils {
         
         return b;
     }
+
+	public static int getRandomColor(int position) {
+		
+		position = position > 15 ? position % 16 : position;
+		
+		return ApplicationContext.getContext().getResources().getColor(Constant.RANDOM_COLORS[position]);
+	}
+	
+	public static int getAdjustedColor(int groupPosition, int childPosition) {
+		
+		int parentColor = UiUtils.getRandomColor(groupPosition);
+
+		if (childPosition == 0) {
+			return parentColor;
+		}
+		
+	    float[] pixelHSV = new float[3];
+		Color.colorToHSV(parentColor, pixelHSV);
+		pixelHSV[2] -= (0.08f * childPosition);
+		
+		return Color.HSVToColor(pixelHSV);
+	}
 }

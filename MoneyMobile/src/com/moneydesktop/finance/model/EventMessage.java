@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.json.JSONObject;
 
-import android.R.bool;
+import android.graphics.Bitmap;
 
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.LockType;
@@ -108,6 +108,18 @@ public class EventMessage {
 	}
 	
 	public class BackEvent extends EventMessage {}
+	public class ChartImageEvent extends EventMessage {
+		
+		private Bitmap image;
+		
+		public ChartImageEvent(Bitmap image) {
+			this.image = image;
+		}
+		
+		public Bitmap getImage() {
+			return image;
+		}
+	}
     public class DatabaseSaveEvent extends EventMessage {
     	
     	private List<Class<?>> mClasses = new ArrayList<Class<?>>();
@@ -184,10 +196,25 @@ public class EventMessage {
 		
 		protected Boolean mShowing;
 		protected NavDirection mDirection;
+		protected Boolean mMovingHome;
+		protected Boolean mToggleNavigation;
+		protected FragmentType mType;
 		
+		public Boolean getMovingHome() {
+			return mMovingHome;
+		}
+
+		public void setMovingHome(Boolean mMovingHome) {
+			this.mMovingHome = mMovingHome;
+			this.mToggleNavigation = null;
+		}
+
 		public NavigationEvent() {
-			this.mShowing = null;
-			this.mDirection = null;
+			this.mToggleNavigation = true;
+		}
+		
+		public NavigationEvent(FragmentType type) {
+			mType = type;
 		}
 		
 		public NavigationEvent(boolean showing) {
@@ -200,8 +227,16 @@ public class EventMessage {
 			this.mDirection = direction;
 		}
 		
+		public FragmentType getType() {
+			return mType;
+		}
+		
 		public Boolean isShowing() {
 			return mShowing;
+		}
+		
+		public Boolean getToggleNavigation() {
+			return mToggleNavigation;
 		}
 		
 		public NavDirection getDirection() {

@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.Property;
-import de.greenrobot.dao.SqlUtils;
-import de.greenrobot.dao.Query;
-import de.greenrobot.dao.QueryBuilder;
+import de.greenrobot.dao.internal.SqlUtils;
+import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 
 import com.moneydesktop.finance.database.BankAccountBalance;
 
@@ -151,15 +151,17 @@ public class BankAccountBalanceDao extends AbstractDao<BankAccountBalance, Long>
     }
     
     /** Internal query to resolve the "bankAccountBalances" to-many relationship of BankAccount. */
-    public synchronized List<BankAccountBalance> _queryBankAccount_BankAccountBalances(Long bankAccountId) {
-        if (bankAccount_BankAccountBalancesQuery == null) {
-            QueryBuilder<BankAccountBalance> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.BankAccountId.eq(bankAccountId));
-            bankAccount_BankAccountBalancesQuery = queryBuilder.build();
-        } else {
-            bankAccount_BankAccountBalancesQuery.setParameter(0, bankAccountId);
+    public List<BankAccountBalance> _queryBankAccount_BankAccountBalances(Long bankAccountId) {
+        synchronized (this) {
+            if (bankAccount_BankAccountBalancesQuery == null) {
+                QueryBuilder<BankAccountBalance> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.BankAccountId.eq(null));
+                bankAccount_BankAccountBalancesQuery = queryBuilder.build();
+            }
         }
-        return bankAccount_BankAccountBalancesQuery.list();
+        Query<BankAccountBalance> query = bankAccount_BankAccountBalancesQuery.forCurrentThread();
+        query.setParameter(0, bankAccountId);
+        return query.list();
     }
 
     private String selectDeep;

@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.Property;
-import de.greenrobot.dao.SqlUtils;
-import de.greenrobot.dao.Query;
-import de.greenrobot.dao.QueryBuilder;
+import de.greenrobot.dao.internal.SqlUtils;
+import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 
 import com.moneydesktop.finance.database.Location;
 
@@ -223,15 +223,17 @@ public class LocationDao extends AbstractDao<Location, Long> {
     }
     
     /** Internal query to resolve the "locations" to-many relationship of Bank. */
-    public synchronized List<Location> _queryBank_Locations(Long bankId) {
-        if (bank_LocationsQuery == null) {
-            QueryBuilder<Location> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.BankId.eq(bankId));
-            bank_LocationsQuery = queryBuilder.build();
-        } else {
-            bank_LocationsQuery.setParameter(0, bankId);
+    public List<Location> _queryBank_Locations(Long bankId) {
+        synchronized (this) {
+            if (bank_LocationsQuery == null) {
+                QueryBuilder<Location> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.BankId.eq(null));
+                bank_LocationsQuery = queryBuilder.build();
+            }
         }
-        return bank_LocationsQuery.list();
+        Query<Location> query = bank_LocationsQuery.forCurrentThread();
+        query.setParameter(0, bankId);
+        return query.list();
     }
 
     private String selectDeep;

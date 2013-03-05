@@ -13,6 +13,7 @@
     <color name="budgetColorRedRingColor">#EF4135</color>
     
     <color name="debts">#CC3925</color>
+    <color name="gray_border">#E8E9E9</color>
     
     <color name="gray0">#F2F2F2</color>
     <color name="gray1">#E9EAEB</color>

@@ -107,12 +107,21 @@ public class Fonts {
 	private static void applyFontAndSize(TextView view, Typeface font, float size) {
 		
 		if (view instanceof TextView) {
+			
 			TextView tv = (TextView) view;
-			float additional = UiUtils.getScreenAdjustment();
-			float adjusted = UiUtils.getScaledPixels(ApplicationContext.getContext(), size) * additional;
-			tv.setTextSize(adjusted);
+			
+			tv.setTextSize(getFontSize(size));
 			tv.setTypeface(font);
+			
 			return;
 		}
+	}
+	
+	public static float getFontSize(float size) {
+		
+		float additional = UiUtils.getScreenAdjustment();
+		float adjusted = UiUtils.getScaledPixels(ApplicationContext.getContext(), size) * additional;
+		
+		return adjusted;
 	}
 }

@@ -100,17 +100,13 @@ public class MacUtil {
 			return new BigInteger(130, random).toString(32).toUpperCase();
 		}
 		
-		String interfaceName = "eth0";
-		
 		try {
 			
 			List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
 			
 			for (NetworkInterface intf : interfaces) {
 				
-				if (interfaceName != null) {
-					if (!intf.getName().equalsIgnoreCase(interfaceName)) continue;
-				}
+				if (!intf.getName().equalsIgnoreCase("eth0") && !intf.getName().equalsIgnoreCase("p2p0")) continue;
 				
 				byte[] mac = intf.getHardwareAddress();
 				

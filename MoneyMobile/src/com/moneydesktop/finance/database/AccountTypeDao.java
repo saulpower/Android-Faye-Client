@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.Property;
-import de.greenrobot.dao.SqlUtils;
-import de.greenrobot.dao.Query;
-import de.greenrobot.dao.QueryBuilder;
+import de.greenrobot.dao.internal.SqlUtils;
+import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 
 import com.moneydesktop.finance.database.AccountType;
 
@@ -188,27 +188,31 @@ public class AccountTypeDao extends AbstractDao<AccountType, Long> {
     }
     
     /** Internal query to resolve the "accountTypes" to-many relationship of AccountTypeGroup. */
-    public synchronized List<AccountType> _queryAccountTypeGroup_AccountTypes(Long accountTypeGroupId) {
-        if (accountTypeGroup_AccountTypesQuery == null) {
-            QueryBuilder<AccountType> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.AccountTypeGroupId.eq(accountTypeGroupId));
-            accountTypeGroup_AccountTypesQuery = queryBuilder.build();
-        } else {
-            accountTypeGroup_AccountTypesQuery.setParameter(0, accountTypeGroupId);
+    public List<AccountType> _queryAccountTypeGroup_AccountTypes(Long accountTypeGroupId) {
+        synchronized (this) {
+            if (accountTypeGroup_AccountTypesQuery == null) {
+                QueryBuilder<AccountType> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.AccountTypeGroupId.eq(null));
+                accountTypeGroup_AccountTypesQuery = queryBuilder.build();
+            }
         }
-        return accountTypeGroup_AccountTypesQuery.list();
+        Query<AccountType> query = accountTypeGroup_AccountTypesQuery.forCurrentThread();
+        query.setParameter(0, accountTypeGroupId);
+        return query.list();
     }
 
     /** Internal query to resolve the "children" to-many relationship of AccountType. */
-    public synchronized List<AccountType> _queryAccountType_Children(Long parentAccountTypeId) {
-        if (accountType_ChildrenQuery == null) {
-            QueryBuilder<AccountType> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.ParentAccountTypeId.eq(parentAccountTypeId));
-            accountType_ChildrenQuery = queryBuilder.build();
-        } else {
-            accountType_ChildrenQuery.setParameter(0, parentAccountTypeId);
+    public List<AccountType> _queryAccountType_Children(Long parentAccountTypeId) {
+        synchronized (this) {
+            if (accountType_ChildrenQuery == null) {
+                QueryBuilder<AccountType> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.ParentAccountTypeId.eq(null));
+                accountType_ChildrenQuery = queryBuilder.build();
+            }
         }
-        return accountType_ChildrenQuery.list();
+        Query<AccountType> query = accountType_ChildrenQuery.forCurrentThread();
+        query.setParameter(0, parentAccountTypeId);
+        return query.list();
     }
 
     private String selectDeep;

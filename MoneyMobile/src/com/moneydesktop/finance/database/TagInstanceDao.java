@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.Property;
-import de.greenrobot.dao.SqlUtils;
-import de.greenrobot.dao.Query;
-import de.greenrobot.dao.QueryBuilder;
+import de.greenrobot.dao.internal.SqlUtils;
+import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 
 import com.moneydesktop.finance.database.TagInstance;
 
@@ -135,27 +135,31 @@ public class TagInstanceDao extends AbstractDao<TagInstance, Long> {
     }
     
     /** Internal query to resolve the "tagInstances" to-many relationship of BusinessObjectBase. */
-    public synchronized List<TagInstance> _queryBusinessObjectBase_TagInstances(long baseObjectId) {
-        if (businessObjectBase_TagInstancesQuery == null) {
-            QueryBuilder<TagInstance> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.BaseObjectId.eq(baseObjectId));
-            businessObjectBase_TagInstancesQuery = queryBuilder.build();
-        } else {
-            businessObjectBase_TagInstancesQuery.setParameter(0, baseObjectId);
+    public List<TagInstance> _queryBusinessObjectBase_TagInstances(long baseObjectId) {
+        synchronized (this) {
+            if (businessObjectBase_TagInstancesQuery == null) {
+                QueryBuilder<TagInstance> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.BaseObjectId.eq(null));
+                businessObjectBase_TagInstancesQuery = queryBuilder.build();
+            }
         }
-        return businessObjectBase_TagInstancesQuery.list();
+        Query<TagInstance> query = businessObjectBase_TagInstancesQuery.forCurrentThread();
+        query.setParameter(0, baseObjectId);
+        return query.list();
     }
 
     /** Internal query to resolve the "tagInstances" to-many relationship of Tag. */
-    public synchronized List<TagInstance> _queryTag_TagInstances(long tagId) {
-        if (tag_TagInstancesQuery == null) {
-            QueryBuilder<TagInstance> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.TagId.eq(tagId));
-            tag_TagInstancesQuery = queryBuilder.build();
-        } else {
-            tag_TagInstancesQuery.setParameter(0, tagId);
+    public List<TagInstance> _queryTag_TagInstances(long tagId) {
+        synchronized (this) {
+            if (tag_TagInstancesQuery == null) {
+                QueryBuilder<TagInstance> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.TagId.eq(null));
+                tag_TagInstancesQuery = queryBuilder.build();
+            }
         }
-        return tag_TagInstancesQuery.list();
+        Query<TagInstance> query = tag_TagInstancesQuery.forCurrentThread();
+        query.setParameter(0, tagId);
+        return query.list();
     }
 
     private String selectDeep;

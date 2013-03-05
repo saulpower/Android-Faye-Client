@@ -217,6 +217,26 @@ public class AnimationFactory {
 	
 	public static void slideTransition(final ViewAnimator viewAnimator, int index, AnimationListener finish1, AnimationListener finish2, FlipDirection dir, long duration) {   
 
+		Animation[] animc = getAnimations(finish1, finish2, dir, duration);
+		
+		viewAnimator.setOutAnimation(animc[0]);
+		viewAnimator.setInAnimation(animc[1]);
+		
+		viewAnimator.setDisplayedChild(index);
+	}
+	
+	public static void slideTransition(final com.moneydesktop.finance.views.ViewAnimator viewAnimator, int index, AnimationListener finish1, AnimationListener finish2, FlipDirection dir, long duration) {   
+
+		Animation[] animc = getAnimations(finish1, finish2, dir, duration);
+		
+		viewAnimator.setOutAnimation(animc[0]);
+		viewAnimator.setInAnimation(animc[1]);
+		
+		viewAnimator.setDisplayedChild(index);
+	}
+	
+	private static Animation[] getAnimations(AnimationListener finish1, AnimationListener finish2, FlipDirection dir, long duration) {
+		
 		Animation in = AnimationUtils.loadAnimation(ApplicationContext.getContext(), FlipDirection.BOTTOM_TOP == dir ? R.anim.in_up : R.anim.in_down);
 		Animation out = AnimationUtils.loadAnimation(ApplicationContext.getContext(), FlipDirection.BOTTOM_TOP == dir ? R.anim.out_up : R.anim.out_down);
 		Animation[] animc = new Animation[] { out, in };
@@ -225,10 +245,7 @@ public class AnimationFactory {
 		
 		if (finish2 != null) animc[1].setAnimationListener(finish2);
 		
-		viewAnimator.setOutAnimation(animc[0]);
-		viewAnimator.setInAnimation(animc[1]);
-		
-		viewAnimator.setDisplayedChild(index);
+		return animc;
 	}
 	
 	//////////////

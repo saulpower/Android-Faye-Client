@@ -17,6 +17,7 @@ import android.util.Pair;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -37,16 +38,22 @@ import com.moneydesktop.finance.handset.adapter.MenuHandsetAdapter;
 import com.moneydesktop.finance.handset.adapter.MenuRightHandsetAdapter;
 import com.moneydesktop.finance.handset.fragment.AccountTypesHandsetFragment;
 import com.moneydesktop.finance.handset.fragment.SettingsHandsetFragment;
+import com.moneydesktop.finance.handset.fragment.SpendingChartHandsetFragment;
+import com.moneydesktop.finance.handset.fragment.SpendingChartSummaryHandsetFragment;
 import com.moneydesktop.finance.handset.fragment.TransactionsHandsetFragment;
+import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.shared.activity.DashboardBaseActivity;
+import com.moneydesktop.finance.shared.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
-import com.moneydesktop.finance.tablet.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.GrowViewPager;
 import com.moneydesktop.finance.views.NavBarView;
 import com.moneydesktop.finance.views.UltimateListView;
+import com.moneydesktop.finance.views.ViewAnimator;
+
+import de.greenrobot.event.EventBus;
 
 public class DashboardHandsetActivity extends DashboardBaseActivity implements OnItemClickListener {
 	
@@ -54,7 +61,10 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	
 	private static final String STATE_MENUDRAWER = "menuDrawer";
 
-	private ViewFlipper mFlipper, mMenuFlipper;
+	private static final int DEFAULT_FRAGMENTS = 8;
+	
+	private ViewFlipper mMenuFlipper;
+	private ViewAnimator mFlipper;
 	private TextView mUpdateLabel, mUpdate;
 	private NavBarView mRefresh;
 	private UltimateListView mRightMenuList;
@@ -66,22 +76,60 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	private GrowViewPager mPager;
 	
     private RelativeLayout mNavBar;
-    private TextView mTitle,mLeft, mRight;
+    private TextView mTitle, mLeft, mRight;
     
     private MenuHandsetAdapter mMenuAdapter;
-    private MenuDrawer mMenuDrawer, mMenuDrawerRight;
+    private MenuDrawer mMenuDrawerLeft, mMenuDrawerRight;
     
     private Animation mLeftIn, mLeftOut, mRightIn, mRightOut;
+    
+    private OnMenuChangeListener mOnMenuChangeListener;
 
     protected SimpleDateFormat mDateFormatter = new SimpleDateFormat("MM.dd.yyyy '@' h:mma", Locale.US);
     
     private Map<FragmentType, BaseFragment> mFragments = new HashMap<FragmentType, BaseFragment>();
+	
+	private AnimationListener mStart = new AnimationListener() {
+		
+		@Override
+		public void onAnimationStart(Animation animation) {
+			EventBus.getDefault().post(new EventMessage().new NavigationEvent());
+		}
+		
+		@Override
+		public void onAnimationRepeat(Animation animation) {}
+		
+		@Override
+		public void onAnimationEnd(Animation animation) {}
+	};
+    
+    private AnimationListener mFinish = new AnimationListener() {
+
+		@Override
+		public void onAnimationEnd(Animation animation) {
+			EventBus.getDefault().post(new EventMessage().new NavigationEvent(mCurrentFragment));
+		}
+
+		@Override
+		public void onAnimationRepeat(Animation animation) {}
+
+		@Override
+		public void onAnimationStart(Animation animation) {}
+	};
+	
+	public FragmentType getCurrentFragment() {
+		return mCurrentFragment;
+	}
 
 	public GrowPagerAdapter getPagerAdapter() {
 	    return mAdapter;
 	}
     
-    @Override
+    public void setOnMenuChangeListener(OnMenuChangeListener mOnMenuChangeListener) {
+		this.mOnMenuChangeListener = mOnMenuChangeListener;
+	}
+
+	@Override
     public void onFragmentAttached(BaseFragment fragment) {
     	super.onFragmentAttached(fragment);
     	
@@ -99,7 +147,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
         DateFormatSymbols sym = mDateFormatter.getDateFormatSymbols();
         sym.setAmPmStrings(new String[] { "am", "pm" });
         mDateFormatter.setDateFormatSymbols(sym);
-        
+
         loadFragments();
         
         setupMenus();
@@ -135,12 +183,12 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	@Override
 	public void onBackPressed() {
 
-        final int drawerStateLeft = mMenuDrawer.getDrawerState();
+        final int drawerStateLeft = mMenuDrawerLeft.getDrawerState();
         final int drawerStateRight = mMenuDrawerRight.getDrawerState();
         
 		if (drawerStateLeft == MenuDrawer.STATE_OPEN || drawerStateLeft == MenuDrawer.STATE_OPENING) {
 			
-            mMenuDrawer.closeMenu();
+            mMenuDrawerLeft.closeMenu();
             return;
             
         } else if (drawerStateRight == MenuDrawer.STATE_OPEN || drawerStateRight == MenuDrawer.STATE_OPENING) {
@@ -152,7 +200,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 		    
             return;
             
-        } else if (mFlipper.indexOfChild(mFlipper.getCurrentView()) > 0 && mFragmentCount > 5) {
+        } else if (mFlipper.indexOfChild(mFlipper.getCurrentView()) > 0 && mFragmentCount >= DEFAULT_FRAGMENTS) {
 
 			navigateBack();
 			
@@ -168,7 +216,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     protected void onRestoreInstanceState(Bundle inState) {
         super.onRestoreInstanceState(inState);
         
-        mMenuDrawer.restoreState(inState.getParcelable(STATE_MENUDRAWER));
+        mMenuDrawerLeft.restoreState(inState.getParcelable(STATE_MENUDRAWER));
     }
 
     @Override
@@ -176,7 +224,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
         super.onSaveInstanceState(outState);
         
         outState.putInt(KEY_PAGER, mPager.getCurrentItem());
-        outState.putParcelable(STATE_MENUDRAWER, mMenuDrawer.saveState());
+        outState.putParcelable(STATE_MENUDRAWER, mMenuDrawerLeft.saveState());
     }
     
     @Override
@@ -224,6 +272,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     	
     	loadFragment(R.id.accounts_fragment, AccountTypesHandsetFragment.getInstance());
     	loadFragment(R.id.transactions_fragment, TransactionsHandsetFragment.newInstance());
+    	loadFragment(R.id.spending_fragment, SpendingChartHandsetFragment.newInstance());
     	loadFragment(R.id.settings_fragment, SettingsHandsetFragment.getInstance());
     }
     
@@ -252,10 +301,20 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     
     private void setupMenus() {
 
-        mMenuDrawer = MenuDrawer.attach(this, MenuDrawer.MENU_DRAG_WINDOW);
-        mMenuDrawer.setContentView(R.layout.handset_dashboard_view);
-        mMenuDrawer.setMenuView(R.layout.handset_menu_left);
-        mMenuDrawer.setMenuSize((int) UiUtils.getDynamicPixels(this, 125));
+        mMenuDrawerLeft = MenuDrawer.attach(this, MenuDrawer.MENU_DRAG_WINDOW);
+        mMenuDrawerLeft.setContentView(R.layout.handset_dashboard_view);
+        mMenuDrawerLeft.setMenuView(R.layout.handset_menu_left);
+        mMenuDrawerLeft.setMenuSize((int) UiUtils.getDynamicPixels(this, 125));
+        mMenuDrawerLeft.setOnDrawerStateChangeListener(new OnDrawerStateChangeListener() {
+			
+			@Override
+			public void onDrawerStateChange(int oldState, int newState) {
+				
+				if (mOnMenuChangeListener != null) {
+					mOnMenuChangeListener.onLeftMenuStateChanged(oldState, newState);
+				}
+			}
+		});
         
         mMenuAdapter = new MenuHandsetAdapter(this, R.layout.handset_menu_item, Constant.MENU_ITEMS);
         ListView list = (ListView) findViewById(R.id.menu_list);
@@ -278,10 +337,14 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 			@Override
 			public void onDrawerStateChange(int oldState, int newState) {
 				
+				if (mOnMenuChangeListener != null) {
+					mOnMenuChangeListener.onRightMenuStateChanged(oldState, newState);
+				}
+				
 				if (newState == MenuDrawer.STATE_CLOSED || newState == MenuDrawer.STATE_OPEN) {
 					
 					boolean opened = newState == MenuDrawer.STATE_OPEN;
-					mMenuDrawer.setTouchMode(opened
+					mMenuDrawerLeft.setTouchMode(opened
 	                        ? MenuDrawer.TOUCH_MODE_NONE
 	                        : MenuDrawer.TOUCH_MODE_BEZEL);
 				}
@@ -331,7 +394,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	
 	private void setupView() {
 		
-		mFlipper = (ViewFlipper) findViewById(R.id.flipper);
+		mFlipper = (ViewAnimator) findViewById(R.id.flipper);
         mPager = (GrowViewPager) findViewById(R.id.pager);
 		
 		mNavBar = (RelativeLayout) findViewById(R.id.nav_bar);
@@ -347,10 +410,10 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 			@Override
 			public void onClick(View v) {
 				
-				if (mFragmentCount < 6) {
+				if (mFragmentCount < DEFAULT_FRAGMENTS) {
 					
 					mMenuDrawerRight.closeMenu();
-					mMenuDrawer.toggleMenu();
+					mMenuDrawerLeft.toggleMenu();
 					
 				} else {
 					
@@ -392,7 +455,18 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 
     	resetRightMenu();
     	mCurrentFragment = type;
-    	mMenuAdapter.setSelectedIndex(mCurrentFragment.index());
+    	
+    	int index = mCurrentFragment.index();
+    	
+    	// Adjustment for ordering issues the must remain so
+    	// things work properly on the tablet version
+    	if (index == 3) {
+    		index = 4;
+    	} else if (index == 4) {
+    		index = 3;
+    	}
+    	
+    	mMenuAdapter.setSelectedIndex(index);
     	
     	mOnHome = (FragmentType.DASHBOARD == type);
     	
@@ -406,8 +480,8 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	    	// Tell the selected fragment it is now showing
 	    	if (mFragments.containsKey(type)) mFragments.get(type).isShowing(false);
     	}
-		
-        AnimationFactory.slideTransition(mFlipper, type.index(), null, null, moveUp ? FlipDirection.BOTTOM_TOP : FlipDirection.TOP_BOTTOM, TRANSITION_DURATION);
+    	
+        AnimationFactory.slideTransition(mFlipper, type.index(), mStart, mFinish, moveUp ? FlipDirection.BOTTOM_TOP : FlipDirection.TOP_BOTTOM, TRANSITION_DURATION);
     }
 	
 	/**
@@ -439,7 +513,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	
 	private void configureBackButton() {
 		
-		mLeft.setText(mFragmentCount < 6 ? R.string.nav_icon_menu_left : R.string.nav_icon_back);
+		mLeft.setText(mFragmentCount < DEFAULT_FRAGMENTS ? R.string.nav_icon_menu_left : R.string.nav_icon_back);
 	}
 
 	@Override
@@ -454,7 +528,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 		
 		boolean moveUp = (mMenuAdapter.getSelectedIndex() - position) < 0;
     	
-        mMenuDrawer.closeMenu();
+        mMenuDrawerLeft.closeMenu();
         
         switch (position) {
 	        case 0:
@@ -471,8 +545,17 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	        	break;
 	        case 3:
 	        	clearBackStack();
+	        	showFragment(FragmentType.SPENDING, moveUp);
+	        	break;
+	        case 4:
+	        	clearBackStack();
 	        	showFragment(FragmentType.SETTINGS, moveUp);
 	        	break;
         }
+	}
+	
+	public interface OnMenuChangeListener {
+		public void onLeftMenuStateChanged(int oldState, int newState);
+		public void onRightMenuStateChanged(int oldState, int newState);
 	}
 }

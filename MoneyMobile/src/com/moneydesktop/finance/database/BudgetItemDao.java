@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.Property;
-import de.greenrobot.dao.SqlUtils;
-import de.greenrobot.dao.Query;
-import de.greenrobot.dao.QueryBuilder;
+import de.greenrobot.dao.internal.SqlUtils;
+import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 
 import com.moneydesktop.finance.database.BudgetItem;
 
@@ -169,15 +169,17 @@ public class BudgetItemDao extends AbstractDao<BudgetItem, Long> {
     }
     
     /** Internal query to resolve the "budgetItems" to-many relationship of Category. */
-    public synchronized List<BudgetItem> _queryCategory_BudgetItems(Long categoryId) {
-        if (category_BudgetItemsQuery == null) {
-            QueryBuilder<BudgetItem> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.CategoryId.eq(categoryId));
-            category_BudgetItemsQuery = queryBuilder.build();
-        } else {
-            category_BudgetItemsQuery.setParameter(0, categoryId);
+    public List<BudgetItem> _queryCategory_BudgetItems(Long categoryId) {
+        synchronized (this) {
+            if (category_BudgetItemsQuery == null) {
+                QueryBuilder<BudgetItem> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.CategoryId.eq(null));
+                category_BudgetItemsQuery = queryBuilder.build();
+            }
         }
-        return category_BudgetItemsQuery.list();
+        Query<BudgetItem> query = category_BudgetItemsQuery.forCurrentThread();
+        query.setParameter(0, categoryId);
+        return query.list();
     }
 
     private String selectDeep;

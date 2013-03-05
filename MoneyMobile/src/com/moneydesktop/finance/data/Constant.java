@@ -145,6 +145,7 @@ public class Constant {
     public static final String BUSINESS_OBJECT = "business_object";
     public static final String INCOME = "income";
     public static final String PERSONAL = "personal";
+    public static final String TRANSFER = "transfer";
     public static final String UNCATEGORIZED = "uncategorized";
     public static final int QUERY_LIMIT = 30;
     public static final float STANDARD_DPI = 160f;
@@ -177,6 +178,10 @@ public class Constant {
     public static final String QUERY_TOP_SPENDING_CATEGORY = "SELECT CATEGORY_ID, Sum(AMOUNT) As AMOUNT FROM TRANSACTIONS WHERE DATE BETWEEN ? AND ? GROUP BY CATEGORY_ID ORDER BY AMOUNT desc ";
     public static final String QUERY_DATED_TRANSACTIONS = "SELECT * FROM TRANSACTIONS WHERE DATE BETWEEN ? AND ? ORDER BY DATE ASC";
     public static final String QUERY_UNVIEWED_TRANSACTIONS = "SELECT COUNT(IS_PROCESSED) As UnProcessedTrans FROM TRANSACTIONS WHERE IS_PROCESSED='0' AND DATE BETWEEN ? AND ? ";
+    public static final String QUERY_TRANSACTIONS_TOTAL = "SELECT SUM(ABS(AMOUNT)) AS Amount FROM TRANSACTIONS";
+    public static final String QUERY_SPENDING_TOTAL = "SELECT SUM(ABS(T.AMOUNT)) AS TOTAL FROM TRANSACTIONS T JOIN CATEGORY C ON T.CATEGORY_ID = C._ID JOIN CATEGORY C1 ON C.PARENT_CATEGORY_ID = C1._ID WHERE C.CATEGORY_NAME NOT LIKE '%income%' AND C1.CATEGORY_NAME NOT LIKE '%income%'AND C.CATEGORY_NAME NOT LIKE '%transfer%' AND C1.CATEGORY_NAME NOT LIKE '%transfer%' AND T.DATE BETWEEN ? AND ?";
+    public static final String QUERY_CATEGORY_CHILD_TOTAL = "SELECT SUM(ABS(T.AMOUNT)) AS Amount FROM TRANSACTIONS T JOIN CATEGORY C ON T.CATEGORY_ID = C._ID WHERE C._ID = ? AND T.DATE BETWEEN ? AND ?";
+    public static final String QUERY_CATEGORY_TOTAL = "SELECT SUM(ABS(T.AMOUNT)) AS Amount FROM TRANSACTIONS T JOIN CATEGORY C ON T.CATEGORY_ID = C._ID WHERE (C._ID = ? OR C.PARENT_CATEGORY_ID = ?) AND T.DATE BETWEEN ? AND ?";
     public static final String QUERY_DAILY_TRANSACTIONS = "SELECT DATE, SUM(AMOUNT) AS Amount FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER, MONTH_NUMBER, DAY_NUMBER ORDER BY DATE ASC";
     public static final String QUERY_MONTHLY_TRANSACTIONS = "SELECT DATE, SUM(AMOUNT) AS Amount FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER, MONTH_NUMBER ORDER BY DATE ASC";
     public static final String QUERY_QUARTERLY_TRANSACTIONS = "SELECT DATE, SUM(AMOUNT) AS Amount, QUARTER_NUMBER FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER, QUARTER_NUMBER ORDER BY DATE ASC";
@@ -203,6 +208,25 @@ public class Constant {
     /*******************************************************************
      * ARRAYS & MAPS
      *******************************************************************/
+    
+	public static int[] RANDOM_COLORS = new int[] {
+	        R.color.random1,
+	        R.color.random2,
+	        R.color.random3,
+	        R.color.random4,
+	        R.color.random5,
+	        R.color.random6,
+	        R.color.random7,
+	        R.color.random8,
+	        R.color.random9,
+	        R.color.random10,
+	        R.color.random11,
+	        R.color.random12,
+	        R.color.random13,
+	        R.color.random14,
+	        R.color.random15,
+	        R.color.random16
+    };
 
     public static String[] OPERATION_ORDER = new String[] {
 			KEY_CREATED, 
@@ -254,6 +278,7 @@ public class Constant {
     	items.add(new int[] { R.string.icon_home, R.string.title_activity_handset_dashboard });
     	items.add(new int[] { R.string.icon_accounts, R.string.title_activity_accounts });
     	items.add(new int[] { R.string.icon_transaction, R.string.title_activity_transactions });
+    	items.add(new int[] { R.string.icon_chart, R.string.title_activity_spending });
     	items.add(new int[] { R.string.icon_settings, R.string.title_activity_settings });
     	MENU_ITEMS = Collections.unmodifiableList(items);
     }

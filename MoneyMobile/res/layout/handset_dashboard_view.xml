@@ -88,7 +88,7 @@
 		    android:layout_height="match_parent"
 		    android:background="@drawable/phone_wood" >
 		    
-		    <ViewFlipper 
+		    <com.moneydesktop.finance.views.ViewAnimator 
 		        android:id="@+id/flipper"
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent">
@@ -112,8 +112,13 @@
                     android:id="@+id/settings_fragment"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+
+	            <FrameLayout
+	                android:id="@+id/spending_fragment"
+	                android:layout_width="match_parent"
+	                android:layout_height="match_parent" />
 		        
-		    </ViewFlipper>
+		    </com.moneydesktop.finance.views.ViewAnimator>
 		    
 		</RelativeLayout>
 	

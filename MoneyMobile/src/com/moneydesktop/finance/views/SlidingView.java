@@ -1,5 +1,6 @@
 package com.moneydesktop.finance.views;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.moneydesktop.finance.data.Enums.SlideFrom;
 import com.moneydesktop.finance.util.UiUtils;
 import com.nineoldandroids.animation.ObjectAnimator;
 
+@SuppressLint("NewApi")
 public class SlidingView extends FrameLayout{
 
     final Context mContext;

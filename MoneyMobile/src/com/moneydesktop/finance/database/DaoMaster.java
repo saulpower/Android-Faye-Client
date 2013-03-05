@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import de.greenrobot.dao.AbstractDaoMaster;
-import de.greenrobot.dao.IdentityScopeType;
+import de.greenrobot.dao.identityscope.IdentityScopeType;
 
 import com.moneydesktop.finance.database.BusinessObjectBaseDao;
 import com.moneydesktop.finance.database.TagDao;

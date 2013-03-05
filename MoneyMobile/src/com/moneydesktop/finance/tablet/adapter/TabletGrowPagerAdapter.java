@@ -4,10 +4,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import com.moneydesktop.finance.handset.fragment.DashboardFragmentFactory;
+import com.moneydesktop.finance.shared.adapter.GrowPagerAdapter;
 
 public class TabletGrowPagerAdapter extends GrowPagerAdapter {
     
-    private final int COUNT = 2;
+    private final int COUNT = 3;
 
 	public TabletGrowPagerAdapter(FragmentManager fm) {
 		super(fm);

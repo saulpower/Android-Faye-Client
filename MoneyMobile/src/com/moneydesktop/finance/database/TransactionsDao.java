@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.Property;
-import de.greenrobot.dao.SqlUtils;
-import de.greenrobot.dao.Query;
-import de.greenrobot.dao.QueryBuilder;
+import de.greenrobot.dao.internal.SqlUtils;
+import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 
 import com.moneydesktop.finance.database.Transactions;
 
@@ -468,39 +468,45 @@ public class TransactionsDao extends AbstractDao<Transactions, Long> {
     }
     
     /** Internal query to resolve the "transactions" to-many relationship of BankAccount. */
-    public synchronized List<Transactions> _queryBankAccount_Transactions(Long bankAccountId) {
-        if (bankAccount_TransactionsQuery == null) {
-            QueryBuilder<Transactions> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.BankAccountId.eq(bankAccountId));
-            bankAccount_TransactionsQuery = queryBuilder.build();
-        } else {
-            bankAccount_TransactionsQuery.setParameter(0, bankAccountId);
+    public List<Transactions> _queryBankAccount_Transactions(Long bankAccountId) {
+        synchronized (this) {
+            if (bankAccount_TransactionsQuery == null) {
+                QueryBuilder<Transactions> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.BankAccountId.eq(null));
+                bankAccount_TransactionsQuery = queryBuilder.build();
+            }
         }
-        return bankAccount_TransactionsQuery.list();
+        Query<Transactions> query = bankAccount_TransactionsQuery.forCurrentThread();
+        query.setParameter(0, bankAccountId);
+        return query.list();
     }
 
     /** Internal query to resolve the "transactions" to-many relationship of Category. */
-    public synchronized List<Transactions> _queryCategory_Transactions(Long categoryId) {
-        if (category_TransactionsQuery == null) {
-            QueryBuilder<Transactions> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.CategoryId.eq(categoryId));
-            category_TransactionsQuery = queryBuilder.build();
-        } else {
-            category_TransactionsQuery.setParameter(0, categoryId);
+    public List<Transactions> _queryCategory_Transactions(Long categoryId) {
+        synchronized (this) {
+            if (category_TransactionsQuery == null) {
+                QueryBuilder<Transactions> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.CategoryId.eq(null));
+                category_TransactionsQuery = queryBuilder.build();
+            }
         }
-        return category_TransactionsQuery.list();
+        Query<Transactions> query = category_TransactionsQuery.forCurrentThread();
+        query.setParameter(0, categoryId);
+        return query.list();
     }
 
     /** Internal query to resolve the "children" to-many relationship of Transactions. */
-    public synchronized List<Transactions> _queryTransactions_Children(Long parentTransactionId) {
-        if (transactions_ChildrenQuery == null) {
-            QueryBuilder<Transactions> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.ParentTransactionId.eq(parentTransactionId));
-            transactions_ChildrenQuery = queryBuilder.build();
-        } else {
-            transactions_ChildrenQuery.setParameter(0, parentTransactionId);
+    public List<Transactions> _queryTransactions_Children(Long parentTransactionId) {
+        synchronized (this) {
+            if (transactions_ChildrenQuery == null) {
+                QueryBuilder<Transactions> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.ParentTransactionId.eq(null));
+                transactions_ChildrenQuery = queryBuilder.build();
+            }
         }
-        return transactions_ChildrenQuery.list();
+        Query<Transactions> query = transactions_ChildrenQuery.forCurrentThread();
+        query.setParameter(0, parentTransactionId);
+        return query.list();
     }
 
     private String selectDeep;

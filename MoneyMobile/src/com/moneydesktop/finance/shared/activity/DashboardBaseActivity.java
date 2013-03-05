@@ -20,9 +20,9 @@ import com.moneydesktop.finance.handset.activity.LoginHandsetActivity;
 import com.moneydesktop.finance.model.EventMessage.LogoutEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.model.User;
+import com.moneydesktop.finance.shared.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.LoginTabletActivity;
-import com.moneydesktop.finance.tablet.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsTabletFragment;
 import com.moneydesktop.finance.util.DialogUtils;
@@ -38,9 +38,13 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 	protected boolean mLoggingOut = false;
 	protected boolean mOnHome = true;
     
-    protected BaseFragment mFragment;
+	protected BaseFragment mFragment;
 	protected GrowViewPager mPager;
 	protected GrowPagerAdapter mAdapter;
+	
+    public boolean isOnHome() {
+		return mOnHome;
+	}
 
 	public GrowPagerAdapter getPagerAdapter() {
 	    return mAdapter;

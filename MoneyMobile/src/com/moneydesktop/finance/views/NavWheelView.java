@@ -306,6 +306,24 @@ public class NavWheelView extends View {
 		
 		ObjectAnimator fade = ObjectAnimator.ofInt(this, "mAlpha", ALPHA, 0);
 		fade.setDuration(250);
+		fade.addListener(new AnimatorListener() {
+			
+			@Override
+			public void onAnimationStart(Animator animation) {}
+			
+			@Override
+			public void onAnimationRepeat(Animator animation) {}
+			
+			@Override
+			public void onAnimationEnd(Animator animation) {
+
+				// Notify the system the navigation is no longer showing
+				EventBus.getDefault().post(new EventMessage().new NavigationEvent(false));
+			}
+			
+			@Override
+			public void onAnimationCancel(Animator animation) {}
+		});
 		fade.start();
 		
 		for (NavItemDrawable item : mDrawables) {
@@ -315,8 +333,6 @@ public class NavWheelView extends View {
 		// Timer to handle hide animations have completed
 		mHandler.postDelayed(mTask, 1200);
 		
-		// Notify the system the navigation is no longer showing
-		EventBus.getDefault().post(new EventMessage().new NavigationEvent(false));
 		
 		// Update any listener of the index change
 		if (listener != null) {
