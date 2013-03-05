@@ -1,39 +1,41 @@
 package com.moneydesktop.finance.handset.adapter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.data.BankLogoManager;
-import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.handset.fragment.AddAccountHandsetFragment;
-import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.views.BankRefreshIcon;
-
 import android.app.Activity;
-import android.app.ActionBar.LayoutParams;
-import android.content.Context;
-import android.graphics.Color;
-import android.support.v4.app.FragmentTransaction;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.BankLogoManager;
+import com.moneydesktop.finance.data.Enums.BankRefreshStatus;
+import com.moneydesktop.finance.database.AccountType;
+import com.moneydesktop.finance.database.Bank;
+import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.BankRefreshIcon;
+
 public class AccountBankListAdapter extends BaseAdapter {
 
 	private List<Bank> mBanks;
 	private Activity mActivity;
-	
+	private boolean mShouldForceToUpdate = false;
+	private List<Bank> mBanksToUpdate;
+   	
 	public AccountBankListAdapter(Activity activity, List<Bank> banks) {
 		super();
 		mActivity = activity;
 		mBanks = banks;
+		mBanksToUpdate = new ArrayList<Bank>();
 	}
 
 	@Override
@@ -78,6 +80,9 @@ public class AccountBankListAdapter extends BaseAdapter {
 		bankRefreshIcon.setLayoutParams(layoutParams);
 		bankRefreshIcon.setPadding(10, 10, 10, 10);
 		
+		
+		setBanner(bank, bankStatus, bankRefreshIcon);
+		
         String logoId = bank.getBankId();
         
         if (bank.getInstitution() != null) {
@@ -104,6 +109,83 @@ public class AccountBankListAdapter extends BaseAdapter {
         
    
         return addBank;
+	}
+	
+    private void setBanner(final Bank bank, final ImageView status, final TextView refreshStatus) { 
+    	status.setVisibility(View.VISIBLE);
+
+        if (mActivity != null) {
+        	if (mBanksToUpdate.size() > 0) {
+        		Log.d("kent", "made it 1");
+
+    	        List<Bank> tempList = new ArrayList<Bank>();
+    	        tempList = Arrays.asList(new Bank[mBanksToUpdate.size()]);  
+    	        Collections.copy(tempList, mBanksToUpdate);
+        		
+        		for (Bank bankIterator : tempList) {        			
+        			if (bankIterator.getBankName().equals(bank.getBankName())) {
+	        			mShouldForceToUpdate = true;
+	        			mBanksToUpdate.remove(bankIterator);
+        			}
+        		
+        		} 
+    		} 
+        	
+        	if (mShouldForceToUpdate) {
+        		applyUpdatingImage(status, refreshStatus);
+        		Log.d("kent", "forcing bank to update " + bank.getBankName());
+        	} else {
+        		Log.d("kent", "not forcing bank to update " + bank.getBankName());
+	        	if (bank.getProcessStatus() == null) {
+	        		applyUpdatingImage(status, refreshStatus);
+	        		return;
+	        	}
+	            if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_SUCCEEDED.index()) {
+	            	refreshStatus.setVisibility(View.GONE);
+	                status.setVisibility(View.GONE);
+	                
+	            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_PENDING.index()) {
+	            	applyUpdatingImage(status, refreshStatus);
+	                
+	            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_MFA.index()) {
+	            	refreshStatus.setVisibility(View.GONE);
+	                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.handset_accounts_mfa));
+	                
+	            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_LOGIN_FAILED.index()) {
+	            	refreshStatus.setVisibility(View.GONE);
+	                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.handset_accounts_broken));
+	                
+	            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_UPDATE_REQUIRED.index()) {
+	            	refreshStatus.setVisibility(View.GONE);
+	                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.handset_accounts_mfa));
+	                
+	            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_EXCEPTION.index()) {
+	            	refreshStatus.setVisibility(View.GONE);
+	                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.handset_accounts_broken));
+	                
+	            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_PROCESSING.index()) {
+	            	applyUpdatingImage(status, refreshStatus);
+	            }
+        	}
+        }
+    }
+    
+	private void applyUpdatingImage(final ImageView status, TextView bankRefreshIcon) {
+		status.setVisibility(View.GONE);
+		bankRefreshIcon.setVisibility(View.VISIBLE);
+	}
+
+	public void setAllToUpdate(boolean shouldForceToUpdate) {
+		mShouldForceToUpdate = shouldForceToUpdate;
+	//	Log.d("kent", "outside force = " + ((shouldForceToUpdate) ? "true" : "false"));
+	}
+
+	public void setBankToUpdate(Bank bank) {
+		if (!mBanksToUpdate.contains(bank)) {
+			mBanksToUpdate.add(bank);			
+		}
+//		Log.d("kent", "list size" + mBanksToUpdate.size());
+		
 	}
 	
 }
