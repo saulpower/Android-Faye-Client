@@ -116,7 +116,6 @@ public class AccountBankListAdapter extends BaseAdapter {
 
         if (mActivity != null) {
         	if (mBanksToUpdate.size() > 0) {
-        		Log.d("kent", "made it 1");
 
     	        List<Bank> tempList = new ArrayList<Bank>();
     	        tempList = Arrays.asList(new Bank[mBanksToUpdate.size()]);  
@@ -133,9 +132,7 @@ public class AccountBankListAdapter extends BaseAdapter {
         	
         	if (mShouldForceToUpdate) {
         		applyUpdatingImage(status, refreshStatus);
-        		Log.d("kent", "forcing bank to update " + bank.getBankName());
         	} else {
-        		Log.d("kent", "not forcing bank to update " + bank.getBankName());
 	        	if (bank.getProcessStatus() == null) {
 	        		applyUpdatingImage(status, refreshStatus);
 	        		return;
@@ -177,14 +174,12 @@ public class AccountBankListAdapter extends BaseAdapter {
 
 	public void setAllToUpdate(boolean shouldForceToUpdate) {
 		mShouldForceToUpdate = shouldForceToUpdate;
-	//	Log.d("kent", "outside force = " + ((shouldForceToUpdate) ? "true" : "false"));
 	}
 
 	public void setBankToUpdate(Bank bank) {
 		if (!mBanksToUpdate.contains(bank)) {
 			mBanksToUpdate.add(bank);			
 		}
-//		Log.d("kent", "list size" + mBanksToUpdate.size());
 		
 	}
 	
