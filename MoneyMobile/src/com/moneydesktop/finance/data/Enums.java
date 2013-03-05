@@ -382,12 +382,14 @@ public class Enums {
 	    ACCOUNT_EXCLUSION_FLAGS_BUDGETS                	(1 << 3), //8
 	    ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME	(1 << 4), //16
 	    ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES	(1 << 5), //32
+	    ACCOUNT_EXCLUSION_FLAGS_DEBT					(1 << 6), //64
 	    ACCOUNT_EXCLUSION_FLAGS_ALL						(1 << 0
 											    		|1 << 1
 											    		|1 << 2
 											    		|1 << 3
 											    		|1 << 4
-											    		|1 << 5); //63
+											    		|1 << 5
+											    		|1 << 6); //127
 	    	    
 	    private final int index;
 	    

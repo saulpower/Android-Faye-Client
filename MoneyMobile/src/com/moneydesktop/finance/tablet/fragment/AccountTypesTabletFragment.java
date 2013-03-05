@@ -55,6 +55,7 @@ import com.moneydesktop.finance.model.EventMessage.BankStatusUpdateEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.shared.adapter.AccountsExpandableListAdapter;
+import com.moneydesktop.finance.shared.fragment.AccountTypesFragment;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.DialogUtils;
@@ -75,21 +76,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class AccountTypesTabletFragment extends BaseFragment implements FragmentVisibilityListener{
-	
-	private QueryProperty mBusinessObjectBaseTable = new QueryProperty(BusinessObjectBaseDao.TABLENAME, BankDao.Properties.BusinessObjectId, BusinessObjectBaseDao.Properties.Id);
-	private QueryProperty mBankAccountTable = new QueryProperty(BankAccountDao.TABLENAME, AccountTypeDao.Properties.BusinessObjectId, BankAccountDao.Properties.BusinessObjectId);
-	
-	private QueryProperty mWhereDataState = new QueryProperty(BusinessObjectBaseDao.TABLENAME, BusinessObjectBaseDao.Properties.DataState, "!= ?");
-	private QueryProperty mWhereBankName = new QueryProperty(BankDao.TABLENAME, BankDao.Properties.BankName, "!= ?");
-	private QueryProperty mAccountTypeWhere = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName, "!= ?");
-	private QueryProperty mOrderBy = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName);
+public class AccountTypesTabletFragment extends AccountTypesFragment implements FragmentVisibilityListener{
 	
     private ListView mListView;
     private static SlidingDrawerRightSide sRightDrawer;
     private View mFooter;
     private PopupWindowAtLocation mPopup;
-    private List<Bank> mBankList;
     private List<Bank> mBanksForDeletion;
     LinearLayout mPanelLayoutHolder;
     List<AccountType> mAccountTypesFiltered;
@@ -108,19 +100,14 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         
         return frag;
 	}
-
-	@Override
-	public FragmentType getType() {
-		return FragmentType.ACCOUNT_TYPES;
-	}
 	
-	@Override
+    @Override
     public void onAttach(Activity activity) {
-        super.onAttach(activity);        
+        super.onAttach(activity);
+
         EventBus.getDefault().register(this);
-        this.mActivity.onFragmentAttached(this);
-	}
-	
+    }
+    
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
@@ -134,14 +121,14 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 		mOpenState = new HashMap<Integer, Boolean>();
 
 
-		setupView(false);
+		setupView();
 		
 		mHandler = new Handler();
 		
 		return mRoot;
 	}
 	
-    private void setupView(boolean updateListOnly) {
+    private void setupView() {
 		setupTitleBar((getActivity() != null) ? getActivity() : mActivity);
 		mActivity.updateNavBar(mActivity.getString(R.string.title_activity_accounts), true);
     	
@@ -157,7 +144,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	    mPanelLayoutHolder = (LinearLayout)mRoot.findViewById(R.id.panel_layout_holder);
         	    
 	    AccountTypeDao accountTypeDAO = ApplicationContext.getDaoSession().getAccountTypeDao();
-			    
+	    
 	    List<AccountType> allAccountTypes = new ArrayList<AccountType>();
 	    		
 	    //Get all account types in alphabetical order. Removing the "Unknown" Type. 
@@ -255,10 +242,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 			}
 		});
         
-        //don't update the panel if we are only trying to update the account types list
-        if (!updateListOnly){
-        	prepPanel();
-        }
+    	prepPanel();
 	}
 
 	private void prepPanel() {
@@ -296,8 +280,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
             public void onClick(View v) {
                 if (User.getCurrentUser().getCanSync()){
                     //start the sync
-                    Intent intent = new Intent((getActivity() != null) ? getActivity() : mActivity, SyncService.class);
-                    ((getActivity() != null) ? getActivity() : mActivity).startService(intent);
+                    SyncEngine.sharedInstance().beginSync();
                     
                     setAllBanksToUpdate();
                 } else {
@@ -358,16 +341,6 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
             mIsInitialization = false;
         }
     }
-
-	private void getAllBanks() {
-		BankDao bankDao = ApplicationContext.getDaoSession().getBankDao();
-		PowerQuery query = new PowerQuery(bankDao);
-	    
-	    query.join(mBusinessObjectBaseTable)
-	    .where(mWhereDataState, "3");
-	    	    
-	    mBankList = bankDao.queryRaw(query.toString(), query.getSelectionArgs());
-	}
 
 	/**
 	 * Adds the header Text to the panel
@@ -444,22 +417,6 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         });
     }
       
-    /**
-     * Updates status for all banks.
-     */
-    private void updateAllBankStatus() {
-        for (Bank bank : mBankList) {
-    		SyncEngine.sharedInstance().beginBankStatusUpdate(bank);
-        }        
-    }
-    
-    /**
-     * Updates status for given bank.
-     */
-    private void updateBankStatus(Bank bank) {
-        SyncEngine.sharedInstance().beginBankStatusUpdate(bank);  
-    }
-    
     @Override
     public void onResume() {
         super.onResume();
@@ -785,7 +742,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
         	}
         	
         	if (mAccountCounter == 0) {
-        		deleteBankWithNoAccountsConfirmation(bank, bankView);
+        		deleteBankWithNoAccountsConfirmation(bankForRemoval, bankView);
           	} else {
         		//start the sync
         		Intent intent = new Intent(getActivity(), SyncService.class);
@@ -803,7 +760,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	    	    public void run()
 	    	    {
 	    	    	if (mActivity != null) {
-	    	    		setupView(false);
+	    	    		setupView();
 	    	    	}
 	    	    }
 	    	});
@@ -898,7 +855,7 @@ public class AccountTypesTabletFragment extends BaseFragment implements Fragment
 	
 	@Override
 	public String getFragmentTitle() {
-		return getString(R.string.title_activity_accounts).toUpperCase();
+		return mActivity.getString(R.string.title_activity_accounts).toUpperCase();
 	}
 
     @Override

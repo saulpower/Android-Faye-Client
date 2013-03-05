@@ -158,6 +158,15 @@ abstract public class BaseActivity extends FragmentActivity {
 		}
 	}
 	
+	public void popBackStackTo(int i) {
+
+		if (mFm.getBackStackEntryCount() > 0) {
+			
+			int fragId = mFm.getBackStackEntryAt(i).getId();
+			mFm.popBackStackImmediate(fragId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+		}
+	}
+	
 	/**
 	 * Called whenever a new fragment has been added and
 	 * attached itself to the host activity.
@@ -232,4 +241,6 @@ abstract public class BaseActivity extends FragmentActivity {
 	}
     
     public abstract String getActivityTitle();
+
+
 }

@@ -513,11 +513,11 @@ public class BankAccount extends BusinessObject  {
 	private static AccountExclusionFlags getShowHideOptions() {
 		AccountExclusionFlags flag = null;
 		if (mExclusion != 0) {
-			if (mExclusion == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ALL.index()) {
-				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ALL.index();
-				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ALL;
-				
-			} else if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES.index()) {
+//			if (mExclusion == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ALL.index()) {
+//				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ALL.index();
+//				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ALL;
+//				
+			if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES.index()) {
 				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES.index();
 				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES;
 				
@@ -540,6 +540,10 @@ public class BankAccount extends BusinessObject  {
 			} else if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSACTION_LIST.index()) {
 				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSACTION_LIST.index();
 				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSACTION_LIST;
+				
+			} else if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_DEBT.index()) {
+				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_DEBT.index();
+				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_DEBT;				
 			}
 		}
 		

@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import android.R.bool;
 
+import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.LockType;
 import com.moneydesktop.finance.data.Enums.NavDirection;
 import com.moneydesktop.finance.database.AccountType;
@@ -158,10 +159,12 @@ public class EventMessage {
 	public class MenuEvent extends EventMessage {
 	    
 	    private int mGroupPosition, mChildPosition;
+	    private FragmentType mFragmenttype;
 	    
-	    public MenuEvent(int groupPosition, int childPosition) {
+	    public MenuEvent(int groupPosition, int childPosition, FragmentType fragmentType) {
 	    	mGroupPosition = groupPosition;
 	    	mChildPosition = childPosition;
+	    	mFragmenttype = fragmentType;
 	    }
 	    
 	    public int getGroupPosition() {
@@ -170,6 +173,10 @@ public class EventMessage {
 	    
 	    public int getChildPosition() {
 	        return mChildPosition;
+	    }
+	    
+	    public FragmentType getFragmentType() {
+	        return mFragmenttype;
 	    }
 	}
 	

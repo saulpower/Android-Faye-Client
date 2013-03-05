@@ -1,10 +1,9 @@
-package com.moneydesktop.finance.tablet.adapter;
+package com.moneydesktop.finance.shared.adapter;
 
 import java.util.List;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.AccountType;
-import com.moneydesktop.finance.tablet.adapter.AddNewInstitutionAdapter.AddInstitutionListHolder;
 import com.moneydesktop.finance.util.Fonts;
 
 import android.app.Activity;
@@ -16,13 +15,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class AddAccountManuallyPropertyTypesAdapter extends ArrayAdapter<AccountType> {
+public class SelectPropertyTypesAdapter extends ArrayAdapter<AccountType> {
 
 	private Context mContext;
 	private int mLayoutId;
 	private List<AccountType> mAccountTypesList;
 	
-	public AddAccountManuallyPropertyTypesAdapter(Context context, int layoutResourceId, List<AccountType> accountTypes) {
+	public SelectPropertyTypesAdapter(Context context, int layoutResourceId, List<AccountType> accountTypes) {
 		super(context, layoutResourceId, accountTypes);
 	
 		mContext = context;
@@ -38,7 +37,7 @@ public class AddAccountManuallyPropertyTypesAdapter extends ArrayAdapter<Account
 		convertView = inflater.inflate(mLayoutId, parent, false);
 					
 		holder.accountTypeImg = (TextView)convertView.findViewById(R.id.txt_image);
-		holder.txtTitle = (TextView)convertView.findViewById(R.id.tablet_add_bank_manually_property_type_name_list_item);			
+		holder.txtTitle = (TextView)convertView.findViewById(R.id.select_property_type_name_list_item);			
 		
 		if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("REAL ESTATE")) {
 			holder.accountTypeImg.setText(mContext.getString(R.string.icon_real_estate));

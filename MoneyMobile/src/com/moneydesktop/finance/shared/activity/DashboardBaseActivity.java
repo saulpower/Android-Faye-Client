@@ -185,4 +185,6 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 	public View getmenuParent() {
 		return null;
 	}
+
+	public void setMenuFragment(FragmentType fragmentType) {}
 }

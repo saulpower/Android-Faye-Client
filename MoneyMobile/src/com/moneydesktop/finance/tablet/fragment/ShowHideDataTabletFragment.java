@@ -58,10 +58,10 @@ public class ShowHideDataTabletFragment extends BaseFragment {
 	
 	private Button mSaveChanges;
 	private static BankAccount mBankAccount;
-	private TextView mAccountName, mBankName, mAccountSum, mBankRefreshStatus, mExcludeFromIncomeTxt, mExcludeFromExpensesTxt;
+	private TextView mAccountName, mBankName, mAccountSum, mBankRefreshStatus, mExcludeFromIncomeTxt, mExcludeFromExpensesTxt, mExcludeTransactionsFromListsTxt, mExcludeFromReportsTxt, mExcludeFromAccountSummaryTxt, mExcludeFromBudgetsTxt;
 	private ImageView mBankLogo;
 	private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();
-	private CheckBox mExcludeFromIncomeCheckbox, mExcludeFromExpensesCheckbox;
+	private CheckBox mExcludeFromIncomeCheckbox, mExcludeFromExpensesCheckbox, mExcludeTransactionsFromListsCheckbox, mExcludeFromReportsCheckbox, mExcludeFromAccountSummaryCheckbox, mExcludeFromBudgetsCheckbox;
 	
 	@Override
  	public String getFragmentTitle() {
@@ -105,10 +105,23 @@ public class ShowHideDataTabletFragment extends BaseFragment {
         mBankName = (TextView)mRoot.findViewById(R.id.tablet_account_linear_summary_bank_name);
         mAccountSum = (TextView)mRoot.findViewById(R.id.tablet_account_linear_summary_account_sum);
         mBankRefreshStatus = (TextView)mRoot.findViewById(R.id.tablet_account_linear_summary_refresh_status);
+        
+        
+        mExcludeTransactionsFromListsTxt = (TextView)mRoot.findViewById(R.id.exclude_transactions_from_list_txt);
+        mExcludeFromReportsTxt = (TextView)mRoot.findViewById(R.id.exclude_from_reports_txt);
+        mExcludeFromAccountSummaryTxt = (TextView)mRoot.findViewById(R.id.exclude_from_account_summary_txt);
+        mExcludeFromBudgetsTxt = (TextView)mRoot.findViewById(R.id.exclude_from_budgets_txt);
         mExcludeFromIncomeTxt = (TextView)mRoot.findViewById(R.id.exclude_transfers_from_income_txt);
         mExcludeFromExpensesTxt = (TextView)mRoot.findViewById(R.id.exclude_transfers_from_expenses_txt);
+        
+        
+        mExcludeTransactionsFromListsCheckbox = (CheckBox)mRoot.findViewById(R.id.exclude_transactions_from_lists);
+        mExcludeFromReportsCheckbox = (CheckBox)mRoot.findViewById(R.id.exclude_from_reports);
+        mExcludeFromAccountSummaryCheckbox = (CheckBox)mRoot.findViewById(R.id.exclude_from_account_summary);
+        mExcludeFromBudgetsCheckbox = (CheckBox)mRoot.findViewById(R.id.exclude_from_budgets);
         mExcludeFromIncomeCheckbox = (CheckBox)mRoot.findViewById(R.id.exclude_transfers_from_income);
         mExcludeFromExpensesCheckbox = (CheckBox)mRoot.findViewById(R.id.exclude_transfers_from_expense);
+        
         mBankLogo = (ImageView)mRoot.findViewById(R.id.tablet_account_linear_summary_logo);
         mSaveChanges = (Button) mRoot.findViewById(R.id.tablet_account_linear_summary_save_button);
        
@@ -129,6 +142,10 @@ public class ShowHideDataTabletFragment extends BaseFragment {
 		mBankName.setText(mBankAccount.getBank().getBankName());
 		mAccountSum.setText(mBankAccount.getBalance() == null ? "" : mFormatter.format(mBankAccount.getBalance()));
 		mBankRefreshStatus.setText("refreshStatus");
+		mExcludeTransactionsFromListsTxt.setText(getString(R.string.show_hide_exclude_transactions_from_lists));
+		mExcludeFromReportsTxt.setText(getString(R.string.show_hide_exclude_from_reports));
+		mExcludeFromAccountSummaryTxt.setText(getString(R.string.show_hide_exclude_from_account_summary));
+		mExcludeFromBudgetsTxt.setText(getString(R.string.show_hide_exclude_from_budgets));
 		mExcludeFromIncomeTxt.setText(getString(R.string.show_hide_exclude_transfers_from_income));
 		mExcludeFromExpensesTxt.setText(getString(R.string.show_hide_exclude_transfers_from_expenses));
         mSaveChanges.setText(getString(R.string.save_changes));
@@ -136,7 +153,11 @@ public class ShowHideDataTabletFragment extends BaseFragment {
         Fonts.applyPrimaryBoldFont(mAccountName, 12);
         Fonts.applyPrimaryBoldFont(mBankName, 10);
         Fonts.applyPrimaryBoldFont(mAccountSum, 14);
-        Fonts.applySecondaryItalicFont(mBankRefreshStatus, 8);
+        Fonts.applySecondaryItalicFont(mBankRefreshStatus, 8);      
+        Fonts.applyPrimaryBoldFont(mExcludeTransactionsFromListsTxt, 12);
+        Fonts.applyPrimaryBoldFont(mExcludeFromReportsTxt, 12);
+        Fonts.applyPrimaryBoldFont(mExcludeFromAccountSummaryTxt, 12);
+        Fonts.applyPrimaryBoldFont(mExcludeFromBudgetsTxt, 12);
         Fonts.applyPrimaryBoldFont(mExcludeFromIncomeTxt, 12);
         Fonts.applyPrimaryBoldFont(mExcludeFromExpensesTxt, 12);        
         Fonts.applyPrimaryBoldFont(mSaveChanges, 18);
@@ -145,20 +166,24 @@ public class ShowHideDataTabletFragment extends BaseFragment {
         List<AccountExclusionFlags> exclusionFlags = BankAccount.getExclusionsForAccount(mBankAccount);
 		
 		for (AccountExclusionFlags flag : exclusionFlags) {
-			if (flag.equals(AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ALL)) {
-				mExcludeFromExpensesCheckbox.setChecked(true);
-				mExcludeFromIncomeCheckbox.setChecked(true);
-			} else if (flag.equals(AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES)) {
+
+			if (flag.equals(AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES)) {
 				mExcludeFromExpensesCheckbox.setChecked(true);
 			} else if (flag.equals(AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME)) {
 				mExcludeFromIncomeCheckbox.setChecked(true);
+			} else if (flag.equals(AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSACTION_LIST)) {
+				mExcludeTransactionsFromListsCheckbox.setChecked(true);
+			} else if (flag.equals(AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_REPORTS)) {
+				mExcludeFromReportsCheckbox.setChecked(true);
+			} else if (flag.equals(AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ACCOUNT_LIST)) {
+				mExcludeFromAccountSummaryCheckbox.setChecked(true);
+			} else if (flag.equals(AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_BUDGETS)) {
+				mExcludeFromBudgetsCheckbox.setChecked(true);
 			}
 		}
 		
         setupOnClickListeners();		
 	}
-
-
 
 	private void setupOnClickListeners() {
 		
@@ -166,12 +191,29 @@ public class ShowHideDataTabletFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 	
+				int flag = 0;
+				if (mExcludeFromExpensesCheckbox.isChecked()) {
+					flag = flag + AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES.index();
+				}
 				if (mExcludeFromIncomeCheckbox.isChecked()) {
-
-					mBankAccount.setExclusionFlags(AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME.index());
+					flag = flag + AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME.index();
+				}
+				if (mExcludeTransactionsFromListsCheckbox.isChecked()) {
+					flag = flag + AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSACTION_LIST.index();
+				}
+				if (mExcludeFromReportsCheckbox.isChecked()) {
+					flag = flag + AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_REPORTS.index();
+				}
+				if (mExcludeFromAccountSummaryCheckbox.isChecked()) {
+					flag = flag + AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ACCOUNT_LIST.index();
+				}
+				if (mExcludeFromBudgetsCheckbox.isChecked()) {
+					flag = flag + AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_BUDGETS.index();
 				}
 				
-				DataController.save();
+				mBankAccount.setExclusionFlags(flag);
+				mBankAccount.updateSingle();
+				((DropDownTabletActivity)mActivity).dismissDropdown();
 			}
 
 		});

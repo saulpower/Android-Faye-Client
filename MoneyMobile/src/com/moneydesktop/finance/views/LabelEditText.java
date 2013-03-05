@@ -34,7 +34,7 @@ public class LabelEditText extends AnimatedEditText {
     private float mTextHeight = 0;
     private int mOrgRightPadding = -1;
     
-    private boolean mIsPressed, mCancelShowing = false;
+    private boolean mIsPressed, mCancelShowing, mIsReversed = false;
 
     public LabelEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -134,6 +134,7 @@ public class LabelEditText extends AnimatedEditText {
         
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.LabelEditText);
         
+        mIsReversed = a.getBoolean(R.styleable.LabelEditText_labelIsReverserd, mIsReversed);
         mText = a.getString(R.styleable.LabelEditText_labelText);
         setLabelTextColors(a.getColorStateList(R.styleable.LabelEditText_labelColor));
         setLabelSize(a.getFloat(R.styleable.LabelEditText_labelSize, 10.0f));
@@ -147,7 +148,12 @@ public class LabelEditText extends AnimatedEditText {
     private void adjustPadding() {
 
         int paddingRight = mCancelShowing ? (int) (mPaddingRight * 1.3) : mOrgRightPadding;
-        int paddingTop = (int) (mLabelHeight * 1.25f);
+        int paddingTop;
+        if (!mIsReversed) {
+        	paddingTop = (int) (mLabelHeight * 1.25f);
+        } else {
+        	paddingTop = 0;
+        }
         
         setPadding(getPaddingLeft(), paddingTop, paddingRight, getPaddingBottom());
         
@@ -174,6 +180,8 @@ public class LabelEditText extends AnimatedEditText {
         mText = text;
         invalidate();
     }
+    
+
 
     public void setLabelSize(float labelSize) {
 
@@ -263,7 +271,13 @@ public class LabelEditText extends AnimatedEditText {
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         
-        canvas.drawText(mText, getPaddingLeft() + getScrollX(), mLabelHeight, mLabelPaint);
+
+        if (!mIsReversed) {
+        	canvas.drawText(mText, getPaddingLeft() + getScrollX(), mLabelHeight, mLabelPaint);
+        } else {
+        	canvas.drawText(mText, getPaddingLeft() + getScrollX(), (getHeight() - getPaddingBottom()) - mTextHeight + (mCancelBounds.height() / 2), mLabelPaint);
+        }
+
         
         if (mCancelShowing) {
             

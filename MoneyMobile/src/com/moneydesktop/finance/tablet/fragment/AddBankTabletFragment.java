@@ -56,16 +56,15 @@ import com.moneydesktop.finance.model.EventMessage.GetLogonCredentialsFinished;
 import com.moneydesktop.finance.model.EventMessage.SaveInstitutionFinished;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.shared.Services.SyncService;
+import com.moneydesktop.finance.shared.adapter.SelectAccountTypesAdapter;
+import com.moneydesktop.finance.shared.adapter.SelectPropertyTypesAdapter;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
-import com.moneydesktop.finance.tablet.adapter.AddAccountManuallyAccountTypesAdapter;
-import com.moneydesktop.finance.tablet.adapter.AddAccountManuallyPropertyTypesAdapter;
 import com.moneydesktop.finance.tablet.adapter.AddNewInstitutionAdapter;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.AnimatedNavView.NavigationListener;
 
 import de.greenrobot.event.EventBus;
-
 
 public class AddBankTabletFragment extends BaseFragment implements NavigationListener{
 
@@ -237,7 +236,7 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 		
 		allAccountTypes = accountTypeDao.queryRaw(query.toString(), query.getSelectionArgs());
 		
-		accountTypesList.setAdapter(new AddAccountManuallyAccountTypesAdapter(mActivity, R.layout.tablet_add_bank_manually_account_types_item, allAccountTypes)); 
+		accountTypesList.setAdapter(new SelectAccountTypesAdapter(mActivity, R.layout.select_account_types_item, allAccountTypes)); 
 		
 		accountTypesList.setOnItemClickListener(new OnItemClickListener() {
 
@@ -286,7 +285,7 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 		
 		allPropertyTypes = accountTypeDao.queryRaw(query.toString(), query.getSelectionArgs());
 		
-		propertyTypesList.setAdapter(new AddAccountManuallyPropertyTypesAdapter(mActivity, R.layout.tablet_add_bank_manually_property_types_item, allPropertyTypes)); 
+		propertyTypesList.setAdapter(new SelectPropertyTypesAdapter(mActivity, R.layout.select_property_types_item, allPropertyTypes)); 
 		
 		propertyTypesList.setOnItemClickListener(new OnItemClickListener() {
 
@@ -356,7 +355,7 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 			    	    test.post(new Runnable() {
 			        	    public void run()
 			        	    {
-								Intent intent = new Intent(mActivity, SyncService.class);
+			        	    	Intent intent = new Intent(mActivity, SyncService.class);
 					    		mActivity.startService(intent);
 			        	    }
 			        	});
