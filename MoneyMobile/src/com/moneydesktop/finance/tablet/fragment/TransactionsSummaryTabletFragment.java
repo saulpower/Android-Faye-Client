@@ -15,6 +15,7 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.BarViewModel;
+import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.BarGraphView;
 import com.moneydesktop.finance.views.BasicBarChartAdapter;
 
@@ -97,13 +98,13 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
                 if( data.get(c)[1] > 0){
                     StringBuffer date = new StringBuffer();
                     date = format.format(data.get(c)[0],date,new FieldPosition(0));
-                    barList.add(new BarViewModel(date.toString(),data.get(c)[1],max));
+                    barList.add(new BarViewModel(date.toString().toUpperCase(),data.get(c)[1],max));
                 }              
             }
             mAdapter.setNewList(barList);
             mGraph.setMax(max);
             mGraph.setLabel(true);
-            mGraph.setLabelFontSize(14);    
+            mGraph.setLabelFontSize(UiUtils.getScaledPixels(getActivity(), 24));    
     }
     private void setGraphViewQuarterly(Date end){
         List<Double[]> data = Transactions.getQuarterlyExpenseTotals(end);
@@ -128,7 +129,7 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
             mAdapter.setNewList(barList);
             mGraph.setMax(max);
             mGraph.setLabel(true);
-            mGraph.setLabelFontSize(14);    
+            mGraph.setLabelFontSize(UiUtils.getScaledPixels(getActivity(), 24));    
     }
     private void setGraphViewYearly(Date end){
         List<Double[]> data = Transactions.getYearlyExpenseTotals(end);
@@ -151,7 +152,7 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
             mAdapter.setNewList(barList);
             mGraph.setMax(max);
             mGraph.setLabel(true);
-            mGraph.setLabelFontSize(14);    
+            mGraph.setLabelFontSize(UiUtils.getScaledPixels(getActivity(), 24));    
     }
     private void setGraphViewDaily(Date end) {
         List<Double[]> data = Transactions.get30DayExpenseTotals(end);
@@ -174,7 +175,7 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
             mAdapter.setNewList(barList);
             mGraph.setMax(max);
             mGraph.setLabel(true);
-            mGraph.setLabelFontSize(14);         
+            mGraph.setLabelFontSize(UiUtils.getScaledPixels(getActivity(), 18));         
         }
     
     @Override

@@ -40,7 +40,7 @@ public class BarView extends View {
     private boolean mShowLabel;
     public BarView(Context context){
         super(context);
-        mTextSize = UiUtils.getDynamicPixels(getContext(), 11);
+        mTextSize = UiUtils.getScaledPixels(getContext(), 11);
         makePaint();
         mLabelText = "text";
         mShowLabel = false;
@@ -55,7 +55,7 @@ public class BarView extends View {
     }
     public BarView(Context context, String day, double amount, double scale_amount) {
         super(context);
-        mTextSize = UiUtils.getDynamicPixels(getContext(), 11);
+        mTextSize = UiUtils.getScaledPixels(getContext(), 11);
         makePaint();
         mLabelText = day;
         mShowLabel = true;

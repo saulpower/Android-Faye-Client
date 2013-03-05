@@ -11,7 +11,7 @@ public class BottomDrawer extends VerticalDrawer {
 
     BottomDrawer(Activity activity, int dragMode) {
         super(activity, dragMode);
-    }
+    } 
 
     public BottomDrawer(Context context) {
         super(context);
