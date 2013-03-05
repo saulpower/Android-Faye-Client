@@ -19,6 +19,7 @@ import com.moneydesktop.finance.views.FrictionDynamics;
 import com.moneydesktop.finance.views.chart.PieChartView.OnInfoClickListener;
 import com.moneydesktop.finance.views.chart.PieChartView.OnPieChartChangeListener;
 import com.moneydesktop.finance.views.chart.PieChartView.OnPieChartExpandListener;
+import com.moneydesktop.finance.views.chart.PieChartView.OnPieChartReadyListener;
 import com.moneydesktop.finance.views.chart.PieChartView.OnRotationStateChangeListener;
 import com.moneydesktop.finance.views.chart.PieChartView.PieChartAnchor;
 
@@ -33,6 +34,10 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 	BitmapDrawable mDrawableCache;
     
     private PieChartView mBaseChart, mSubChart;
+    private boolean mBaseReady = false;
+    private boolean mSubReady = false;
+    
+    private OnPieChartReadyListener mOnPieChartReadyListener;
 	
 	private PieChartBridgeAdapter mBridgeAdapter;
 	
@@ -77,32 +82,33 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 		public void onItemClick(boolean secondTap, View parent, Drawable drawable, int position, long id) {
 			
 			if (secondTap) {
-				
-				boolean hiding = mSubChart.toggleChart();
-				
-				if (!hiding) {
-					configureInfo(mSubChart.getCurrentIndex());
-					return;
-				}
-				
-				configureInfo();
+				toggleGroup();
 				return;
 			}
-
-			mSubChart.hideChart();
 		}
 	};
 	
+	public Bitmap getDrawingCache() {
+		return mDrawingCache;
+	}
+	
 	public void toggleGroup() {
 		
-		boolean hiding = mSubChart.toggleChart();
+		int state = mSubChart.toggleChart();
 		
-		if (!hiding) {
-			configureInfo(mSubChart.getCurrentIndex());
-			return;
+		switch (state) {
+			case PieChartView.CHART_SHOWING:
+	
+				configureInfo(mSubChart.getCurrentIndex());
+				
+				break;
+				
+			case PieChartView.CHART_HIDDEN:
+	
+				configureInfo();
+				
+				break;
 		}
-		
-		configureInfo();
 	}
 	
 	private OnPieChartExpandListener mOnPieChartExpandListener = new OnPieChartExpandListener() {
@@ -111,7 +117,7 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 		public void onPieChartExpanded() {
 			
 			if (mExpandableChartChangeListener != null) {
-				mExpandableChartChangeListener.onGroupExpanded(mBridgeAdapter.getGroupPosition());
+				mExpandableChartChangeListener.onGroupExpanded(mBridgeAdapter.getGroupPosition(), mSubChart.getCurrentIndex());
 			}
 		}
 
@@ -134,6 +140,11 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 		this.mExpandablePieChartInfoClickListener = mExpandablePieChartInfoClickListener;
 	}
 
+	public void setOnPieChartReadyListener(
+			OnPieChartReadyListener mOnPieChartReadyListener) {
+		this.mOnPieChartReadyListener = mOnPieChartReadyListener;
+	}
+
 	private void configureInfo() {
 		
 		int groupPosition = mBridgeAdapter.getGroupPosition();
@@ -146,10 +157,12 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 	
 	private void configureInfo(int childPosition) {
 		
+		if (!mSubChart.isLoaded()) return;
+		
 		int groupPosition = mBridgeAdapter.getGroupPosition();
 		InfoDrawable info = mSubChart.getInfoDrawable();
 		PieSliceDrawable slice = mSubChart.getSlice(childPosition);
-
+		
 		mBridgeAdapter.getExpandableAdapter().configureChildInfo(info, slice, groupPosition, childPosition);
 		updateCache();
 	}
@@ -244,8 +257,8 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 				}
 
 				Canvas cache = new Canvas(mDrawingCache);
-				mBaseChart.getDrawThread().doDraw(cache);
-				mSubChart.getDrawThread().doDraw(cache);
+				mBaseChart.getDrawThread().drawCache(cache);
+				mSubChart.getDrawThread().drawCache(cache);
 				
 				mDrawableCache = new BitmapDrawable(getResources(), mDrawingCache);
 
@@ -256,6 +269,10 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
     		protected void onPostExecute(Boolean result) {
 
 				setCachedBackground(mDrawableCache);
+				
+				if (mOnPieChartReadyListener != null) {
+					mOnPieChartReadyListener.onPieChartReady();
+				}
     		}
 			
 		}.execute();
@@ -302,14 +319,28 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 	
 	private void addPieCharts() {
 
-		mBaseChart = new PieChartView(getContext());
+		mBaseChart = new PieChartView(getContext(), new OnPieChartReadyListener() {
+			
+			@Override
+			public void onPieChartReady() {
+				mBaseReady = true;
+				readyCheck();
+			}
+		});
 		mBaseChart.setDynamics(new FrictionDynamics(0.95f));
 		mBaseChart.setSnapToAnchor(PieChartAnchor.BOTTOM);
 		mBaseChart.setOnRotationStateChangeListener(mBaseRotationListener);
 		mBaseChart.setOnPieChartChangeListener(mBaseListener);
 		mBaseChart.setOnItemClickListener(mOnGroupChartClicked);
 		
-		mSubChart = new PieChartView(getContext());
+		mSubChart = new PieChartView(getContext(), new OnPieChartReadyListener() {
+			
+			@Override
+			public void onPieChartReady() {
+				mSubReady = true;
+				readyCheck();
+			}
+		});
 		mSubChart.setOnInfoClickListener(this);
 		mSubChart.setOnPieChartExpandListener(mOnPieChartExpandListener);
 		mSubChart.setOnPieChartChangeListener(mSubListener);
@@ -329,6 +360,14 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 		
 		addAndMeasureChart(mSubChart, 1, subChartSize, subChartSize);
 		mSubChart.layout(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(), getHeight() - getPaddingBottom());
+	}
+	
+	private void readyCheck() {
+		
+		if (mBaseReady && mSubReady) {
+			
+			updateCache();
+		}
 	}
 
     /**
@@ -350,6 +389,9 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
     }
 	
 	private void initializeChartData() {
+		
+		if (mBaseChart == null || mSubChart == null) return;
+		
 		mBaseChart.setAdapter(mBridgeAdapter.getGroupAdapter());
 		mSubChart.setAdapter(mBridgeAdapter.getChildAdapter());
 	}
@@ -489,7 +531,7 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 		 * @param childPosition The currently selected childPosition
 		 */
 		public void onChildChanged(int groupPosition, int childPosition);
-		public void onGroupExpanded(int groupPosition);
+		public void onGroupExpanded(int groupPosition, int childPosition);
 		public void onGroupCollapsed(int groupPosition);
 	}
 	

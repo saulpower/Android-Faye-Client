@@ -264,6 +264,7 @@ public class Constant {
     	items.add(new int[] { R.string.icon_home, R.string.title_activity_handset_dashboard });
     	items.add(new int[] { R.string.icon_accounts, R.string.title_activity_accounts });
     	items.add(new int[] { R.string.icon_transaction, R.string.title_activity_transactions });
+    	items.add(new int[] { R.string.icon_chart, R.string.title_activity_spending });
     	items.add(new int[] { R.string.icon_settings, R.string.title_activity_settings });
     	MENU_ITEMS = Collections.unmodifiableList(items);
     }

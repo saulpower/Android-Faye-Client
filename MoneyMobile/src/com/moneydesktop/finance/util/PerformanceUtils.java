@@ -7,17 +7,17 @@ public class PerformanceUtils {
     public static final String TAG = "PerformanceUtils";
 
 	private static int sCount = 0;
-	private static long sStart = 0;
+	private static long sStart = 0, sFrameStart = 0;
 	
 	public static void frame() {
 		
 		sCount++;
 		
-		if (sStart == 0) {
-			sStart = System.currentTimeMillis();
-		} else if (System.currentTimeMillis() - sStart >= 1000) {
+		if (sFrameStart == 0) {
+			sFrameStart = System.currentTimeMillis();
+		} else if (System.currentTimeMillis() - sFrameStart >= 1000) {
 			Log.i(TAG, "FPS: " + sCount);
-			sStart = System.currentTimeMillis();
+			sFrameStart = System.currentTimeMillis();
 			sCount = 0;
 		}
 	}

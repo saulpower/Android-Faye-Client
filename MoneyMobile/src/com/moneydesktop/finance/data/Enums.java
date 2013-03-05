@@ -146,6 +146,7 @@ public class Enums {
         ACCOUNT_TYPES(1),
         TRANSACTIONS(2),
         SETTINGS(3), 
+        SPENDING(4),
         POPUP_TAGS(10),
         POPUP_CATEGORIES(11),
         LOCK_SCREEN(12),
@@ -178,6 +179,8 @@ public class Enums {
                 return TRANSACTIONS;
             case 3:
                 return SETTINGS;
+            case 4:
+            	return SPENDING;
             case 10:
                 return POPUP_TAGS;
             case 11:

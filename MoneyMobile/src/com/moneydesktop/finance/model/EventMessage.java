@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+import android.graphics.Bitmap;
+
+import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.LockType;
 import com.moneydesktop.finance.data.Enums.NavDirection;
 import com.moneydesktop.finance.database.AccountType;
@@ -92,6 +95,18 @@ public class EventMessage {
 	}
 	
 	public class BackEvent extends EventMessage {}
+	public class ChartImageEvent extends EventMessage {
+		
+		private Bitmap image;
+		
+		public ChartImageEvent(Bitmap image) {
+			this.image = image;
+		}
+		
+		public Bitmap getImage() {
+			return image;
+		}
+	}
     public class DatabaseSaveEvent extends EventMessage {
     	
     	private List<Class<?>> mClasses = new ArrayList<Class<?>>();
@@ -164,6 +179,7 @@ public class EventMessage {
 		protected NavDirection mDirection;
 		protected Boolean mMovingHome;
 		protected Boolean mToggleNavigation;
+		protected FragmentType mType;
 		
 		public Boolean getMovingHome() {
 			return mMovingHome;
@@ -178,6 +194,10 @@ public class EventMessage {
 			this.mToggleNavigation = true;
 		}
 		
+		public NavigationEvent(FragmentType type) {
+			mType = type;
+		}
+		
 		public NavigationEvent(boolean showing) {
 			this.mShowing = showing;
 			this.mDirection = null;
@@ -186,6 +206,10 @@ public class EventMessage {
 		public NavigationEvent(NavDirection direction) {
 			this.mShowing = null;
 			this.mDirection = direction;
+		}
+		
+		public FragmentType getType() {
+			return mType;
 		}
 		
 		public Boolean isShowing() {

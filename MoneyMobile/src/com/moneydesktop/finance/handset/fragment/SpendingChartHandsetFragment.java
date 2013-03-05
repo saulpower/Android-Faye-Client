@@ -1,86 +1,142 @@
 package com.moneydesktop.finance.handset.fragment;
 
+import net.simonvt.menudrawer.MenuDrawer;
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
-import com.moneydesktop.finance.shared.adapter.GrowPagerAdapter.OnScrollStateChangedListener;
-import com.moneydesktop.finance.shared.fragment.GrowFragment;
+import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
+import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity.OnMenuChangeListener;
+import com.moneydesktop.finance.model.EventMessage;
+import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
+import com.moneydesktop.finance.shared.fragment.BaseFragment;
+import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.chart.CategoryPieChartAdapter;
 import com.moneydesktop.finance.views.chart.ExpandablePieChartView;
+import com.moneydesktop.finance.views.chart.PieChartView.OnPieChartReadyListener;
 
-public class SpendingChartHandsetFragment extends GrowFragment implements OnScrollStateChangedListener {
+import de.greenrobot.event.EventBus;
+
+public class SpendingChartHandsetFragment extends BaseFragment implements OnMenuChangeListener {
 	
     public final String TAG = this.getClass().getSimpleName();
     
     private ExpandablePieChartView mChart;
-    
-    private boolean mShowing = false;
-    
-	public static SpendingChartHandsetFragment getInstance(int position) {
+    private TextView mTitle;
+
+	public static SpendingChartHandsetFragment newInstance() {
 	    
 	    SpendingChartHandsetFragment fragment = new SpendingChartHandsetFragment();
 	    fragment.setRetainInstance(true);
-		
+	    
         Bundle args = new Bundle();
-        args.putInt(POSITION, position);
         fragment.setArguments(args);
         
         return fragment;
 	}
-
+	
 	@Override
-	public FragmentType getType() {
-		return null;
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+     
+        if (mActivity instanceof DashboardHandsetActivity) {
+        	((DashboardHandsetActivity) mActivity).setOnMenuChangeListener(this);
+        }
+        
+        EventBus.getDefault().register(this);
 	}
 	
 	@Override
-	public void transitionFragment(float percent, float scale) {
-		super.transitionFragment(percent, scale);
+	public void onDestroy() {
+		super.onDestroy();
 		
-		mShowing = percent < 0.01f;
+		EventBus.getDefault().unregister(this);
+	}
+
+	@Override
+	public FragmentType getType() {
+		return FragmentType.SPENDING;
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
-		mRoot = inflater.inflate(R.layout.handset_spending_summary_view, null);
+		Log.i(TAG, "OnCreateView");
 		
-		CategoryPieChartAdapter adapter = new CategoryPieChartAdapter(getActivity());
+		mRoot = inflater.inflate(R.layout.handset_spending_view, null);
+		
+		mTitle = (TextView) mRoot.findViewById(R.id.title);
+		Fonts.applySecondaryItalicFont(mTitle, 8);
 		
 		mChart = (ExpandablePieChartView) mRoot.findViewById(R.id.chart);
-		mChart.setAdapter(adapter);
+		mChart.setOnPieChartReadyListener(new OnPieChartReadyListener() {
+			
+			@Override
+			public void onPieChartReady() {
+				EventBus.getDefault().post(new EventMessage().new ChartImageEvent(mChart.getDrawingCache()));
+			}
+		});
+		mChart.setAdapter(new CategoryPieChartAdapter(getActivity()));
+		
+		mRoot.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				if (mChart.isExpanded()) {
+					mChart.toggleGroup();
+				}
+			}
+		});
 		
 		return mRoot;
 	}
 	
-	@Override
-	public void onResume() {
-		super.onResume();
+	public void onEvent(NavigationEvent event) {
 		
-		mAdapter.setOnScrollStateChangedListener(this);
+		if (event.getType() != null && event.getType() == FragmentType.SPENDING) {
+			mChart.onResume();
+		} else {
+			mChart.onPause();
+		}
 	}
 	
 	@Override
 	public String getFragmentTitle() {
-		return null;
+		return getString(R.string.title_fragment_spending_summary).toUpperCase();
 	}
 
 	@Override
-	public void onScrollStateChanged(int state) {
+	public boolean onBackPressed() {
+		return false;
+	}
+
+	@Override
+	public void onLeftMenuStateChanged(int oldState, int newState) {
 		
-		if (ViewPager.SCROLL_STATE_IDLE == state && mShowing && mChart.getVisibility() != View.VISIBLE) {
+		configureChart(newState);
+	}
 
-			mChart.setVisibility(View.VISIBLE);
-			
-		} else if (ViewPager.SCROLL_STATE_IDLE != state) {
+	@Override
+	public void onRightMenuStateChanged(int oldState, int newState) {
 
-			mChart.setVisibility(View.GONE);
+		configureChart(newState);
+	}
+	
+	private void configureChart(int state) {
+		
+		if (state == MenuDrawer.STATE_CLOSED && ((DashboardHandsetActivity) mActivity).getCurrentFragment() == getType()) {
+			mChart.onResume();
+		} else {
+			mChart.onPause();
 		}
 	}
 }

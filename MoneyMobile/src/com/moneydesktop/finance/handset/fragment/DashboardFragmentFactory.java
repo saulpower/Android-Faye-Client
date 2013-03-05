@@ -15,7 +15,7 @@ public class DashboardFragmentFactory {
             case 1:
                 return TransactionSummaryHandsetFragment.getInstance(position);
 	        case 2:
-	            return SpendingChartHandsetFragment.getInstance(position);
+	            return SpendingChartSummaryHandsetFragment.newInstance(position);
         }
         
         return null;

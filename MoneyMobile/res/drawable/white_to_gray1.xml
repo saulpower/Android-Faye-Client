@@ -7,7 +7,10 @@
 		android:state_focused="true"
 		android:drawable="@color/gray1" />
 	<item
-		android:state_selected= "true"
+		android:state_selected="true"
+		android:drawable="@color/gray1" />
+	<item
+		android:state_checked="true"
 		android:drawable="@color/gray1" />
 	<item
 		android:drawable="@color/white" />

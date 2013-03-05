@@ -57,6 +57,8 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 		
 		setupView();
 		
+		configureChart(false);
+		
 		mBridge = new ChartListBridge(getActivity(), mChart, mList, mTotalAmount, mBackButton);
 		
 		return mRoot;
@@ -138,7 +140,7 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 		
 		if (showChart && mShowing && mActivity.isOnHome()) {
 			mChart.onResume();
-		} else {
+		} else if (!mShowing) {
 			mChart.onPause();
 		}
 	}

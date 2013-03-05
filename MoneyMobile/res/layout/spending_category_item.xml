@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.moneydesktop.finance.views.chart.CheckableLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
     android:id="@+id/item"
     android:layout_width="fill_parent"
@@ -51,4 +52,4 @@
         app:lineColor="@color/gray3"
         app:lineStrokeWidth="2dp" />
 
-</RelativeLayout>
+</com.moneydesktop.finance.views.chart.CheckableLayout>

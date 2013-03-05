@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.chart.PieChartView.DrawThread;
 import com.moneydesktop.finance.views.chart.ThreadAnimator.AnimationListener;
 
@@ -95,8 +94,8 @@ public class InfoDrawable extends Drawable {
 		setBounds(bounds);
 		mRadius = radius;
 		
-		mTitleOffset = -0.8f * UiUtils.getDynamicPixels(context, radius / 6);
-		mSubTitleOffset = UiUtils.getDynamicPixels(context, radius / 6);
+		mTitleOffset = -0.8f * radius / 3;
+		mSubTitleOffset = radius / 3;
 		
 		mTitlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		mTitlePaint.setColor(resources.getColor(R.color.gray4));
@@ -116,6 +115,12 @@ public class InfoDrawable extends Drawable {
 	}
 	
 	public void animateTransition(final String amount, final int amountColor, final String title) {
+		
+		if (mThread.isPaused()) {
+			setAmount(amount);
+			setAmountColor(amountColor);
+			setTitle(title);
+		}
 		
 		final ThreadAnimator inAlpha = ThreadAnimator.ofInt(0, 255);
 		inAlpha.setDuration(200);

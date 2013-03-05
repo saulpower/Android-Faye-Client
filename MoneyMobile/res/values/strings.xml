@@ -169,6 +169,7 @@
     <string name="icon_cancel">X</string>
     <string name="icon_cash">C</string>
     <string name="icon_cc">F</string>
+    <string name="icon_chart">&amp;</string>
     <string name="icon_checking">D</string>
     <string name="icon_email">(</string>
     <string name="icon_feedback">6</string>
@@ -238,6 +239,7 @@
     <string name="label_password">Password</string>
     <string name="label_payee">Payee</string>
     <string name="label_show_filters">Show Filters</string>
+    <string name="label_spending_month">Spending Current Month</string>
     <string name="label_stmt">Statement Description</string>
     <string name="label_sum">Sum</string>
     <string name="label_tags">Tags</string>
