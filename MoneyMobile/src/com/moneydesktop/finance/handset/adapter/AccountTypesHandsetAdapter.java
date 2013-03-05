@@ -106,7 +106,7 @@ public class AccountTypesHandsetAdapter extends UltimateAdapter implements OnGro
     public View getSectionView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         
         View cell = convertView;
-        	cell = ((BaseActivity)mContext).getLayoutInflater().inflate(R.layout.handset_account_type_details_header, parent, false);
+    	cell = ((BaseActivity)mContext).getLayoutInflater().inflate(R.layout.handset_account_type_details_header, parent, false);
         if (mAccountTypesFiltered != null) {
 	        if (mAccountTypesFiltered.size() > 0) {
 	        	

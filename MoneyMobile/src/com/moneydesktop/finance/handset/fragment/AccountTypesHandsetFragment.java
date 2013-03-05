@@ -9,31 +9,27 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.devsmart.android.ui.HorizontalListView;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.data.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.SlideFrom;
@@ -44,6 +40,7 @@ import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
+import com.moneydesktop.finance.handset.adapter.AccountBankListAdapter;
 import com.moneydesktop.finance.handset.adapter.AccountTypesHandsetAdapter;
 import com.moneydesktop.finance.handset.adapter.BankOptionsAdapter;
 import com.moneydesktop.finance.model.EventMessage.BankStatusUpdateEvent;
@@ -65,7 +62,7 @@ import de.greenrobot.event.EventBus;
 
 public class AccountTypesHandsetFragment extends AccountTypesFragment{
     
-    private LinearLayout mBanksContainer;
+    private HorizontalListView mBanksHorizontalList;
     private UltimateListView mAccountsListView;
     private View mBankOptionsView;
     private SlidingView mSliderView;
@@ -81,6 +78,7 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
     private Handler mHandler;    
 	private List<AccountType> mAccountTypesFiltered;
 	private BankRefreshIcon mBankRefreshIcon;
+	private AccountBankListAdapter mBankListAdapter;
 
     @Override
     public void isShowing(boolean fromBackstack) {
@@ -170,7 +168,7 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
 	}
     
 	private void setupView() {
-        mBanksContainer = (LinearLayout) mRoot.findViewById(R.id.account_types_bank_list_handset);
+		mBanksHorizontalList = (HorizontalListView) mRoot.findViewById(R.id.account_types_bank_list_handset);
         mAccountsListView = (UltimateListView) mRoot.findViewById(R.id.handset_account_types_list);
         mAccountTypesFiltered = new ArrayList<AccountType>();
         
@@ -183,10 +181,12 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
         mAccountsListView.setDividerHeight(0);
         mAccountsListView.setDivider(null);
         mAccountsListView.setChildDivider(null);
-               
+                
+        mBankListAdapter = new AccountBankListAdapter(mActivity, mBankList);
         mAdapter = new AccountTypesHandsetAdapter(mActivity, mAccountTypesFiltered, mAccountsListView);
         
     	mAccountsListView.setAdapter(mAdapter);
+    	mBanksHorizontalList.setAdapter(mBankListAdapter);
 
     	mAccountsListView.setOnChildClickListener(new OnChildClickListener() {
 			
@@ -202,6 +202,23 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
 				ft.commit();
 				
 				return true;
+			}
+		});
+    	
+    	mBanksHorizontalList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				if (position == 0) { //this is the add bank button
+					AddAccountHandsetFragment frag = getAddAccountFragment();
+					FragmentTransaction ft = getFragmentManager().beginTransaction();
+					ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
+					ft.replace(R.id.accounts_fragment, frag);
+					ft.addToBackStack(null);
+					ft.commit();
+				} else { // for everything else, open the bank options menu
+					bankImageListener(mBankList.get(position - 1), view);
+				}
 			}
 		});
 
@@ -241,78 +258,81 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
         	}
         }
     	
-    	//MUST FIND A BETTER WAY!!!! this line causes major blinking of banks being added/removed
-    	mBanksContainer.removeAllViews();
+    //	mBanksContainer.removeAllViews();
 
-        addBankSymbolToContainer();
+     //   addBankSymbolToContainer();
         
-        for (final Bank bank : mBankList) {
-        	final View bankView = populateBankContainer(bank);
-            mBanksContainer.addView(bankView);
-        }
+        
+        //TODO: THIS IS WHERE I NEED TO UPDATE THE ADAPTER for the banks list
+        
+//        for (final Bank bank : mBankList) {
+//        	final View bankView = populateBankContainer(bank);
+//            mBanksContainer.addView(bankView);
+//        }
     }
 
-	private void addBankSymbolToContainer() {
-		TextView addBank = new TextView(getActivity());
-        addBank.setText(getString(R.string.icon_add));
-        addBank.setTextColor(Color.WHITE);
-        Fonts.applyGlyphFont(addBank, 35);
-        addBank.setPadding(20, 10, 10, 10);
-        
-        
-        addBank.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				//add an account		    	
-				AddAccountHandsetFragment frag = getAddAccountFragment();
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-				ft.replace(R.id.accounts_fragment, frag);
-				ft.addToBackStack(null);
-				ft.commit();
-			}
-		});
-    
-        mBanksContainer.addView(addBank);
-	}
+//	private void addBankSymbolToContainer() {
+//		TextView addBank = new TextView(getActivity());
+//        addBank.setText(getString(R.string.icon_add));
+//        addBank.setTextColor(Color.WHITE);
+//        Fonts.applyGlyphFont(addBank, 35);
+//        addBank.setPadding(20, 10, 10, 10);
+//        
+//        
+//        addBank.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				//add an account		    	
+//				AddAccountHandsetFragment frag = getAddAccountFragment();
+//				FragmentTransaction ft = getFragmentManager().beginTransaction();
+//				ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
+//				ft.replace(R.id.accounts_fragment, frag);
+//				ft.addToBackStack(null);
+//				ft.commit();
+//			}
+//		});
+//    
+//      //  mBanksHorizontalList.addView(addBank, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+//     //   mBanksHorizontalList.addView(addBank);
+//	}
 
-	private View populateBankContainer(final Bank bank) {
-		
-		LayoutInflater layoutInflater = mActivity.getLayoutInflater();
-		final View bankView = layoutInflater.inflate(R.layout.handset_account_types_bank_item, null);
-		ImageView bankImage = (ImageView)bankView.findViewById(R.id.handset_account_types_bank_image);
-		ImageView bankStatus = (ImageView)bankView.findViewById(R.id.handset_account_types_bank_status);
-		mBankRefreshIcon = (BankRefreshIcon) bankView.findViewById(R.id.handset_account_types_bank_status_update);
-		
-		Fonts.applyGlyphFont(mBankRefreshIcon, 20);
-		
-		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)UiUtils.getScaledPixels(getActivity(), 80), (int)UiUtils.getScaledPixels(getActivity(), 80));
-		bankImage.setLayoutParams(layoutParams);
-		bankImage.setPadding(10, 10, 10, 10);
-		bankStatus.setLayoutParams(layoutParams);
-		bankStatus.setPadding(10, 10, 10, 10);
-		mBankRefreshIcon.setLayoutParams(layoutParams);
-		mBankRefreshIcon.setPadding(10, 10, 10, 10);
-		
-        String logoId = bank.getBankId();
-        
-        if (bank.getInstitution() != null) {
-            logoId = bank.getInstitution().getInstitutionId();
-        }
-		
-        BankLogoManager.getBankImage(bankImage, logoId);
-		
-		bankImage.setOnClickListener(new View.OnClickListener() {
-		    
-		    @Override
-		    public void onClick(final View v) {
-		        bankImageListener(bank, v);
-		    }
-
-		});
-		return bankView;
-	}
+//	private View populateBankContainer(final Bank bank) {
+//		
+//		LayoutInflater layoutInflater = mActivity.getLayoutInflater();
+//		final View bankView = layoutInflater.inflate(R.layout.handset_account_types_bank_item, null);
+//		ImageView bankImage = (ImageView)bankView.findViewById(R.id.handset_account_types_bank_image);
+//		ImageView bankStatus = (ImageView)bankView.findViewById(R.id.handset_account_types_bank_status);
+//		mBankRefreshIcon = (BankRefreshIcon) bankView.findViewById(R.id.handset_account_types_bank_status_update);
+//		
+//		Fonts.applyGlyphFont(mBankRefreshIcon, 20);
+//		
+//		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)UiUtils.getScaledPixels(getActivity(), 80), (int)UiUtils.getScaledPixels(getActivity(), 80));
+//		bankImage.setLayoutParams(layoutParams);
+//		bankImage.setPadding(10, 10, 10, 10);
+//		bankStatus.setLayoutParams(layoutParams);
+//		bankStatus.setPadding(10, 10, 10, 10);
+//		mBankRefreshIcon.setLayoutParams(layoutParams);
+//		mBankRefreshIcon.setPadding(10, 10, 10, 10);
+//		
+//        String logoId = bank.getBankId();
+//        
+//        if (bank.getInstitution() != null) {
+//            logoId = bank.getInstitution().getInstitutionId();
+//        }
+//		
+//        BankLogoManager.getBankImage(bankImage, logoId);
+//		
+//		bankImage.setOnClickListener(new View.OnClickListener() {
+//		    
+//		    @Override
+//		    public void onClick(final View v) {
+//		        bankImageListener(bank, v);
+//		    }
+//
+//		});
+//		return bankView;
+//	}
     
 	private void bankImageListener(final Bank bank, final View v) {
 		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -379,7 +399,7 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
                     
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        mSliderView = new SlidingView(mActivity, 0, v.getBottom() + (int)UiUtils.convertDpToPixel(20, getActivity()), (ViewGroup)mRoot, mBankOptionsView, SlideFrom.BOTTOM, v);                                    
+                        mSliderView = new SlidingView(mActivity, 0, v.getBottom() + (int)UiUtils.convertDpToPixel(20, mActivity), (ViewGroup)mRoot, mBankOptionsView, SlideFrom.BOTTOM, v);                                    
                     }
                 };
                 mSliderView.dismiss(listener);
@@ -389,7 +409,7 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
                 mSliderView = null;
             }
         } else {
-            mSliderView = new SlidingView(mActivity, 0, mBanksContainer.getBottom() + (int)UiUtils.convertDpToPixel(20, getActivity()), (ViewGroup)mRoot, mBankOptionsView, SlideFrom.BOTTOM, v);
+            mSliderView = new SlidingView(mActivity, 0, v.getBottom() + (int)UiUtils.convertDpToPixel(20, mActivity), (ViewGroup)mRoot, mBankOptionsView, SlideFrom.BOTTOM, v);
         }
 	}
 
@@ -447,6 +467,7 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
 
     private void redrawScreen() {
 		mAdapter.notifyDataSetChanged();
+		mBankListAdapter.notifyDataSetChanged();
     	mAccountsListView.expandAll();
 		if (mBankOptionsAdapter != null) {
 			mBankOptionsAdapter.notifyDataSetChanged();
@@ -481,7 +502,7 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
     }
     
 	private void removeBank(final View v, final Bank bank) {        
-        mBanksContainer.removeView(v);
+		mBankListAdapter.notifyDataSetChanged();
 		
 		for (BankAccount account : bank.getBankAccounts()) {
 			account.softDeleteBatch();
@@ -507,13 +528,15 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
             int i = 0;
             for (final Bank bank : mBankList) {
                 i++;
-                View bankView = mBanksContainer.getChildAt(i); 
+                View bankView = mBanksHorizontalList.getChildAt(i); 
                 if (bankView != null) {
                 	
                 	ImageView status = (ImageView) bankView.findViewById(R.id.handset_account_types_bank_status);
-                	TextView refreshStatus = (TextView)bankView.findViewById(R.id.handset_account_types_bank_status_update);
+                	//TextView refreshStatus = (TextView)bankView.findViewById(R.id.handset_account_types_bank_status_update);
 	                
-	                setBanner(bank, status, refreshStatus);
+                	mBankRefreshIcon = (BankRefreshIcon) bankView.findViewById(R.id.handset_account_types_bank_status_update);
+                	
+	                setBanner(bank, status, mBankRefreshIcon);
 	                if (bank.getProcessStatus() < 3) {
 	                	mHandler.post(new Runnable() {
 	                	    public void run()
@@ -544,11 +567,12 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
             if (!bank.isDeleted()) {
 
                 i++;
-                View bankView = mBanksContainer.getChildAt(i); 
+                View bankView = mBanksHorizontalList.getChildAt(i); 
             
                 if (bankView != null) {
 	                ImageView status = (ImageView) bankView.findViewById(R.id.handset_account_types_bank_status);
 	                //TextView refreshStatus = (TextView) bankView.findViewById(R.id.handset_account_types_bank_status_update);
+	                mBankRefreshIcon = (BankRefreshIcon) bankView.findViewById(R.id.handset_account_types_bank_status_update);
 	                applyUpdatingImage(status, mBankRefreshIcon);
                 }
             }
@@ -564,11 +588,12 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
             i++;
             if (bankIterator.getBankName().equals(bank.getBankName())) {
 
-                View bankView = mBanksContainer.getChildAt(i); 
+                View bankView = mBanksHorizontalList.getChildAt(i); 
             
                 if (bankView != null) {
                 	ImageView status = (ImageView) bankView.findViewById(R.id.handset_account_types_bank_status);
                 //	TextView refreshStatus = (TextView) bankView.findViewById(R.id.handset_account_types_bank_status_update);
+                	mBankRefreshIcon = (BankRefreshIcon) bankView.findViewById(R.id.handset_account_types_bank_status_update);
                 	applyUpdatingImage(status, mBankRefreshIcon);
                 }
             }
@@ -580,7 +605,7 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
     	int i = 0;
         for (Bank bank : mBankList) {
         	i++;
-        	View bankView = mBanksContainer.getChildAt(i); 
+        	View bankView = mBanksHorizontalList.getChildAt(i); 
         	for (AccountType accountType : mAccountTypesFiltered) {
         		for(BankAccount bankAccount : bank.getBankAccounts()) {
         			if (bank.getBankName().equals(bankForRemoval.getBankName()) && (bankAccount.getAccountType().equals(accountType))) {
@@ -618,7 +643,7 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
                 
                 for (Bank bankIterator : mBankList) {
                     i++;
-                    View bankView = mBanksContainer.getChildAt(i);
+                    View bankView = mBanksHorizontalList.getChildAt(i);
                     if (bankView != null) {
 	                    if (bankIterator.getBankName().equals(bank.getBankName())) {
 	                    	TextView refreshStatus = (TextView)bankView.findViewById(R.id.handset_account_types_bank_status_update);
@@ -695,7 +720,7 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
 	                                SyncEngine.sharedInstance().beginSync();
 	                        		
 	                        		//remove bank from view
-	                        		mBanksContainer.removeView(bankView);
+	                        		mBankListAdapter.notifyDataSetChanged();
 	                                
 	                                break;                                
 	                            case DialogInterface.BUTTON_NEGATIVE:
