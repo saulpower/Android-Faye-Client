@@ -121,15 +121,7 @@ public class AccountInstitutionListHandsetFragment extends BaseFragment{
 		    @Override
 		    public void onItemClick(AdapterView<?> a, View v,int position, long id) 
 		    {
-		    	
-		    	Institution selectedInstitution = (Institution)a.getItemAtPosition(position);
-		    	
-		    	AccountOptionsCredentialsHandsetFragment frag = getConnectScreenFragment(selectedInstitution);
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-				ft.replace(mCurrentFragment.getId(), frag);
-				ft.addToBackStack(null);
-				ft.commit();
+		    	loadConnectScreenFragment(a, position);
 		    }
 		});
 	}
@@ -139,6 +131,17 @@ public class AccountInstitutionListHandsetFragment extends BaseFragment{
 		mConnectAccountFragment = AccountOptionsCredentialsHandsetFragment.newInstance(selectedInstitution);
 		
 		return mConnectAccountFragment;
+	}
+
+	private void loadConnectScreenFragment(AdapterView<?> a, int position) {
+		Institution selectedInstitution = (Institution)a.getItemAtPosition(position);
+		
+		AccountOptionsCredentialsHandsetFragment frag = getConnectScreenFragment(selectedInstitution);
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
+		ft.replace(mCurrentFragment.getId(), frag);
+		ft.addToBackStack(null);
+		ft.commit();
 	}
 	
 }

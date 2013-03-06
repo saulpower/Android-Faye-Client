@@ -120,63 +120,67 @@ public class AccountTypesManualSaveHandsetFragment extends BaseFragment{
 			
 			@Override
 			public void onClick(View v) {
-				String balance = mCurrentBalance.getText().toString();
-				String accountName = mAccountName.getText().toString();
-				
-				if (accountName.equals("")) {
-			        DialogUtils.alertDialog(getString(R.string.add_account_manually_cannot_save), 
-			        		getString(R.string.add_account_manually_cannot_save_message), 
-			        		mActivity);
-			 
-				} else {
-				
-					UiUtils.hideKeyboard(mActivity, v);
-					mAddManualBankJsonRequest = new JSONObject();
-	
-					try {
-						mAddManualBankJsonRequest.putOpt(Constant.KEY_ACCOUNT_TYPE, mSelectedAccountType.getAccountTypeId());
-					
-						mAddManualBankJsonRequest.putOpt(Constant.KEY_USER_GUID, User.getCurrentUser().getUserId());
-						mAddManualBankJsonRequest.putOpt(Constant.KEY_IS_HIDDEN, false);
-						mAddManualBankJsonRequest.putOpt(Constant.KEY_BALANCE, balance);
-						mAddManualBankJsonRequest.putOpt(Constant.KEY_ORG_BALANCE, balance);
-						mAddManualBankJsonRequest.putOpt(Constant.KEY_IS_DELETED, false);
-						mAddManualBankJsonRequest.putOpt(Constant.KEY_NAME, accountName);
-						mAddManualBankJsonRequest.putOpt(Constant.KEY_USER_NAME, accountName);
-						
-						//the "." means that its a subtype of the account type "Property"
-						if (mSelectedAccountType.getAccountTypeId().contains(".")) {
-							
-							String[] splitID = mSelectedAccountType.getAccountTypeId().split("\\.");
-							mAddManualBankJsonRequest.putOpt(Constant.KEY_PROPERTY_TYPE, splitID[1]);
-							
-						}
-					
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-					
-					
-					new Thread(new Runnable() {			
-						public void run() {	
-							DataBridge.sharedInstance().saveManualAccount(mAddManualBankJsonRequest);
-							DataController.save();
-							
-							Handler test = new Handler(Looper.getMainLooper());
-				    	    test.post(new Runnable() {
-				        	    public void run()
-				        	    {
-									Intent intent = new Intent(mActivity, SyncService.class);
-						    		mActivity.startService(intent);
-				        	    }
-				        	});
-						}
-					}).start();
-					
-					mActivity.popBackStackTo(0);
-				}
+				saveManualBank(v);
 			}
 		});
+	}
+	
+	private void saveManualBank(View v) {
+		String balance = mCurrentBalance.getText().toString();
+		String accountName = mAccountName.getText().toString();
+		
+		if (accountName.equals("")) {
+	        DialogUtils.alertDialog(getString(R.string.add_account_manually_cannot_save), 
+	        		getString(R.string.add_account_manually_cannot_save_message), 
+	        		mActivity);
+	 
+		} else {
+		
+			UiUtils.hideKeyboard(mActivity, v);
+			mAddManualBankJsonRequest = new JSONObject();
+
+			try {
+				mAddManualBankJsonRequest.putOpt(Constant.KEY_ACCOUNT_TYPE, mSelectedAccountType.getAccountTypeId());
+			
+				mAddManualBankJsonRequest.putOpt(Constant.KEY_USER_GUID, User.getCurrentUser().getUserId());
+				mAddManualBankJsonRequest.putOpt(Constant.KEY_IS_HIDDEN, false);
+				mAddManualBankJsonRequest.putOpt(Constant.KEY_BALANCE, balance);
+				mAddManualBankJsonRequest.putOpt(Constant.KEY_ORG_BALANCE, balance);
+				mAddManualBankJsonRequest.putOpt(Constant.KEY_IS_DELETED, false);
+				mAddManualBankJsonRequest.putOpt(Constant.KEY_NAME, accountName);
+				mAddManualBankJsonRequest.putOpt(Constant.KEY_USER_NAME, accountName);
+				
+				//the "." means that its a subtype of the account type "Property"
+				if (mSelectedAccountType.getAccountTypeId().contains(".")) {
+					
+					String[] splitID = mSelectedAccountType.getAccountTypeId().split("\\.");
+					mAddManualBankJsonRequest.putOpt(Constant.KEY_PROPERTY_TYPE, splitID[1]);
+					
+				}
+			
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			
+			
+			new Thread(new Runnable() {			
+				public void run() {	
+					DataBridge.sharedInstance().saveManualAccount(mAddManualBankJsonRequest);
+					DataController.save();
+					
+					Handler test = new Handler(Looper.getMainLooper());
+		    	    test.post(new Runnable() {
+		        	    public void run()
+		        	    {
+							Intent intent = new Intent(mActivity, SyncService.class);
+				    		mActivity.startService(intent);
+		        	    }
+		        	});
+				}
+			}).start();
+			
+			mActivity.popBackStackTo(0);
+		}
 	}
 	
 }

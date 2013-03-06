@@ -211,7 +211,6 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 				CheckBox checkbox = (CheckBox)v.findViewById(R.id.handset_exclude_checkbox);
 				TextView title = (TextView)v.findViewById(R.id.handset_exclude_txt);
 				updateCheckedStatus(checkbox, title);
-				
 			}
 		});
 		
@@ -314,130 +313,133 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 		
 	private void setupSecondaryOptions() {
 		
-        final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		
-		if (mBankAccountTypeName.equals("Credit Card")) {
+		if (mBankAccountTypeName.equals(Constant.CREDIT_CARD)) {
+			bankDetailsForCreditCard();
 			
-			optionalField1.setVisibility(View.VISIBLE);
-			optionalField2.setVisibility(View.VISIBLE);
-			optionalField3.setVisibility(View.VISIBLE);
-			mLine4.setVisibility(View.VISIBLE);
-			mLine5.setVisibility(View.VISIBLE);
-			mLine6.setVisibility(View.VISIBLE);
+		} else if (mBankAccountTypeName.equals(Constant.LOANS) || (mBankAccountTypeName.equals(Constant.MORTGAGE))) {
+			bankDetailsForLoanAndMortgage();
 			
-			//This is to disable the onclicklistener that was created when user selects account type "Property"
-			optionalField1.setOnClickListener(null);
+		} else if (mBankAccountTypeName.equals(Constant.INVESTMENTS) || (mBankAccountTypeName.equals(Constant.LINE_OF_CREDIT))) {
+			bankDetailsForInvestmentsAndLOC();
 			
-			if (mBankAccount.getInterestRate() != null) {
-				optionalField1.setText(mBankAccount.getInterestRate().toString() + " %");
-			} else {
-				optionalField1.setText("0 %");
-			}
-			optionalField1.setLabelText(getString(R.string.label_account_interest_rate));
-			
-			if (mBankAccount.getDueDay() != null) {
-				optionalField2.setText(mBankAccount.getDueDay().toString());
-			} else {
-				optionalField2.setText("0");
-			}
-			optionalField2.setLabelText(getString(R.string.label_account_due_day));
-			
-			if (mBankAccount.getCreditLimit() != null) {
-				optionalField3.setText("$ " + mBankAccount.getCreditLimit().toString());
-			} else {
-				optionalField3.setText("$ 0");
-			}
-			optionalField3.setLabelText(getString(R.string.label_account_credit_limit));
-			
-		} else if (mBankAccountTypeName.equals("Loans") || (mBankAccountTypeName.equals("Mortgage"))) {
-			
-			optionalField1.setVisibility(View.VISIBLE);
-			optionalField2.setVisibility(View.VISIBLE);
-			optionalField3.setVisibility(View.GONE);
-			
-			mLine4.setVisibility(View.VISIBLE);
-			mLine5.setVisibility(View.VISIBLE);
-			mLine6.setVisibility(View.GONE);
-			
-			//This is to disable the onclicklistener that was created when user selects account type "Property"
-			optionalField1.setOnClickListener(null);
-		
-			if (mBankAccount.getInterestRate() != null) {
-				optionalField1.setText("% " + mBankAccount.getInterestRate().toString());
-			} else {
-				optionalField1.setText("% 0");
-			}
-			optionalField1.setLabelText(getString(R.string.label_account_interest_rate));
-			
-			if (mBankAccount.getBeginningBalance() != null) {
-				optionalField2.setText("$ " + mBankAccount.getBeginningBalance().toString());
-			} else {
-				optionalField2.setText("$ 0");
-			}
-			optionalField2.setLabelText(getString(R.string.label_account_original_balance));
-			
-		} else if (mBankAccountTypeName.equals("Investments") || (mBankAccountTypeName.equals("Line of Credit"))) {
-			
-			optionalField1.setVisibility(View.VISIBLE);
-			optionalField2.setVisibility(View.GONE);
-			optionalField3.setVisibility(View.GONE);
-			
-			mLine4.setVisibility(View.VISIBLE);
-			mLine5.setVisibility(View.GONE);
-			mLine6.setVisibility(View.GONE);
-			
-			//This is to disable the onclicklistener that was created when user selects account type "Property"
-			optionalField1.setOnClickListener(null);
-			
-			if (mBankAccount.getInterestRate() != null) {
-				optionalField1.setText("% " + mBankAccount.getInterestRate().toString());
-			} else {
-				optionalField1.setText("% 0");
-			}
-			optionalField1.setLabelText(getString(R.string.label_account_interest_rate));
-			
-		} else if (mBankAccountTypeName.toLowerCase().equals("property")) {			
-			optionalField1.setFocusable(false);
-			 if (mBankAccount.getSubAccountType() != null) {
-				 optionalField1.setText(mBankAccount.getSubAccountType().getAccountTypeName());
-				 optionalField1.setLabelText(getString(R.string.label_account_property_type));
-			} else if (mSelectedAccountType != null) {
-				optionalField1.setText(mSelectedAccountType.getAccountTypeName());
-				optionalField1.setLabelText(getString(R.string.label_account_property_type));
-			} else {
-				optionalField1.setLabelText(getString(R.string.label_account_property_type));
-				optionalField1.setText("");
-			}
-			 
-
-			
-			
-		 	optionalField1.setVisibility(View.VISIBLE);
-			optionalField2.setVisibility(View.GONE);
-			optionalField3.setVisibility(View.GONE);
-			
-			mLine4.setVisibility(View.VISIBLE);
-			mLine5.setVisibility(View.GONE);
-			mLine6.setVisibility(View.GONE);
-			
-			optionalField1.setOnClickListener(new View.OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-
-				}
-			});
+		} else if (mBankAccountTypeName.equals(Constant.PROPERTY)) {
+			bankDetailsForProperty();
 			
 		} else {
-			optionalField1.setVisibility(View.GONE);
-			optionalField2.setVisibility(View.GONE);
-			optionalField3.setVisibility(View.GONE);
-			
-			mLine4.setVisibility(View.GONE);
-			mLine5.setVisibility(View.GONE);
-			mLine6.setVisibility(View.GONE);
-		}
+			bankDetailsHideAllOptional();
+		}		
+	}
+
+	private void bankDetailsHideAllOptional() {
+		optionalField1.setVisibility(View.GONE);
+		optionalField2.setVisibility(View.GONE);
+		optionalField3.setVisibility(View.GONE);
 		
+		mLine4.setVisibility(View.GONE);
+		mLine5.setVisibility(View.GONE);
+		mLine6.setVisibility(View.GONE);
+	}
+
+	private void bankDetailsForProperty() {
+		optionalField1.setFocusable(false);
+		 if (mBankAccount.getSubAccountType() != null) {
+			 optionalField1.setText(mBankAccount.getSubAccountType().getAccountTypeName());
+			 optionalField1.setLabelText(getString(R.string.label_account_property_type));
+		} else if (mSelectedAccountType != null) {
+			optionalField1.setText(mSelectedAccountType.getAccountTypeName());
+			optionalField1.setLabelText(getString(R.string.label_account_property_type));
+		} else {
+			optionalField1.setLabelText(getString(R.string.label_account_property_type));
+			optionalField1.setText("");
+		}
+		 		
+		optionalField1.setVisibility(View.VISIBLE);
+		optionalField2.setVisibility(View.GONE);
+		optionalField3.setVisibility(View.GONE);
+		
+		mLine4.setVisibility(View.VISIBLE);
+		mLine5.setVisibility(View.GONE);
+		mLine6.setVisibility(View.GONE);
+	}
+
+	private void bankDetailsForInvestmentsAndLOC() {
+		optionalField1.setVisibility(View.VISIBLE);
+		optionalField2.setVisibility(View.GONE);
+		optionalField3.setVisibility(View.GONE);
+		
+		mLine4.setVisibility(View.VISIBLE);
+		mLine5.setVisibility(View.GONE);
+		mLine6.setVisibility(View.GONE);
+		
+		//This is to disable the onclicklistener that was created when user selects account type "Property"
+		optionalField1.setOnClickListener(null);
+		
+		if (mBankAccount.getInterestRate() != null) {
+			optionalField1.setText("% " + mBankAccount.getInterestRate().toString());
+		} else {
+			optionalField1.setText("% 0");
+		}
+		optionalField1.setLabelText(getString(R.string.label_account_interest_rate));
+	}
+
+	private void bankDetailsForLoanAndMortgage() {
+		optionalField1.setVisibility(View.VISIBLE);
+		optionalField2.setVisibility(View.VISIBLE);
+		optionalField3.setVisibility(View.GONE);
+		
+		mLine4.setVisibility(View.VISIBLE);
+		mLine5.setVisibility(View.VISIBLE);
+		mLine6.setVisibility(View.GONE);
+		
+		//This is to disable the onclicklistener that was created when user selects account type "Property"
+		optionalField1.setOnClickListener(null);
+
+		if (mBankAccount.getInterestRate() != null) {
+			optionalField1.setText("% " + mBankAccount.getInterestRate().toString());
+		} else {
+			optionalField1.setText("% 0");
+		}
+		optionalField1.setLabelText(getString(R.string.label_account_interest_rate));
+		
+		if (mBankAccount.getBeginningBalance() != null) {
+			optionalField2.setText("$ " + mBankAccount.getBeginningBalance().toString());
+		} else {
+			optionalField2.setText("$ 0");
+		}
+		optionalField2.setLabelText(getString(R.string.label_account_original_balance));
+	}
+
+	private void bankDetailsForCreditCard() {
+		optionalField1.setVisibility(View.VISIBLE);
+		optionalField2.setVisibility(View.VISIBLE);
+		optionalField3.setVisibility(View.VISIBLE);
+		mLine4.setVisibility(View.VISIBLE);
+		mLine5.setVisibility(View.VISIBLE);
+		mLine6.setVisibility(View.VISIBLE);
+		
+		//This is to disable the onclicklistener that was created when user selects account type "Property"
+		optionalField1.setOnClickListener(null);
+		
+		if (mBankAccount.getInterestRate() != null) {
+			optionalField1.setText(mBankAccount.getInterestRate().toString() + " %");
+		} else {
+			optionalField1.setText("0 %");
+		}
+		optionalField1.setLabelText(getString(R.string.label_account_interest_rate));
+		
+		if (mBankAccount.getDueDay() != null) {
+			optionalField2.setText(mBankAccount.getDueDay().toString());
+		} else {
+			optionalField2.setText("0");
+		}
+		optionalField2.setLabelText(getString(R.string.label_account_due_day));
+		
+		if (mBankAccount.getCreditLimit() != null) {
+			optionalField3.setText("$ " + mBankAccount.getCreditLimit().toString());
+		} else {
+			optionalField3.setText("$ 0");
+		}
+		optionalField3.setLabelText(getString(R.string.label_account_credit_limit));
 	}
 	
 	private void setupOnClickListeners() {
@@ -448,12 +450,10 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 			public boolean onTouch(View v, MotionEvent event) {
 				UiUtils.hideKeyboard(mActivity, v);
 				
-		
 				Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_right);
 				Animation out = AnimationUtils.loadAnimation(getActivity(), R.anim.out_left);
 				mFlipper.setInAnimation(in);
 				mFlipper.setOutAnimation(out);
-				
 				mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view2)));
 				
 				mAccountTypesList.setOnItemClickListener(new OnItemClickListener() {
@@ -461,32 +461,7 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 						@Override
 						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				
-							mSelectedAccountType = ((AccountType)mAccountTypesList.getItemAtPosition(position));
-							
-							mBankAccountTypeName = mSelectedAccountType.getAccountTypeName();
-
-							if (!mBankAccountTypeName.toLowerCase().equals("property")) {
-								
-								setupSecondaryOptions();
-								
-								mAccountType.setText(mSelectedAccountType.getAccountTypeName());
-								
-								Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_left);
-								Animation out = AnimationUtils.loadAnimation(getActivity(), R.anim.out_right);
-								mFlipper.setInAnimation(in);
-								mFlipper.setOutAnimation(out);
-								
-								mFlipper.showPrevious();
-							} else {
-								loadPropertyTypesList();
-								
-								Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_right);
-								Animation out = AnimationUtils.loadAnimation(getActivity(), R.anim.out_left);
-								mFlipper.setInAnimation(in);
-								mFlipper.setOutAnimation(out);
-								
-								mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view3)));
-							}
+							accountTypeSelectionListener(position);
 						}
 				});
 				return true;
@@ -497,7 +472,6 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 			
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-
 				UiUtils.hideKeyboard(mActivity, v);
 				
 				Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_right);
@@ -506,8 +480,6 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 				mFlipper.setOutAnimation(out);
 				
 				mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view4)));
-				
-				
 				
 				return true;
 			}
@@ -536,10 +508,6 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				
 				mSelectedAccountType = ((AccountType)mAccountPropertyTypesList.getItemAtPosition(position));
-				//setBankAccountValues();
-				
-				
-			//	mBankAccount.setSubAccountType(subAccountType)
 				setupSecondaryOptions();
 				
 				mAccountType.setText(mBankAccountTypeName);
@@ -548,12 +516,10 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 				Animation out = AnimationUtils.loadAnimation(getActivity(), R.anim.out_right);
 				mFlipper.setInAnimation(in);
 				mFlipper.setOutAnimation(out);
-				
 				mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view1)));
 				
 			}
 		});
-		
 		
 	};
 		
@@ -563,7 +529,7 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 			mBankAccount.setAccountType(mSelectedAccountType);
 		}
 		
-		if (mBankAccountTypeName.equals("Credit Card")) {
+		if (mBankAccountTypeName.equals(Constant.CREDIT_CARD)) {
 			String interestRate = optionalField1.getText().toString().replace(" %", "");
 			String creditLimit = optionalField3.getText().toString().replace("$ ", "");
 			mBankAccount.setInterestRate(Double.valueOf(interestRate));
@@ -571,7 +537,7 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 			mBankAccount.setCreditLimit(Double.valueOf(creditLimit));					
 			mBankAccount.setBeginningBalance(0.0);
 			mBankAccount.setPropertyType(0);
-		} else if (mBankAccountTypeName.equals("Loans") || (mBankAccountTypeName.equals("Mortgage"))) {
+		} else if (mBankAccountTypeName.equals(Constant.LOANS) || (mBankAccountTypeName.equals(Constant.MORTGAGE))) {
 			String interestRate = optionalField1.getText().toString().replace(" %", "");
 			String beginingBalance = optionalField2.getText().toString().replace("$ ", "");
 			mBankAccount.setInterestRate(Double.valueOf(interestRate));
@@ -579,7 +545,7 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 			mBankAccount.setDueDay(0);
 			mBankAccount.setCreditLimit(0.0);
 			mBankAccount.setPropertyType(0);
-		} else if (mBankAccountTypeName.equals("Investments") || (mBankAccountTypeName.equals("Line of Credit"))) {
+		} else if (mBankAccountTypeName.equals(Constant.INVESTMENTS) || (mBankAccountTypeName.equals(Constant.LINE_OF_CREDIT))) {
 			String interestRate = optionalField1.getText().toString().replace(" %", "");
 			mBankAccount.setInterestRate(Double.valueOf(interestRate));	
 			mBankAccount.setDueDay(0);
@@ -587,7 +553,7 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 			mBankAccount.setBeginningBalance(0.0);
 			mBankAccount.setPropertyType(0);
 			
-		} else if (mBankAccountTypeName.equals("Property")) {	
+		} else if (mBankAccountTypeName.equals(Constant.PROPERTY)) {	
 			for (AccountType accountType : mFilteredPropertyTypes) {
 				if (accountType.getAccountTypeName().equals(optionalField1.getText().toString())) {
 					
@@ -653,7 +619,30 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 		return TransactionsHandsetFragment.newInstance(intent);
 	}
 
+	private void accountTypeSelectionListener(int position) {
+		mSelectedAccountType = ((AccountType)mAccountTypesList.getItemAtPosition(position));
+		
+		mBankAccountTypeName = mSelectedAccountType.getAccountTypeName();
+
+		if (!mBankAccountTypeName.toLowerCase().equals("property")) {
+			setupSecondaryOptions();
+			
+			mAccountType.setText(mSelectedAccountType.getAccountTypeName());
+			
+			Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_left);
+			Animation out = AnimationUtils.loadAnimation(getActivity(), R.anim.out_right);
+			mFlipper.setInAnimation(in);
+			mFlipper.setOutAnimation(out);
+			mFlipper.showPrevious();
+		} else {
+			loadPropertyTypesList();
+			
+			Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_right);
+			Animation out = AnimationUtils.loadAnimation(getActivity(), R.anim.out_left);
+			mFlipper.setInAnimation(in);
+			mFlipper.setOutAnimation(out);
+			mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view3)));
+		}
+	}
+
 }
-
-
-

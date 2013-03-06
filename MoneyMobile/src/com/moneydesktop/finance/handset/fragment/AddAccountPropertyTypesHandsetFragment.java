@@ -119,14 +119,7 @@ public class AddAccountPropertyTypesHandsetFragment extends BaseFragment{
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				
-				mSelectedAccountType = ((AccountType)mAccountTypesList.getItemAtPosition(position));
-				
-				AccountTypesManualSaveHandsetFragment frag = getSaveManualBankFragment(mSelectedAccountType);
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-				ft.replace(mCurrentFragment.getId(), frag);
-				ft.addToBackStack(null);
-				ft.commit();
+				showManualAccountSaveFragment(position);
 			}
 		});
 		
@@ -136,6 +129,17 @@ public class AddAccountPropertyTypesHandsetFragment extends BaseFragment{
 	private AccountTypesManualSaveHandsetFragment getSaveManualBankFragment(AccountType accountType) {
 		mSaveManualBankFragment = AccountTypesManualSaveHandsetFragment.newInstance(accountType);
 		return mSaveManualBankFragment;
+	}
+
+	private void showManualAccountSaveFragment(int position) {
+		mSelectedAccountType = ((AccountType)mAccountTypesList.getItemAtPosition(position));
+		
+		AccountTypesManualSaveHandsetFragment frag = getSaveManualBankFragment(mSelectedAccountType);
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
+		ft.replace(mCurrentFragment.getId(), frag);
+		ft.addToBackStack(null);
+		ft.commit();
 	}
 	
 }

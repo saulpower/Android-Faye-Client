@@ -547,11 +547,7 @@ public class BankAccount extends BusinessObject  {
     
 	private static AccountExclusionFlags getShowHideOptions() {
 		AccountExclusionFlags flag = null;
-		if (mExclusion != 0) {
-//			if (mExclusion == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ALL.index()) {
-//				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ALL.index();
-//				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ALL;
-//				
+		if (mExclusion != 0) {			
 			if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES.index()) {
 				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES.index();
 				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES;

@@ -153,69 +153,8 @@ public class AccountOptionsCredentialsHandsetFragment extends FixBankFragment{
 	    	Handler updateFields = new Handler(Looper.getMainLooper());
 	    	updateFields.post(new Runnable() {
 	    	    public void run()
-	    	    {
-	    	    	
-	    	    	List<String> logonLabels = event.getLogonLabels();
-	            	
-	            	LineView line1 = (LineView)mRoot.findViewById(R.id.view_breaker1);
-	            	LineView line2 = (LineView)mRoot.findViewById(R.id.view_breaker2);
-	            	LineView line3 = (LineView)mRoot.findViewById(R.id.view_breaker3);
-	            	
-	            	
-	    	    	switch (logonLabels.size()) {
-	    			case 1:
-	    				//Don't think this will ever happen....
-	    				mLabel1.setVisibility(View.VISIBLE);
-	    				mLabel2.setVisibility(View.GONE);
-	    				mLabel3.setVisibility(View.GONE);
-	    				
-	    				line1.setVisibility(View.VISIBLE);
-	    				line2.setVisibility(View.GONE);
-	    				line3.setVisibility(View.GONE);
-	    					    				
-	    				break;
-	    			case 2:
-	    				//Most common...just UserName/password
-	    				mLabel1.setVisibility(View.VISIBLE);
-	    				mLabel2.setVisibility(View.VISIBLE);
-	    				mLabel3.setVisibility(View.GONE);
-	    				
-	    				line1.setVisibility(View.VISIBLE);
-	    				line2.setVisibility(View.VISIBLE);
-	    				line3.setVisibility(View.GONE);
-	    				
-	    				break;
-	    			case 3:
-	    				//Banks like USSA will hit this. UserName/Password/Pin
-	    				mLabel1.setVisibility(View.VISIBLE);
-	    				mLabel2.setVisibility(View.VISIBLE);
-	    				mLabel3.setVisibility(View.VISIBLE);
-	    				
-	    				line1.setVisibility(View.VISIBLE);
-	    				line2.setVisibility(View.VISIBLE);
-	    				line3.setVisibility(View.VISIBLE);
-	    				
-	    				break;
-	    			default:
-	    				break;
-	    			}
-	            	
-	            	for (int i = 0; i < logonLabels.size(); i++) {        		
-	            		switch (i) {
-	    				case 0:
-	    					mLabel1.setLabelText(logonLabels.get(i));
-	    					break;
-	    				case 1:
-	    					mLabel2.setLabelText(logonLabels.get(i));
-	    					break;
-	    				case 2:
-	    					mLabel3.setLabelText(logonLabels.get(i));
-	    					break;					
-	    				default:
-	    					break;
-	    				}
-	            	
-	            	}
+	    	    {	
+	    	    	updateLogonLabels(event);
 	    	    }
 	    	});
 	    	
@@ -224,63 +163,129 @@ public class AccountOptionsCredentialsHandsetFragment extends FixBankFragment{
 				
 				@Override
 				public void onClick(View v) {
-					
-					UiUtils.hideKeyboard(mActivity, v);
-
-					final JSONObject objectToSendToAddInstitution = new JSONObject();
-					JSONArray jsonArray = new JSONArray();
-					
-					try {
-						for (int i = 0; i < event.getLogonLabels().size(); i++) {
-							JSONObject jsonObject = new JSONObject();
-				
-							jsonObject.put("guid", mCredentialsHash.get(event.getLogonLabels().get(i).toString()));
-						
-							switch (i) {
-							case 0:
-								jsonObject.put("value", mLabel1.getText().toString());
-								break;						
-							case 1:
-								jsonObject.put("value", mLabel2.getText().toString());
-								break;
-							case 2:
-								jsonObject.put("value", mLabel3.getText().toString());
-								break;
-							default:
-								break;
-							}
-							
-							jsonArray.put(jsonObject);
-						}
-	
-						objectToSendToAddInstitution.put(Constant.KEY_CREDENTIALS, jsonArray);
-						objectToSendToAddInstitution.put("institution_guid", mInstitutionID);
-						objectToSendToAddInstitution.put("user_guid", User.getCurrentUser().getUserId());
-					} catch (JSONException e) {
-						//TODO: update this log to something useful
-						e.printStackTrace(); 
-					}
-					
-					if (mBank != null){
-					
-						sendUpdatedCredentials(objectToSendToAddInstitution, mBank);
-					} else {
-						new Thread(new Runnable() {			
-							public void run() {	
-								JSONObject jsonResponse = DataBridge.sharedInstance().saveFinancialInstitute(objectToSendToAddInstitution);
-								
-								//Notify that request is finished and we are now ready to start populating the view.
-								EventBus.getDefault().post(new EventMessage().new SaveInstitutionFinished(jsonResponse));
-							}
-						}).start();
-					}
-					
-					mActivity.popBackStackTo(0);
-										
+					saveBank(event, v);
 				}
 			});
 	    }
     }
+
+	private void updateLogonLabels(final GetLogonCredentialsFinished event) {
+		List<String> logonLabels = event.getLogonLabels();
+		
+		LineView line1 = (LineView)mRoot.findViewById(R.id.view_breaker1);
+		LineView line2 = (LineView)mRoot.findViewById(R.id.view_breaker2);
+		LineView line3 = (LineView)mRoot.findViewById(R.id.view_breaker3);
+		
+		
+		switch (logonLabels.size()) {
+		case 1:
+			//Don't think this will ever happen....
+			mLabel1.setVisibility(View.VISIBLE);
+			mLabel2.setVisibility(View.GONE);
+			mLabel3.setVisibility(View.GONE);
+			
+			line1.setVisibility(View.VISIBLE);
+			line2.setVisibility(View.GONE);
+			line3.setVisibility(View.GONE);
+				    				
+			break;
+		case 2:
+			//Most common...just UserName/password
+			mLabel1.setVisibility(View.VISIBLE);
+			mLabel2.setVisibility(View.VISIBLE);
+			mLabel3.setVisibility(View.GONE);
+			
+			line1.setVisibility(View.VISIBLE);
+			line2.setVisibility(View.VISIBLE);
+			line3.setVisibility(View.GONE);
+			
+			break;
+		case 3:
+			//Banks like USSA will hit this. UserName/Password/Pin
+			mLabel1.setVisibility(View.VISIBLE);
+			mLabel2.setVisibility(View.VISIBLE);
+			mLabel3.setVisibility(View.VISIBLE);
+			
+			line1.setVisibility(View.VISIBLE);
+			line2.setVisibility(View.VISIBLE);
+			line3.setVisibility(View.VISIBLE);
+			
+			break;
+		default:
+			break;
+		}
+		
+		for (int i = 0; i < logonLabels.size(); i++) {        		
+			switch (i) {
+			case 0:
+				mLabel1.setLabelText(logonLabels.get(i));
+				break;
+			case 1:
+				mLabel2.setLabelText(logonLabels.get(i));
+				break;
+			case 2:
+				mLabel3.setLabelText(logonLabels.get(i));
+				break;					
+			default:
+				break;
+			}
+		
+		}
+	}
+
+	private void saveBank(final GetLogonCredentialsFinished event, View v) {
+		UiUtils.hideKeyboard(mActivity, v);
+
+		final JSONObject objectToSendToAddInstitution = new JSONObject();
+		JSONArray jsonArray = new JSONArray();
+		
+		try {
+			for (int i = 0; i < event.getLogonLabels().size(); i++) {
+				JSONObject jsonObject = new JSONObject();
+
+				jsonObject.put("guid", mCredentialsHash.get(event.getLogonLabels().get(i).toString()));
+			
+				switch (i) {
+				case 0:
+					jsonObject.put("value", mLabel1.getText().toString());
+					break;						
+				case 1:
+					jsonObject.put("value", mLabel2.getText().toString());
+					break;
+				case 2:
+					jsonObject.put("value", mLabel3.getText().toString());
+					break;
+				default:
+					break;
+				}
+				
+				jsonArray.put(jsonObject);
+			}
+
+			objectToSendToAddInstitution.put(Constant.KEY_CREDENTIALS, jsonArray);
+			objectToSendToAddInstitution.put("institution_guid", mInstitutionID);
+			objectToSendToAddInstitution.put("user_guid", User.getCurrentUser().getUserId());
+		} catch (JSONException e) {
+			//TODO: update this log to something useful
+			e.printStackTrace(); 
+		}
+		
+		if (mBank != null){
+		
+			sendUpdatedCredentials(objectToSendToAddInstitution, mBank);
+		} else {
+			new Thread(new Runnable() {			
+				public void run() {	
+					JSONObject jsonResponse = DataBridge.sharedInstance().saveFinancialInstitute(objectToSendToAddInstitution);
+					
+					//Notify that request is finished and we are now ready to start populating the view.
+					EventBus.getDefault().post(new EventMessage().new SaveInstitutionFinished(jsonResponse));
+				}
+			}).start();
+		}
+		
+		mActivity.popBackStackTo(0);
+	}
 	
 	
 	

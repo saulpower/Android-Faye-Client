@@ -496,100 +496,103 @@ public class AccountTypesTabletFragment extends AccountTypesFragment implements 
 			
 			@Override
 			public void onClick(final View bankAccountView) {
-				
-				RelativeLayout parentView = (RelativeLayout)getActivity().findViewById(R.id.account_types_container);
-				
-				List<OnClickListener> onClickListeners = new ArrayList<View.OnClickListener>();
-				String[] titles = getActivity().getResources().getStringArray(R.array.bank_selection_popup);
-				
-				if (bank.getProcessStatus().equals(BankRefreshStatus.STATUS_MFA.index())
-						|| bank.getProcessStatus().equals(BankRefreshStatus.STATUS_UPDATE_REQUIRED.index())
-						|| bank.getProcessStatus().equals(BankRefreshStatus.STATUS_LOGIN_FAILED.index())) {
-					
-					titles = getActivity().getResources().getStringArray(R.array.fix_bank_selection_popup);
-					onClickListeners.add(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-						    if (User.getCurrentUser().getCanSync()){
-						        fixBank(bank);
-						    } else {
-						        DialogUtils.alertDialog(getResources().getString(R.string.feature_not_available), getResources().getString(R.string.feature_not_available_message), getActivity());
-						    }
-					        mPopup.fadeOutTransparency();
-						}
-
-					});
-				}
-				
-				onClickListeners.add(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-					    if (User.getCurrentUser().getCanSync()){
-					        refreshAccount(bank);
-					    } else {
-					        DialogUtils.alertDialog(getResources().getString(R.string.feature_not_available), getResources().getString(R.string.feature_not_available_message), getActivity());
-					    }
-				        mPopup.fadeOutTransparency();
-					}
-
-				});
-				
-				onClickListeners.add(new OnClickListener() { 	
-
-                    @Override
-					public void onClick(View v) {
-                        if (User.getCurrentUser().getCanSync()){
-                        	deleteMemberAccount(bankAccountView, mPanelLayoutHolder, bank);
-                        } else {
-                            //Popup dialog saying you can't delete demo data
-                            DialogUtils.alertDialog(String.format(getString(R.string.feature_not_available_delete_title), bank.getBankName()), getResources().getString(R.string.feature_not_available_delete_message), getActivity());
-                        }
-                        mPopup.fadeOutTransparency();
-					}
-
-				});
-				
-				onClickListeners.add(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						if (User.getCurrentUser().getCanSync()) {
-	                        Intent i = new Intent(mActivity, DropDownTabletActivity.class);
-                            i.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.UPDATE_USERNAME_PASSWORD);
-                            i.putExtra(Constant.KEY_BANK_ACCOUNT_ID, bank.getBankId());
-	                        mActivity.startActivity(i);
-						} else {
-						    DialogUtils.alertDialog(getResources().getString(R.string.feature_not_available), getResources().getString(R.string.feature_not_available_message), getActivity());
-						}
-                        mPopup.fadeOutTransparency();
-					}
-				});
-				
-				
-				//Display popup with offset when bank is clicked
-				for (Bank bankIterator : mBankList) {
-				    if (bankIterator.getBankName().equals(bank.getBankName())) {
-				        
-				        DisplayMetrics dm = new DisplayMetrics();
-				        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-				        int topOffset = dm.heightPixels - mRoot.getMeasuredHeight();
-				        
-				        int[] location = new int[2];
-                        bankTypeAccountView.getLocationOnScreen(location);
-				        
-				        mPopup = new PopupWindowAtLocation(getActivity(), 
-		                        parentView, 
-		                        sRightDrawer.getLeft() + mPanelLayoutHolder.getWidth(), 
-		                        location[1] - topOffset, 
-		                        titles, 
-		                        onClickListeners, 
-		                        booklet);
-				    }
-				}
+				bankPanelClickEvent(bank, bankTypeAccountView, booklet, bankAccountView);
 			}
 		});
 
         return bankTypeAccountView;
     }
+	
+	private void bankPanelClickEvent(final Bank bank, final View bankTypeAccountView, final ImageView booklet, final View bankAccountView) {
+		RelativeLayout parentView = (RelativeLayout)getActivity().findViewById(R.id.account_types_container);
+		
+		List<OnClickListener> onClickListeners = new ArrayList<View.OnClickListener>();
+		String[] titles = getActivity().getResources().getStringArray(R.array.bank_selection_popup);
+		
+		if (bank.getProcessStatus().equals(BankRefreshStatus.STATUS_MFA.index())
+				|| bank.getProcessStatus().equals(BankRefreshStatus.STATUS_UPDATE_REQUIRED.index())
+				|| bank.getProcessStatus().equals(BankRefreshStatus.STATUS_LOGIN_FAILED.index())) {
+			
+			titles = getActivity().getResources().getStringArray(R.array.fix_bank_selection_popup);
+			onClickListeners.add(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+				    if (User.getCurrentUser().getCanSync()){
+				        fixBank(bank);
+				    } else {
+				        DialogUtils.alertDialog(getResources().getString(R.string.feature_not_available), getResources().getString(R.string.feature_not_available_message), getActivity());
+				    }
+			        mPopup.fadeOutTransparency();
+				}
+
+			});
+		}
+		
+		onClickListeners.add(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+			    if (User.getCurrentUser().getCanSync()){
+			        refreshAccount(bank);
+			    } else {
+			        DialogUtils.alertDialog(getResources().getString(R.string.feature_not_available), getResources().getString(R.string.feature_not_available_message), getActivity());
+			    }
+		        mPopup.fadeOutTransparency();
+			}
+
+		});
+		
+		onClickListeners.add(new OnClickListener() { 	
+
+            @Override
+			public void onClick(View v) {
+                if (User.getCurrentUser().getCanSync()){
+                	deleteMemberAccount(bankAccountView, mPanelLayoutHolder, bank);
+                } else {
+                    //Popup dialog saying you can't delete demo data
+                    DialogUtils.alertDialog(String.format(getString(R.string.feature_not_available_delete_title), bank.getBankName()), getResources().getString(R.string.feature_not_available_delete_message), getActivity());
+                }
+                mPopup.fadeOutTransparency();
+			}
+
+		});
+		
+		onClickListeners.add(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (User.getCurrentUser().getCanSync()) {
+                    Intent i = new Intent(mActivity, DropDownTabletActivity.class);
+                    i.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.UPDATE_USERNAME_PASSWORD);
+                    i.putExtra(Constant.KEY_BANK_ACCOUNT_ID, bank.getBankId());
+                    mActivity.startActivity(i);
+				} else {
+				    DialogUtils.alertDialog(getResources().getString(R.string.feature_not_available), getResources().getString(R.string.feature_not_available_message), getActivity());
+				}
+                mPopup.fadeOutTransparency();
+			}
+		});
+		
+		
+		//Display popup with offset when bank is clicked
+		for (Bank bankIterator : mBankList) {
+		    if (bankIterator.getBankName().equals(bank.getBankName())) {
+		        
+		        DisplayMetrics dm = new DisplayMetrics();
+		        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+		        int topOffset = dm.heightPixels - mRoot.getMeasuredHeight();
+		        
+		        int[] location = new int[2];
+                bankTypeAccountView.getLocationOnScreen(location);
+		        
+		        mPopup = new PopupWindowAtLocation(getActivity(), 
+                        parentView, 
+                        sRightDrawer.getLeft() + mPanelLayoutHolder.getWidth(), 
+                        location[1] - topOffset, 
+                        titles, 
+                        onClickListeners, 
+                        booklet);
+		    }
+		}
+	}
 
     private void setBanner(final Bank bank, final ImageView status) {
     	status.setVisibility(View.VISIBLE);
@@ -654,8 +657,7 @@ public class AccountTypesTabletFragment extends AccountTypesFragment implements 
                 getActivity(), 
                 new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {  
-                        
+                    public void onClick(DialogInterface dialog, int which) {                          
                         switch (which) {
                             case DialogInterface.BUTTON_POSITIVE:
                                 DialogUtils.dismissAlert();
@@ -804,19 +806,7 @@ public class AccountTypesTabletFragment extends AccountTypesFragment implements 
 	                            case DialogInterface.BUTTON_POSITIVE:
 	                                DialogUtils.dismissAlert();
 	                                
-	                        		mBanksForDeletion.add(bank);
-	                        		if (mBanksForDeletion.contains(bank)) {
-	                        		    mBankList.remove(bank);
-	                        		}
-	                        		
-	                        		bank.softDeleteSingle();
-	                            		
-	                        		//start the sync
-	                        		Intent intent = new Intent(getActivity(), SyncService.class);
-	                        		getActivity().startService(intent);
-	                        		
-	                        		//remove bank from view
-	                        		mPanelLayoutHolder.removeView(bankView);
+	                                removeBank(bank, bankView);
 	                                
 	                                break;                                
 	                            case DialogInterface.BUTTON_NEGATIVE:
@@ -868,5 +858,21 @@ public class AccountTypesTabletFragment extends AccountTypesFragment implements 
         if (activity != null) {
             setupTitleBar(activity);
         } 
-    }   
+    }
+
+	private void removeBank(final Bank bank, final View bankView) {
+		mBanksForDeletion.add(bank);
+		if (mBanksForDeletion.contains(bank)) {
+		    mBankList.remove(bank);
+		}
+		
+		bank.softDeleteSingle();
+			
+		//start the sync
+		Intent intent = new Intent(getActivity(), SyncService.class);
+		getActivity().startService(intent);
+		
+		//remove bank from view
+		mPanelLayoutHolder.removeView(bankView);
+	}   
 }

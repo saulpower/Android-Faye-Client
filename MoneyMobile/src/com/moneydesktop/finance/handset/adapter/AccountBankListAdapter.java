@@ -97,17 +97,15 @@ public class AccountBankListAdapter extends BaseAdapter {
 	private TextView addBankSymbolToContainer() {
 		
 		LayoutInflater layoutInflater = mActivity.getLayoutInflater();
-		final View addBankView = layoutInflater.inflate(R.layout.handset_account_types_add_bank_item, null);
-		
+		final View addBankView = layoutInflater.inflate(R.layout.handset_account_types_add_bank_item, null);	
 		TextView addBank = (TextView)addBankView.findViewById(R.id.handset_account_types_add_bank_icon);	
-	//	RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)UiUtils.getScaledPixels(mActivity, 80), (int)UiUtils.getScaledPixels(mActivity, 80));
 	
         Fonts.applyGlyphFont(addBank, 35);
-       // addBank.setLayoutParams(layoutParams);
-        int tenDIP = (int) UiUtils.convertDpToPixel(10, mActivity);
-       addBank.setPadding(tenDIP, tenDIP*(int)(1.5), 0, tenDIP);
         
-   
+        int tenDIP = (int) UiUtils.convertDpToPixel(10, mActivity);
+        
+        addBank.setPadding(tenDIP, tenDIP*(int)(1.5), 0, tenDIP);
+        
         return addBank;
 	}
 	
@@ -140,28 +138,41 @@ public class AccountBankListAdapter extends BaseAdapter {
 	            if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_SUCCEEDED.index()) {
 	            	refreshStatus.setVisibility(View.GONE);
 	                status.setVisibility(View.GONE);
+	                return;
 	                
-	            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_PENDING.index()) {
+	            } 
+	            if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_PENDING.index()) {
 	            	applyUpdatingImage(status, refreshStatus);
+	            	return;
 	                
-	            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_MFA.index()) {
+	            }  
+	            if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_MFA.index()) {
 	            	refreshStatus.setVisibility(View.GONE);
 	                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.handset_accounts_mfa));
+	                return;
 	                
-	            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_LOGIN_FAILED.index()) {
+	            }  
+	            if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_LOGIN_FAILED.index()) {
 	            	refreshStatus.setVisibility(View.GONE);
 	                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.handset_accounts_broken));
+	                return;
 	                
-	            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_UPDATE_REQUIRED.index()) {
+	            }  
+	            if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_UPDATE_REQUIRED.index()) {
 	            	refreshStatus.setVisibility(View.GONE);
 	                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.handset_accounts_mfa));
+	                return;
 	                
-	            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_EXCEPTION.index()) {
+	            }  
+	            if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_EXCEPTION.index()) {
 	            	refreshStatus.setVisibility(View.GONE);
 	                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.handset_accounts_broken));
+	                return;
 	                
-	            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_PROCESSING.index()) {
+	            }  
+	            if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_PROCESSING.index()) {
 	            	applyUpdatingImage(status, refreshStatus);
+	            	return;
 	            }
         	}
         }

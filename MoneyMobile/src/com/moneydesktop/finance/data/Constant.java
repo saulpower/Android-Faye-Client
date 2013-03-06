@@ -21,6 +21,18 @@ import com.moneydesktop.finance.database.TransactionsDao;
 
 public class Constant {
     
+	
+	/*******************************************************************
+	 * ACCOUNT TYPES
+	 *******************************************************************/
+	public static final String CREDIT_CARD = "Credit Card";
+	public static final String LOANS = "Credit Card";
+	public static final String MORTGAGE = "Credit Card";
+	public static final String INVESTMENTS = "Credit Card";
+	public static final String LINE_OF_CREDIT = "Line of Credit";
+	public static final String PROPERTY = "Property";
+			
+	
     /*******************************************************************
      * INTENT
      *******************************************************************/
