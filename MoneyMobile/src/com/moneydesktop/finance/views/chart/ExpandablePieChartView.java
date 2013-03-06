@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
@@ -215,8 +216,10 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 	 * the Pie Charts.
 	 */
 	public void onResume() {
-
+		
 		if (mChildChart == null || mGroupChart == null) return;
+		
+		Log.i(TAG, "onResume");
 		
 		mGroupChart.getDrawThread().onResume();
 		mChildChart.getDrawThread().onResume();

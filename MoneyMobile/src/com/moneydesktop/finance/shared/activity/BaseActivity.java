@@ -71,7 +71,8 @@ abstract public class BaseActivity extends FragmentActivity {
 	protected final long TRANSITION_DURATION = 300;
 
 	protected FragmentManager mFm;
-    
+
+	protected BaseFragment mFragment;
     protected int mFragmentCount = 0;
 	protected boolean mOnFragment = false;
 	
@@ -80,6 +81,10 @@ abstract public class BaseActivity extends FragmentActivity {
 	private static long sPause;
 	
 	public static boolean sInForeground = false;
+    
+    public void setCurrentFragment(BaseFragment fragment) {
+    	mFragment = fragment;
+    }
 	
 	public void setFragmentCount(int count) {
 		mFragmentCount = count;
@@ -164,7 +169,9 @@ abstract public class BaseActivity extends FragmentActivity {
 	 * 
 	 * @param fragment
 	 */
-	public void onFragmentAttached(BaseFragment fragment) {}
+	public void onFragmentAttached(BaseFragment fragment) {
+        setCurrentFragment(fragment);
+    }
 	
 	public void modalActivity(Class<?> key) {
 

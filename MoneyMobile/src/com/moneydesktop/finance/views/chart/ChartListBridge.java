@@ -7,6 +7,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,6 +32,7 @@ import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.TxFilter;
 import com.moneydesktop.finance.database.Category;
+import com.moneydesktop.finance.handset.fragment.TransactionsHandsetFragment;
 import com.moneydesktop.finance.shared.CategoryViewHolder;
 import com.moneydesktop.finance.shared.adapter.CategoryPieChartAdapter;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
@@ -66,21 +69,25 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 	
 	private Animation mIn, mOut, mBackIn, mBackOut;
 	
-	public ChartListBridge(Activity activity, ExpandablePieChartView chart, ListView list, TextSwitcher total, TextView backButton) {
-		
-		mActivity = activity;
-		
-		mAdapter = new CategoryPieChartAdapter(mActivity);
+	private FragmentManager mFragmentManager;
+	
+	public FragmentManager getFragmentManager() {
+		return mFragmentManager;
+	}
 
+	public void setFragmentManager(FragmentManager mFragmentManager) {
+		this.mFragmentManager = mFragmentManager;
+	}
+
+	public ChartListBridge(Activity activity, ExpandablePieChartView chart, ListView list, TextSwitcher total, TextView backButton) {
+		this(activity, chart);
+
+		mChart.setExpandableChartChangeListener(this);
+		
 		mTotal = total;
 		mTotal.setFactory(this);
 		mTotal.setInAnimation(activity, R.anim.fade_in_fast);
 		mTotal.setOutAnimation(activity, R.anim.fade_out_fast);
-		
-		mChart = chart;
-		mChart.setExpandablePieChartInfoClickListener(this);
-		mChart.setExpandableChartChangeListener(this);
-		mChart.setAdapter(mAdapter);
 		
 		mList = list;
 		mList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -102,6 +109,17 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 		});
 		
 		loadAnimations();
+	}
+	
+	public ChartListBridge(Activity activity, ExpandablePieChartView chart) {
+
+		mActivity = activity;
+		
+		mAdapter = new CategoryPieChartAdapter(mActivity);
+		
+		mChart = chart;
+		mChart.setExpandablePieChartInfoClickListener(this);
+		mChart.setAdapter(mAdapter);
 	}
 	
 	private void loadAnimations() {
@@ -281,13 +299,38 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 		
 		ArrayList<Long> categories = getCategories(groupPosition, childPosition);
 		
-	    Intent i = new Intent(mActivity, DropDownTabletActivity.class);
+		if (getFragmentManager() == null) {
+			showTransactionsDropDown(categories, other);
+		} else {
+			showTransactionsFragment(categories, other);
+		}
+	}
+	
+	private void showTransactionsDropDown(ArrayList<Long> categories, boolean other) {
+		
+		Intent i = new Intent(mActivity, DropDownTabletActivity.class);
         i.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.TRANSACTIONS_PAGE);
         i.putExtra(Constant.EXTRA_CATEGORY_ID, categories);
         i.putExtra(Constant.EXTRA_CATEGORY_TYPE, (mExpanded && !other) ? Constant.CATEGORY_TYPE_CHILD : Constant.CATEGORY_TYPE_GROUP);
         i.putExtra(Constant.EXTRA_TXN_TYPE, TxFilter.ALL);
         
         mActivity.startActivity(i);
+	}
+	
+	private void showTransactionsFragment(ArrayList<Long> categories, boolean other) {
+		
+		Intent intent = new Intent();
+        intent.putExtra(Constant.EXTRA_CATEGORY_ID, categories);
+        intent.putExtra(Constant.EXTRA_CATEGORY_TYPE, (mExpanded && !other) ? Constant.CATEGORY_TYPE_CHILD : Constant.CATEGORY_TYPE_GROUP);
+        intent.putExtra(Constant.EXTRA_TXN_TYPE, TxFilter.ALL);
+        
+        TransactionsHandsetFragment frag = TransactionsHandsetFragment.newInstance(intent, R.id.spending_fragment);
+        
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
+		ft.replace(R.id.spending_fragment, frag);
+		ft.addToBackStack(null);
+		ft.commit();
 	}
 	
 	private ArrayList<Long> getCategories(int groupPosition, int childPosition) {

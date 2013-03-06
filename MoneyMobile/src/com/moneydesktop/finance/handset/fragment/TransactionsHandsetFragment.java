@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.data.Enums.TxFilter;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
@@ -44,17 +46,38 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
     private TextView mBack, mTitle;
     private UltimateListView mFiltersList;
     private FilterAdapter mFilterAdapter;
+    
+    private int mFragmentResource = R.id.transactions_fragment;
 	
 	public static TransactionsHandsetFragment newInstance() {
 			
 	    TransactionsHandsetFragment frag = new TransactionsHandsetFragment();
-	    frag.setRetainInstance(true);
 	
         Bundle args = new Bundle();
         frag.setArguments(args);
         
         return frag;
 	}
+
+    @SuppressWarnings("unchecked")
+	public static TransactionsHandsetFragment newInstance(Intent intent, int fragmentResource) {
+    	
+	    TransactionsHandsetFragment fragment = new TransactionsHandsetFragment();
+	    fragment.setFragmentResource(fragmentResource);
+        fragment.setAccountId(intent.getStringExtra(Constant.EXTRA_ACCOUNT_ID));
+        fragment.setCategories((ArrayList<Long>) intent.getSerializableExtra(Constant.EXTRA_CATEGORY_ID));
+        fragment.setCategoryType(intent.getIntExtra(Constant.EXTRA_CATEGORY_TYPE, -1));
+        fragment.setTxFilter((TxFilter) intent.getSerializableExtra(Constant.EXTRA_TXN_TYPE));
+	
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        
+        return fragment;
+	}
+    
+    public void setFragmentResource(int resource) {
+    	mFragmentResource = resource;
+    }
 
 	@Override
 	public FragmentType getType() {
@@ -203,7 +226,7 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 			
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
 			ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-			ft.replace(R.id.transactions_fragment, frag);
+			ft.replace(mFragmentResource, frag);
 			ft.addToBackStack(null);
 			ft.commit();
 		}
@@ -212,7 +235,7 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 	private TransactionDetailHandsetFragment getDetailFragment() {
 		
 		if (mDetail == null) {
-			mDetail = TransactionDetailHandsetFragment.newInstance(getActivity());
+			mDetail = TransactionDetailHandsetFragment.newInstance(getActivity(), mFragmentResource);
 		}
 		
 		return mDetail;

@@ -976,7 +976,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	private void createInfo() {
 		
 		if (mInfoDrawable == null) {
-			mInfoDrawable = new InfoDrawable(getDrawThread(), getContext(), getBounds(), mInfoRadius);
+			mInfoDrawable = new InfoDrawable(this, getContext(), getBounds(), mInfoRadius);
 		}
 	}
     
@@ -1291,6 +1291,8 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		
+		Log.i(TAG, "surfaceCreated");
+		
 		if (mDrawThread.getState() == Thread.State.TERMINATED) {
 			
 			mDrawThread = new DrawThread(getHolder(), mHandler);
@@ -1306,6 +1308,8 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
+		
+		Log.i(TAG, "surfaceDestroyed");
 		
 		boolean retry = true;
 
@@ -1454,7 +1458,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 					
 					synchronized (mSurfaceHolder) {
 						
-						if (canvas != null) {
+						if (canvas != null && !mPaused) {
 							
 							// Update our animator objects
 							updateAnimators();
@@ -1590,7 +1594,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 			if (canvas == null || mAdapter == null) return;
 			
 			if (scale != 0) {
-			
+				
 				// Scale and rotate the canvas
 				canvas.save();
 				canvas.scale(scale, scale, mCenter.x, mCenter.y);

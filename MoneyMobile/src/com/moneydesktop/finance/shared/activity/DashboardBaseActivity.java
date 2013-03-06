@@ -38,7 +38,6 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 	protected boolean mLoggingOut = false;
 	protected boolean mOnHome = true;
     
-	protected BaseFragment mFragment;
 	protected GrowViewPager mPager;
 	protected GrowPagerAdapter mAdapter;
 	
@@ -49,13 +48,6 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 	public GrowPagerAdapter getPagerAdapter() {
 	    return mAdapter;
 	}
-    
-    @Override
-    public void onFragmentAttached(BaseFragment fragment) {
-    	super.onFragmentAttached(fragment);
-    	
-        setCurrentFragment(fragment);
-    }
     
     @Override
     protected void onResume() {
@@ -69,10 +61,6 @@ public abstract class DashboardBaseActivity extends BaseActivity {
         super.onPause();
         
     	SyncEngine.sharedInstance().beginSync();
-    }
-    
-    public void setCurrentFragment(BaseFragment fragment) {
-    	mFragment = fragment;
     }
     
     public void setDetailFragment(TransactionsDetailTabletFragment fragment) {

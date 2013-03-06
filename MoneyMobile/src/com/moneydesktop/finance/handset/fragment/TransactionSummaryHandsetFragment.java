@@ -32,7 +32,6 @@ public class TransactionSummaryHandsetFragment extends GrowFragment {
 
 
     	TransactionSummaryHandsetFragment fragment = new TransactionSummaryHandsetFragment();
-    	fragment.setRetainInstance(true);
 
         Bundle args = new Bundle();
         args.putInt(POSITION, position);

@@ -3,7 +3,6 @@ package com.moneydesktop.finance.handset.fragment;
 import net.simonvt.menudrawer.MenuDrawer;
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,10 +14,9 @@ import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity.OnMenuChangeListener;
 import com.moneydesktop.finance.model.EventMessage;
-import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
-import com.moneydesktop.finance.shared.adapter.CategoryPieChartAdapter;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.views.chart.ChartListBridge;
 import com.moneydesktop.finance.views.chart.ExpandablePieChartView;
 import com.moneydesktop.finance.views.chart.PieChartView.OnPieChartReadyListener;
 
@@ -27,9 +25,13 @@ import de.greenrobot.event.EventBus;
 public class SpendingChartHandsetFragment extends BaseFragment implements OnMenuChangeListener {
 	
     public final String TAG = this.getClass().getSimpleName();
+
+    private ChartListBridge mBridge;
     
     private ExpandablePieChartView mChart;
     private TextView mTitle;
+    
+    private boolean mPaused = false;
 
 	public static SpendingChartHandsetFragment newInstance() {
 	    
@@ -49,15 +51,6 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
         if (mActivity instanceof DashboardHandsetActivity) {
         	((DashboardHandsetActivity) mActivity).setOnMenuChangeListener(this);
         }
-        
-        EventBus.getDefault().register(this);
-	}
-	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		
-		EventBus.getDefault().unregister(this);
 	}
 
 	@Override
@@ -69,7 +62,16 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		
-		Log.i(TAG, "OnCreateView");
+		if (mRoot != null) {
+			
+			View oldParent = (View) mRoot.getParent();
+			
+			if (oldParent != container) {
+				((ViewGroup) oldParent).removeView(mRoot);
+			}
+			
+			return mRoot;
+		}
 		
 		mRoot = inflater.inflate(R.layout.handset_spending_view, null);
 		
@@ -81,10 +83,14 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
 			
 			@Override
 			public void onPieChartReady() {
+
+				configureChart(true);
 				EventBus.getDefault().post(new EventMessage().new ChartImageEvent(mChart.getDrawingCache()));
 			}
 		});
-		mChart.setAdapter(new CategoryPieChartAdapter(getActivity()));
+
+		mBridge = new ChartListBridge(getActivity(), mChart);
+		mBridge.setFragmentManager(getFragmentManager());
 		
 		mRoot.setOnClickListener(new OnClickListener() {
 			
@@ -100,13 +106,35 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
 		return mRoot;
 	}
 	
-	public void onEvent(NavigationEvent event) {
+	@Override
+	public void onResume() {
+		super.onResume();
 		
-		if (event.getType() != null && event.getType() == FragmentType.SPENDING) {
-			mChart.onResume();
-		} else {
-			mChart.onPause();
-		}
+		mPaused = false;
+		configureChart(true);
+	}
+    
+    @Override
+    public void isShowing(boolean fromBackstack) {
+    	super.isShowing(fromBackstack);
+		
+		mPaused = false;
+		configureChart(true);
+    }
+    
+    @Override
+    public void isHiding() {
+
+		mPaused = true;
+		configureChart(false);
+    }
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		
+		mPaused = true;
+		configureChart(false);
 	}
 	
 	@Override
@@ -122,18 +150,18 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
 	@Override
 	public void onLeftMenuStateChanged(int oldState, int newState) {
 		
-		configureChart(newState);
+		configureChart(newState == MenuDrawer.STATE_CLOSED);
 	}
 
 	@Override
 	public void onRightMenuStateChanged(int oldState, int newState) {
 
-		configureChart(newState);
+		configureChart(newState == MenuDrawer.STATE_CLOSED);
 	}
 	
-	private void configureChart(int state) {
+	private void configureChart(boolean showChart) {
 		
-		if (state == MenuDrawer.STATE_CLOSED && ((DashboardHandsetActivity) mActivity).getCurrentFragment() == getType()) {
+		if (showChart && ((DashboardHandsetActivity) mActivity).getCurrentFragmentType() == getType() && !mPaused) {
 			mChart.onResume();
 		} else {
 			mChart.onPause();

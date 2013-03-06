@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.views.chart.PieChartView.DrawThread;
 import com.moneydesktop.finance.views.chart.ThreadAnimator.AnimationListener;
 
 /**
@@ -23,7 +22,7 @@ public class InfoDrawable extends Drawable {
     
     public final String TAG = this.getClass().getSimpleName();
 	
-    private DrawThread mThread;
+    private PieChartView mChart;
     
 	private Paint mTitlePaint, mAmountPaint, mSubTitlePaint;
 	private float mOffsetX;
@@ -87,9 +86,9 @@ public class InfoDrawable extends Drawable {
 		invalidateSelf();
 	}
 	
-	public InfoDrawable(DrawThread thread, Context context, Rect bounds, float radius) {
+	public InfoDrawable(PieChartView chart, Context context, Rect bounds, float radius) {
 		
-		mThread = thread;
+		mChart = chart;
 		Resources resources = context.getResources();
 		setBounds(bounds);
 		mRadius = radius;
@@ -116,7 +115,7 @@ public class InfoDrawable extends Drawable {
 	
 	public void animateTransition(final String amount, final int amountColor, final String title) {
 		
-		if (mThread.isPaused()) {
+		if (mChart.getDrawThread().isPaused()) {
 			
 			setAmount(amount);
 			setAmountColor(amountColor);
@@ -137,11 +136,11 @@ public class InfoDrawable extends Drawable {
 				setAmount(amount);
 				setAmountColor(amountColor);
 				setTitle(title);
-				mThread.setInfoAnimator(inAlpha);
+				mChart.getDrawThread().setInfoAnimator(inAlpha);
 			}
 		});
 		
-		mThread.setInfoAnimator(outAlpha);
+		mChart.getDrawThread().setInfoAnimator(outAlpha);
 	}
 
 	@Override
