@@ -120,6 +120,26 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 		mChart = chart;
 		mChart.setExpandablePieChartInfoClickListener(this);
 		mChart.setAdapter(mAdapter);
+		mChart.setExpandableChartChangeListener(new OnExpandablePieChartChangeListener() {
+			
+			@Override
+			public void onGroupExpanded(int groupPosition, int childPosition) {
+
+				mExpanded = mChart.isExpanded();
+			}
+			
+			@Override
+			public void onGroupCollapsed(int groupPosition) {
+
+				mExpanded = mChart.isExpanded();
+			}
+			
+			@Override
+			public void onGroupChanged(int groupPosition) {}
+			
+			@Override
+			public void onChildChanged(int groupPosition, int childPosition) {}
+		});
 	}
 	
 	private void loadAnimations() {
@@ -194,6 +214,13 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 	private void updateTotal(float amount) {
 		
 		mTotal.setText(mFormatter.format(amount));
+	}
+	
+	/**
+	 * Refresh the data backing the expandable chart
+	 */
+	public void updateChart() {
+		mAdapter.refreshData();
 	}
 	
 	/**
@@ -323,6 +350,8 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
         intent.putExtra(Constant.EXTRA_CATEGORY_ID, categories);
         intent.putExtra(Constant.EXTRA_CATEGORY_TYPE, (mExpanded && !other) ? Constant.CATEGORY_TYPE_CHILD : Constant.CATEGORY_TYPE_GROUP);
         intent.putExtra(Constant.EXTRA_TXN_TYPE, TxFilter.ALL);
+        intent.putExtra(Constant.EXTRA_START_DATE, mAdapter.getDateRange().getStartDate().getTime());
+        intent.putExtra(Constant.EXTRA_END_DATE, mAdapter.getDateRange().getEndDate().getTime());
         
         TransactionsHandsetFragment frag = TransactionsHandsetFragment.newInstance(intent, R.id.spending_fragment);
         

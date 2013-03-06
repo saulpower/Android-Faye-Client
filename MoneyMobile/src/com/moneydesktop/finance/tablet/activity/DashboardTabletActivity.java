@@ -406,7 +406,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 
         switch (type) {
             case DASHBOARD:
-            	SyncEngine.sharedInstance().beginSync();
+            	SyncEngine.sharedInstance().syncCheck();
     			configureView(true);
             	return null;
             case ACCOUNT_TYPES:

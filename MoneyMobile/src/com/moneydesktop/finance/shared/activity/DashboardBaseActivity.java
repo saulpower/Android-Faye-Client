@@ -21,7 +21,6 @@ import com.moneydesktop.finance.model.EventMessage.LogoutEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.shared.adapter.GrowPagerAdapter;
-import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.LoginTabletActivity;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsTabletFragment;
@@ -53,14 +52,14 @@ public abstract class DashboardBaseActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         
-    	SyncEngine.sharedInstance().beginSync();
+    	SyncEngine.sharedInstance().syncCheck();
     }
     
     @Override
     protected void onPause() {
         super.onPause();
         
-    	SyncEngine.sharedInstance().beginSync();
+    	SyncEngine.sharedInstance().syncCheck();
     }
     
     public void setDetailFragment(TransactionsDetailTabletFragment fragment) {

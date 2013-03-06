@@ -29,6 +29,8 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
 	private float mTotal = 0f;
 	
 	private DateRange mRange;
+	
+	private boolean mLoading = false;
 
 	private List<Pair<Category, List<Category>>> mCategories;
 	
@@ -48,7 +50,15 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
 		loadCategories();
 	}
 	
+	public void refreshData() {
+		loadCategories();
+	}
+	
 	private void loadCategories() {
+		
+		if (mLoading) return;
+		
+		mLoading = true;
 		
 		new AsyncTask<Integer, Void, List<Pair<Category, List<Category>>>>() {
             
@@ -149,6 +159,8 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
                 mCategories.addAll(categories);
 				
                 notifyDataSetChanged();
+                
+        		mLoading = false;
             }
 
         }.execute();

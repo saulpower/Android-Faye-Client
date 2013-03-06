@@ -90,7 +90,7 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
         this.mCategoryType = mCategoryType;
     }
 
-    public void setTxFilter(TxFilter mTxFilter) {
+	public void setTxFilter(TxFilter mTxFilter) {
         this.mTxFilter = mTxFilter;
     }
 

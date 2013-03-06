@@ -94,6 +94,9 @@ public class ApplicationContext extends Application {
 		
 		EventBus.getDefault().unregister(this);
 		
+        Intent intent = new Intent(this, WebSocketService.class);
+		stopService(intent);
+		
 		unregisterReceiver(sScreenLock);
 	}
 	

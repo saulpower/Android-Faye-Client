@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
@@ -218,11 +217,9 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 	public void onResume() {
 		
 		if (mChildChart == null || mGroupChart == null) return;
-		
-		Log.i(TAG, "onResume");
-		
-		mGroupChart.getDrawThread().onResume();
+
 		mChildChart.getDrawThread().onResume();
+		mGroupChart.getDrawThread().onResume();
 	}
 	
 	/**
@@ -324,25 +321,12 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 	}
 	
 	private void addPieCharts() {
-
-		mGroupChart = new PieChartView(getContext(), new OnPieChartReadyListener() {
-			
-			@Override
-			public void onPieChartReady() {
-				mGroupReady = true;
-				readyCheck();
-			}
-		});
-		mGroupChart.setDynamics(new FrictionDynamics(0.95f));
-		mGroupChart.setSnapToAnchor(PieChartAnchor.BOTTOM);
-		mGroupChart.setOnRotationStateChangeListener(mGroupRotationListener);
-		mGroupChart.setOnPieChartChangeListener(mGroupListener);
-		mGroupChart.setOnItemClickListener(mOnGroupChartClicked);
 		
 		mChildChart = new PieChartView(getContext(), new OnPieChartReadyListener() {
 			
 			@Override
 			public void onPieChartReady() {
+				
 				mChildReady = true;
 				readyCheck();
 			}
@@ -353,6 +337,21 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 		mChildChart.setDynamics(new FrictionDynamics(0.95f));
 		mChildChart.setSnapToAnchor(PieChartAnchor.BOTTOM);
 		mChildChart.showInfo();
+
+		mGroupChart = new PieChartView(getContext(), new OnPieChartReadyListener() {
+			
+			@Override
+			public void onPieChartReady() {
+				
+				mGroupReady = true;
+				readyCheck();
+			}
+		});
+		mGroupChart.setDynamics(new FrictionDynamics(0.95f));
+		mGroupChart.setSnapToAnchor(PieChartAnchor.BOTTOM);
+		mGroupChart.setOnRotationStateChangeListener(mGroupRotationListener);
+		mGroupChart.setOnPieChartChangeListener(mGroupListener);
+		mGroupChart.setOnItemClickListener(mOnGroupChartClicked);
 		
 		initializeChartData();
 		
@@ -360,12 +359,11 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 		int height = getHeight() - getPaddingTop() - getPaddingBottom();
 		
 		addAndMeasureChart(mGroupChart, 0, width, height);
-		mGroupChart.layout(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(), getHeight() - getPaddingBottom());
-		
 		int subChartSize = (int) (mGroupChart.getChartDiameter() * 7 / 10);
-		
 		addAndMeasureChart(mChildChart, 1, subChartSize, subChartSize);
+		
 		mChildChart.layout(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(), getHeight() - getPaddingBottom());
+		mGroupChart.layout(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(), getHeight() - getPaddingBottom());
 	}
 	
 	/**

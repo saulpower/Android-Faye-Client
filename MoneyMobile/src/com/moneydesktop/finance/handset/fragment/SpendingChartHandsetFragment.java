@@ -11,9 +11,11 @@ import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity.OnMenuChangeListener;
 import com.moneydesktop.finance.model.EventMessage;
+import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.chart.ChartListBridge;
@@ -51,6 +53,15 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
         if (mActivity instanceof DashboardHandsetActivity) {
         	((DashboardHandsetActivity) mActivity).setOnMenuChangeListener(this);
         }
+        
+        EventBus.getDefault().register(this);
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		
+		EventBus.getDefault().unregister(this);
 	}
 
 	@Override
@@ -104,6 +115,13 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
 		});
 		
 		return mRoot;
+	}
+	
+	public void onEvent(DatabaseSaveEvent event) {
+	    
+	    if (event.didDatabaseChange() && event.getChangedClassesList().contains(Transactions.class)) {
+	        mBridge.updateChart();
+	    }
 	}
 	
 	@Override

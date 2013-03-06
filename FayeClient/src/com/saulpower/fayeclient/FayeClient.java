@@ -34,7 +34,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import com.saulpower.fayeclient.WebSocketClient.Listener;
@@ -118,11 +117,6 @@ public class FayeClient implements Listener {
 
 	private Handler getHandler() {
 		
-		if (mHandler == null) {
-			Looper.prepare();
-			mHandler = new Handler();
-		}
-		
 		return mHandler;
 	}
     
@@ -133,8 +127,9 @@ public class FayeClient implements Listener {
 	 * @param fayeUrl The URL of the FayeServer
 	 * @param channel The channel to subscribe to
 	 */
-    public FayeClient(URI fayeUrl, String channel) {
+    public FayeClient(Handler handler, URI fayeUrl, String channel) {
     	
+    	mHandler = handler;
     	mFayeUrl = fayeUrl;
     	mActiveSubChannel = channel;
     }
@@ -167,14 +162,12 @@ public class FayeClient implements Listener {
     
     private void openWebSocketConnection() {
     	
-    	Log.i(TAG, "Opening Web Socket");
-    	
     	if (mClient != null) {
     		mClient.disconnect();
     		mClient = null;
     	}
     	
-    	mClient = new WebSocketClient(mFayeUrl, this, null);
+    	mClient = new WebSocketClient(getHandler(), mFayeUrl, this, null);
     	mClient.connect();
     }
     

@@ -1291,8 +1291,6 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		
-		Log.i(TAG, "surfaceCreated");
-		
 		if (mDrawThread.getState() == Thread.State.TERMINATED) {
 			
 			mDrawThread = new DrawThread(getHolder(), mHandler);
@@ -1308,8 +1306,6 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		
-		Log.i(TAG, "surfaceDestroyed");
 		
 		boolean retry = true;
 
@@ -1434,6 +1430,17 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 			Canvas canvas;
 			
 			while (mIsRunning) {
+				
+				// Check for a pause lock
+				synchronized (mPauseLock) {
+				    while (mPaused) {
+				        try {
+				            mPauseLock.wait();
+				        } catch (InterruptedException e) {
+				        	Log.e(TAG, "Interrupted", e);
+				        }
+				    }
+				}
 
 				// If there are no PieSliceDrawables and we have an
 				// adapter create the necessary slices, the drawing
@@ -1479,17 +1486,6 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 					if (canvas != null) {
 						mSurfaceHolder.unlockCanvasAndPost(canvas);
 					}
-				}
-				
-				// Check for a pause lock
-				synchronized (mPauseLock) {
-				    while (mPaused) {
-				        try {
-				            mPauseLock.wait();
-				        } catch (InterruptedException e) {
-				        	Log.e(TAG, "Interrupted", e);
-				        }
-				    }
 				}
 			}
 		}

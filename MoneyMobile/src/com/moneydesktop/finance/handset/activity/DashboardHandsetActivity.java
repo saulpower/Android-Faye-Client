@@ -13,7 +13,6 @@ import net.simonvt.menudrawer.MenuDrawer.OnDrawerStateChangeListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -107,7 +106,8 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 
 		@Override
 		public void onAnimationEnd(Animation animation) {
-			EventBus.getDefault().post(new EventMessage().new NavigationEvent(mCurrentFragmentType));
+			
+			fragmentShowing();
 		}
 
 		@Override
@@ -272,6 +272,21 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     	FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.add(containerViewId, fragment);
 		ft.commit();
+    }
+    
+    private void fragmentShowing() {
+    	
+    	if (mFragments.containsKey(mCurrentFragmentType)) {
+			
+			mFlipper.post(new Runnable() {
+				
+				@Override
+				public void run() {
+
+		    		mFragments.get(mCurrentFragmentType).isShowing(false);
+				}
+			});
+    	}
     }
 	
 	private void resetRightMenu() {
@@ -463,17 +478,11 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     	
     	if (mOnHome) {
 
-        	SyncEngine.sharedInstance().beginSync();
+        	SyncEngine.sharedInstance().syncCheck();
             updateNavBar(getActivityTitle(), false);
     		
-    	} else {
-    	
-	    	// Tell the selected fragment it is now showing
-	    	if (mFragments.containsKey(type)) {
-	    		mFragments.get(type).isShowing(false);
-	    	}
     	}
-    	
+
         AnimationFactory.slideTransition(mFlipper, type.index(), mStart, mFinish, moveUp ? FlipDirection.BOTTOM_TOP : FlipDirection.TOP_BOTTOM, TRANSITION_DURATION);
     }
 	
