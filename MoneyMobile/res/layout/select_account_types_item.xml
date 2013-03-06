@@ -5,22 +5,21 @@
     android:background="@color/white"
     android:orientation="horizontal">
  
-    <ImageView
+    <TextView
         android:id="@+id/image"
         android:layout_width="40dip"
         android:layout_height="40dip"
         android:padding="5dip"
         android:layout_gravity="center"
-        android:src="@drawable/tablet_accounts_icon_accounttype_mortgage"
+        android:textColor="@color/primaryColor"
         android:contentDescription="@string/description"/>
  
     <TextView
         android:id="@+id/tablet_add_bank_manually_account_type_name_list_item"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:textColor="@color/primaryColor"
         android:layout_marginLeft="20dip"
+        android:textColor="@color/primaryColor"
 		android:gravity="center_vertical"/>
-
  
 </LinearLayout>

@@ -29,8 +29,10 @@ import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.model.EventMessage.MenuEvent;
 import com.moneydesktop.finance.shared.FilterViewHolder;
+import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
 import com.moneydesktop.finance.shared.adapter.FilterAdapter;
 import com.moneydesktop.finance.shared.fragment.TransactionsFragment;
+import com.moneydesktop.finance.tablet.fragment.TransactionsPageTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.UltimateListView;
 
@@ -60,6 +62,18 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
         
         return fragment;
 	}
+	
+    public static TransactionsHandsetFragment newInstance(Intent intent) {
+        
+    	TransactionsHandsetFragment fragment = new TransactionsHandsetFragment();
+        fragment.setAccountId(intent.getStringExtra(Constant.EXTRA_ACCOUNT_ID));
+        fragment.setTxFilter((TxFilter) intent.getSerializableExtra(Constant.EXTRA_TXN_TYPE));
+        
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        
+        return fragment;
+    }
 
     @SuppressWarnings("unchecked")
 	public static TransactionsHandsetFragment newInstance(Intent intent, int fragmentResource) {
@@ -139,7 +153,9 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
     	
     	data.add(new Pair<Integer, List<int[]>>(R.string.menu_transactions, items));
     	
+    	//mActivity.
     	mActivity.addMenuItems(data);
+    	mActivity.setMenuFragment(FragmentType.TRANSACTIONS);
 	}
 	
 	private void setupFilterList() {
@@ -264,18 +280,20 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 	
 	public void onEvent(MenuEvent event) {
 	    
-	    switch (event.getChildPosition()) {
-		    case 0:
-		    	mActivity.pushMenuView(mFilterListView);
-		    	break;
-		    case 1:
-		    	Transactions.setAllRead();
-		    	for (Transactions t : mAdapter.getTransactions()) {
-		    		t.setIsProcessed(true);
-		    	}
-		    	refreshTransactionsList();
-		    	break;
-	    }
+		if (event.getFragmentType().equals(FragmentType.TRANSACTIONS)) {
+		    switch (event.getChildPosition()) {
+			    case 0:
+			    	mActivity.pushMenuView(mFilterListView);
+			    	break;
+			    case 1:
+			    	Transactions.setAllRead();
+			    	for (Transactions t : mAdapter.getTransactions()) {
+			    		t.setIsProcessed(true);
+			    	}
+			    	refreshTransactionsList();
+			    	break;
+		    }
+		}
 	}
 	
 	public void onEvent(DatabaseSaveEvent event) {

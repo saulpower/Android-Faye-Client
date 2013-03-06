@@ -1,5 +1,12 @@
-<resources>
-
+<resources>  
+    <string-array name="account_exclusions_handset">
+        <item>@string/handset_account_exclusion_from_transaction_lists</item>
+        <item>@string/handset_account_exclusion_from_reports_charts</item>
+        <item>@string/handset_account_exclusion_from_account_listings</item>
+        <item>@string/handset_account_exclusion_from_budgets</item>
+        <item>@string/handset_account_exclusion_from_transfers_in</item>
+        <item>@string/handset_account_exclusion_from_transfers_out</item>
+    </string-array>
     <string-array name="account_selection_popup">
         <item>VIEW ALL TXNS</item>
         <item>VIEW UNCLEARED TXNS</item>
@@ -18,6 +25,16 @@
         <item>REMOVE</item>
         <item>UPDATE USERNAME AND PASSWORD</item>
     </string-array>
+   	<string-array name="fix_bank_options">
+        <item>@string/fix_bank_more_info_needed</item>
+        <item>@string/credentials</item>
+		<item>@string/delete_institution</item>
+    </string-array>
+  	<string-array name="fix_bank_exception_options">
+        <item>@string/fix_bank_somethings_wrong</item>
+        <item>@string/credentials</item>
+		<item>@string/delete_institution</item>
+    </string-array>         
     <string-array name="account_types_bank_options">
         <item>@string/icon_lock</item>
         <item>@string/icon_trash</item>
@@ -32,23 +49,35 @@
         <item>@string/icon_help</item>
         <item>@string/icon_refresh</item>
     </string-array>
+    <string-array name="bank_options">
+        <item>@string/credentials</item>
+        <item>@string/delete_institution</item>
+    </string-array>
     <string-array name="transactions_title_bar_icons">
         <item>@string/icon_help</item>
     </string-array>
     
+    <string name="accounts">accounts</string>
     <string name="account_types_indicator_hide">HIDE</string>
     <string name="account_types_indicator_show">SHOW</string>
     <string name="account_types_title">Accounts</string>
     <string name="action_menu">ACTION MENU</string>
     <string name="add_account_automatically_title">AUTOMATICALLY DOWNLOAD TRANSACTIONS</string>
     <string name="add_account_automatically_desc">Connect to your account online and let us automatically download your transactions. No data entry needed.</string>
-    <string name="add_account_institution">ADD AN INSTITUTION</string>
+    <string name="add_account_institution"> INSTITUTION</string>
     <string name="add_account_institution_connect">CONNECT TO %1$s</string>
     <string name="add_account_label">ADDING A NEW ACCOUNT</string>
+    <string name="add_account_label_handset">NEW ACCOUNT</string>
     <string name="add_account_manually_title">MANUALLY MANAGE TRANSACTIONS</string>
+    <string name="add_account_manually_cannot_save">Cannot Save</string>
+    <string name="add_account_manually_cannot_save_message">Account Name field is required</string>
     <string name="add_account_manually_desc">Manage your transactions independent of your bank and reconcile between the two automatically, or not.</string>
     <string name="add_account_search_box">ENTER YOUR INSTITUTION\'S NAME HERE</string>
     <string name="add_account_enter_credentials">Please enter your online credentials</string>
+    <string name="add_account_new_account">NEW %1$s ACCOUNT</string>
+    <string name="add_account_type_to_add">ACCOUNT TYPE TO ADD?</string>
+    <string name="add_account_type_of_property">TYPE OF PROPERTY</string>
+    <string name="add_account_type_search_for_institution">Search for an institution</string>
     <string name="account_transaction_type">these transactions are primarily:</string>
     <string name="all_accounts">All Accounts</string>
     <string name="app_name">MoneyMobile</string>
@@ -92,6 +121,7 @@
     <string name="button_transactions">Tap to View Transactions</string>
     <string name="button_yearly">BY YEAR</string>
     <string name="category_search">Start typing to search for a category</string>
+    <string name="credentials">Credentials</string>
     <string name="connect">Connect</string>
     <string name="connecting">Connecting to bank</string>    
     <string name="ct_asst">Asset</string>
@@ -113,6 +143,7 @@
     <string name="delete_bank_with_no_accounts_message">All accounts for this institution have been removed. Continue to remove the institution?</string>
     <string name="delete_bank_message">All associated accounts will also be removed</string>
     <string name="delete_bank_title">Remove %1$s?</string>
+    <string name="delete_institution">Delete this Institution</string>
     <string name="demo_message">Creating Demo Data&#8230;</string>
     <string name="description">description</string>
     <string name="dollar_sign">$</string>
@@ -146,6 +177,8 @@
     <string name="filter_folder">Folders</string>
     <string name="filter_payees">Payees</string>
     <string name="filter_tags">Tags</string>
+    <string name="fix_bank_more_info_needed">We need more info. Press here.</string>
+    <string name="fix_bank_somethings_wrong">Something\'s wrong. Tap to fix.</string>
     <string name="folder_all_sub">All Items, All Accounts</string>
     <string name="folder_all">ALL TRANSACTIONS</string>
     <string name="folder_clear_sub">Items That Have Not Cleared Your Bank</string>
@@ -156,6 +189,12 @@
     <string name="folder_new">NEW</string>
     <string name="get_started">BEGIN USING THE APP</string>
     <string name="generate_email">Generating Email&#8230;</string>
+    <string name="handset_account_exclusion_from_transaction_lists">Exclude transations from lists</string>
+    <string name="handset_account_exclusion_from_reports_charts">Exclude from reports/charts</string>      
+   	<string name="handset_account_exclusion_from_account_listings">Exclude from all account listings</string>
+    <string name="handset_account_exclusion_from_budgets">Exclude from budgets</string>
+    <string name="handset_account_exclusion_from_transfers_in">Exclude transfers in</string>
+	<string name="handset_account_exclusion_from_transfers_out">Exclude transfers out</string>
     <string name="handset_intro_desc_1">No matter where you are in the app, you can always press this home button to take you right back to the dashboard.</string>
     <string name="handset_intro_desc_2">We fill our dropdown menus chuck full of useful tools like \"Add another Account\", or \"Print this Transaction\", or \"Call Mom.\" Seriously, call her.</string>
     <string name="handset_intro_desc_3">Giving a little sideways swipe on the transactions list will open up the transactions folders. Think of the folders as preset filters.</string>
@@ -166,35 +205,46 @@
     <string name="hint_search_transactions">Search For Transactions</string>
     <string name="icon_accounts">O</string>
     <string name="icon_add">A</string>
+    <string name="icon_alert">B</string>
+    <string name="icon_appliances">\\</string>
+    <string name="icon_art">|</string>
     <string name="icon_cancel">X</string>
     <string name="icon_cash">C</string>
     <string name="icon_cc">F</string>
     <string name="icon_chart">&amp;</string>
     <string name="icon_checking">D</string>
+    <string name="icon_computer">_</string>
+    <string name="icon_electronics">)</string>
     <string name="icon_email">(</string>
     <string name="icon_feedback">6</string>
+    <string name="icon_furniture">=</string>
     <string name="icon_frown">f</string>
     <string name="icon_help">v</string>
     <string name="icon_home">L</string>
     <string name="icon_inv">I</string>
+    <string name="icon_jewelry">]</string>
     <string name="icon_left_arrow">3</string>
     <string name="icon_loans">H</string>
     <string name="icon_loc">J</string>
     <string name="icon_lock">E</string>
     <string name="icon_logout">7</string>
+    <string name="icon_miscellaneous">v</string>
     <string name="icon_mort">L</string>
     <string name="icon_password">§</string>
     <string name="icon_print">print</string>
     <string name="icon_prop">M</string>
     <string name="icon_qmark">\?</string>
+    <string name="icon_real_estate">9</string>
     <string name="icon_refresh">N</string>
     <string name="icon_saving">O</string>
     <string name="icon_search">8</string>
     <string name="icon_settings">Z</string>
     <string name="icon_share">4</string>
     <string name="icon_smile">:</string>
+    <string name="icon_sports_equipment">}</string>
     <string name="icon_trash">G</string>
     <string name="icon_transaction">x</string>
+    <string name="icon_vehicle">a</string>
     <string name="intro_desc_1">You can print a report of your financial data straight from the app. Just look for this printer icon.\nIt really is that easy.</string>
     <string name="intro_desc_2">You can print or email any transaction you want. \"Honey, why did you spend $112 at the golf course? Did you lose a bet?\" Sorry boys, now your wife knows everything.</string>
     <string name="intro_desc_3">Keep your side biz separate from your personal stuff by tagging transaction as business expenses (\"B\") or personal expenses (\"P\"). Some call it OCD. We call it organization. You\'re welcome.</string>
@@ -207,10 +257,20 @@
     <string name="label_account_current_balance">Current Balance</string>
     <string name="label_account_due_day">Due Day (Optional)</string>
     <string name="label_account_interest_rate">Interest Rate (Optional)</string>
+    <string name="label_account_menu">ACCOUNTS MENU</string>
     <string name="label_account_name">Account Name</string>
     <string name="label_account_original_balance">Original Balance (Optional)</string>
     <string name="label_account_property_type">Property Type</string>
 	<string name="label_account_type">Account Type</string>
+	<string name="label_add_account">ADD AN ACCOUNT</string>
+	<string name="label_account_detail">ACCOUNT DETAIL</string>
+	<string name="label_account_details_delete_account">DELETE ACCOUNT</string>
+	<string name="label_account_details_menu">ACCOUNT DETAIL MENU</string>		
+	<string name="label_account_details_view_transactions">VIEW TRANSACTIONS</string>
+	<string name="label_add_linked_account">Add a Linked Account</string>
+	<string name="label_add_linked_account_description">With a linked account, your account data (including transactions) are automatically downloaded straight to your phone. Manual data entry is so last year.</string>	
+	<string name="label_add_manual_account">Add a Manual Account</string>
+	<string name="label_add_manual_account_description">If you hate clouds (or just love typing) then you can add a manual account. These accounts aren\'t linked to any data feeds, so you have to enter every balance and transaction by hand.</string>			
     <string name="label_amount">Amount</string>
     <string name="label_app_lock">APP LOCK</string>
     <string name="label_average">Average</string>
@@ -223,6 +283,8 @@
     <string name="label_date">Date</string>
     <string name="label_delete">Delete</string>
     <string name="label_email">Email</string>
+    <string name="label_exclusions">Exclusions</string>
+    <string name="label_exclusions_description">This account is partially hidden.</string>
     <string name="label_exit">exit demo</string>
     <string name="label_expense">in expenses</string>
     <string name="label_feedback">FEEDBACK</string>
@@ -238,6 +300,7 @@
     <string name="label_others">Other</string>
     <string name="label_password">Password</string>
     <string name="label_payee">Payee</string>
+    <string name="label_refresh_all_accounts">REFRESH ALL ACCOUNTS</string>
     <string name="label_show_filters">Show Filters</string>
     <string name="label_spending_month">Spending Current Month</string>
     <string name="label_stmt">Statement Description</string>
@@ -261,6 +324,7 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_transactions">Flagged Menu</string>
     <string name="nag_bank">MoneyDesktop is a free service offered through hundreds of leading financial institutions\' Online Banking. If your institution doesn\'t currently offer MoneyDesktop, please let us know by submitting a request below.</string>
+    <string name="nav_icon_add">i</string>
     <string name="nav_icon_back">c</string>
     <string name="nav_icon_feedback">e</string>
     <string name="nav_icon_filter">k</string>
@@ -268,11 +332,13 @@
     <string name="nav_icon_menu_left">a</string>
     <string name="nav_icon_menu_right">b</string>
     <string name="nav_icon_refresh">h</string>
+    <string name="nav_icon_trash">n</string>
     <string name="need_account">You need a MoneyDesktop account to use MoneyMobile.</string>
     <string name="new_sub_category_hint">type your new category here</string>
     <string name="new_sub_category">ADD NEW SUBCATEGORY</string>
     <string name="new_tag">(Select to Add)</string>
     <string name="panel_title">MY INSTITUTIONS</string>
+    <string name="password">Password</string>
     <string name="plus">+</string>
     <string name="personal">Personal</string>
     <string name="press_here_to_continue">PRESS HERE TO CONTINUE</string>
@@ -289,6 +355,10 @@
     <string name="setting_unlink_title">Unlink</string>
     <string name="setup_url">http://embed.moneydesktop.com/setup-instructions.html</string>
     <string name="show_hide_label">SHOW/HIDE ACCOUNT</string>
+    <string name="show_hide_exclude_transactions_from_lists">EXCLUDE TRANSACTIONS FROM LISTS</string>
+    <string name="show_hide_exclude_from_reports">HIDE FROM REPORTS/CHARTS</string>
+    <string name="show_hide_exclude_from_account_summary">HIDE FROM ACCOUNT SUMMARY</string>
+    <string name="show_hide_exclude_from_budgets">EXCLUDE FROM BUDGETS</string>
     <string name="show_hide_exclude_transfers_from_income">EXCLUDE TRANSFERS FROM INCOME</string>
     <string name="show_hide_exclude_transfers_from_expenses">EXCLUDE TRANSFERS FROM EXPENSES</string>
     <string name="signup_bank">Your Financial Institution</string>
@@ -334,6 +404,7 @@
     <string name="unlink_message">Unlinking will remove this device from your list of approved devices. you can re-link it at any time. Would you like to continue?</string>
     <string name="unlink_title">Unlink?</string>
     <string name="update_refresh">You need to refresh your data.</string>
+    <string name="user_id">User ID</string>
     <string name="wingding_cancel">V</string>
 
 </resources>

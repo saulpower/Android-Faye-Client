@@ -14,6 +14,7 @@
            <include layout="@layout/tablet_add_bank_connect" android:id="@+id/view3"/>
            <include layout="@layout/tablet_add_bank_manually_account_types" android:id="@+id/view4"/>
            <include layout="@layout/tablet_add_bank_manually_save_screen" android:id="@+id/view5"/>
+           <include layout="@layout/tablet_add_bank_manually_property_type" android:id="@+id/view6"/>
            
 	</ViewFlipper>
 

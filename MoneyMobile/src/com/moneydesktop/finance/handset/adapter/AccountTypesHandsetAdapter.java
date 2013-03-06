@@ -4,9 +4,11 @@ import java.text.NumberFormat;
 import java.util.List;
 
 import android.content.Context;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView.OnGroupCollapseListener;
 import android.widget.ExpandableListView.OnGroupExpandListener;
@@ -17,11 +19,17 @@ import android.widget.TextView;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.AccountType;
+import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.database.QueryProperty;
+import com.moneydesktop.finance.handset.fragment.AccountBankDetailsHandsetFragment;
 import com.moneydesktop.finance.shared.activity.BaseActivity;
 import com.moneydesktop.finance.shared.adapter.UltimateAdapter;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.views.BarGraphView;
+import com.moneydesktop.finance.views.BarView;
 import com.moneydesktop.finance.views.UltimateListView;
+
 
 public class AccountTypesHandsetAdapter extends UltimateAdapter implements OnGroupExpandListener, OnGroupCollapseListener{
 
@@ -31,13 +39,15 @@ public class AccountTypesHandsetAdapter extends UltimateAdapter implements OnGro
     private UltimateListView mAccountListView;
     
     public AccountTypesHandsetAdapter(Context context, List<AccountType> accountTypesFiltered, UltimateListView accountsListView) {
-        mAccountTypesFiltered = accountTypesFiltered;   
+    	
+    	mAccountTypesFiltered = accountTypesFiltered;   
         mContext = context;
         mAccountListView = accountsListView;
         
         mAccountListView.setOnGroupExpandListener(this);
-        mAccountListView.setOnGroupCollapseListener(this);
+        mAccountListView.setOnGroupCollapseListener(this); 
     }
+   
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
@@ -51,7 +61,13 @@ public class AccountTypesHandsetAdapter extends UltimateAdapter implements OnGro
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return mAccountTypesFiltered.get(groupPosition).getBankAccounts().size();
+    	int response;
+    	if (mAccountTypesFiltered.size() == 0 || mAccountTypesFiltered == null) {
+    		response = 0;
+    	} else {
+    		response = mAccountTypesFiltered.get(groupPosition).getBankAccounts().size();    		
+    	}
+    	return response;
     }
 
     @Override
@@ -61,10 +77,17 @@ public class AccountTypesHandsetAdapter extends UltimateAdapter implements OnGro
 
     @Override
     public int getGroupCount() {
-        return mAccountTypesFiltered.size();
+    	int response;
+    	if (mAccountTypesFiltered != null) {
+    		response = mAccountTypesFiltered.size();    		
+    	} else {
+    		response = 0;
+    	}
+    	return response;
+        
     }
 
-    @Override
+	@Override
     public long getGroupId(int groupPosition) {
         return 0;
     }
@@ -79,26 +102,34 @@ public class AccountTypesHandsetAdapter extends UltimateAdapter implements OnGro
         return true;
     }
 
-
     @Override
     public View getSectionView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         
         View cell = convertView;
-        cell = ((BaseActivity)mContext).getLayoutInflater().inflate(R.layout.handset_account_type_details_header, parent, false);
         
-        TextView accountTypeName = (TextView)cell.findViewById(R.id.handset_account_type_name);
-        TextView accountTypeSum = (TextView)cell.findViewById(R.id.handset_account_type_sum);
-        
-        accountTypeName.setText(mAccountTypesFiltered.get(groupPosition).getAccountTypeName()); //get the account name (Checking, savings, etc)
-        double accountTypeValue = 0;
-        
-        for (BankAccount bankAccount : mAccountTypesFiltered.get(groupPosition).getBankAccounts()) {
-            accountTypeValue = accountTypeValue + bankAccount.getBalance();
+        if (cell == null) {
+        	cell = ((BaseActivity)mContext).getLayoutInflater().inflate(R.layout.handset_account_type_details_header, parent, false);
         }
         
-        String formatedSum = NumberFormat.getCurrencyInstance().format(accountTypeValue);
-        
-        accountTypeSum.setText(formatedSum);
+        if (mAccountTypesFiltered != null) {
+	        if (mAccountTypesFiltered.size() > 0) {
+	        	
+		        
+		        TextView accountTypeName = (TextView)cell.findViewById(R.id.handset_account_type_name);
+		        TextView accountTypeSum = (TextView)cell.findViewById(R.id.handset_account_type_sum);
+		        
+		        accountTypeName.setText(mAccountTypesFiltered.get(groupPosition).getAccountTypeName()); //get the account name (Checking, savings, etc)
+		        double accountTypeValue = 0;
+		        
+		        for (BankAccount bankAccount : mAccountTypesFiltered.get(groupPosition).getBankAccounts()) {
+		            accountTypeValue = accountTypeValue + bankAccount.getBalance();
+		        }
+		        
+		        String formatedSum = NumberFormat.getCurrencyInstance().format(accountTypeValue);
+		        
+		        accountTypeSum.setText(formatedSum);
+	        }
+        }
         
         
         return cell;
@@ -107,36 +138,38 @@ public class AccountTypesHandsetAdapter extends UltimateAdapter implements OnGro
     
     @Override
     public View getItemView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        View cell = convertView;        
+        View cell = convertView;
         cell = ((BaseActivity)mContext).getLayoutInflater().inflate(R.layout.account_type_child_handset, parent, false);
         
         List<BankAccount> bankAccounts = mAccountTypesFiltered.get(groupPosition).getBankAccounts();
-        BankAccount accountType = bankAccounts.get(childPosition);
+        BankAccount bankAccount = bankAccounts.get(childPosition);
         
-        LinearLayout bankAccountContainer = (LinearLayout) cell.findViewById(R.id.account_type_bank_container_handset);
-        
-        LinearLayout barLineView = (LinearLayout) cell.findViewById(R.id.account_types_handset_barview_container);
-        
-        
-        final View view = createChildView();
-        
-        ImageView bankLogo = (ImageView)view.findViewById(R.id.handset_account_types_bank_icon);
-        BankLogoManager.getBankImage(bankLogo, accountType.getInstitutionId());
-        TextView accountName = (TextView)view.findViewById(R.id.handset_sub_account_type_name);
-        TextView accountSum = (TextView)view.findViewById(R.id.handset_sub_account_type_sum);
-        
-        Fonts.applyPrimarySemiBoldFont(accountName, 10);
-        Fonts.applyPrimarySemiBoldFont(accountSum, 10);
-        
-        accountName.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
-        accountName.setText(accountType.getAccountName() == null ? "" : accountType.getAccountName());
-        accountSum.setText(accountType.getBalance() == null ? "" : mFormatter.format(accountType.getBalance()));
-     
-        bankAccountContainer.addView(view);
+        if (!bankAccount.isDeleted()) {
+	        LinearLayout bankAccountContainer = (LinearLayout) cell.findViewById(R.id.account_type_bank_container_handset);
+	        
+	     //   LinearLayout barLineView = (LinearLayout) cell.findViewById(R.id.account_types_handset_barview_container);
+	               
+	        final View view = createChildView();
+	        
+	        ImageView bankLogo = (ImageView)view.findViewById(R.id.handset_account_types_bank_icon);
+	        BankLogoManager.getBankImage(bankLogo, bankAccount.getInstitutionId());
+	        TextView accountName = (TextView)view.findViewById(R.id.handset_sub_account_type_name);
+	        TextView accountSum = (TextView)view.findViewById(R.id.handset_sub_account_type_sum);
+	        
+	        Fonts.applyPrimarySemiBoldFont(accountName, 10);
+	        Fonts.applyPrimarySemiBoldFont(accountSum, 10);
+	        
+	        accountName.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
+	        accountName.setText(bankAccount.getAccountName() == null ? "" : bankAccount.getAccountName());
+	        accountSum.setText(bankAccount.getBalance() == null ? "" : mFormatter.format(bankAccount.getBalance()));
+	     
+	        bankAccountContainer.addView(view);
+        }
+
                 
         return cell;
     }
-
+    
     @Override
     public void configureHeader(View header, int section) {
         TextView sectionHeader = (TextView)header.findViewById(R.id.handset_account_type_name);

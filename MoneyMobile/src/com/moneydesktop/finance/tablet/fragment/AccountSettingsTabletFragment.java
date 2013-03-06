@@ -7,9 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -19,7 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
@@ -30,7 +27,6 @@ import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BankAccountDao;
-import com.moneydesktop.finance.database.BankDao;
 import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
@@ -80,8 +76,7 @@ public class AccountSettingsTabletFragment extends BaseFragment{
 	public FragmentType getType() {
 		return null;
 	}
-	
-	
+		
 	@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -103,7 +98,6 @@ public class AccountSettingsTabletFragment extends BaseFragment{
         return fragment;
 	}
 
-	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -289,17 +283,9 @@ public class AccountSettingsTabletFragment extends BaseFragment{
 			mField3Label.setText(getString(R.string.label_account_interest_rate));
 			
 		} else if (mSelectedAccountTypeName.equals("Property")) {			
-			mField3Label.setVisibility(View.VISIBLE);
-			mField3.setVisibility(View.VISIBLE);
-			
-			if (mBankAccount.getPropertyType() != null) {
-				for (AccountType propertyTypes : mFilteredPropertyTypes) {
-					String propertyId = propertyTypes.getAccountTypeId().replace(".", "");
-					if (mBankAccount.getPropertyType().intValue() == Integer.valueOf(propertyId)) {
-						mField3.setText(propertyTypes.getAccountTypeName());
-					}
-				}
-				
+			mField3.setFocusable(false);
+			 if (mBankAccount.getSubAccountType() != null) {
+				mField3.setText(mBankAccount.getSubAccountType().getAccountTypeName());
 			} else {
 				mField3.setText("");
 			}
@@ -319,19 +305,22 @@ public class AccountSettingsTabletFragment extends BaseFragment{
 					
 	                final View inflatedView = inflater.inflate(R.layout.tablet_account_type_settings, null);
 	                final ListView accountTypesListView = (ListView)inflatedView.findViewById(R.id.account_type_settings_list);
-	                               
+	                
 	                listAdapter = new AccountSettingsTypesAdapter(getActivity(), R.layout.tablet_account_type_settings_list_item, mFilteredPropertyTypes);
 	                
 	                accountTypesListView.setAdapter(listAdapter);
 	                
 	                mSlidingView = new SlidingView(getActivity(), 0, 0, (ViewGroup)mRoot, inflatedView, SlideFrom.RIGHT, v);
 			
+	                ((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(getString(R.string.label_account_property_type));
+	                
+	                
 					accountTypesListView.setOnItemClickListener(new OnItemClickListener() {
 							@Override
 							public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 								mSlidingView.dismiss();
-								//((DropDownTabletActivity)getActivity()).animateLabelsReverse();
 								
+								((DropDownTabletActivity)mActivity).getAnimatedNavView().popNav();
 								AccountType mSelectedPropertyType = ((AccountType)accountTypesListView.getItemAtPosition(position));
 								
 								mSelectedPropertyTypeName = mSelectedPropertyType.getAccountTypeName();
@@ -358,31 +347,18 @@ public class AccountSettingsTabletFragment extends BaseFragment{
 	
 	private void setupOnClickListeners() {
 		
-//		((DropDownTabletActivity)getActivity()).backArrowAction(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				if (mSlidingView != null) {
-//					if (mSlidingView.viewIsVisible()) {
-//						mSlidingView.dismiss();
-//					//	((DropDownTabletActivity)getActivity()).animateLabelsReverse();
-//					}
-//				}
-//			}
-//		});
-		
 		mField2.setOnClickListener(new View.OnClickListener() {	
 			@Override
 			public void onClick(final View v) {
 				ArrayAdapter<AccountType> listAdapter;   
 				UiUtils.hideKeyboard(mActivity, v);
 				
-				//((DropDownTabletActivity)mActivity).animateLabelsForward(mActivity.getResources().getString(R.string.label_account_type), true);
-				
+				((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(getString(R.string.label_account_type));
 				
                 LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 final View inflatedView = inflater.inflate(R.layout.tablet_account_type_settings, null);
                 final ListView accountTypesListView = (ListView)inflatedView.findViewById(R.id.account_type_settings_list);
-                               
+                       
                 listAdapter = new AccountSettingsTypesAdapter(mActivity, R.layout.tablet_account_type_settings_list_item, mFilteredAccountTypes);
                 
                 accountTypesListView.setAdapter(listAdapter);
@@ -393,8 +369,7 @@ public class AccountSettingsTabletFragment extends BaseFragment{
 						@Override
 						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 							mSlidingView.dismiss();
-						//	((DropDownTabletActivity)getActivity()).animateLabelsReverse();
-							
+							((DropDownTabletActivity)mActivity).getAnimatedNavView().popNav();
 							mSelectedAccountType = ((AccountType)accountTypesListView.getItemAtPosition(position));
 							
 							mSelectedAccountTypeName = mSelectedAccountType.getAccountTypeName();
@@ -455,9 +430,11 @@ public class AccountSettingsTabletFragment extends BaseFragment{
 		} else if (mSelectedAccountTypeName.equals("Property")) {	
 			for (AccountType accountType : mFilteredPropertyTypes) {
 				if (accountType.getAccountTypeName().equals(mField3.getText().toString())) {
-					String typeID = accountType.getAccountTypeId().replace(".", "");
 					
-					mBankAccount.setPropertyType(Integer.valueOf(typeID));
+					String[] splitID = accountType.getAccountTypeId().split("\\.");
+					Integer typeID = Integer.valueOf(splitID[1]);
+					
+					mBankAccount.setPropertyType(typeID);
 					mBankAccount.setInterestRate(0.0);
 					mBankAccount.setDueDay(0);
 					mBankAccount.setCreditLimit(0.0);

@@ -38,6 +38,19 @@ public class EventMessage {
     
 	public class AuthEvent extends EventMessage {}
 	
+	
+	public class UpdateSpecificBankStatus extends EventMessage {	
+		private Bank mBank;
+		
+		public UpdateSpecificBankStatus(Bank bank) {
+			this.mBank = bank;
+		}
+		
+		public Bank getBank() {
+			return mBank;
+		}
+	}
+	
 	public class MfaQuestionsRecieved extends EventMessage {	
 		private List<String> mList;
 		
@@ -158,10 +171,12 @@ public class EventMessage {
 	public class MenuEvent extends EventMessage {
 	    
 	    private int mGroupPosition, mChildPosition;
+	    private FragmentType mFragmenttype;
 	    
-	    public MenuEvent(int groupPosition, int childPosition) {
+	    public MenuEvent(int groupPosition, int childPosition, FragmentType fragmentType) {
 	    	mGroupPosition = groupPosition;
 	    	mChildPosition = childPosition;
+	    	mFragmenttype = fragmentType;
 	    }
 	    
 	    public int getGroupPosition() {
@@ -170,6 +185,10 @@ public class EventMessage {
 	    
 	    public int getChildPosition() {
 	        return mChildPosition;
+	    }
+	    
+	    public FragmentType getFragmentType() {
+	        return mFragmenttype;
 	    }
 	}
 	

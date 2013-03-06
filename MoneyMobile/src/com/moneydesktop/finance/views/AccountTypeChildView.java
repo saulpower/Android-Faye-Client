@@ -15,11 +15,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.AccountType;
+import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.Bank;
+import com.moneydesktop.finance.database.BankDao;
 import com.moneydesktop.finance.database.BusinessObjectBase;
+import com.moneydesktop.finance.database.PowerQuery;
+import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.data.Enums.FragmentType;
@@ -35,6 +40,7 @@ import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.shared.fragment.PopupFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.DialogUtils;
+import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 
 import de.greenrobot.event.EventBus;
@@ -56,6 +62,8 @@ public class AccountTypeChildView extends FrameLayout {
     private ImageView mStatus;
     private Activity mActivity;
     private PopupWindowAtLocation mPopup;
+    
+    private QueryProperty mWhereId = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.Id, "= ?");
     
     public AccountTypeChildView (Context context, List<BankAccount> bankAccounts, View parent) {
         super(context);
@@ -88,12 +96,22 @@ public class AccountTypeChildView extends FrameLayout {
 		        	final TextView accountName = (TextView)view.findViewById(R.id.tablet_account_type_bank_name);
 		        	final TextView accountSum = (TextView)view.findViewById(R.id.tablet_account_type_bank_sum);
 		        	ImageView bankLogo = (ImageView)view.findViewById(R.id.tablet_account_type_bank_logo);
+		        	final TextView propertyType = (TextView)view.findViewById(R.id.tablet_account_type_property_description);
 		        	
 		        	accountName.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
 		        	accountName.setText(account.getAccountName() == null ? "" : account.getAccountName());
 		        	accountSum.setText(account.getBalance() == null ? "" : mFormatter.format(account.getBalance()));
 		        	BankLogoManager.getBankImage(bankLogo, account.getInstitutionId());
 		
+		        	
+		        	Fonts.applyPrimaryFont(accountName, 12);
+		        	Fonts.applyPrimaryBoldFont(accountSum, 16);
+		        	Fonts.applyPrimaryFont(propertyType, 12);
+		        	
+		        	if (account.getSubAccountTypeId() != null) {
+		        		propertyType.setText(getPropertyTypeName(account.getSubAccountTypeId()));
+		        	}
+		        	
 		        	view.setOnClickListener(new OnClickListener() {
 						public void onClick(View v) {
 							
@@ -174,11 +192,25 @@ public class AccountTypeChildView extends FrameLayout {
     	}
     }
     
+    private String getPropertyTypeName (Long id) {
+    	
+		AccountTypeDao accountTypeDao = ApplicationContext.getDaoSession().getAccountTypeDao();
+		PowerQuery query = new PowerQuery(accountTypeDao);
+	    
+	    query.where(mWhereId, String.valueOf(id));
+	    	 
+	    List<AccountType> propertyTypeList = new ArrayList<AccountType>();
+	    propertyTypeList = accountTypeDao.queryRaw(query.toString(), query.getSelectionArgs());
+	    
+	    return propertyTypeList.get(0).getAccountTypeName();
+    	
+    }
+    
     
 	private void deleteAccount(BankAccount account, View view) {
 		mBankAccountContainer.removeView(view);
-		account.softDeleteSingle();
 		removeInstancesOfAccount(account);
+		account.softDeleteSingle();
         mPopup.fadeOutTransparency();
 	}
     
@@ -263,8 +295,7 @@ public class AccountTypeChildView extends FrameLayout {
             EventBus.getDefault().post(new EventMessage(). new RemoveAccountTypeEvent(accountToBeRemoved));
         }
     }
-
-    
+  
     protected void removeInstancesOfAccount(BankAccount account) {        
         if (mBankAccountContainer.getChildCount() == 0) {
         	AccountType accountToBeRemoved = new AccountType();

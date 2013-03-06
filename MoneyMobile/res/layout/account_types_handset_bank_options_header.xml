@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dip"
+    android:background="@color/gray1"
+    android:paddingBottom="5dip"
+    android:paddingLeft="10dip"
+    android:paddingTop="5dip" >
+
+    <TextView
+        android:id="@+id/handset_bank_options_account_name_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gray7" />
+
+    <TextView
+        android:id="@+id/handset_bank_options_number_of_accounts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/handset_bank_options_account_name_header"
+        android:textColor="@color/gray7" />
+
+</RelativeLayout>

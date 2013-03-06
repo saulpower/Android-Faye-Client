@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <ImageView
+        android:id="@+id/handset_account_types_bank_image"
+        android:layout_height="50dip"
+        android:layout_width="50dip"
+        android:contentDescription="@string/description"/>
+
+    <ImageView
+        android:id="@+id/handset_account_types_bank_status"
+        android:layout_height="50dip"
+        android:layout_width="50dip"
+        android:contentDescription="@string/description"
+        />
+        
+    <com.moneydesktop.finance.views.BankRefreshIcon 
+		                android:id="@+id/handset_account_types_bank_status_update"
+					    android:layout_height="wrap_content"
+					    android:layout_width="wrap_content"
+				        android:gravity="center"
+				        android:textColor="@color/white"
+				        android:text="@string/icon_refresh"/>
+    
+        
+</RelativeLayout>

@@ -54,10 +54,8 @@ public class TransactionSummaryHandsetFragment extends GrowFragment {
         setupView(transList, mRoot);
         mRoot.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v){
-                
+            public void onClick(View v){                
                  mActivity.showFragment(FragmentType.TRANSACTIONS, true);
-                
             }
             
         });

@@ -21,6 +21,18 @@ import com.moneydesktop.finance.database.TransactionsDao;
 
 public class Constant {
     
+	
+	/*******************************************************************
+	 * ACCOUNT TYPES
+	 *******************************************************************/
+	public static final String CREDIT_CARD = "Credit Card";
+	public static final String LOANS = "Credit Card";
+	public static final String MORTGAGE = "Credit Card";
+	public static final String INVESTMENTS = "Credit Card";
+	public static final String LINE_OF_CREDIT = "Line of Credit";
+	public static final String PROPERTY = "Property";
+			
+	
     /*******************************************************************
      * INTENT
      *******************************************************************/
@@ -122,6 +134,7 @@ public class Constant {
     public static final String KEY_POPULARITY = "popularity";
     public static final String KEY_POSTED_DATE = "posted_date";
     public static final String KEY_PROCESS_STATUS = "process_status";
+    public static final String KEY_PROPERTY = "property";
     public static final String KEY_PROPERTY_TYPE = "property_type";
     public static final String KEY_RECORDS = "records";
     public static final String KEY_REFERENCE = "reference";
@@ -191,6 +204,19 @@ public class Constant {
     public static final String QUERY_MONTHLY_TRANSACTIONS = "SELECT DATE, SUM(AMOUNT) AS Amount FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER, MONTH_NUMBER ORDER BY DATE ASC";
     public static final String QUERY_QUARTERLY_TRANSACTIONS = "SELECT DATE, SUM(AMOUNT) AS Amount, QUARTER_NUMBER FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER, QUARTER_NUMBER ORDER BY DATE ASC";
     public static final String QUERY_YEARLY_TRANSACTIONS = "SELECT DATE, SUM(AMOUNT) AS Amount FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER ORDER BY DATE ASC";
+    
+    
+    /*******************************************************************
+     * Preferences
+     *******************************************************************/
+    public static final String PREFS_EXCLUSIONS_ACCOUNTS_LIST = "accountsList";
+    public static final String PREFS_EXCLUSIONS_ALL = "all";
+    public static final String PREFS_EXCLUSIONS_BUDGETS = "budgets";
+    public static final String PREFS_EXCLUSIONS_REPORTS = "reports";
+    public static final String PREFS_EXCLUSIONS_TRANSACTIONS_LIST = "transactionsList";
+    public static final String PREFS_EXCLUSIONS_TRANSFERS_FROM_EXPENSES = "transfersFromExpenses";
+    public static final String PREFS_EXCLUSIONS_TRANSFERS_FROM_INCOME = "transfersFromIncome";
+    
     /*******************************************************************
      * VALUES
      *******************************************************************/
@@ -295,4 +321,13 @@ public class Constant {
         aMap.put(KEY_MEMBERS, Bank.class);
         OBJECT_TYPES = Collections.unmodifiableMap(aMap);
     }
+
 }
+
+
+
+
+
+
+
+

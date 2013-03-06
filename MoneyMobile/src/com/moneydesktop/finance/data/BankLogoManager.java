@@ -20,26 +20,25 @@ public class BankLogoManager {
 	    
 		if (checkForPackagedImage(view, guid)) return;
 		
-		new AsyncTask<String, Void, String>() {
+		new AsyncTask<String, Void, Bitmap>() {
 			
 			@Override
-			protected String doInBackground(String... params) {
+			protected Bitmap doInBackground(String... params) {
 				
 				String guid = params[0];
 				
 				String imageUrl = String.format("%s/%s_100x100.png", IMAGES_HD, guid);
 				String filePath = CacheUtils.cacheResource(imageUrl);
 		
-				return filePath;
+				Bitmap image = BitmapFactory.decodeFile(filePath);
+				
+				return image;
 			}
 			
 			@Override
-			protected void onPostExecute(String filePath) {
+			protected void onPostExecute(Bitmap image) {
 				
 				if (isCancelled()) return; 
-				
-				
-				Bitmap image = BitmapFactory.decodeFile(filePath);
 				
 				if (image != null & view != null) {
 					view.setImageBitmap(image);
