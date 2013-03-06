@@ -137,10 +137,14 @@ public class SyncEngine {
 	
 	private void startBankStatusTimer() {
 		
-		if (User.getCurrentUser().getCanSync() && banksUpdating.size() > 0 && bankStatusTimer == null) {
+		if (User.getCurrentUser() != null && User.getCurrentUser().getCanSync() && banksUpdating.size() > 0 && bankStatusTimer == null) {
 			
 			bankStatusTimer = new Handler();
 			bankStatusTimer.postDelayed(bankStatusTask, TIMER_DELAY);
+			
+		} else if (bankStatusTimer != null) {
+			
+			bankStatusTimer.removeCallbacks(bankStatusTask);
 		}
 	}
 	
