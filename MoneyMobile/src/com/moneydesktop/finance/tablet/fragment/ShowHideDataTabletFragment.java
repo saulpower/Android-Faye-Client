@@ -45,9 +45,9 @@ import com.moneydesktop.finance.tablet.adapter.AccountSettingsTypesAdapter;
 import com.moneydesktop.finance.util.EmailUtils;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.SettingButton;
 import com.moneydesktop.finance.views.SlidingView;
+import com.moneydesktop.finance.views.navigation.NavBarButtons;
 
 import de.greenrobot.event.EventBus;
 

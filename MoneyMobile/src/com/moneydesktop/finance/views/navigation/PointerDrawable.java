@@ -1,8 +1,5 @@
-package com.moneydesktop.finance.views;
+package com.moneydesktop.finance.views.navigation;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -15,8 +12,16 @@ import android.view.animation.OvershootInterpolator;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.model.PointEvaluator;
 import com.moneydesktop.finance.util.UiUtils;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
 
-@TargetApi(11)
+/**
+ * Used to draw the pointer for the Navigation Wheel indicating which
+ * view the navigation is on.
+ * 
+ * @author saulhoward
+ *
+ */
 public class PointerDrawable extends NavItemDrawable {
 
 	private final float SIZE = 180;

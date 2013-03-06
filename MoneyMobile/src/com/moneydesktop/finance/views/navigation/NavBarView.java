@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.views;
+package com.moneydesktop.finance.views.navigation;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -8,7 +8,6 @@ import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.animation.LinearInterpolator;
 import android.widget.TextView;
 

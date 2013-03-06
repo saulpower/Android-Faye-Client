@@ -117,9 +117,12 @@ public class InfoDrawable extends Drawable {
 	public void animateTransition(final String amount, final int amountColor, final String title) {
 		
 		if (mThread.isPaused()) {
+			
 			setAmount(amount);
 			setAmountColor(amountColor);
 			setTitle(title);
+			
+			return;
 		}
 		
 		final ThreadAnimator inAlpha = ThreadAnimator.ofInt(0, 255);

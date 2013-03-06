@@ -87,6 +87,8 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 	public void onResume() {
 		super.onResume();
 		
+		configureChart(true);
+		
 		EventBus.getDefault().register(this);
 		mAdapter.setOnScrollStateChangedListener(this);
 	}
@@ -140,7 +142,7 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 		
 		if (showChart && mShowing && mActivity.isOnHome()) {
 			mChart.onResume();
-		} else if (!mShowing) {
+		} else {
 			mChart.onPause();
 		}
 	}

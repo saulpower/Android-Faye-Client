@@ -26,11 +26,10 @@
                 <TextView 
                     android:id="@+id/title"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_margin="15dp"
-                    android:gravity="left"
+                    android:layout_marginLeft="15dp"
+                    android:gravity="left|center_vertical"
                     android:text="@string/title_fragment_spending_summary"
                     android:textColor="@color/gray7" />
 		        
@@ -46,7 +45,7 @@
             <RelativeLayout
 		        android:layout_width="match_parent"
 		        android:layout_height="0dp"
-		        android:layout_weight="75"
+		        android:layout_weight="85"
 		        android:layout_marginLeft="20dp"
 		        android:layout_marginRight="20dp"
     			android:background="@drawable/grid_repeat" >
@@ -54,19 +53,19 @@
 		        <LinearLayout 
 			        android:layout_width="match_parent"
 			        android:layout_height="match_parent"
-			        android:weightSum="10"
+			        android:weightSum="7"
 			        android:orientation="horizontal" >
         
 				    <com.moneydesktop.finance.views.chart.ExpandablePieChartView
 				        android:id="@+id/chart"
 				        android:layout_width="0dp"
-				        android:layout_weight="5"
+				        android:layout_weight="4"
 				        android:layout_height="match_parent"
 				        android:layout_margin="10dp" />
 				    
 				    <RelativeLayout 
 				        android:layout_width="0dp"
-				        android:layout_weight="5"
+				        android:layout_weight="3"
 				        android:layout_height="match_parent"
 	                    android:layout_marginLeft="50dp"
 	                    android:layout_marginRight="10dp"
@@ -147,19 +146,27 @@
 		    
 		    </RelativeLayout>
 	        
+            <!-- Weight should be 15 -->
             <RelativeLayout
 		        android:layout_width="match_parent"
 		        android:layout_height="0dp"
-		        android:layout_weight="15">
+		        android:layout_weight="5">
 		        
 		        <com.moneydesktop.finance.views.LineView
 		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content"
 		            android:layout_alignParentTop="true"
 		            app:lineColor="@color/gray5"
+		            app:lineStrokeWidth="2dp" />
+		        
+		        <!-- <com.moneydesktop.finance.views.LineView
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_alignParentTop="true"
+		            app:lineColor="@color/gray5"
 		            app:isDashed="true"
 		            app:dashLength="2dp"
-		            app:lineStrokeWidth="6dp" />
+		            app:lineStrokeWidth="6dp" /> -->
     			
             </RelativeLayout>
 		    

@@ -60,7 +60,7 @@
 			            
 		            </LinearLayout>
 		            
-		            <com.moneydesktop.finance.views.NavBarView 
+		            <com.moneydesktop.finance.views.navigation.NavBarView 
 		                android:id="@+id/refresh"
 				        android:layout_width="wrap_content"
 				        android:layout_height="wrap_content"

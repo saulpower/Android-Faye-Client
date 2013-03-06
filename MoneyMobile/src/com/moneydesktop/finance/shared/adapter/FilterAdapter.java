@@ -351,7 +351,7 @@ public class FilterAdapter extends UltimateAdapter implements OnGroupExpandListe
                 
                 for (Category cat : categories) {
 
-                    PowerQuery query = PowerQuery.where(false, new QueryProperty(CategoryDao.TABLENAME, CategoryDao.Properties.CategoryName), cat.getCategoryName());
+                    PowerQuery query = PowerQuery.where(false, new QueryProperty(CategoryDao.TABLENAME, CategoryDao.Properties.CategoryId), cat.getCategoryId());
                     
                     FilterViewHolder temp = new FilterViewHolder();
                     temp.mText = cat.getCategoryName().toUpperCase();

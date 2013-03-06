@@ -471,7 +471,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 		setZOrderOnTop(true);
         getHolder().setFormat(PixelFormat.TRANSPARENT);
         
-        mDrawThread = new DrawThread(getHolder());
+        mDrawThread = new DrawThread(getHolder(), mHandler);
 		
 		mScrollThreshold = ViewConfiguration.get(context).getScaledTouchSlop();
 		mPixelDensity = UiUtils.getDisplayMetrics(context).density;
@@ -1293,7 +1293,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 		
 		if (mDrawThread.getState() == Thread.State.TERMINATED) {
 			
-			mDrawThread = new DrawThread(getHolder());
+			mDrawThread = new DrawThread(getHolder(), mHandler);
 			mDrawThread.setRunning(true);
 			mDrawThread.start();
 			
@@ -1302,12 +1302,6 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
         	mDrawThread.setRunning(true);
         	mDrawThread.start();
         }
-		
-		if (mOnPieChartReadyListener != null) {
-			mOnPieChartReadyListener.onPieChartReady();
-		}
-		
-		mDrawThread.onPause();
 	}
 
 	@Override
@@ -1334,10 +1328,10 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	protected class DrawThread extends Thread {
 		
 		/** The SurfaceHolder to draw to */
-		private SurfaceHolder surfaceHolder;
+		private SurfaceHolder mSurfaceHolder;
 		
 		/** Tracks the running state of the thread */
-		private boolean isRunning;
+		private boolean mIsRunning;
 		
 		/** Object used to acquire a pause lock on the thread */
 		private Object mPauseLock = new Object();  
@@ -1347,6 +1341,8 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 		
 		/** Animator objects used to animate the rotation, scale, and info panel */
 		private ThreadAnimator mRotateAnimator, mScaleAnimator, mInfoAnimator;
+		
+		private Handler mHandler;
 
 		/**
 		 * Creates a new DrawThread that will manage drawing the PieChartView onto
@@ -1354,17 +1350,19 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 		 * 
 		 * @param surfaceHolder the surfaceHolder to draw to
 		 */
-		public DrawThread(SurfaceHolder surfaceHolder) {
-			this.surfaceHolder = surfaceHolder;
-			isRunning = false;
+		public DrawThread(SurfaceHolder surfaceHolder, Handler handler) {
+			this.mSurfaceHolder = surfaceHolder;
+			this.mHandler = handler;
+			mIsRunning = false;
+			mPaused = true;
 		}
 
 		public void setRunning(boolean run) {
-			isRunning = run;
+			mIsRunning = run;
 		}
 		
 		public boolean isRunning() {
-			return isRunning;
+			return mIsRunning;
 		}
 		
 		public boolean isPaused() {
@@ -1415,9 +1413,23 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 		@Override
 		public void run() {
 			
+			createInfo();
+			
+			// Notify any listener the thread is ready and running
+			mHandler.post(new Runnable() {
+				
+				@Override
+				public void run() {
+
+					if (mOnPieChartReadyListener != null) {
+						mOnPieChartReadyListener.onPieChartReady();
+					}
+				}
+			});
+			
 			Canvas canvas;
 			
-			while (isRunning) {
+			while (mIsRunning) {
 
 				// If there are no PieSliceDrawables and we have an
 				// adapter create the necessary slices, the drawing
@@ -1438,9 +1450,9 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 				
 				try {
 					
-					canvas = surfaceHolder.lockCanvas(null);
+					canvas = mSurfaceHolder.lockCanvas(null);
 					
-					synchronized (surfaceHolder) {
+					synchronized (mSurfaceHolder) {
 						
 						if (canvas != null) {
 							
@@ -1461,7 +1473,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 					// during the above, we don't leave the Surface in an
 					// inconsistent state
 					if (canvas != null) {
-						surfaceHolder.unlockCanvasAndPost(canvas);
+						mSurfaceHolder.unlockCanvasAndPost(canvas);
 					}
 				}
 				
@@ -1506,9 +1518,9 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 			
 			try {
 				
-				canvas = surfaceHolder.lockCanvas(null);
+				canvas = mSurfaceHolder.lockCanvas(null);
 				
-				synchronized (surfaceHolder) {
+				synchronized (mSurfaceHolder) {
 					if (canvas != null) {
 						canvas.drawColor(0, PorterDuff.Mode.CLEAR);
 					}
@@ -1519,7 +1531,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 				// during the above, we don't leave the Surface in an
 				// inconsistent state
 				if (canvas != null) {
-					surfaceHolder.unlockCanvasAndPost(canvas);
+					mSurfaceHolder.unlockCanvasAndPost(canvas);
 				}
 			}
 		}
@@ -1602,7 +1614,6 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	        if (showInfo) {
 	        	
 				createCaret();
-				createInfo();
 	
 		        canvas.drawCircle(mCenter.x, mCenter.y, mInfoRadius, mStrokePaint);
 		        mCaret.draw(canvas);

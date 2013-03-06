@@ -28,6 +28,7 @@ public class Constant {
     public static final String EXTRA_ACCOUNT_ID = "account_id";
     public static final String EXTRA_ID = "bod_id";
     public static final String EXTRA_CATEGORY_ID = "category_id";
+    public static final String EXTRA_CATEGORY_TYPE = "category_type";
     public static final String EXTRA_FRAGMENT = "fragment";
     public static final String EXTRA_POSITION = "position";
     public static final String EXTRA_POSITION_X = "position_x";
@@ -35,6 +36,9 @@ public class Constant {
     public static final String EXTRA_SOURCE_CODE = "source_code";
     public static final String EXTRA_TXN_TYPE = "txn_type";
     public static final String EXTRA_VALUES = "values";
+    
+    public static final int CATEGORY_TYPE_CHILD = 0;
+    public static final int CATEGORY_TYPE_GROUP = 1;
     
     public static final int CODE_CATEGORY_LIST = 1;
     public static final int CODE_CATEGORY_DETAIL = 2;

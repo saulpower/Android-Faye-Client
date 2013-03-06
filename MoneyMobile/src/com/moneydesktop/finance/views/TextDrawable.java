@@ -1,8 +1,5 @@
 package com.moneydesktop.finance.views;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,8 +11,9 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 
 import com.moneydesktop.finance.model.PointEvaluator;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
 
-@SuppressLint("NewApi")
 public class TextDrawable extends Drawable {
 
     public final String TAG = this.getClass().getSimpleName();

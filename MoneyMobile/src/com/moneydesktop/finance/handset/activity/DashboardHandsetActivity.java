@@ -49,9 +49,9 @@ import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.GrowViewPager;
-import com.moneydesktop.finance.views.NavBarView;
 import com.moneydesktop.finance.views.UltimateListView;
 import com.moneydesktop.finance.views.ViewAnimator;
+import com.moneydesktop.finance.views.navigation.NavBarView;
 
 import de.greenrobot.event.EventBus;
 

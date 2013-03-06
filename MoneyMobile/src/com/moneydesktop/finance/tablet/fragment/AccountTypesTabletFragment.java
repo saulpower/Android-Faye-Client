@@ -55,10 +55,10 @@ import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.PopupWindowAtLocation;
 import com.moneydesktop.finance.views.SlidingDrawerRightSide;
 import com.moneydesktop.finance.views.AnimatedListView.SlideExpandableListAdapter;
+import com.moneydesktop.finance.views.navigation.NavBarButtons;
 
 import de.greenrobot.event.EventBus;
 

@@ -1,11 +1,12 @@
 package com.moneydesktop.finance.views.chart;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,9 +26,13 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.data.Enums.TxFilter;
 import com.moneydesktop.finance.database.Category;
 import com.moneydesktop.finance.shared.CategoryViewHolder;
 import com.moneydesktop.finance.shared.adapter.CategoryPieChartAdapter;
+import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.chart.ExpandablePieChartView.OnExpandablePieChartChangeListener;
 import com.moneydesktop.finance.views.chart.ExpandablePieChartView.OnExpandablePieChartInfoClickListener;
@@ -42,6 +47,8 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 	private ExpandablePieChartView mChart;
 	
 	private ListView mList;
+	
+	private int mGroupPosition = 0;
 	
 	private TextSwitcher mTotal;
 	
@@ -132,13 +139,17 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 				
 				mList.setVisibility(View.INVISIBLE);
 				
+				// Update position and chart expanded state
 				mExpanded = mChart.isExpanded();
+				mGroupPosition = mChart.getSelectedGroup();
+				
 				notifyDataSetChanged();
 
 				// Set selection to selected item
 				mList.setSelection(mSelection);
 				mList.setItemChecked(mSelection, true);
 				
+				// Animate ListView in
 				mList.setVisibility(View.VISIBLE);
 				mList.startAnimation(mIn);
 			}
@@ -176,7 +187,7 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 		int count = 0;
 		
 		if (mExpanded) {
-			count = mAdapter.getChildrenCount(mChart.getSelectedGroup());
+			count = mAdapter.getChildrenCount(mGroupPosition);
 		} else {
 			count = mAdapter.getGroupCount();
 		}
@@ -190,7 +201,7 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 		Object object = null;
 		
 		if (mExpanded) {
-			object = mAdapter.getChild(mChart.getSelectedGroup(), position);
+			object = mAdapter.getChild(mGroupPosition, position);
 		} else {
 			object = mAdapter.getGroup(position);
 		}
@@ -227,7 +238,7 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
         
         if (mExpanded) {
         	total = category.getChildTotal();
-        	color = mAdapter.getChildColor(mChart.getSelectedGroup(), position);
+        	color = mAdapter.getChildColor(mGroupPosition, position);
         } else {
         	total = category.getParentTotal();
         	color = mAdapter.getGroupColor(position);
@@ -257,32 +268,64 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
         return viewHolder;
 	}
 	
-	public void notifyDataSetChanged() {
-		super.notifyDataSetChanged();
-		
-		Log.i(TAG, "DataSetChanged");
-	}
-	
-	public void notifyDataSetInvalidated() {
-		super.notifyDataSetInvalidated();
-		
-		Log.i(TAG, "notifyDataSetInvalidated");
-	}
-	
 	/**
 	 * Expandable Pie Chart Listeners
 	 */
 
 	@Override
 	public void onInfoClicked(int groupPosition, int childPosition) {
-		Log.i(TAG, "onInfoClicked");
+
+		mChart.onPause();
+		
+		boolean other = groupPosition == (mAdapter.getGroupCount() - 1);
+		
+		ArrayList<Long> categories = getCategories(groupPosition, childPosition);
+		
+	    Intent i = new Intent(mActivity, DropDownTabletActivity.class);
+        i.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.TRANSACTIONS_PAGE);
+        i.putExtra(Constant.EXTRA_CATEGORY_ID, categories);
+        i.putExtra(Constant.EXTRA_CATEGORY_TYPE, (mExpanded && !other) ? Constant.CATEGORY_TYPE_CHILD : Constant.CATEGORY_TYPE_GROUP);
+        i.putExtra(Constant.EXTRA_TXN_TYPE, TxFilter.ALL);
+        
+        mActivity.startActivity(i);
+	}
+	
+	private ArrayList<Long> getCategories(int groupPosition, int childPosition) {
+
+		ArrayList<Long> categories = new ArrayList<Long>();
+		Category cat = null;
+		
+		if (mExpanded) {
+		
+			cat = (Category) mAdapter.getChild(groupPosition, childPosition);
+			categories.add(cat.getId());
+		
+		} else {
+			
+			cat = (Category) mAdapter.getGroup(groupPosition);
+			
+			if (cat.getId() == null) {
+			
+				for (Category category : mAdapter.getAllChildren(groupPosition)) {
+					categories.add(category.getId());
+				}
+				
+			} else {
+				
+				categories.add(cat.getId());
+			}
+		}
+		
+		return categories;
 	}
 
 	@Override
 	public void onGroupChanged(int groupPosition) {
 
-		mList.setItemChecked(groupPosition, true);
-		mList.setSelection(groupPosition);
+		mSelection = groupPosition;
+		
+		mList.setItemChecked(mSelection, true);
+		mList.setSelection(mSelection);
 		
 		if (!mInit) {
 			mInit = true;
@@ -292,8 +335,11 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 
 	@Override
 	public void onChildChanged(int groupPosition, int childPosition) {
-		mList.setSelection(childPosition);
-		mList.setItemChecked(childPosition, true);
+		
+		mSelection = childPosition;
+		
+		mList.setSelection(mSelection);
+		mList.setItemChecked(mSelection, true);
 	}
 
 	@Override

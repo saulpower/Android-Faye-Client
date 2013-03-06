@@ -1,6 +1,7 @@
 package com.moneydesktop.finance.model;
 
-import android.animation.TypeEvaluator;
+import com.nineoldandroids.animation.TypeEvaluator;
+
 import android.graphics.PointF;
 
 public class PointEvaluator implements TypeEvaluator<PointF> {

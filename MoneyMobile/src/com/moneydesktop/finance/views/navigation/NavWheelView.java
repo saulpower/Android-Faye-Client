@@ -1,13 +1,8 @@
-package com.moneydesktop.finance.views;
+package com.moneydesktop.finance.views.navigation;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import android.animation.Animator;
-import android.animation.Animator.AnimatorListener;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -25,10 +20,13 @@ import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
 import com.moneydesktop.finance.model.PointEvaluator;
 import com.moneydesktop.finance.util.UiUtils;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.Animator.AnimatorListener;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
 
 import de.greenrobot.event.EventBus;
 
-@TargetApi(11)
 public class NavWheelView extends View {
 	
 	public final String TAG = this.getClass().getSimpleName();
@@ -301,6 +299,8 @@ public class NavWheelView extends View {
 	 * Hide the navigation wheel from the user with the appropriate animations
 	 */
 	public void hideNav() {
+		
+		EventBus.getDefault().post(new EventMessage().new NavigationButtonEvent());
 
         mShowing = false;
 		

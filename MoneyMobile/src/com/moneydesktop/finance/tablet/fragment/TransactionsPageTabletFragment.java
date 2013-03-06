@@ -13,7 +13,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,11 +97,14 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
 		return FragmentType.TRANSACTIONS_PAGE;
 	}
 
-    public static TransactionsPageTabletFragment newInstance(ParentTransactionInterface parent, Intent intent) {
+    @SuppressWarnings("unchecked")
+	public static TransactionsPageTabletFragment newInstance(ParentTransactionInterface parent, Intent intent) {
             
         TransactionsPageTabletFragment fragment = new TransactionsPageTabletFragment();
         fragment.setParent(parent);
         fragment.setAccountId(intent.getStringExtra(Constant.EXTRA_ACCOUNT_ID));
+        fragment.setCategories((ArrayList<Long>) intent.getSerializableExtra(Constant.EXTRA_CATEGORY_ID));
+        fragment.setCategoryType(intent.getIntExtra(Constant.EXTRA_CATEGORY_TYPE, -1));
         fragment.setTxFilter((TxFilter) intent.getSerializableExtra(Constant.EXTRA_TXN_TYPE));
         fragment.setShowButtons(false);
         

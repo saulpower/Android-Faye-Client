@@ -15,8 +15,8 @@ import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
-import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.SettingButton;
+import com.moneydesktop.finance.views.navigation.NavBarButtons;
 
 import de.greenrobot.event.EventBus;
 
