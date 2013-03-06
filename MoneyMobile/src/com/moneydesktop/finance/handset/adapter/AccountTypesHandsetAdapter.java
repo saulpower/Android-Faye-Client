@@ -139,7 +139,7 @@ public class AccountTypesHandsetAdapter extends UltimateAdapter implements OnGro
     @Override
     public View getItemView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         View cell = convertView;
-        	cell = ((BaseActivity)mContext).getLayoutInflater().inflate(R.layout.account_type_child_handset, parent, false);
+        cell = ((BaseActivity)mContext).getLayoutInflater().inflate(R.layout.account_type_child_handset, parent, false);
         
         List<BankAccount> bankAccounts = mAccountTypesFiltered.get(groupPosition).getBankAccounts();
         BankAccount bankAccount = bankAccounts.get(childPosition);

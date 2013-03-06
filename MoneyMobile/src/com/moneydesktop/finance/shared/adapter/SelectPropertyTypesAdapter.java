@@ -3,6 +3,8 @@ package com.moneydesktop.finance.shared.adapter;
 import java.util.List;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Enums.AccountTypesEnum;
+import com.moneydesktop.finance.data.Enums.PropertyTypesEnum;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.util.Fonts;
 
@@ -39,27 +41,52 @@ public class SelectPropertyTypesAdapter extends ArrayAdapter<AccountType> {
 		holder.accountTypeImg = (TextView)convertView.findViewById(R.id.txt_image);
 		holder.txtTitle = (TextView)convertView.findViewById(R.id.select_property_type_name_list_item);			
 		
-		if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("REAL ESTATE")) {
+		PropertyTypesEnum type = PropertyTypesEnum.fromString(mAccountTypesList.get(position).getAccountTypeName().toUpperCase());
+		
+		switch (type) {
+		case REAL_ESTATE:
 			holder.accountTypeImg.setText(mContext.getString(R.string.icon_real_estate));
-		} else if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("VEHICLE")) {
+			break;
+			
+		case VEHICLE:
 			holder.accountTypeImg.setText(mContext.getString(R.string.icon_vehicle));
-		} else if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("ART")) {
+			break;
+			
+		case ART:
 			holder.accountTypeImg.setText(mContext.getString(R.string.icon_art));
-		} else if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("JEWELRY")) {
+			break;
+			
+		case JEWELRY:
 			holder.accountTypeImg.setText(mContext.getString(R.string.icon_jewelry));
-		} else if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("FURNITURE")) {
+			break;
+			
+		case FURNITURE:
 			holder.accountTypeImg.setText(mContext.getString(R.string.icon_furniture));
-		} else if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("APPLIANCES")) {
+			break;
+			
+		case APPLIANCES:
 			holder.accountTypeImg.setText(mContext.getString(R.string.icon_appliances));
-		} else if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("COMPUTER")) {
+			break;
+			
+		case COMPUTER:
 			holder.accountTypeImg.setText(mContext.getString(R.string.icon_computer));
-		} else if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("ELECTRONICS")) {
+			break;
+			
+		case ELECTRONICS:
 			holder.accountTypeImg.setText(mContext.getString(R.string.icon_electronics));
-		} else if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("SPORTS EQUIPMENT")) {
+			break;
+			
+		case SPORTS_EQUIPMENT:
 			holder.accountTypeImg.setText(mContext.getString(R.string.icon_sports_equipment));
-		} else if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("MISCELLANEOUS")) {
+			break;
+			
+		case MISCELLANEOUS:
 			holder.accountTypeImg.setText(mContext.getString(R.string.icon_miscellaneous));
-		}
+			break;
+
+		default:
+			break;
+		}	
 		
 		
 		holder.txtTitle.setText(mAccountTypesList.get(position).getAccountTypeName());

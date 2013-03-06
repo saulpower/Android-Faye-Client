@@ -605,27 +605,41 @@ public class AccountTypesTabletFragment extends AccountTypesFragment implements 
 		        		status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
 		        		return;
 		        	}
-		            if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_SUCCEEDED.index()) {
-		                status.setVisibility(View.GONE);
-		                
-		            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_PENDING.index()) {
-		                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
-		                
-		            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_MFA.index()) {
-		                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_more_info_banner));
-		                
-		            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_LOGIN_FAILED.index()) {
-		                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
-		                
-		            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_UPDATE_REQUIRED.index()) {
-		                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_more_info_banner));
-		                
-		            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_EXCEPTION.index()) {
-		                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
-		                
-		            } else if (bank.getProcessStatus().intValue() == BankRefreshStatus.STATUS_PROCESSING.index()) {
-		                status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
-		            }
+		        	
+		        	BankRefreshStatus type = BankRefreshStatus.fromInteger(bank.getProcessStatus().intValue());
+		        	
+		        	switch (type) {
+					case STATUS_SUCCEEDED:
+						status.setVisibility(View.GONE);
+						break;
+						
+					case STATUS_PENDING:
+						status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+						break;
+						
+					case STATUS_MFA:
+						status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_more_info_banner));
+						break;
+						
+					case STATUS_LOGIN_FAILED:
+						status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
+						break;
+						
+					case STATUS_UPDATE_REQUIRED:
+						status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_more_info_banner));
+						break;
+						
+					case STATUS_EXCEPTION:
+						status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_error_banner));
+						break;
+						
+					case STATUS_PROCESSING:
+						status.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.tablet_accounts_bank_book_updating_banner));
+						break;
+
+					default:
+						break;
+					}
 		        }
     	    }
     	});

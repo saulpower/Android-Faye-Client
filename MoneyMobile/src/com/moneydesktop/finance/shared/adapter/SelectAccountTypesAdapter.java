@@ -3,6 +3,7 @@ package com.moneydesktop.finance.shared.adapter;
 import java.util.List;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Enums.AccountTypesEnum;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.util.Fonts;
 
@@ -38,26 +39,49 @@ public class SelectAccountTypesAdapter extends ArrayAdapter<AccountType> {
 		holder.accountTypeImg = (TextView)convertView.findViewById(R.id.image);
 		holder.txtTitle = (TextView)convertView.findViewById(R.id.tablet_add_bank_manually_account_type_name_list_item);			
 	
-		if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("CASH")) {
-			holder.accountTypeImg.setText(mContext.getString(R.string.icon_cash));
-		} else if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("CHECKING")) {
-			holder.accountTypeImg.setText(mContext.getString(R.string.icon_checking));
-		} else if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("CREDIT CARD")) {
-			holder.accountTypeImg.setText(mContext.getString(R.string.icon_cc));
-		} else if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("INVESTMENTS")) {
-			holder.accountTypeImg.setText(mContext.getString(R.string.icon_inv));
-		} else if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("LINE OF CREDIT")) {
-			holder.accountTypeImg.setText(mContext.getString(R.string.icon_loc));
-		} else if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("LOANS")) {
-			holder.accountTypeImg.setText(mContext.getString(R.string.icon_loans));
-		} else if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("MORTGAGE")) {
-			holder.accountTypeImg.setText(mContext.getString(R.string.icon_mort));
-		} else if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("PROPERTY")) {
-			holder.accountTypeImg.setText(mContext.getString(R.string.icon_prop));
-		} else if (mAccountTypesList.get(position).getAccountTypeName().toUpperCase().equals("SAVINGS")) {
-			holder.accountTypeImg.setText(mContext.getString(R.string.icon_saving));
-		}
 		
+		AccountTypesEnum type = AccountTypesEnum.fromString(mAccountTypesList.get(position).getAccountTypeName().toUpperCase());
+
+		switch (type) {
+		case CASH:
+			holder.accountTypeImg.setText(mContext.getString(R.string.icon_cash));
+			break;
+			
+		case CHECKING:
+			holder.accountTypeImg.setText(mContext.getString(R.string.icon_checking));
+			break;
+			
+		case CREDIT_CARD:
+			holder.accountTypeImg.setText(mContext.getString(R.string.icon_cc));
+			break;
+			
+		case INVESTMENTS:
+			holder.accountTypeImg.setText(mContext.getString(R.string.icon_inv));
+			break;
+			
+		case LINE_OF_CREDIT:
+			holder.accountTypeImg.setText(mContext.getString(R.string.icon_loc));
+			break;
+			
+		case LOANS:
+			holder.accountTypeImg.setText(mContext.getString(R.string.icon_loans));
+			break;
+			
+		case MORTGAGE:
+			holder.accountTypeImg.setText(mContext.getString(R.string.icon_mort));
+			break;
+			
+		case PROPERTY:
+			holder.accountTypeImg.setText(mContext.getString(R.string.icon_prop));
+			break;
+			
+		case SAVINGS:
+			holder.accountTypeImg.setText(mContext.getString(R.string.icon_saving));
+			break;
+
+		default:
+			break;
+		}
 		
 		holder.txtTitle.setText(mAccountTypesList.get(position).getAccountTypeName());
 		

@@ -412,4 +412,104 @@ public class Enums {
 			TOP,
 			BOTTOM
 	}
+	
+	public enum AccountTypesEnum {
+	    CASH("CASH"),
+	    CHECKING("CHECKING"),
+	    CREDIT_CARD("CREDIT CARD"),
+	    INVESTMENTS("INVESTMENTS"),
+	    LINE_OF_CREDIT("LINE OF CREDIT"),
+	    LOANS("LOANS"),
+	    MORTGAGE("MORTGAGE"),
+	    PROPERTY("PROPERTY"),
+	    SAVINGS("SAVINGS");
+
+	    
+	    private AccountTypesEnum(final String text) {
+	        this.text = text;
+	    }
+
+	    private final String text;
+
+	    @Override
+	    public String toString() {
+	        return text;
+	    }
+	    
+	    public static AccountTypesEnum fromString(String value) {
+	    	AccountTypesEnum typesEnum = null;
+			if (value.equals("CASH")) {
+				typesEnum = CASH;
+			} else if (value.equals("CHECKING")) {
+				typesEnum = CHECKING;
+			} else if (value.equals("CREDIT CARD")) {
+				typesEnum = CREDIT_CARD;
+			} else if (value.equals("INVESTMENTS")) {
+				typesEnum = INVESTMENTS;
+			} else if (value.equals("LINE OF CREDIT")) {
+				typesEnum = LINE_OF_CREDIT;
+			} else if (value.equals("LOANS")) {
+				typesEnum = LOANS;
+			} else if (value.equals("MORTGAGE")) {
+				typesEnum = MORTGAGE;
+			} else if (value.equals("PROPERTY")) {
+				typesEnum = PROPERTY;
+			} else if (value.equals("SAVINGS")) {
+				typesEnum = SAVINGS;
+			}
+			return typesEnum;
+	    }
+	}
+	
+	
+	public enum PropertyTypesEnum {
+	    REAL_ESTATE("REAL ESTATE"),
+	    VEHICLE("VEHICLE"),
+	    ART("ART"),
+	    JEWELRY("JEWELRY"),
+	    FURNITURE("FURNITURE"),
+	    APPLIANCES("APPLIANCES"),
+	    COMPUTER("COMPUTER"),
+	    ELECTRONICS("ELECTRONICS"),
+	    SPORTS_EQUIPMENT("SPORTS EQUIPMENT"),
+	    MISCELLANEOUS("MISCELLANEOUS");
+
+	    
+	    private PropertyTypesEnum(final String text) {
+	        this.text = text;
+	    }
+
+	    private final String text;
+
+	    @Override
+	    public String toString() {
+	        return text;
+	    }
+	    
+	    public static PropertyTypesEnum fromString(String value) {
+	    	PropertyTypesEnum typesEnum = null;
+			if (value.equals("REAL ESTATE")) {
+				typesEnum = REAL_ESTATE;
+			} else if (value.equals("VEHICLE")) {
+				typesEnum = VEHICLE;
+			} else if (value.equals("ART")) {
+				typesEnum = ART;
+			} else if (value.equals("JEWELRY")) {
+				typesEnum = JEWELRY;
+			} else if (value.equals("FURNITURE")) {
+				typesEnum = FURNITURE;
+			} else if (value.equals("APPLIANCES")) {
+				typesEnum = APPLIANCES;
+			} else if (value.equals("COMPUTER")) {
+				typesEnum = COMPUTER;
+			} else if (value.equals("ELECTRONICS")) {
+				typesEnum = ELECTRONICS;
+			} else if (value.equals("SPORTS EQUIPMENT")) {
+				typesEnum = SPORTS_EQUIPMENT;
+			} else if (value.equals("MISCELLANEOUS")) {
+				typesEnum = MISCELLANEOUS;
+			}
+			return typesEnum;
+	    }
+	}
 }
