@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray1"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical" >
+
+        <ImageView
+            android:id="@+id/handset_account_details_bank_logo"
+            android:layout_width="60dip"
+            android:layout_height="60dip"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="10dip" />
+
+        <com.moneydesktop.finance.views.LabelEditText
+            android:id="@+id/handset_bank_details_account_name"
+            style="@style/field"
+            android:layout_width="match_parent"
+            android:layout_height="60dip"
+            android:layout_alignTop="@id/handset_account_details_bank_logo"
+            android:layout_toRightOf="@id/handset_account_details_bank_logo"
+            android:background="@drawable/text_field_bg_handset"
+            android:textColor="@color/gray7"
+            app:labelColor="@drawable/gray3_to_white_text"
+            app:labelIsReverserd="true"
+            app:labelSize="10"
+            app:labelText="@string/ct_bal" />
+    </RelativeLayout>
+
+    <com.moneydesktop.finance.views.LineView
+        android:id="@+id/view_breaker1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:dashLength="3dp"
+        app:isDashed="true"
+        app:lineColor="@color/gray2"
+        app:lineStrokeWidth="2dp" />
+
+    <com.moneydesktop.finance.views.LabelEditText
+        android:id="@+id/handset_bank_details_balance"
+        style="@style/field"
+        android:layout_width="match_parent"
+        android:layout_height="70dip"
+        android:background="@color/gray1"
+        android:focusable="false"
+        android:textColor="@color/gray7"
+        app:labelColor="@drawable/gray3_to_white_text"
+        app:labelSize="10"
+        app:labelText="@string/ct_bal" />
+
+    <com.moneydesktop.finance.views.LineView
+        android:id="@+id/view_breaker2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:dashLength="3dp"
+        app:isDashed="true"
+        app:lineColor="@color/gray2"
+        app:lineStrokeWidth="2dp" />
+
+    <com.moneydesktop.finance.views.LabelEditText
+        android:id="@+id/handset_bank_details_type"
+        style="@style/field"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:background="@drawable/text_field_bg_handset"
+        android:textColor="@color/gray7"
+        app:labelColor="@drawable/gray3_to_white_text"
+        app:labelSize="10"
+        app:labelText="@string/label_account_type" />
+
+    <com.moneydesktop.finance.views.LineView
+        android:id="@+id/view_breaker3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:dashLength="3dp"
+        app:isDashed="true"
+        app:lineColor="@color/gray2"
+        app:lineStrokeWidth="2dp" />
+
+    <com.moneydesktop.finance.views.LabelEditText
+        android:id="@+id/handset_bank_details_optional1"
+        style="@style/field"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:background="@drawable/text_field_bg_handset"
+        android:textColor="@color/gray7"
+        app:labelColor="@drawable/gray3_to_white_text"
+        app:labelSize="10"
+        app:labelText="@string/label_account_type" />
+
+    <com.moneydesktop.finance.views.LineView
+        android:id="@+id/view_breaker4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:dashLength="3dp"
+        app:isDashed="true"
+        app:lineColor="@color/gray2"
+        app:lineStrokeWidth="2dp" />
+
+    <com.moneydesktop.finance.views.LabelEditText
+        android:id="@+id/handset_bank_details_optional2"
+        style="@style/field"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:background="@drawable/text_field_bg_handset"
+        android:textColor="@color/gray7"
+        app:labelColor="@drawable/gray3_to_white_text"
+        app:labelSize="10"
+        app:labelText="@string/label_account_type" />
+
+    <com.moneydesktop.finance.views.LineView
+        android:id="@+id/view_breaker5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:dashLength="3dp"
+        app:isDashed="true"
+        app:lineColor="@color/gray2"
+        app:lineStrokeWidth="2dp" />
+
+    <com.moneydesktop.finance.views.LabelEditText
+        android:id="@+id/handset_bank_details_optional3"
+        style="@style/field"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:background="@drawable/text_field_bg_handset"
+        android:textColor="@color/gray7"
+        app:labelColor="@drawable/gray3_to_white_text"
+        app:labelSize="10"
+        app:labelText="@string/label_account_type" />
+
+    <com.moneydesktop.finance.views.LineView
+        android:id="@+id/view_breaker6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:dashLength="3dp"
+        app:isDashed="true"
+        app:lineColor="@color/gray2"
+        app:lineStrokeWidth="2dp" />
+
+    <com.moneydesktop.finance.views.LabelEditText
+        android:id="@+id/handset_bank_details_exclusions"
+        style="@style/field"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:background="@drawable/text_field_bg_handset"
+        android:textColor="@color/gray7"
+        app:labelColor="@drawable/gray3_to_white_text"
+        app:labelSize="10"
+        app:labelText="@string/label_exclusions" />
+
+    <com.moneydesktop.finance.views.LineView
+        android:id="@+id/view_breaker7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:dashLength="3dp"
+        app:isDashed="true"
+        app:lineColor="@color/gray2"
+        app:lineStrokeWidth="2dp" />
+
+</LinearLayout>

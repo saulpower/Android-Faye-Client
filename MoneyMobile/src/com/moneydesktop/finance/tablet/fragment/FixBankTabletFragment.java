@@ -29,6 +29,8 @@ import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataBridge;
+import com.moneydesktop.finance.data.DataController;
+import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.data.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Bank;
@@ -40,32 +42,24 @@ import com.moneydesktop.finance.model.EventMessage.GetLogonCredentialsFinished;
 import com.moneydesktop.finance.model.EventMessage.MfaQuestionsRecieved;
 import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
+import com.moneydesktop.finance.shared.fragment.FixBankFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.Fonts;
 
 import de.greenrobot.event.EventBus;
 
-
-public class FixBankTabletFragment extends BaseFragment{
+public class FixBankTabletFragment extends FixBankFragment{
 
 	private static String mAccountName;
 	private static String mAccountId;
 	private Bank mBank;
 	private TextView mNotificationDescription, mNotificationTitle, mNotificationContinue, mFixCredentialsMessage, mConnect, mCredential1Question;
 	private ViewFlipper mFlipper;
-	private HashMap<String, String> mQuestions;
-	private List<String> mQuestionLabels;
 	private JSONObject mUpdateMFA;
 	private JSONArray mJsonCredentialsArray; 
 	private EditText mAnswer1;
-	private List<String> mLoginLabels;
-	private HashMap<String, String> mCredentialsHash = new HashMap<String, String>();
 	private EditText mEdit1, mEdit2, mEdit3;
 	private Button mSaveInstitution;
-	private CheckBox mPersonal, mBusiness;
-	private JSONObject objectToSendToAddInstitution;
-	private boolean mHasRetrievedAccounts;
-	
 	
 	@Override
 	public String getFragmentTitle() {
@@ -82,6 +76,12 @@ public class FixBankTabletFragment extends BaseFragment{
         super.onAttach(activity);
         EventBus.getDefault().register(this);
         mActivity.onFragmentAttached(this);
+	}
+	
+    @Override
+	public void onPause() {
+    	super.onPause();
+    	EventBus.getDefault().unregister(this);
 	}
 
 	public static FixBankTabletFragment newInstance(Intent intent) {
@@ -116,8 +116,6 @@ public class FixBankTabletFragment extends BaseFragment{
         mConnect = (TextView)mRoot.findViewById(R.id.tablet_bank_broken_notification_connect);
         mCredential1Question = (TextView)mRoot.findViewById(R.id.fix_account_question_title);
         
-        mHasRetrievedAccounts = false;  
-        
         mAnswer1 = (EditText)mRoot.findViewById(R.id.fix_account_connect_option1_edittxt);
         mSaveInstitution = (Button)mRoot.findViewById(R.id.add_account_save_button);
         
@@ -138,48 +136,11 @@ public class FixBankTabletFragment extends BaseFragment{
 
 	private void setupView() {
 		if (mBank.getProcessStatus().equals(BankRefreshStatus.STATUS_MFA.index())) {
-			mQuestions = new HashMap<String, String>();
-			mQuestionLabels = new ArrayList<String>();
 			mNotificationDescription.setText(getString(R.string.fix_bank_notification_mfa_message));
-			
-			new Thread(new Runnable() {			
-				public void run() {			
-					JSONArray jsonArray = DataBridge.sharedInstance().getMfaQuestions(mBank.getBankId());
-					for (int i = 0; i < jsonArray.length(); i++) {
-						JSONObject jsonCredentials = jsonArray.optJSONObject(i);
-						mQuestions.put(jsonCredentials.optString(Constant.KEY_LABEL), jsonCredentials.optString(Constant.KEY_GUID));
-						mQuestionLabels.add(jsonCredentials.optString(Constant.KEY_LABEL));
-					}
-					EventBus.getDefault().post(new EventMessage().new MfaQuestionsRecieved(mQuestionLabels));
-					
-				}
-			}).start();
+			getMfaQuestions(mBank);
 		} else if (mBank.getProcessStatus().equals(BankRefreshStatus.STATUS_LOGIN_FAILED.index())) {
-			setupLoginFailedScreen();
+			getLoginQuestions(mBank.getInstitution().getInstitutionId());
 		}
-		
-	}
-	
-    private void setupLoginFailedScreen() {
-    	mLoginLabels = new ArrayList<String>();
-    	
-		new Thread(new Runnable() {			
-			public void run() {				
-				JSONArray array = DataBridge.sharedInstance().getInstituteLoginFields(mBank.getInstitution().getInstitutionId());
-				for (int i = 0; i< array.length(); i++) {
-					try {
-						String object = ((JSONObject)array.get(i)).getString("label");
-						mLoginLabels.add(object);
-						mCredentialsHash.put(object, ((JSONObject)array.get(i)).getString("guid"));
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}	
-				}	
-				
-				//Notify that request is finished and we are now ready to start populating the view.
-				EventBus.getDefault().post(new EventMessage().new GetLogonCredentialsFinished(true, mLoginLabels));
-			}
-		}).start();
 	}
        
 	public void onEvent(final GetLogonCredentialsFinished event) {        
@@ -262,7 +223,7 @@ public class FixBankTabletFragment extends BaseFragment{
 				public void onClick(View v) {
 					
 					((DropDownTabletActivity)mActivity).dismissDropdown();
-					objectToSendToAddInstitution = new JSONObject();
+					JSONObject objectToSendToAddInstitution = new JSONObject();
 					JSONArray jsonArray = new JSONArray();
 					
 					try {
@@ -296,20 +257,12 @@ public class FixBankTabletFragment extends BaseFragment{
 						e.printStackTrace(); 
 					}
 					
-					new Thread(new Runnable() {			
-						public void run() {	
-							
-							JSONObject jsonResponse = DataBridge.sharedInstance().updateLoginFields(mBank.getBankId(), objectToSendToAddInstitution);
-							
-				    		Intent intent = new Intent(mActivity, SyncService.class);
-				    		mActivity.startService(intent);
-						}
-					}).start();
+					sendUpdatedCredentials(objectToSendToAddInstitution, mBank);
 					
 				}
+
 			});
 	    }
-	   	
     }
              
 	private void offsetKeyboardOnConnectScreen() {
@@ -355,34 +308,8 @@ public class FixBankTabletFragment extends BaseFragment{
     	});
     }
         
-    public void onEvent(BankStatusUpdateEvent event) {
-    	
-		//start the sync for the purpose of getting account for new bank
-    	//if we don't do the HasRetrievedAccounts check, we may end up in a endless sync
-    	if (mBank.getBankId().equals(event.getUpdatedBank().getBankId()) && !mHasRetrievedAccounts) {
-    		if (event.getUpdatedBank().getProcessStatus() == BankRefreshStatus.STATUS_SUCCEEDED.index()) {
-	    		Intent intent = new Intent(mActivity, SyncService.class);
-	    		mActivity.startService(intent);
-	    		mHasRetrievedAccounts = true;
-    		}
-    	}
-    }
-
 	private void setupOnClickListeners() {
 		
-//		((DropDownTabletActivity)getActivity()).backArrowAction(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_left);
-//				Animation out = AnimationUtils.loadAnimation(getActivity(), R.anim.out_right);
-//				mFlipper.setInAnimation(in);
-//				mFlipper.setOutAnimation(out);
-//			//	((DropDownTabletActivity)getActivity()).animateLabelsReverse();
-//				mFlipper.showPrevious();	
-//
-//			}
-//		});	
-//		
 		mNotificationContinue.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -401,7 +328,6 @@ public class FixBankTabletFragment extends BaseFragment{
 					mFlipper.setOutAnimation(out);
 					mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.tablet_fix_bank_login_failed)));
 				}
-				
 			}
 		});
 		
@@ -426,22 +352,10 @@ public class FixBankTabletFragment extends BaseFragment{
 					e.printStackTrace();
 				}
 				
-				
-				new Thread(new Runnable() {			
-					public void run() {			
-						JSONObject jsonArray = DataBridge.sharedInstance().updateMfaQuestions(mBank.getBankId(), mJsonCredentialsArray);
-                		
-						//start the sync
-                		Intent intent = new Intent(mActivity, SyncService.class);
-                		mActivity.startService(intent);
-						
-					}
-				}).start();
-				
-				}
+				sendAnsweredMFAQuestion(mBank, mJsonCredentialsArray);
+			}
 			
-		});
-		
+		});		
 	}
 
 	@Override

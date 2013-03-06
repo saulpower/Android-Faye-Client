@@ -1,6 +1,7 @@
 package com.moneydesktop.finance.database;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -13,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.DataBridge;
 import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Enums.AccountExclusionFlags;
 import com.moneydesktop.finance.data.Enums.DataState;
@@ -57,6 +59,7 @@ public class BankAccount extends BusinessObject  {
     private long businessObjectId;
     private Long accountTypeId;
     private Long subAccountTypeId;
+	private static int mExclusion;
 
     /** Used to resolve relations */
     private transient DaoSession daoSession;
@@ -526,6 +529,57 @@ public class BankAccount extends BusinessObject  {
     public String getExternalId() {
         return getAccountId();
     }
+    
+    public static List<AccountExclusionFlags> getExclusionsForAccount(BankAccount account) {
+		mExclusion = account.getExclusionFlags();
+		
+		List<AccountExclusionFlags> exclusionFlags = new ArrayList<AccountExclusionFlags>();
+
+		for (int i = 0; i <= AccountExclusionFlags.size(); i++) {
+			AccountExclusionFlags flag = getShowHideOptions();
+			if (flag != null) {
+				exclusionFlags.add(flag);
+			}
+		}
+			
+    	return exclusionFlags;    	
+    }
+    
+	private static AccountExclusionFlags getShowHideOptions() {
+		AccountExclusionFlags flag = null;
+		if (mExclusion != 0) {			
+			if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES.index()) {
+				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES.index();
+				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES;
+				
+			} else if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME.index()) {
+				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME.index();
+				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME;
+				
+			} else if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_BUDGETS.index()) {
+				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_BUDGETS.index();
+				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_BUDGETS;
+				
+			} else if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ACCOUNT_LIST.index()) {
+				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ACCOUNT_LIST.index();
+				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ACCOUNT_LIST;
+				
+			} else if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_REPORTS.index()) {
+				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_REPORTS.index();
+				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_REPORTS;
+				
+			} else if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSACTION_LIST.index()) {
+				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSACTION_LIST.index();
+				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSACTION_LIST;
+				
+			} else if (mExclusion >= AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_DEBT.index()) {
+				mExclusion = mExclusion - AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_DEBT.index();
+				flag = AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_DEBT;				
+			}
+		}
+		
+		return flag;
+	}
 
     public static BankAccount saveBankAccount(JSONObject json, boolean delete) {
 
@@ -641,6 +695,8 @@ public class BankAccount extends BusinessObject  {
 
         return bankAccount;
     }
+    
+    
 
     /**
      * Iterate through each Bank and then each Bank Account and create a bank

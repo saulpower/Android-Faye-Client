@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:background="@color/gray1">
+
+    <LinearLayout
+        android:id="@+id/handset_add_account_linked_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:clickable="true"
+        android:background="@drawable/grey_to_dark_grey_list_selector"
+        android:padding="20dip" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/description"
+            android:src="@drawable/handset_addaccount_linked" />
+
+        <TextView
+            android:id="@+id/handset_add_account_linked_title"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="5dip"
+            android:text="@string/label_add_linked_account"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/handset_add_account_linked_description"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="10dip"
+            android:text="@string/label_add_linked_account_description"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line_break1"
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_below="@id/handset_add_account_linked_container"
+        android:background="@color/gray3" />
+
+    <LinearLayout
+        android:id="@+id/handset_add_account_manual_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/line_break1"
+        android:clickable="true"
+        android:orientation="vertical"
+        android:background="@drawable/grey_to_dark_grey_list_selector"
+        android:padding="20dip" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/description"
+            android:src="@drawable/handset_addaccount_manual" />
+
+        <TextView
+            android:id="@+id/handset_add_account_manual_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_add_manual_account"
+            android:layout_marginTop="5dip" />
+
+        <TextView
+            android:id="@+id/handset_add_account_manual_description"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="10dip"
+            android:text="@string/label_add_manual_account_description"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line_break2"
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_below="@id/handset_add_account_manual_container"
+        android:background="@color/gray3" />
+
+</RelativeLayout>

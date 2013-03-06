@@ -171,7 +171,7 @@ public class SyncEngine {
 						JSONObject json = DataBridge.sharedInstance().getBankStatus(bank.getBankId());
 						bank.updateStatus(json);
 
-						if (bank.getProcessStatus().intValue()  >= 3 || json == null){
+						if (bank.getProcessStatus().intValue()  >= 3){
 							banksUpdating.remove(i);
 						    eventBus.post(new EventMessage().new BankStatusUpdateEvent(bank));
 						}
@@ -185,8 +185,7 @@ public class SyncEngine {
 							public void run() {
 
 								endBankStatusTimer();
-								//Kent: I commented this out because it was causing a eternal loop in the AccountTypesTabletFragment
-								//beginSync();
+								beginSync();
 							}
 						});
 					}

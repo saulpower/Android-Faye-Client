@@ -1,6 +1,10 @@
 
 package com.moneydesktop.finance.shared.activity;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -22,9 +26,15 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.ViewFlipper;
 
+import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataBridge;
 import com.moneydesktop.finance.data.DemoData;
+import com.moneydesktop.finance.data.Preferences;
+import com.moneydesktop.finance.data.Enums.AccountExclusionFlags;
+import com.moneydesktop.finance.database.BankAccount;
+import com.moneydesktop.finance.database.BankAccountDao;
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
 import com.moneydesktop.finance.handset.activity.IntroHandsetActivity;
 import com.moneydesktop.finance.model.EventMessage;
@@ -99,7 +109,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         if (isTablet(this)) {
             mIsTablet = true;
         }
-
+        
         mViewFlipper = (ViewFlipper) findViewById(R.id.flipper);
         mButtonView = (LinearLayout) findViewById(R.id.button_view);
         mCredentialView = (LinearLayout) findViewById(R.id.credentials);

@@ -13,6 +13,7 @@ import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.shared.MenuViewHolder;
 import com.moneydesktop.finance.shared.adapter.UltimateAdapter;
@@ -28,6 +29,7 @@ public class MenuRightHandsetAdapter extends UltimateAdapter implements OnGroupC
     private List<Pair<Integer, List<int[]>>> mData;
     private Activity mActivity;
     private UltimateListView mListView;
+    private FragmentType mCurrentFragmentType;
     
     public void setData(List<Pair<Integer, List<int[]>>> data) {
         mData = data;
@@ -48,6 +50,10 @@ public class MenuRightHandsetAdapter extends UltimateAdapter implements OnGroupC
     
     public void resetMenu() {
     	setData(new ArrayList<Pair<Integer, List<int[]>>>());
+    }
+    
+    public void setCurrentFragmentType (FragmentType currentFragmentType) {
+    	mCurrentFragmentType = currentFragmentType;
     }
     
     private void addDefaultMenuItems() {
@@ -195,7 +201,7 @@ public class MenuRightHandsetAdapter extends UltimateAdapter implements OnGroupC
 		if (groupPosition == (getGroupCount() - 1)) {
 			EventBus.getDefault().post(new EventMessage().new FeedbackEvent());
 		} else {
-			EventBus.getDefault().post(new EventMessage().new MenuEvent(groupPosition, childPosition));
+			EventBus.getDefault().post(new EventMessage().new MenuEvent(groupPosition, childPosition, mCurrentFragmentType));
 		}
 		
 		return true;

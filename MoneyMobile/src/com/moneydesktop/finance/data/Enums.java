@@ -120,6 +120,67 @@ public class Enums {
         }
         
     };
+    
+    
+  public enum PropertyTypes {
+	  	
+	  	REAL_ESTATE(0),
+	  	VEHICLE(1),
+        ART (2),
+        JEWELRY (3),
+        FURNITURE (4),
+        APPLIANCES (5),
+        COMPUTER (6),        
+        ELECTRONICS (7),
+        SPORTS_EQUIPMENT (8),
+        MISCELLANEOUS (9);
+                     
+        private int index;
+        
+        PropertyTypes(int index) {
+            this.index = index;
+        }
+        
+        public static PropertyTypes fromInteger(Integer value) {
+            
+            switch(value) {
+            case 0:
+                return REAL_ESTATE;
+            case 1:
+                return VEHICLE;
+            case 2:
+                return ART;
+            case 3:
+                return JEWELRY;
+            case 4:
+                return FURNITURE;
+            case 5:
+                return APPLIANCES;
+            case 6:
+                return COMPUTER;
+            case 7:
+                return ELECTRONICS;
+            case 8:
+                return SPORTS_EQUIPMENT;
+            case 9:
+                return MISCELLANEOUS;
+            }
+            
+            return null;
+        }
+        
+        public int index() {
+            return index;
+        }
+        
+        public static int size() {
+			return 10;
+        }
+         
+    };
+    
+    
+    
     public enum HandsetFragments {
         
     }
@@ -316,19 +377,21 @@ public class Enums {
 	
 	public enum AccountExclusionFlags {
 		
-	    ACCOUNT_EXCLUSION_FLAGS_TRANSACTION_LIST        (1 << 0),
-	    ACCOUNT_EXCLUSION_FLAGS_REPORTS               	(1 << 1),
-	    ACCOUNT_EXCLUSION_FLAGS_ACCOUNT_LIST            (1 << 2),
-	    ACCOUNT_EXCLUSION_FLAGS_BUDGETS                	(1 << 3),
-	    ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME	(1 << 4),
-	    ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES	(1 << 5),
+	    ACCOUNT_EXCLUSION_FLAGS_TRANSACTION_LIST        (1 << 0), //1
+	    ACCOUNT_EXCLUSION_FLAGS_REPORTS               	(1 << 1), //2
+	    ACCOUNT_EXCLUSION_FLAGS_ACCOUNT_LIST            (1 << 2), //4
+	    ACCOUNT_EXCLUSION_FLAGS_BUDGETS                	(1 << 3), //8
+	    ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME	(1 << 4), //16
+	    ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES	(1 << 5), //32
+	    ACCOUNT_EXCLUSION_FLAGS_DEBT					(1 << 6), //64
 	    ACCOUNT_EXCLUSION_FLAGS_ALL						(1 << 0
 											    		|1 << 1
 											    		|1 << 2
 											    		|1 << 3
 											    		|1 << 4
-											    		|1 << 5);
-	    
+											    		|1 << 5
+											    		|1 << 6); //127
+	    	    
 	    private final int index;
 	    
 	    AccountExclusionFlags(int index) {
@@ -338,6 +401,9 @@ public class Enums {
 	    public int index() {
 	    	return index;
 	    }
+	    public static int size() {
+	    	return 7;
+	    }
 	};
 	
 	public enum SlideFrom {
@@ -345,5 +411,105 @@ public class Enums {
 			LEFT,
 			TOP,
 			BOTTOM
+	}
+	
+	public enum AccountTypesEnum {
+	    CASH("CASH"),
+	    CHECKING("CHECKING"),
+	    CREDIT_CARD("CREDIT CARD"),
+	    INVESTMENTS("INVESTMENTS"),
+	    LINE_OF_CREDIT("LINE OF CREDIT"),
+	    LOANS("LOANS"),
+	    MORTGAGE("MORTGAGE"),
+	    PROPERTY("PROPERTY"),
+	    SAVINGS("SAVINGS");
+
+	    
+	    private AccountTypesEnum(final String text) {
+	        this.text = text;
+	    }
+
+	    private final String text;
+
+	    @Override
+	    public String toString() {
+	        return text;
+	    }
+	    
+	    public static AccountTypesEnum fromString(String value) {
+	    	AccountTypesEnum typesEnum = null;
+			if (value.equals("CASH")) {
+				typesEnum = CASH;
+			} else if (value.equals("CHECKING")) {
+				typesEnum = CHECKING;
+			} else if (value.equals("CREDIT CARD")) {
+				typesEnum = CREDIT_CARD;
+			} else if (value.equals("INVESTMENTS")) {
+				typesEnum = INVESTMENTS;
+			} else if (value.equals("LINE OF CREDIT")) {
+				typesEnum = LINE_OF_CREDIT;
+			} else if (value.equals("LOANS")) {
+				typesEnum = LOANS;
+			} else if (value.equals("MORTGAGE")) {
+				typesEnum = MORTGAGE;
+			} else if (value.equals("PROPERTY")) {
+				typesEnum = PROPERTY;
+			} else if (value.equals("SAVINGS")) {
+				typesEnum = SAVINGS;
+			}
+			return typesEnum;
+	    }
+	}
+	
+	
+	public enum PropertyTypesEnum {
+	    REAL_ESTATE("REAL ESTATE"),
+	    VEHICLE("VEHICLE"),
+	    ART("ART"),
+	    JEWELRY("JEWELRY"),
+	    FURNITURE("FURNITURE"),
+	    APPLIANCES("APPLIANCES"),
+	    COMPUTER("COMPUTER"),
+	    ELECTRONICS("ELECTRONICS"),
+	    SPORTS_EQUIPMENT("SPORTS EQUIPMENT"),
+	    MISCELLANEOUS("MISCELLANEOUS");
+
+	    
+	    private PropertyTypesEnum(final String text) {
+	        this.text = text;
+	    }
+
+	    private final String text;
+
+	    @Override
+	    public String toString() {
+	        return text;
+	    }
+	    
+	    public static PropertyTypesEnum fromString(String value) {
+	    	PropertyTypesEnum typesEnum = null;
+			if (value.equals("REAL ESTATE")) {
+				typesEnum = REAL_ESTATE;
+			} else if (value.equals("VEHICLE")) {
+				typesEnum = VEHICLE;
+			} else if (value.equals("ART")) {
+				typesEnum = ART;
+			} else if (value.equals("JEWELRY")) {
+				typesEnum = JEWELRY;
+			} else if (value.equals("FURNITURE")) {
+				typesEnum = FURNITURE;
+			} else if (value.equals("APPLIANCES")) {
+				typesEnum = APPLIANCES;
+			} else if (value.equals("COMPUTER")) {
+				typesEnum = COMPUTER;
+			} else if (value.equals("ELECTRONICS")) {
+				typesEnum = ELECTRONICS;
+			} else if (value.equals("SPORTS EQUIPMENT")) {
+				typesEnum = SPORTS_EQUIPMENT;
+			} else if (value.equals("MISCELLANEOUS")) {
+				typesEnum = MISCELLANEOUS;
+			}
+			return typesEnum;
+	    }
 	}
 }

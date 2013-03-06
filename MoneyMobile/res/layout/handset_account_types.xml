@@ -1,42 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
-   	android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-    
-	<LinearLayout 
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:orientation="vertical" >
-	
-	    <TextView
-	        android:id="@+id/handset_account_types_header"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:background="@color/black"
-	        android:orientation="horizontal"
-	        android:paddingLeft="10dip"
-	        android:text="@string/panel_title"
-	        android:textColor="@color/white" />
-	
-	    <HorizontalScrollView
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:background="@color/gray7"
-	        android:scrollbars="none" >
-	
-	        <LinearLayout
-	            android:id="@+id/account_types_bank_list_handset"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:gravity="center_vertical" />
-	    </HorizontalScrollView>
-	
-	    <com.moneydesktop.finance.views.UltimateListView
-	        android:id="@+id/handset_account_types_list"
-	        android:layout_width="fill_parent"
-	        android:groupIndicator="@null"
-	        android:layout_height="fill_parent" />
-	
-	</LinearLayout>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/handset_account_types_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        android:orientation="horizontal"
+        android:paddingLeft="10dip"
+        android:text="@string/panel_title"
+        android:textColor="@color/white" />
+
+    <com.devsmart.android.ui.HorizontalListView
+        android:id="@+id/account_types_bank_list_handset"
+        android:layout_width="match_parent"
+        android:layout_height="80dip"
+        android:background="@color/gray7"
+        android:layout_below="@id/handset_account_types_header"/>
+
+    <com.moneydesktop.finance.views.UltimateListView
+        android:id="@+id/handset_account_types_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:groupIndicator="@null"
+        android:layout_below="@id/account_types_bank_list_handset" />
 
 </RelativeLayout>

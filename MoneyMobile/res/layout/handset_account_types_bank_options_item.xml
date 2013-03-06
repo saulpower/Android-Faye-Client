@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bank_options_container"
+    android:layout_width="match_parent"
+    android:layout_height="60dip"
+    android:background="@color/gray1"
+    android:orientation="horizontal" >
+    
+    <TextView
+        android:id="@+id/txt_image"
+        android:layout_width="40dip"
+        android:layout_height="40dip"
+        android:padding="5dip"
+        android:layout_gravity="center"
+        android:src="@drawable/tablet_accounts_icon_accounttype_mortgage"
+        android:contentDescription="@string/description"/>
+ 
+    <TextView
+        android:id="@+id/handset_bank_options_name_list_item"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="20dip"
+		android:gravity="center_vertical"/>
+    
+</LinearLayout>

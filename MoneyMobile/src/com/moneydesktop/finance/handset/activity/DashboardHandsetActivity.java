@@ -231,6 +231,11 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     public void addMenuItems(List<Pair<Integer, List<int[]>>> data) {
     	mRightMenuAdapter.setData(data);
     }
+    
+    @Override
+    public void setMenuFragment(FragmentType fragmentType) {
+    	mRightMenuAdapter.setCurrentFragmentType(fragmentType);
+    }
 
     @Override
 	public void pushMenuView(View view) {
@@ -258,6 +263,10 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     public View getmenuParent() {
 		return mMenuFlipper;
 	}
+    
+    public MenuDrawer getMenuDrawer () {
+    	return mMenuDrawerRight;
+    }
     
     private void loadFragments() {
     	

@@ -350,6 +350,10 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
         mDropdown.startAnimation(mIn);
     }
     
+    public AnimatedNavView getAnimatedNavView() {
+    	return mNavView;
+    }
+    
     /**
      * Sets the size of the popup container for the given fragment that
      * will be displayed.  This is calculated as a percent of the total

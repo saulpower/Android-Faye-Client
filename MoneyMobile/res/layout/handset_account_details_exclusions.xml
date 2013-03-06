@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray1" >
+
+        
+   <TextView 
+       android:id="@+id/handset_save_exclusions"
+       android:layout_width="match_parent"
+       android:layout_height="50dip"
+       android:textColor="@color/primaryColor"
+       android:layout_margin="10dip"
+       android:gravity="center"
+       android:layout_alignParentBottom="true"
+       android:background="@drawable/perf_paper"/>
+    
+	<ListView 
+	    android:id="@+id/handset_exclusions_list"
+	    android:layout_height="wrap_content"
+	    android:layout_width="match_parent"
+	    android:divider="@null"
+	    android:layout_alignParentTop="true"
+	    android:layout_above="@id/handset_save_exclusions"
+	    android:background="@color/gray1"/>
+
+	
+</RelativeLayout>

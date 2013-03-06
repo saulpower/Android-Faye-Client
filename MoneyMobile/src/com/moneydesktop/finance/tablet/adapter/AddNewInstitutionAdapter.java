@@ -21,6 +21,7 @@ import com.moneydesktop.finance.util.Fonts;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Pair;
@@ -48,6 +49,7 @@ public class AddNewInstitutionAdapter extends AmazingAdapter {
     
     private AsyncTask<Integer, Void, Pair<Boolean, List<Institution>>> mBackgroundTask;
     private OnDataLoadedListener mOnDataLoadedListener;
+    private Handler mHandler = new Handler();
 	
     
 	protected List<Pair<String, List<Institution>>> mSections = new ArrayList<Pair<String, List<Institution>>>();
@@ -56,6 +58,47 @@ public class AddNewInstitutionAdapter extends AmazingAdapter {
 	private QueryProperty mWherePopularity = new QueryProperty(InstitutionDao.TABLENAME, InstitutionDao.Properties.Popularity, "!= ?");
 	private QueryProperty mWhereLike = new QueryProperty(InstitutionDao.TABLENAME, InstitutionDao.Properties.Name);
 	private QueryProperty mOrderBy = new QueryProperty(InstitutionDao.TABLENAME, InstitutionDao.Properties.Name);
+
+	private String filterString;
+	
+	Runnable mFilterTask = new Runnable() {
+	     @Override
+	     public void run() {
+	          fillList();
+	     }
+	};
+		
+	private void fillList() {
+		if (filterString.length() > 0) {
+
+			PowerQuery powerQuery = new PowerQuery(mDAO);
+			powerQuery.whereLike(mWhereLike, filterString + "%")
+			.orderBy(mOrderBy, false);
+			
+			mInstitutions = mDAO.queryRaw(powerQuery.toString(), powerQuery.getSelectionArgs());
+			
+			if (mInstitutions.size() > 0 && mInstitutions.size() <= Constant.QUERY_LIMIT) {
+				mListView.setVisibility(View.VISIBLE);
+				notifyDataSetInvalidated();
+				initializeData();
+				
+			} else if (mInstitutions.size() == 0) {
+				mListView.setVisibility(View.GONE);
+			}
+			
+		} else {		
+			PowerQuery powerQuery = new PowerQuery(mDAO);
+			powerQuery.where(mWherePopularity, "0")
+			.orderBy(mOrderBy, false);
+			
+			mInstitutions = mDAO.queryRaw(powerQuery.toString(), powerQuery.getSelectionArgs());
+			mListView.setVisibility(View.VISIBLE);
+			
+			notifyDataSetInvalidated();
+			initializeData();
+		}
+		
+	}     
 	
 	public AddNewInstitutionAdapter(Context context, int layoutResourceId, List<Institution> institutions, EditText filter, final ListView addInstitutionList) {
 	
@@ -63,6 +106,8 @@ public class AddNewInstitutionAdapter extends AmazingAdapter {
 		mLayoutId = layoutResourceId;
 		mInstitutions = institutions;
 		mListView = addInstitutionList;
+		
+		
 		
 		mFilter = filter;
 		final InstitutionDao dao = ApplicationContext.getDaoSession().getInstitutionDao();
@@ -81,35 +126,9 @@ public class AddNewInstitutionAdapter extends AmazingAdapter {
 			@Override
 			public void afterTextChanged(final Editable s) {
 				
-				String filterSet = s.toString();
-				if (s.length() > 0) {
-
-					PowerQuery powerQuery = new PowerQuery(dao);
-					powerQuery.whereLike(mWhereLike, filterSet + "%")
-					.orderBy(mOrderBy, false);
-					
-					mInstitutions = dao.queryRaw(powerQuery.toString(), powerQuery.getSelectionArgs());
-					
-					if (mInstitutions.size() > 0 && mInstitutions.size() <= Constant.QUERY_LIMIT) {
-						addInstitutionList.setVisibility(View.VISIBLE);
-						notifyDataSetInvalidated();
-						initializeData();
-						
-					} else if (mInstitutions.size() == 0) {
-						addInstitutionList.setVisibility(View.GONE);
-					}
-					
-				} else {		
-					PowerQuery powerQuery = new PowerQuery(dao);
-					powerQuery.where(mWherePopularity, "0")
-					.orderBy(mOrderBy, false);
-					
-					mInstitutions = dao.queryRaw(powerQuery.toString(), powerQuery.getSelectionArgs());
-					addInstitutionList.setVisibility(View.VISIBLE);
-					
-					notifyDataSetInvalidated();
-					initializeData();
-				}
+				filterString = s.toString();
+		        mHandler.removeCallbacks(mFilterTask); 
+		        mHandler.postDelayed(mFilterTask, 2000);
 			}
 		});
 	}
@@ -163,7 +182,7 @@ public class AddNewInstitutionAdapter extends AmazingAdapter {
 			holder = (AddInstitutionListHolder) convertView.getTag();
 		}
 
-		//	BankLogoManager.getBankImage(holder.imageLogo, mInstitutions.get(position).getInstitutionId());			
+			BankLogoManager.getBankImage(holder.imageLogo, mInstitutions.get(position).getInstitutionId());			
 			holder.txtTitle.setText(mInstitutions.get(position).getName());			
 			Fonts.applyPrimaryBoldFont(holder.txtTitle, 14);
 			

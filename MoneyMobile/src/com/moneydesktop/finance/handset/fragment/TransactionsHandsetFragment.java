@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
@@ -22,13 +23,16 @@ import android.widget.TextView;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.data.Enums.TxFilter;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.model.EventMessage.MenuEvent;
 import com.moneydesktop.finance.shared.FilterViewHolder;
+import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
 import com.moneydesktop.finance.shared.adapter.FilterAdapter;
 import com.moneydesktop.finance.shared.fragment.TransactionsFragment;
+import com.moneydesktop.finance.tablet.fragment.TransactionsPageTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.UltimateListView;
 
@@ -55,6 +59,18 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
         
         return frag;
 	}
+	
+    public static TransactionsHandsetFragment newInstance(Intent intent) {
+        
+    	TransactionsHandsetFragment fragment = new TransactionsHandsetFragment();
+        fragment.setAccountId(intent.getStringExtra(Constant.EXTRA_ACCOUNT_ID));
+        fragment.setTxFilter((TxFilter) intent.getSerializableExtra(Constant.EXTRA_TXN_TYPE));
+        
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        
+        return fragment;
+    }
 
 	@Override
 	public FragmentType getType() {
@@ -100,7 +116,9 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
     	
     	data.add(new Pair<Integer, List<int[]>>(R.string.menu_transactions, items));
     	
+    	//mActivity.
     	mActivity.addMenuItems(data);
+    	mActivity.setMenuFragment(FragmentType.TRANSACTIONS);
 	}
 	
 	private void setupFilterList() {
@@ -225,18 +243,20 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 	
 	public void onEvent(MenuEvent event) {
 	    
-	    switch (event.getChildPosition()) {
-		    case 0:
-		    	mActivity.pushMenuView(mFilterListView);
-		    	break;
-		    case 1:
-		    	Transactions.setAllRead();
-		    	for (Transactions t : mAdapter.getTransactions()) {
-		    		t.setIsProcessed(true);
-		    	}
-		    	refreshTransactionsList();
-		    	break;
-	    }
+		if (event.getFragmentType().equals(FragmentType.TRANSACTIONS)) {
+		    switch (event.getChildPosition()) {
+			    case 0:
+			    	mActivity.pushMenuView(mFilterListView);
+			    	break;
+			    case 1:
+			    	Transactions.setAllRead();
+			    	for (Transactions t : mAdapter.getTransactions()) {
+			    		t.setIsProcessed(true);
+			    	}
+			    	refreshTransactionsList();
+			    	break;
+		    }
+		}
 	}
 	
 	public void onEvent(DatabaseSaveEvent event) {
