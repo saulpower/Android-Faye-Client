@@ -29,10 +29,8 @@ import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.model.EventMessage.MenuEvent;
 import com.moneydesktop.finance.shared.FilterViewHolder;
-import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
 import com.moneydesktop.finance.shared.adapter.FilterAdapter;
 import com.moneydesktop.finance.shared.fragment.TransactionsFragment;
-import com.moneydesktop.finance.tablet.fragment.TransactionsPageTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.UltimateListView;
 

@@ -43,6 +43,7 @@ import com.moneydesktop.finance.shared.TransactionViewHolder;
 import com.moneydesktop.finance.shared.fragment.TransactionsFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
+import com.moneydesktop.finance.util.DateRange;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.EmailUtils;
 import com.moneydesktop.finance.util.FileIO;
@@ -76,6 +77,8 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
     
     private Animation mFadeIn, mFadeOut;
     
+    private DateRange mRange;
+    
     public ParentTransactionInterface getParent() {
         return mParent;
     }
@@ -96,6 +99,10 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
 	public FragmentType getType() {
 		return FragmentType.TRANSACTIONS_PAGE;
 	}
+    
+    public void setDateRange(long start, long end) {
+		this.mRange = new DateRange(start, end);
+	}
 
     @SuppressWarnings("unchecked")
 	public static TransactionsPageTabletFragment newInstance(ParentTransactionInterface parent, Intent intent) {
@@ -107,6 +114,12 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
         fragment.setCategoryType(intent.getIntExtra(Constant.EXTRA_CATEGORY_TYPE, -1));
         fragment.setTxFilter((TxFilter) intent.getSerializableExtra(Constant.EXTRA_TXN_TYPE));
         fragment.setShowButtons(false);
+        
+        if (intent.hasExtra(Constant.EXTRA_START_DATE) && intent.hasExtra(Constant.EXTRA_END_DATE)) {
+        	long start = intent.getLongExtra(Constant.EXTRA_START_DATE, 0);
+        	long end = intent.getLongExtra(Constant.EXTRA_END_DATE, 0);
+        	fragment.setDateRange(start, end);
+        }
         
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -157,6 +170,10 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
         mDateRange = (DateRangeView) mRoot.findViewById(R.id.date_range);
         mDateRange.setScroller(mScroller);
         mDateRange.setDateRangeChangeListener(this);
+        
+        if (mRange != null) {
+        	mDateRange.setDateRange(mRange);
+        }
         
         mDate = (HeaderView) mRoot.findViewById(R.id.date_header);
         mDate.setOnFilterChangeListener(this);

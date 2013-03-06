@@ -1,6 +1,10 @@
 package com.moneydesktop.finance.views;
 
-import android.annotation.TargetApi;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -16,16 +20,13 @@ import android.view.View;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.model.EventMessage;
+import com.moneydesktop.finance.util.DateRange;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.AnchorView.AnchorMoveListener;
 
 import de.greenrobot.event.EventBus;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
+// TODO: Fix this to work with setting date range in Transactions View
 public class DateRangeView extends View implements AnchorMoveListener {
     
     public final String TAG = this.getClass().getSimpleName();
@@ -73,7 +74,6 @@ public class DateRangeView extends View implements AnchorMoveListener {
         return mEnd;
     }
     
-    @TargetApi(11)
 	public DateRangeView(Context context, AttributeSet attrs) {
         super(context, attrs);
         
@@ -100,6 +100,15 @@ public class DateRangeView extends View implements AnchorMoveListener {
         mHighlightPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mHighlightPaint.setColor(resources.getColor(R.color.primaryColor));
         mHighlightPaint.setStyle(Paint.Style.FILL);
+    }
+    
+    public void setDateRange(DateRange range) {
+    	
+    	mStart = range.getStartDate();
+    	mEnd = range.getEndDate();
+
+        moveScroller(mStart);
+        anchorDidMove();
     }
     
     private void initDateRange() {
@@ -197,8 +206,12 @@ public class DateRangeView extends View implements AnchorMoveListener {
     }
     
     private void moveScroller() {
+    	moveScroller(new Date());
+    }
+    
+    private void moveScroller(Date date) {
 
-        DateRangeItem item = getItem(new Date());
+        DateRangeItem item = getItem(date);
         
         if (item != null && mScroller != null) {
             mScroller.scrollBy(item.getBounds().left / 2 + item.getBounds().width() / 2, 0);

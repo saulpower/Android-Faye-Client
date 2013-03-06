@@ -50,6 +50,13 @@ public class DateRange {
 		mCalendar = Calendar.getInstance();
 	}
 	
+	public DateRange(long start, long end) {
+		this();
+		
+		mStartDate = new Date(start);
+		mEndDate = new Date(end);
+	}
+	
 	private void resetCalendar() {
 		mCalendar.setTime(mToday);
 		mCalendar.set(Calendar.HOUR_OF_DAY, 0);
