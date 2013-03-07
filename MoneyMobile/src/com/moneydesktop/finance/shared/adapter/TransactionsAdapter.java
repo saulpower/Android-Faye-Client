@@ -119,7 +119,6 @@ public abstract class TransactionsAdapter extends AmazingAdapter {
 
 	@Override
 	protected void onNextPageRequested(int page) {
-
 		loadPage(page);
 	}
 	
@@ -258,6 +257,8 @@ public abstract class TransactionsAdapter extends AmazingAdapter {
             .where(subQuery).and();
             
         for (PowerQuery powerQuery : mQueries) {
+        	
+        	if (powerQuery == null) continue;
         	
         	query.where(powerQuery).and();
         	

@@ -70,7 +70,7 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
 
     private HeaderView mDate, mPayee, mCategory, mAmount;
     private LinearLayout mButtons, mHeaders;
-    private ImageView mSum, mEmail, mPrint, mReport, mAdd;
+    private ImageView mSum, mEmail, mAdd;
     
     private boolean mShowButtons = true;
     private DecimalFormat mFormatter = new DecimalFormat("$#,##0.00;-$#,##0.00");
@@ -193,8 +193,6 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
         
         mSum = (ImageView) mRoot.findViewById(R.id.sum);
         mEmail = (ImageView) mRoot.findViewById(R.id.email);
-        mPrint = (ImageView) mRoot.findViewById(R.id.print);
-        mReport = (ImageView) mRoot.findViewById(R.id.report);
         mAdd = (ImageView) mRoot.findViewById(R.id.add);
         
         // Bug with line not being lined up correctly

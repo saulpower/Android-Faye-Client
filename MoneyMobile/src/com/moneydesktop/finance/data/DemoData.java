@@ -253,7 +253,7 @@ public class DemoData {
 		}
 		
 		bankAccount.setIsHolding(false);
-		bankAccount.setIsLinked(true);
+		bankAccount.setIsLinked(false);
 		bankAccount.setDefaultClassId(Constant.PERSONAL);
 		
 		AccountType accountType = (AccountType) BusinessObject.getObject(AccountType.class, row[ACCOUNT_TYPE]);

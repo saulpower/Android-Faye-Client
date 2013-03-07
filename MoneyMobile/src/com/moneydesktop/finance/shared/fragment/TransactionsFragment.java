@@ -1,6 +1,5 @@
 package com.moneydesktop.finance.shared.fragment;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -27,6 +26,7 @@ import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.handset.adapter.TransactionsHandsetAdapter;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.model.EventMessage.FilterEvent;
+import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.shared.adapter.TransactionsAdapter;
 import com.moneydesktop.finance.shared.adapter.TransactionsAdapter.OnDataLoadedListener;
 import com.moneydesktop.finance.tablet.adapter.TransactionsTabletAdapter;
@@ -223,8 +223,15 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
     }
     
     public void onEvent(DatabaseSaveEvent event) {
+    	
+    	if (mAdapter != null && event.getChangedClassesList().contains(Transactions.class)) {
+    		mAdapter.notifyDataSetChanged();
+    	}
+    }
+    
+    public void onEvent(SyncEvent event) {
         
-    	if (mAdapter != null && event.didDatabaseChange()) {
+    	if (mAdapter != null && event.isFinished()) {
     		refreshTransactionsList(false);
     	}
     }

@@ -373,11 +373,6 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
     }
 
     @Override
-    public void parentOnActivityResult(int requestCode, int resultCode, Intent data) {
-        mBase.parentOnActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
     public void keyboardStateDidChange(boolean isShowing) {
         
         if (isShowing && mEditText != null) {

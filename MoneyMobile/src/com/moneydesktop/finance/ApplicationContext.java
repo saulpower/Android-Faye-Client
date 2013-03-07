@@ -42,8 +42,6 @@ public class ApplicationContext extends Application {
     private static DaoSession sDaoSession;
 	
 	private static boolean sScreenOn = true;
-	private static boolean sIsTablet = false;
-    private static boolean sIsLargeTablet = false;
     private static boolean sLockShowing = false;
 
     private BroadcastReceiver sScreenLock = new BroadcastReceiver() {
@@ -185,19 +183,19 @@ public class ApplicationContext extends Application {
 	}
 	
     public static boolean isTablet() {
-        return sIsTablet;
+        return Preferences.getBoolean(Preferences.KEY_IS_TABLET, false);
     }
 
     public static void setIsTablet(boolean sIsTablet) {
-        ApplicationContext.sIsTablet = sIsTablet;
+        Preferences.saveBoolean(Preferences.KEY_IS_TABLET, sIsTablet);
     }
     
     public static boolean isLargeTablet() {
-        return sIsLargeTablet;
+        return Preferences.getBoolean(Preferences.KEY_IS_LARGE_TABLET, false);
     }
 
     public static void setIsLargeTablet(boolean sIsLargeTablet) {
-        ApplicationContext.sIsLargeTablet = sIsLargeTablet;
+        Preferences.saveBoolean(Preferences.KEY_IS_LARGE_TABLET, sIsLargeTablet);
     }
 
     public static boolean isLockShowing() {
