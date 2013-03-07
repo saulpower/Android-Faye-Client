@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.views;
+package com.moneydesktop.finance.views.navigation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.TextDrawable;
 import com.nineoldandroids.animation.ObjectAnimator;
 
 import android.annotation.SuppressLint;
@@ -22,6 +23,13 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
 
+/**
+ * A view providing a navigation controller that animates as navigation items are
+ * pushed onto and popped off of the navigation stack.
+ * 
+ * @author saulhoward
+ *
+ */
 @SuppressLint("NewApi")
 public class AnimatedNavView extends View implements OnClickListener {
 	

@@ -37,6 +37,9 @@ public class SyncEngine {
 
 	private static SyncEngine sharedInstance;
 
+	/** We want to wait 5 minutes in between regular sync checks */
+	private static final long MINIMUM_SYNC_WAIT = 300000;
+	
 	private final int TIMER_DELAY = 10000;
 	
 	private DataBridge db;
@@ -101,8 +104,9 @@ public class SyncEngine {
 	
 	public void syncIfNeeded() {
 		
-		if (shouldSync && !isRunning && User.getCurrentUser().getCanSync())
+		if (shouldSync && !isRunning && User.getCurrentUser().getCanSync()) {
 			beginSync();
+		}
 	}
 
 	/**
@@ -133,10 +137,14 @@ public class SyncEngine {
 	
 	private void startBankStatusTimer() {
 		
-		if (User.getCurrentUser().getCanSync() && banksUpdating.size() > 0 && bankStatusTimer == null) {
+		if (User.getCurrentUser() != null && User.getCurrentUser().getCanSync() && banksUpdating.size() > 0 && bankStatusTimer == null) {
 			
 			bankStatusTimer = new Handler();
 			bankStatusTimer.postDelayed(bankStatusTask, TIMER_DELAY);
+			
+		} else if (bankStatusTimer != null) {
+			
+			bankStatusTimer.removeCallbacks(bankStatusTask);
 		}
 	}
 	
@@ -193,6 +201,18 @@ public class SyncEngine {
 			}
 			
 		}).start();
+	}
+	
+	public void syncCheck() {
+		
+		long now = System.currentTimeMillis();
+		long lastSync = Preferences.getLong(Preferences.KEY_LAST_SYNC, now);
+		
+		long elapsed = (now - lastSync);
+		
+		if (MINIMUM_SYNC_WAIT < elapsed) {
+			beginSync();
+		}
 	}
 	
 	public void beginSync() {
@@ -484,7 +504,7 @@ public class SyncEngine {
 	}
 	
 	private void processSyncData(JSONObject data) throws JSONException {
-
+		
 		DatabaseDefaults.ensureCategoryTypesLoaded();
 		DatabaseDefaults.ensureAccountTypeGroupsLoaded();
 		DatabaseDefaults.ensureAccountTypesLoaded();

@@ -41,6 +41,7 @@ public class WebSocketClient {
     private Thread                   mThread;
     private HandlerThread            mHandlerThread;
     private Handler                  mHandler;
+    private Handler                  mUiHandler;
     private List<BasicNameValuePair> mExtraHeaders;
     private HybiParser               mParser;
 
@@ -52,15 +53,16 @@ public class WebSocketClient {
         sTrustManagers = tm;
     }
 
-    public WebSocketClient(URI uri, Listener listener, List<BasicNameValuePair> extraHeaders) {
-        mURI          = uri;
-        mListener = listener;
-        mExtraHeaders = extraHeaders;
-        mParser       = new HybiParser(this);
+    public WebSocketClient(Handler uiHandler, URI uri, Listener listener, List<BasicNameValuePair> extraHeaders) {
+		mUiHandler = uiHandler;
+		mURI = uri;
+		mListener = listener;
+		mExtraHeaders = extraHeaders;
+		mParser = new HybiParser(this);
 
-        mHandlerThread = new HandlerThread("websocket-thread");
-        mHandlerThread.start();
-        mHandler = new Handler(mHandlerThread.getLooper());
+		mHandlerThread = new HandlerThread("websocket-thread");
+		mHandlerThread.start();
+		mHandler = new Handler(mHandlerThread.getLooper());
     }
 
     public Listener getListener() {
@@ -155,21 +157,34 @@ public class WebSocketClient {
 
                 } catch (EOFException ex) {
                 	
+                	
                     Log.e(TAG, "WebSocket EOF!", ex);
-                    mListener.onError(ex);
+                    onError(ex);
 
                 } catch (SSLException ex) {
                 	
                     // Connection reset by peer
                     Log.e(TAG, "Websocket SSL error!", ex);
-                    mListener.onError(ex);
+                    onError(ex);
 
                 } catch (Exception ex) {
-                    mListener.onError(ex);
+                    onError(ex);
                 }
             }
         });
         mThread.start();
+    }
+    
+    private void onError(final Exception ex) {
+    	
+    	mUiHandler.post(new Runnable() {
+			
+			@Override
+			public void run() {
+
+                mListener.onError(ex);
+			}
+		});
     }
     
     private String createSecretValidation(String secret) {
@@ -201,7 +216,7 @@ public class WebSocketClient {
                         mSocket = null;
                     } catch (IOException ex) {
                         Log.e(TAG, "Error while disconnecting", ex);
-                        mListener.onError(ex);
+                        onError(ex);
                     }
                 }
             });
@@ -268,25 +283,28 @@ public class WebSocketClient {
     }
 
     void sendFrame(final byte[] frame) {
-    	
-        mHandler.post(new Runnable() {
+
+        if (mSocket != null) {
         	
-            @Override
-            public void run() {
+        	mHandler.post(new Runnable() {
             	
-                try {
+                @Override
+                public void run() {
                 	
-                    synchronized (mSendLock) {
-                        OutputStream outputStream = mSocket.getOutputStream();
-                        outputStream.write(frame);
-                        outputStream.flush();
+                    try {
+                    	
+                        synchronized (mSendLock) {
+                            OutputStream outputStream = mSocket.getOutputStream();
+                            outputStream.write(frame);
+                            outputStream.flush();
+                        }
+                        
+                    } catch (IOException e) {
+                        onError(e);
                     }
-                    
-                } catch (IOException e) {
-                    mListener.onError(e);
                 }
-            }
-        });
+            });
+        }
     }
 
     public interface Listener {

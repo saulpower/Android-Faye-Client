@@ -2,6 +2,7 @@ package com.moneydesktop.finance.data;
 
 import java.util.Set;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -11,6 +12,7 @@ import android.util.Log;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.crypto.StringEncrypter;
 
+@SuppressLint("NewApi")
 public class Preferences {
 
 	private final static String TAG = "Preferences";
@@ -27,6 +29,8 @@ public class Preferences {
 	public static final String KEY_USER = "md_user";
 	public static final String KEY_NEEDS_SYNC = "md_needs_sync";
 	public static final String KEY_NEEDS_FULL_SYNC = "md_needs_full_sync";
+	public static final String KEY_IS_LARGE_TABLET = "md_large_tablet";
+	public static final String KEY_IS_TABLET = "md_tablet";
 
 	private static final String PASSWORD = "m0n3y_d3skt0p";
 

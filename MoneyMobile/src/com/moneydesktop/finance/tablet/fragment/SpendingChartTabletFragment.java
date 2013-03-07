@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
 import com.moneydesktop.finance.shared.adapter.GrowPagerAdapter.OnScrollStateChangedListener;
 import com.moneydesktop.finance.util.Fonts;
@@ -87,6 +89,8 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 	public void onResume() {
 		super.onResume();
 		
+		configureChart(true);
+		
 		EventBus.getDefault().register(this);
 		mAdapter.setOnScrollStateChangedListener(this);
 	}
@@ -122,6 +126,13 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 			configureChart(false);
 		}
 	}
+	
+	public void onEvent(DatabaseSaveEvent event) {
+	    
+	    if (event.didDatabaseChange() && event.getChangedClassesList().contains(Transactions.class)) {
+	        mBridge.updateChart();
+	    }
+	}
     
 	public void onEvent(NavigationEvent event) {
 		
@@ -140,7 +151,7 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 		
 		if (showChart && mShowing && mActivity.isOnHome()) {
 			mChart.onResume();
-		} else if (!mShowing) {
+		} else {
 			mChart.onPause();
 		}
 	}

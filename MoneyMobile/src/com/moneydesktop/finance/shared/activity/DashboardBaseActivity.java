@@ -21,7 +21,6 @@ import com.moneydesktop.finance.model.EventMessage.LogoutEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.shared.adapter.GrowPagerAdapter;
-import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.LoginTabletActivity;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsTabletFragment;
@@ -38,7 +37,6 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 	protected boolean mLoggingOut = false;
 	protected boolean mOnHome = true;
     
-	protected BaseFragment mFragment;
 	protected GrowViewPager mPager;
 	protected GrowPagerAdapter mAdapter;
 	
@@ -51,28 +49,17 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 	}
     
     @Override
-    public void onFragmentAttached(BaseFragment fragment) {
-    	super.onFragmentAttached(fragment);
-    	
-        setCurrentFragment(fragment);
-    }
-    
-    @Override
     protected void onResume() {
         super.onResume();
         
-    	SyncEngine.sharedInstance().beginSync();
+    	SyncEngine.sharedInstance().syncCheck();
     }
     
     @Override
     protected void onPause() {
         super.onPause();
         
-    	SyncEngine.sharedInstance().beginSync();
-    }
-    
-    public void setCurrentFragment(BaseFragment fragment) {
-    	mFragment = fragment;
+    	SyncEngine.sharedInstance().syncCheck();
     }
     
     public void setDetailFragment(TransactionsDetailTabletFragment fragment) {

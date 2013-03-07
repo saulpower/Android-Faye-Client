@@ -29,10 +29,8 @@ import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.model.EventMessage.MenuEvent;
 import com.moneydesktop.finance.shared.FilterViewHolder;
-import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
 import com.moneydesktop.finance.shared.adapter.FilterAdapter;
 import com.moneydesktop.finance.shared.fragment.TransactionsFragment;
-import com.moneydesktop.finance.tablet.fragment.TransactionsPageTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.UltimateListView;
 
@@ -48,16 +46,19 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
     private TextView mBack, mTitle;
     private UltimateListView mFiltersList;
     private FilterAdapter mFilterAdapter;
+    private Date mStart, mEnd;
+    
+    private int mFragmentResource = R.id.transactions_fragment;
 	
 	public static TransactionsHandsetFragment newInstance() {
 			
-	    TransactionsHandsetFragment frag = new TransactionsHandsetFragment();
-	    frag.setRetainInstance(true);
+	    TransactionsHandsetFragment fragment = new TransactionsHandsetFragment();
+	    fragment.setRetainInstance(true);
 	
         Bundle args = new Bundle();
-        frag.setArguments(args);
+        fragment.setArguments(args);
         
-        return frag;
+        return fragment;
 	}
 	
     public static TransactionsHandsetFragment newInstance(Intent intent) {
@@ -72,12 +73,46 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
         return fragment;
     }
 
+    @SuppressWarnings("unchecked")
+	public static TransactionsHandsetFragment newInstance(Intent intent, int fragmentResource) {
+    	
+	    TransactionsHandsetFragment fragment = new TransactionsHandsetFragment();
+	    fragment.setRetainInstance(true);
+	    fragment.setFragmentResource(fragmentResource);
+        fragment.setAccountId(intent.getStringExtra(Constant.EXTRA_ACCOUNT_ID));
+        fragment.setCategories((ArrayList<Long>) intent.getSerializableExtra(Constant.EXTRA_CATEGORY_ID));
+        fragment.setCategoryType(intent.getIntExtra(Constant.EXTRA_CATEGORY_TYPE, -1));
+        fragment.setTxFilter((TxFilter) intent.getSerializableExtra(Constant.EXTRA_TXN_TYPE));
+        
+        if (intent.hasExtra(Constant.EXTRA_START_DATE) && intent.hasExtra(Constant.EXTRA_END_DATE)) {
+        	fragment.setStart(new Date(intent.getLongExtra(Constant.EXTRA_START_DATE, 0)));
+        	fragment.setEnd(new Date(intent.getLongExtra(Constant.EXTRA_END_DATE, 0)));
+        }
+	
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        
+        return fragment;
+	}
+    
+    public void setFragmentResource(int resource) {
+    	mFragmentResource = resource;
+    }
+
 	@Override
 	public FragmentType getType() {
 		return FragmentType.TRANSACTIONS;
 	}
     
-    @Override
+    public void setStart(Date mStart) {
+		this.mStart = mStart;
+	}
+
+	public void setEnd(Date mEnd) {
+		this.mEnd = mEnd;
+	}
+
+	@Override
     public void isShowing(boolean fromBackstack) {
     	super.isShowing(fromBackstack);
 
@@ -133,14 +168,14 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 
                 for (int i = 0; i < Constant.FOLDER_TITLE.length; i++) {
                     FilterViewHolder holder = new FilterViewHolder();
-                    holder.mText = getString(Constant.FOLDER_TITLE[i]);
-                    holder.mSubText = getString(Constant.FOLDER_SUBTITLE[i]);
+                    holder.mText = mActivity.getString(Constant.FOLDER_TITLE[i]);
+                    holder.mSubText = mActivity.getString(Constant.FOLDER_SUBTITLE[i]);
                     holder.mQuery = Constant.FOLDER_QUERIES[i];
                     subItems.add(holder);
                 }
             }
             
-            Pair<String, List<FilterViewHolder>> temp = new Pair<String, List<FilterViewHolder>>(getString(Constant.FILTERS[j]).toUpperCase(), subItems);
+            Pair<String, List<FilterViewHolder>> temp = new Pair<String, List<FilterViewHolder>>(mActivity.getString(Constant.FILTERS[j]).toUpperCase(), subItems);
             data.add(temp);
         }
         
@@ -221,7 +256,7 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 			
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
 			ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-			ft.replace(R.id.transactions_fragment, frag);
+			ft.replace(mFragmentResource, frag);
 			ft.addToBackStack(null);
 			ft.commit();
 		}
@@ -230,7 +265,7 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 	private TransactionDetailHandsetFragment getDetailFragment() {
 		
 		if (mDetail == null) {
-			mDetail = TransactionDetailHandsetFragment.newInstance(getActivity());
+			mDetail = TransactionDetailHandsetFragment.newInstance(mActivity, mFragmentResource);
 		}
 		
 		return mDetail;
@@ -238,7 +273,7 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 
 	@Override
 	public String getFragmentTitle() {
-		return getString(R.string.title_activity_transactions).toUpperCase();
+		return mActivity.getString(R.string.title_activity_transactions).toUpperCase();
 	}
 	
 	public void onEvent(MenuEvent event) {
@@ -291,12 +326,12 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 
 	@Override
 	protected Date getStartDate() {
-		return null;
+		return mStart;
 	}
 
 	@Override
 	protected Date getEndDate() {
-		return null;
+		return mEnd;
 	}
 
 	@Override

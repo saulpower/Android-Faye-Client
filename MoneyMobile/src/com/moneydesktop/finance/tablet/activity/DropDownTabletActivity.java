@@ -41,8 +41,8 @@ import com.moneydesktop.finance.tablet.fragment.TransactionsPageTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.UpdateUsernamePassowrdTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.views.AnimatedNavView;
-import com.moneydesktop.finance.views.AnimatedNavView.NavigationListener;
+import com.moneydesktop.finance.views.navigation.AnimatedNavView;
+import com.moneydesktop.finance.views.navigation.AnimatedNavView.NavigationListener;
 
 import de.greenrobot.event.EventBus;
 
@@ -370,11 +370,6 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
     @Override
     public void onFragmentBackPressed() {
         mBase.configureDetailView();
-    }
-
-    @Override
-    public void parentOnActivityResult(int requestCode, int resultCode, Intent data) {
-        mBase.parentOnActivityResult(requestCode, resultCode, data);
     }
 
     @Override

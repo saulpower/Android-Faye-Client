@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.views;
+package com.moneydesktop.finance.views.navigation;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -21,6 +21,7 @@ import android.view.animation.OvershootInterpolator;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.NavDirection;
 import com.moneydesktop.finance.model.EventMessage;
+import com.moneydesktop.finance.model.EventMessage.NavigationButtonEvent;
 import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
 import com.moneydesktop.finance.util.UiUtils;
 
@@ -32,6 +33,9 @@ public class HomeButton extends View {
 	public final String TAG = this.getClass().getSimpleName();
 
 	private final float SCROLL_DISTANCE = 17.0f;
+	
+	// Animation
+	private static final long DURATION = 500;
 	
 	private float mScrollDistance;
 	
@@ -64,9 +68,6 @@ public class HomeButton extends View {
 	// Touching
 	private boolean mTouching = false, mTouchingSlider = false;
     private float mDistance = 0.0f;
-	
-	// Animation
-	private long mDuration = 500;
 
 	/*******************************************************************************
 	 * Accessory Methods
@@ -87,6 +88,8 @@ public class HomeButton extends View {
 	 * @param showSlider
 	 */
 	public void setShowSlider(boolean showSlider) {
+		
+		if (showSlider == mShowSlider) return;
 		
 		this.mShowSlider = showSlider;
 		animateSlider(showSlider);
@@ -134,7 +137,7 @@ public class HomeButton extends View {
 	public void animateButtonBounce() {
         
         ObjectAnimator button = ObjectAnimator.ofFloat(this, "radius", mTouching ? mWidth : mWidth + 15, mTouching ? mWidth + 15 : mWidth);
-        button.setDuration(mDuration);
+        button.setDuration(DURATION);
         button.setInterpolator(new BounceInterpolator());
         button.start();
 	}
@@ -148,14 +151,14 @@ public class HomeButton extends View {
 	public void animateSlider(boolean showSlider) {
 	    
 	    ObjectAnimator slider = ObjectAnimator.ofFloat(this, "sliderRadius", showSlider ? 0 : mSliderMaxRadius, showSlider ? mSliderMaxRadius : 0);
-        slider.setDuration(mDuration);
+        slider.setDuration(DURATION);
         slider.setInterpolator(new OvershootInterpolator());
 
         ObjectAnimator alpha = ObjectAnimator.ofInt(this, "alphaSlider", showSlider ? 0 : 190, showSlider ? 190 : 0);
-        alpha.setDuration(mDuration);
+        alpha.setDuration(DURATION);
         
         ObjectAnimator stroke = ObjectAnimator.ofInt(this, "alphaSliderStroke", showSlider ? 0 : 255, showSlider ? 255 : 0);
-        stroke.setDuration(mDuration);
+        stroke.setDuration(DURATION);
         
         AnimatorSet set = new AnimatorSet();
         set.play(slider).with(alpha).with(stroke);
@@ -293,7 +296,7 @@ public class HomeButton extends View {
 			mStartPos = mPosY;
 			
 	        ObjectAnimator button = ObjectAnimator.ofFloat(this, "posY", mStartPos, mStartPos + mMoveDistance);
-	        button.setDuration(mDuration);
+	        button.setDuration(DURATION);
 	        button.setInterpolator(new AccelerateDecelerateInterpolator());
 	        button.start();
 		}
@@ -483,6 +486,10 @@ public class HomeButton extends View {
 		if (event.isShowing() != null) {
 			setShowSlider(event.isShowing());
 		}
+	}
+	
+	public void onEvent(NavigationButtonEvent event) {
+		setShowSlider(false);
 	}
 
 	/*******************************************************************************

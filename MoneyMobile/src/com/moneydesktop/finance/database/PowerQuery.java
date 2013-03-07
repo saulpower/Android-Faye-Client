@@ -1,15 +1,17 @@
 package com.moneydesktop.finance.database;
 
-import de.greenrobot.dao.AbstractDao;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.greenrobot.dao.AbstractDao;
+
 public class PowerQuery {
 
+    public final String TAG = this.getClass().getSimpleName();
+    
 	private AbstractDao<?, Long> mDao;
 	
     private int mCount = 0;
@@ -120,6 +122,7 @@ public class PowerQuery {
         
         field.setGroup(mGroup);
         field.setConnector(connector);
+        
         mWhereQueries.add(field);
         
         return this;

@@ -1,7 +1,5 @@
-package com.moneydesktop.finance.views;
+package com.moneydesktop.finance.views.navigation;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -16,6 +14,8 @@ import android.view.animation.AnticipateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
 import com.moneydesktop.finance.model.PointEvaluator;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
 
 @TargetApi(11)
 public class NavItemDrawable extends Drawable {

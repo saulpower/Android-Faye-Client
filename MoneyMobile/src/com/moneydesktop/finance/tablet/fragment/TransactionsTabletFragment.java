@@ -23,8 +23,8 @@ import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.shared.FilterViewHolder;
 import com.moneydesktop.finance.shared.adapter.FilterAdapter;
-import com.moneydesktop.finance.views.NavBarButtons;
 import com.moneydesktop.finance.views.UltimateListView;
+import com.moneydesktop.finance.views.navigation.NavBarButtons;
 
 import de.greenrobot.event.EventBus;
 

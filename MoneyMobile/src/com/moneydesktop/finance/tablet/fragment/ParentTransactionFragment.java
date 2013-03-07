@@ -1,7 +1,5 @@
 package com.moneydesktop.finance.tablet.fragment;
 
-import android.annotation.TargetApi;
-import android.content.Intent;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -14,7 +12,6 @@ import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransac
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment.onBackPressedListener;
 
-@TargetApi(11)
 public abstract class ParentTransactionFragment extends BaseFragment implements onBackPressedListener, ParentTransactionInterface {
     
     private TransactionDetailController mBase;
@@ -54,10 +51,5 @@ public abstract class ParentTransactionFragment extends BaseFragment implements 
     @Override
     public void onFragmentBackPressed() {
         mBase.configureDetailView();
-    }
-    
-    @Override
-    public void parentOnActivityResult(int requestCode, int resultCode, Intent data) {    
-        mBase.parentOnActivityResult(requestCode, resultCode, data);
     }
 }

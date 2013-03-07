@@ -637,7 +637,7 @@ public class BankAccount extends BusinessObject  {
             bankAccount.setDueDay(json.optInt(Constant.KEY_DAY_DUE));
 
         if (!json.optString(Constant.KEY_IS_MANUAL).equals(Constant.VALUE_NULL))
-            bankAccount.setIsLinked(json.optBoolean(Constant.KEY_IS_MANUAL));
+            bankAccount.setIsLinked(!json.optBoolean(Constant.KEY_IS_MANUAL));
 
         if (!json.optString(Constant.KEY_IS_PERSONAL).equals(Constant.VALUE_NULL))
             bankAccount
@@ -861,8 +861,8 @@ public class BankAccount extends BusinessObject  {
 
         json.put(Constant.KEY_IS_HIDDEN, (getIsExcluded() != null && getIsExcluded()) ? 1 : 0);
 
-        if (getIsLinked() != null && getIsLinked())
-            json.put(Constant.KEY_IS_MANUAL, getIsLinked() ? 1 : 0);
+        if (getIsLinked() != null && !getIsLinked())
+            json.put(Constant.KEY_IS_MANUAL, getIsLinked() ? 0 : 1);
 
         if (getCreditLimit() != null)
             json.put(Constant.KEY_CREDIT_LIMIT, getCreditLimit());

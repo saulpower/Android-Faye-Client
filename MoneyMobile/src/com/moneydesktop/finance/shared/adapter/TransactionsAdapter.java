@@ -43,7 +43,7 @@ public abstract class TransactionsAdapter extends AmazingAdapter {
 	private QueryProperty mOrderBy = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Date);
 	private boolean mDirection = true;
 	private String mSearch = "%";
-	private PowerQuery mQueries;
+	private List<PowerQuery> mQueries;
 
 	protected Activity mActivity;
 	
@@ -109,7 +109,7 @@ public abstract class TransactionsAdapter extends AmazingAdapter {
         this.mSearch = search;
     }
 
-    public void setQueries(PowerQuery queries) {
+    public void setQueries(List<PowerQuery> queries) {
         this.mQueries = queries;
     }
 
@@ -119,7 +119,6 @@ public abstract class TransactionsAdapter extends AmazingAdapter {
 
 	@Override
 	protected void onNextPageRequested(int page) {
-
 		loadPage(page);
 	}
 	
@@ -245,26 +244,40 @@ public abstract class TransactionsAdapter extends AmazingAdapter {
 	    
 	    int offset = (page - 1) * Constant.QUERY_LIMIT;
 	    
-	    PowerQuery subQuery = new PowerQuery(true);
+	    boolean category = false;
+	    boolean transactionTitle = false;
 	    
-	    if (mQueries == null || !mQueries.hasQueryProperty(mCategoryName)) {
-	        subQuery.or().whereLike(mCategoryName, mSearch);
-	    }
-        if (mQueries == null || !mQueries.hasQueryProperty(mTransactionTitle)) {
-            subQuery.or().whereLike(mTransactionTitle, mSearch);
-        }
+	    PowerQuery subQuery = new PowerQuery(true);
 	    
         PowerQuery query = new PowerQuery(mDao);
         query.join(mCategoryId)
             .join(mBankAccountId)
             .join(mTagInstance)
             .join(mBusinessObjectBase)
-            .where(subQuery).and()
-            .where(mQueries).and()
-            .where(mDataState, Integer.toString(DataState.DATA_STATE_DELETED.index())).and()
+            .where(subQuery).and();
+            
+        for (PowerQuery powerQuery : mQueries) {
+        	
+        	if (powerQuery == null) continue;
+        	
+        	query.where(powerQuery).and();
+        	
+	        category = powerQuery.hasQueryProperty(mCategoryName) || category;
+	        transactionTitle = powerQuery.hasQueryProperty(mTransactionTitle) || transactionTitle;
+        }
+        
+        query.where(mDataState, Integer.toString(DataState.DATA_STATE_DELETED.index())).and()
             .orderBy(mOrderBy, mDirection)
             .limit(Constant.QUERY_LIMIT)
             .offset(offset);
+    	
+    	if (!category) {
+	        subQuery.or().whereLike(mCategoryName, mSearch);
+	    }
+    	
+        if (!transactionTitle) {
+            subQuery.or().whereLike(mTransactionTitle, mSearch);
+        }
         
         if (mStart != null && mEnd != null) {
             query.between(mTransactionDate, mStart, mEnd);

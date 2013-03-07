@@ -17,10 +17,17 @@ public class TransactionDetailHandsetFragment extends TransactionDetailBaseFragm
 	
 	public final String TAG = this.getClass().getSimpleName();
 	
-	public static TransactionDetailHandsetFragment newInstance(Activity activity) {
+    private int mFragmentResource = R.id.transactions_fragment;
+    
+    public void setFragmentResource(int resource) {
+    	mFragmentResource = resource;
+    }
+	
+	public static TransactionDetailHandsetFragment newInstance(Activity activity, int fragmentResource) {
 		
 		TransactionDetailHandsetFragment frag = new TransactionDetailHandsetFragment();
 		frag.inflateView(activity);
+		frag.setFragmentResource(fragmentResource);
 		
         Bundle args = new Bundle();
         frag.setArguments(args);
@@ -80,7 +87,7 @@ public class TransactionDetailHandsetFragment extends TransactionDetailBaseFragm
     protected void showFragment(BaseFragment fragment) {
     	FragmentTransaction ft = getFragmentManager().beginTransaction();
 		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-		ft.replace(R.id.transactions_fragment, fragment);
+		ft.replace(mFragmentResource, fragment);
 		ft.addToBackStack(null);
 		ft.commit();
     }

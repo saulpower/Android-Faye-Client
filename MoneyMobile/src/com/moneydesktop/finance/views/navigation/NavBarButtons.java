@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.views;
+package com.moneydesktop.finance.views.navigation;
 
 import java.util.ArrayList;
 

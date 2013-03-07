@@ -50,6 +50,8 @@ public abstract class BaseFragment extends Fragment {
     		mActivity.updateNavBar(getFragmentTitle(), true);
     	}
     }
+    
+    public void isHiding() {}
 	
 	public abstract String getFragmentTitle();
 	public abstract boolean onBackPressed();

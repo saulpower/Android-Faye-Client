@@ -13,7 +13,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +43,7 @@ import com.moneydesktop.finance.shared.TransactionViewHolder;
 import com.moneydesktop.finance.shared.fragment.TransactionsFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
+import com.moneydesktop.finance.util.DateRange;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.EmailUtils;
 import com.moneydesktop.finance.util.FileIO;
@@ -70,12 +70,14 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
 
     private HeaderView mDate, mPayee, mCategory, mAmount;
     private LinearLayout mButtons, mHeaders;
-    private ImageView mSum, mEmail, mPrint, mReport, mAdd;
+    private ImageView mSum, mEmail, mAdd;
     
     private boolean mShowButtons = true;
     private DecimalFormat mFormatter = new DecimalFormat("$#,##0.00;-$#,##0.00");
     
     private Animation mFadeIn, mFadeOut;
+    
+    private DateRange mRange;
     
     public ParentTransactionInterface getParent() {
         return mParent;
@@ -97,14 +99,27 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
 	public FragmentType getType() {
 		return FragmentType.TRANSACTIONS_PAGE;
 	}
+    
+    public void setDateRange(long start, long end) {
+		this.mRange = new DateRange(start, end);
+	}
 
-    public static TransactionsPageTabletFragment newInstance(ParentTransactionInterface parent, Intent intent) {
+    @SuppressWarnings("unchecked")
+	public static TransactionsPageTabletFragment newInstance(ParentTransactionInterface parent, Intent intent) {
             
         TransactionsPageTabletFragment fragment = new TransactionsPageTabletFragment();
         fragment.setParent(parent);
         fragment.setAccountId(intent.getStringExtra(Constant.EXTRA_ACCOUNT_ID));
+        fragment.setCategories((ArrayList<Long>) intent.getSerializableExtra(Constant.EXTRA_CATEGORY_ID));
+        fragment.setCategoryType(intent.getIntExtra(Constant.EXTRA_CATEGORY_TYPE, -1));
         fragment.setTxFilter((TxFilter) intent.getSerializableExtra(Constant.EXTRA_TXN_TYPE));
         fragment.setShowButtons(false);
+        
+        if (intent.hasExtra(Constant.EXTRA_START_DATE) && intent.hasExtra(Constant.EXTRA_END_DATE)) {
+        	long start = intent.getLongExtra(Constant.EXTRA_START_DATE, 0);
+        	long end = intent.getLongExtra(Constant.EXTRA_END_DATE, 0);
+        	fragment.setDateRange(start, end);
+        }
         
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -156,6 +171,10 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
         mDateRange.setScroller(mScroller);
         mDateRange.setDateRangeChangeListener(this);
         
+        if (mRange != null) {
+        	mDateRange.setDateRange(mRange);
+        }
+        
         mDate = (HeaderView) mRoot.findViewById(R.id.date_header);
         mDate.setOnFilterChangeListener(this);
         mPayee = (HeaderView) mRoot.findViewById(R.id.payee_header);
@@ -174,8 +193,6 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
         
         mSum = (ImageView) mRoot.findViewById(R.id.sum);
         mEmail = (ImageView) mRoot.findViewById(R.id.email);
-        mPrint = (ImageView) mRoot.findViewById(R.id.print);
-        mReport = (ImageView) mRoot.findViewById(R.id.report);
         mAdd = (ImageView) mRoot.findViewById(R.id.add);
         
         // Bug with line not being lined up correctly

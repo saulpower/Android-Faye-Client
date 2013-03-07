@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
 
 import com.moneydesktop.finance.data.Preferences;
@@ -21,6 +22,7 @@ public class WebSocketService extends IntentService implements FayeListener {
     public final String TAG = this.getClass().getSimpleName();
     
     FayeClient mClient;
+    Handler mHandler;
     
     public WebSocketService() {
         super("WebSocketService");
@@ -44,7 +46,7 @@ public class WebSocketService extends IntentService implements FayeListener {
 	        JSONObject ext = new JSONObject();
 	        ext.put("authToken", User.getCurrentUser().getAuthorizationToken());
 	        
-	        mClient = new FayeClient(uri, channel);
+	        mClient = new FayeClient(mHandler, uri, channel);
 	        mClient.setFayeListener(this);
 	        mClient.connectToServer(ext);
 	        
@@ -54,6 +56,8 @@ public class WebSocketService extends IntentService implements FayeListener {
     @Override
     public void onCreate() {
         super.onCreate();
+        
+        mHandler = new Handler();
     }
 
     @Override
@@ -97,7 +101,15 @@ public class WebSocketService extends IntentService implements FayeListener {
 
 	@Override
 	public void messageReceived(JSONObject json) {
-		SyncEngine.sharedInstance().beginSync();
+		
+		mHandler.postDelayed(new Runnable() {
+			
+			@Override
+			public void run() {
+
+				SyncEngine.sharedInstance().beginSync();
+			}
+		}, 1500);
 	}
 
 }

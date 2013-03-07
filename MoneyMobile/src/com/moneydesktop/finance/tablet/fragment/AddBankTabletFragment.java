@@ -4,8 +4,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,12 +35,11 @@ import android.widget.ViewFlipper;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.SplashActivity;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataBridge;
 import com.moneydesktop.finance.data.DataController;
-import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.Bank;
@@ -62,7 +59,7 @@ import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.AddNewInstitutionAdapter;
 import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.views.AnimatedNavView.NavigationListener;
+import com.moneydesktop.finance.views.navigation.AnimatedNavView.NavigationListener;
 
 import de.greenrobot.event.EventBus;
 

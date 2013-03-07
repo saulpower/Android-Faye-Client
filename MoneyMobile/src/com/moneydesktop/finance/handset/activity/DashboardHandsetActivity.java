@@ -39,7 +39,6 @@ import com.moneydesktop.finance.handset.adapter.MenuRightHandsetAdapter;
 import com.moneydesktop.finance.handset.fragment.AccountTypesHandsetFragment;
 import com.moneydesktop.finance.handset.fragment.SettingsHandsetFragment;
 import com.moneydesktop.finance.handset.fragment.SpendingChartHandsetFragment;
-import com.moneydesktop.finance.handset.fragment.SpendingChartSummaryHandsetFragment;
 import com.moneydesktop.finance.handset.fragment.TransactionsHandsetFragment;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
@@ -49,9 +48,9 @@ import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.GrowViewPager;
-import com.moneydesktop.finance.views.NavBarView;
 import com.moneydesktop.finance.views.UltimateListView;
 import com.moneydesktop.finance.views.ViewAnimator;
+import com.moneydesktop.finance.views.navigation.NavBarView;
 
 import de.greenrobot.event.EventBus;
 
@@ -68,7 +67,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	private TextView mUpdateLabel, mUpdate;
 	private NavBarView mRefresh;
 	private UltimateListView mRightMenuList;
-	private FragmentType mCurrentFragment;
+	private FragmentType mCurrentFragmentType;
 	
 	private MenuRightHandsetAdapter mRightMenuAdapter;
 
@@ -107,7 +106,8 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 
 		@Override
 		public void onAnimationEnd(Animation animation) {
-			EventBus.getDefault().post(new EventMessage().new NavigationEvent(mCurrentFragment));
+			
+			fragmentShowing();
 		}
 
 		@Override
@@ -117,8 +117,8 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 		public void onAnimationStart(Animation animation) {}
 	};
 	
-	public FragmentType getCurrentFragment() {
-		return mCurrentFragment;
+	public FragmentType getCurrentFragmentType() {
+		return mCurrentFragmentType;
 	}
 
 	public GrowPagerAdapter getPagerAdapter() {
@@ -281,6 +281,21 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     	FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.add(containerViewId, fragment);
 		ft.commit();
+    }
+    
+    private void fragmentShowing() {
+    	
+    	if (mFragments.containsKey(mCurrentFragmentType)) {
+			
+			mFlipper.post(new Runnable() {
+				
+				@Override
+				public void run() {
+
+		    		mFragments.get(mCurrentFragmentType).isShowing(false);
+				}
+			});
+    	}
     }
 	
 	private void resetRightMenu() {
@@ -451,12 +466,12 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	@Override
     public void showFragment(FragmentType type, boolean moveUp) {
     	
-		if (mCurrentFragment == type) return;
+		if (mCurrentFragmentType == type) return;
 
     	resetRightMenu();
-    	mCurrentFragment = type;
+    	mCurrentFragmentType = type;
     	
-    	int index = mCurrentFragment.index();
+    	int index = mCurrentFragmentType.index();
     	
     	// Adjustment for ordering issues the must remain so
     	// things work properly on the tablet version
@@ -472,15 +487,11 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     	
     	if (mOnHome) {
 
-        	SyncEngine.sharedInstance().beginSync();
+        	SyncEngine.sharedInstance().syncCheck();
             updateNavBar(getActivityTitle(), false);
     		
-    	} else {
-    	
-	    	// Tell the selected fragment it is now showing
-	    	if (mFragments.containsKey(type)) mFragments.get(type).isShowing(false);
     	}
-    	
+
         AnimationFactory.slideTransition(mFlipper, type.index(), mStart, mFinish, moveUp ? FlipDirection.BOTTOM_TOP : FlipDirection.TOP_BOTTOM, TRANSITION_DURATION);
     }
 	
@@ -508,7 +519,14 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 		configureBackButton();
 		
 		// Update the menu when fragments have changed
-    	if (mFragments.containsKey(mCurrentFragment) && count == 5) mFragments.get(mCurrentFragment).isShowing(true);
+    	if (mFragments.containsKey(mCurrentFragmentType) && count == (DEFAULT_FRAGMENTS - 1)) {
+    		
+    		mFragments.get(mCurrentFragmentType).isShowing(true);
+    		
+    	} else if (mFragments.containsKey(mCurrentFragmentType) && count >= DEFAULT_FRAGMENTS) {
+
+    		mFragments.get(mCurrentFragmentType).isHiding();
+    	}
 	}
 	
 	private void configureBackButton() {

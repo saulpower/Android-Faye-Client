@@ -1,6 +1,6 @@
 package com.moneydesktop.finance.shared.fragment;
 
-
+import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.Activity;
@@ -15,8 +15,10 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.TxFilter;
+import com.moneydesktop.finance.database.CategoryDao;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.database.Transactions;
@@ -24,6 +26,7 @@ import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.handset.adapter.TransactionsHandsetAdapter;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.model.EventMessage.FilterEvent;
+import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.shared.adapter.TransactionsAdapter;
 import com.moneydesktop.finance.shared.adapter.TransactionsAdapter.OnDataLoadedListener;
 import com.moneydesktop.finance.tablet.adapter.TransactionsTabletAdapter;
@@ -43,13 +46,15 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
     protected TransactionsAdapter mAdapter;
 
     protected String mAccountId;
+    protected ArrayList<Long> mCategories;
+    protected int mCategoryType;
     protected TxFilter mTxFilter;
     protected QueryProperty mAccountIdProp = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.BankAccountId);
     protected QueryProperty mIsProcessed = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.IsProcessed);
     protected QueryProperty mOrderBy = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Date);
     protected boolean mDirection = true;
     protected String mSearchTitle = "%";
-    protected PowerQuery mQueries;
+    protected ArrayList<PowerQuery> mQueries = new ArrayList<PowerQuery>();
     
     protected EditText mSearch;
     
@@ -76,8 +81,16 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
     public void setAccountId(String mAccountId) {
         this.mAccountId = mAccountId;
     }
+    
+    public void setCategories(ArrayList<Long> mCategories) {
+        this.mCategories = mCategories;
+    }
+    
+    public void setCategoryType(int mCategoryType) {
+        this.mCategoryType = mCategoryType;
+    }
 
-    public void setTxFilter(TxFilter mTxFilter) {
+	public void setTxFilter(TxFilter mTxFilter) {
         this.mTxFilter = mTxFilter;
     }
 
@@ -186,7 +199,7 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
             mTransactionsList.setAdapter(mAdapter);
         }
 
-        addAccountFilter();
+        addAdditionalFilters();
         
         mAdapter.setDateRange(getStartDate(), getEndDate());
         mAdapter.setOrder(mOrderBy, mDirection);
@@ -204,13 +217,21 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
     
     public void onEvent(FilterEvent event) {
 
-        mQueries = event.getQueries();
+    	mQueries.clear();
+        mQueries.add(event.getQuery());
         filterChanged(-1);
     }
     
     public void onEvent(DatabaseSaveEvent event) {
+    	
+    	if (mAdapter != null && event.getChangedClassesList().contains(Transactions.class)) {
+    		mAdapter.notifyDataSetChanged();
+    	}
+    }
+    
+    public void onEvent(SyncEvent event) {
         
-    	if (mAdapter != null && event.didDatabaseChange()) {
+    	if (mAdapter != null && event.isFinished()) {
     		refreshTransactionsList(false);
     	}
     }
@@ -234,22 +255,46 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
      * Add any passed in filters when the fragment
      * was constructed.
      */
-    private void addAccountFilter() {
+    private void addAdditionalFilters() {
         
-        if (mAccountId == null && mTxFilter != null) {
+        if (mAccountId == null && mCategories == null && mTxFilter != null) {
             return;
         }
         
-        if (mQueries == null) {
-            mQueries = new PowerQuery(false);
+        if (mQueries.size() == 0) {
+            mQueries.add(new PowerQuery(false));
         }
         
         if (mAccountId != null) {
-            mQueries.and().where(mAccountIdProp, mAccountId);
+            mQueries.get(0).and().where(mAccountIdProp, mAccountId);
         }
         
         if (mTxFilter != null && mTxFilter == TxFilter.UNCLEARED) {
-            mQueries.and().where(mIsProcessed, "0");
+            mQueries.get(0).and().where(mIsProcessed, "0");
+        }
+        
+        if (mCategories != null) {
+        	
+        	PowerQuery query = new PowerQuery(true);
+        	
+        	for (Long cat : mCategories) {
+        		
+        		String categoryId = Long.toString(cat);
+        		
+        		switch (mCategoryType) {
+        		
+	        		case Constant.CATEGORY_TYPE_GROUP:
+	            	    QueryProperty parentCategoryIdProp = new QueryProperty(CategoryDao.TABLENAME, CategoryDao.Properties.ParentCategoryId);
+	    	            query.or().where(parentCategoryIdProp, categoryId);
+	    	            
+	        		case Constant.CATEGORY_TYPE_CHILD:
+	            	    QueryProperty categoryIdProp = new QueryProperty(CategoryDao.TABLENAME, CategoryDao.Properties.Id);
+	    	            query.or().where(categoryIdProp, categoryId);
+	    	            break;
+        		}
+        	}
+        	
+        	mQueries.add(query);
         }
     }
 }

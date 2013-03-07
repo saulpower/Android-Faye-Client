@@ -147,7 +147,7 @@ public class EventMessage {
 	        mQueries = queries;
 	    }
 	    
-	    public PowerQuery getQueries() {
+	    public PowerQuery getQuery() {
 	        return mQueries;
 	    }
 	}
@@ -192,6 +192,7 @@ public class EventMessage {
 	    }
 	}
 	
+	public class NavigationButtonEvent extends EventMessage {}
 	public class NavigationEvent extends EventMessage {
 		
 		protected Boolean mShowing;

@@ -1,9 +1,7 @@
 package com.moneydesktop.finance.database;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONObject;
 
@@ -20,8 +18,6 @@ import de.greenrobot.dao.query.Query;
 public abstract class BusinessObject implements BusinessObjectInterface {
 	
 	public static final String TAG = "BusinessObject";
-
-	private static Map<Class<?>, Query<?>> sQueries = new HashMap<Class<?>, Query<?>>();
 	
 	protected DataState mDataStateEnum;
 	protected DataState mPreviousDataStateEnum;
@@ -375,18 +371,8 @@ public abstract class BusinessObject implements BusinessObjectInterface {
      */
     private static Query<?> getQuery(Class<?> key, Long id) {
     		
-		Query<?> queryId = sQueries.get(key);
-		
-    	if (queryId == null) {
-
-    		AbstractDao<?, Long> abDao = DataController.getDao(key);
-    		queryId = abDao.queryBuilder().where(Properties.Id.eq(id)).build();
-    		sQueries.put(key, queryId);
-    		
-    	} else {
-    		
-    		queryId.setParameter(0, id);
-    	}
+		AbstractDao<?, Long> abDao = DataController.getDao(key);
+		Query<?> queryId = abDao.queryBuilder().where(Properties.Id.eq(id)).build();
     	
     	return queryId;
     }

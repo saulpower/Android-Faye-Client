@@ -47,9 +47,9 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.FixedSpeedScroller;
 import com.moneydesktop.finance.views.GrowViewPager;
-import com.moneydesktop.finance.views.NavBarButtons;
-import com.moneydesktop.finance.views.NavWheelView;
-import com.moneydesktop.finance.views.NavWheelView.onNavigationChangeListener;
+import com.moneydesktop.finance.views.navigation.NavBarButtons;
+import com.moneydesktop.finance.views.navigation.NavWheelView;
+import com.moneydesktop.finance.views.navigation.NavWheelView.onNavigationChangeListener;
 
 import de.greenrobot.event.EventBus;
 
@@ -166,7 +166,6 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 
     	if (mFlipper == null) return;
     	
-        mOnHome = home;
         
     	if (home && mFlipper.getDisplayedChild() == 1) {
     		
@@ -174,6 +173,22 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
     		
     		mNavigation.setCurrentIndex(0);
 	        
+    		mInHome.setAnimationListener(new AnimationListener() {
+				
+    			public void onAnimationStart(Animation animation) {}
+	            
+	            public void onAnimationRepeat(Animation animation) {}
+	            
+	            public void onAnimationEnd(Animation animation) {
+
+	                mOnHome = home;
+	                
+	            	NavigationEvent navEvent = new EventMessage().new NavigationEvent();
+	                navEvent.setMovingHome(mOnHome);
+	                EventBus.getDefault().post(navEvent);
+	        	}
+			});
+    		
 			mFlipper.setInAnimation(mInHome);
 			mFlipper.setOutAnimation(mOut);
 			mFlipper.setDisplayedChild(0);
@@ -184,7 +199,9 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
             updateNavBar(getActivityTitle(), false);
 			
     	} else if (!home && mFlipper.getDisplayedChild() == 0) {
-    		
+
+            mOnHome = home;
+            
     		NavigationEvent navEvent = new EventMessage().new NavigationEvent();
             navEvent.setMovingHome(home);
             
@@ -249,23 +266,8 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         
         mOut = AnimationUtils.loadAnimation(this, R.anim.out_down);
         mOut.setAnimationListener(finish);
-
-        finish = new AnimationListener() {
-            
-            public void onAnimationStart(Animation animation) {}
-            
-            public void onAnimationRepeat(Animation animation) {}
-            
-            public void onAnimationEnd(Animation animation) {
-            	
-            	NavigationEvent navEvent = new EventMessage().new NavigationEvent();
-                navEvent.setMovingHome(mOnHome);
-                EventBus.getDefault().post(navEvent);
-        	}
-        };
         
         mInHome = AnimationUtils.loadAnimation(this, R.anim.in_down);
-        mInHome.setAnimationListener(finish);
 	}
 
 	private void setupView() {
@@ -404,7 +406,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 
         switch (type) {
             case DASHBOARD:
-            	SyncEngine.sharedInstance().beginSync();
+            	SyncEngine.sharedInstance().syncCheck();
     			configureView(true);
             	return null;
             case ACCOUNT_TYPES:

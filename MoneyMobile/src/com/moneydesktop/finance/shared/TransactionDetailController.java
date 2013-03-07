@@ -1,12 +1,6 @@
 package com.moneydesktop.finance.shared;
 
-import android.animation.Animator;
-import android.animation.Animator.AnimatorListener;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.Intent;
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentManager;
@@ -28,8 +22,12 @@ import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
 import com.moneydesktop.finance.util.UiUtils;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.Animator.AnimatorListener;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
 
-@TargetApi(11)
+@SuppressLint("NewApi")
 public class TransactionDetailController {
     
     public final String TAG = this.getClass().getSimpleName();
@@ -376,22 +374,7 @@ public class TransactionDetailController {
         return fade;
     }
     
-    public void parentOnActivityResult(int requestCode, int resultCode, Intent data) {
-        
-        if (resultCode == Activity.RESULT_OK) {
-            
-            long categoryId = data.getLongExtra(Constant.EXTRA_CATEGORY_ID, -1);
-            
-            if (getDetailFragment() != null && categoryId != -1) {
-                getDetailFragment().updateTransactionCategory(categoryId);
-            }
-            
-            return;
-        }
-    }
-    
     public interface ParentTransactionInterface {
-        public void parentOnActivityResult(int requestCode, int resultCode, Intent data);
         public void showTransactionDetails(View view, int offset, Transactions transaction);
         public void setDetailFragment(TransactionsDetailTabletFragment fragment);
         public TransactionsDetailTabletFragment getDetailFragment();
