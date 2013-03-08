@@ -9,7 +9,7 @@
       <directory url="file://$PROJECT_DIR$/../FayeClient/gen" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/../devsmartlib/gen" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/../Communication/gen" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/../library/gen" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/../NineOldAndroids/gen" includeSubdirectories="true" />
     </excludeFromCompile>
     <resourceExtensions />
     <wildcardResourcePatterns>
@@ -25,6 +25,13 @@
     <annotationProcessing>
       <profile default="true" name="Default" enabled="false">
         <processorPath useClasspath="true" />
+      </profile>
+      <profile default="false" name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="Communication" />
       </profile>
     </annotationProcessing>
   </component>

@@ -8,7 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/MoneyMobile.iml" filepath="$PROJECT_DIR$/MoneyMobile.iml" />
       <module fileurl="file://$PROJECT_DIR$/../ViewPagerIndicator/ViewPagerIndicator.iml" filepath="$PROJECT_DIR$/../ViewPagerIndicator/ViewPagerIndicator.iml" />
       <module fileurl="file://$PROJECT_DIR$/../devsmartlib/devsmartlib.iml" filepath="$PROJECT_DIR$/../devsmartlib/devsmartlib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../library/library.iml" filepath="$PROJECT_DIR$/../library/library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../NineOldAndroids/library.iml" filepath="$PROJECT_DIR$/../NineOldAndroids/library.iml" />
     </modules>
   </component>
 </project>
