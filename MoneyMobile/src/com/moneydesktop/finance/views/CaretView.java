@@ -78,15 +78,15 @@ public class CaretView extends ImageView {
 	
 	private void init(AttributeSet attrs) {
 		
-		TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.Caret);
+		TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CaretView);
 		
-	    setCaretWidth(a.getDimension(R.styleable.Caret_width, 10.0f));
-	    setCaretHeight(a.getDimension(R.styleable.Caret_height, 10.0f));
-	    setCaretRotation(a.getFloat(R.styleable.Caret_rotation, 0.0f));
+	    setCaretWidth(a.getDimension(R.styleable.CaretView_width, 10.0f));
+	    setCaretHeight(a.getDimension(R.styleable.CaretView_height, 10.0f));
+	    setCaretRotation(a.getFloat(R.styleable.CaretView_rotation, 0.0f));
 
         createCaret();
         
-        setColor(a.getColor(R.styleable.Caret_color, Color.WHITE));
+        setColor(a.getColor(R.styleable.CaretView_color, Color.WHITE));
 		
         a.recycle();
 	}

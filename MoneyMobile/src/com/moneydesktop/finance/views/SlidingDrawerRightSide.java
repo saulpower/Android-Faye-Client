@@ -155,22 +155,22 @@ public class SlidingDrawerRightSide extends ViewGroup {
       */
      public SlidingDrawerRightSide(Context context, AttributeSet attrs, int defStyle) {
          super(context, attrs, defStyle);
-         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BankAccountSlidingDrawer, defStyle, 0);
+         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SlidingDrawerRightSide, defStyle, 0);
 
-         int orientation = a.getInt(R.styleable.BankAccountSlidingDrawer_orientation, ORIENTATION_VERTICAL);
+         int orientation = a.getInt(R.styleable.SlidingDrawerRightSide_orientation, ORIENTATION_VERTICAL);
          mVertical = orientation == ORIENTATION_VERTICAL;
-         mBottomOffset = (int) a.getDimension(R.styleable.BankAccountSlidingDrawer_bottomOffset, 0.0f);
-         mTopOffset = (int) a.getDimension(R.styleable.BankAccountSlidingDrawer_topOffset, 0.0f);
+         mBottomOffset = (int) a.getDimension(R.styleable.SlidingDrawerRightSide_bottomOffset, 0.0f);
+         mTopOffset = (int) a.getDimension(R.styleable.SlidingDrawerRightSide_topOffset, 0.0f);
          mAllowSingleTap = true;
          mAnimateOnClick = true;
 
-         int handleId = a.getResourceId(R.styleable.BankAccountSlidingDrawer_handle, 0);
+         int handleId = a.getResourceId(R.styleable.SlidingDrawerRightSide_handle, 0);
          if (handleId == 0) {
              throw new IllegalArgumentException("The handle attribute is required and must refer "
                      + "to a valid child.");
          }
 
-         int contentId = a.getResourceId(R.styleable.BankAccountSlidingDrawer_content, 0);
+         int contentId = a.getResourceId(R.styleable.SlidingDrawerRightSide_content, 0);
          if (contentId == 0) {
              throw new IllegalArgumentException("The content attribute is required and must refer "
                      + "to a valid child.");

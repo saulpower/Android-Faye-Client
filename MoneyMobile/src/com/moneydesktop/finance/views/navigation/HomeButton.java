@@ -270,12 +270,12 @@ public class HomeButton extends View {
 		
 		if (attrs != null) {
 			
-			TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.Caret);
+			TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CaretView);
 	
-		    setColor(a.getColor(R.styleable.Caret_color, Color.WHITE));
-		    setSecondaryColor(a.getColor(R.styleable.Caret_secondaryColor, Color.CYAN));
-		    setButtonWidth(a.getDimension(R.styleable.Caret_width, 10.0f));
-		    setButtonHeight(a.getDimension(R.styleable.Caret_height, 10.0f));
+		    setColor(a.getColor(R.styleable.CaretView_color, Color.WHITE));
+		    setSecondaryColor(a.getColor(R.styleable.CaretView_secondaryColor, Color.CYAN));
+		    setButtonWidth(a.getDimension(R.styleable.CaretView_width, 10.0f));
+		    setButtonHeight(a.getDimension(R.styleable.CaretView_height, 10.0f));
 			
 			a.recycle();
 		}

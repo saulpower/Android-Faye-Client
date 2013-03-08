@@ -106,13 +106,13 @@ public class LineView extends View {
         
         if (attrs != null) {
             
-            TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.Line);
+            TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.LineView);
 
-            setLineColors(a.getColorStateList(R.styleable.Line_lineColor));
-            setIsDashed(a.getBoolean(R.styleable.Line_isDashed, false));
-            setLineWidth(a.getDimension(R.styleable.Line_lineStrokeWidth, 1.0f));
-            setDashLength(a.getDimension(R.styleable.Line_dashLength, mIsDashed ? 1.0f : 0.0f));
-            setIsVertical(a.getBoolean(R.styleable.Line_isVertical, false));
+            setLineColors(a.getColorStateList(R.styleable.LineView_lineColor));
+            setIsDashed(a.getBoolean(R.styleable.LineView_isDashed, false));
+            setLineWidth(a.getDimension(R.styleable.LineView_lineStrokeWidth, 1.0f));
+            setDashLength(a.getDimension(R.styleable.LineView_dashLength, mIsDashed ? 1.0f : 0.0f));
+            setIsVertical(a.getBoolean(R.styleable.LineView_isVertical, false));
             
             a.recycle();
         }

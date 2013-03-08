@@ -25,9 +25,9 @@ public class VerticalTextView extends TextView {
 		
 		if (attrs != null) {
             
-            TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.VerticalText);
+            TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.VerticalTextView);
     
-            mTopDown = a.getBoolean(R.styleable.VerticalText_isLeft, false);
+            mTopDown = a.getBoolean(R.styleable.VerticalTextView_isLeft, false);
             
             a.recycle();
         }

@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="libs">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/commons-lang-2.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/jackson-annotations-2.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/jackson-databind-2.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/jackson-core-2.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/greendao-1.3.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/android-support-v4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/eventbus-V1.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/crittercism_v3_0_3_sdkonly.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

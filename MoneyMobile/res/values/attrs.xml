@@ -15,7 +15,7 @@
         <attr name="iconTextColor" format="color" />
     </declare-styleable>
     
-    <declare-styleable name="Caret">
+    <declare-styleable name="CaretView">
         <attr name="color" format="color" />
         <attr name="secondaryColor" format="color" />
         <attr name="width" format="dimension" />
@@ -36,7 +36,7 @@
         <attr name="spinnerColor" format="color" />
     </declare-styleable>
     
-    <declare-styleable name="Line">
+    <declare-styleable name="LineView">
         <attr name="lineColor" format="reference" />
         <attr name="isDashed" format="boolean" />
         <attr name="isVertical" format="boolean" />
@@ -75,7 +75,7 @@
         <enum name="vertical" value="1" />
     </attr>
         
-    <declare-styleable name="VerticalText">
+    <declare-styleable name="VerticalTextView">
        <attr name="isLeft" format="boolean" />
     </declare-styleable>
     
@@ -84,7 +84,7 @@
         <enum name="right" value="1" />
     </attr>
         
-    <declare-styleable name="BankAccountSlidingDrawer">
+    <declare-styleable name="SlidingDrawerRightSide">
         <attr name="handle" />
         <attr name="content" />
         <attr name="bottomOffset" />

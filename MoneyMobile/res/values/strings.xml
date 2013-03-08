@@ -353,7 +353,6 @@
     <string name="setting_lock_title">Lock Device</string>
     <string name="setting_unlink_text">Unlink this device from your account and delete all the data from this device. (Your data is still stored on our servers.)</string>
     <string name="setting_unlink_title">Unlink</string>
-    <string name="setup_url">http://embed.moneydesktop.com/setup-instructions.html</string>
     <string name="show_hide_label">SHOW/HIDE ACCOUNT</string>
     <string name="show_hide_exclude_transactions_from_lists">EXCLUDE TRANSACTIONS FROM LISTS</string>
     <string name="show_hide_exclude_from_reports">HIDE FROM REPORTS/CHARTS</string>
