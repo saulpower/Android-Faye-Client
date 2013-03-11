@@ -1,5 +1,6 @@
 package com.moneydesktop.finance.handset.fragment;
 
+import android.util.Log;
 import net.simonvt.menudrawer.MenuDrawer;
 import android.app.Activity;
 import android.os.Bundle;
@@ -180,7 +181,7 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
 	private void configureChart(boolean showChart) {
 		
 		if (showChart && ((DashboardHandsetActivity) mActivity).getCurrentFragmentType() == getType() && !mPaused) {
-			mChart.onResume();
+            mChart.onResume();
 		} else {
 			mChart.onPause();
 		}

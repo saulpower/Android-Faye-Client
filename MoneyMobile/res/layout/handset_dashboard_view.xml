@@ -21,7 +21,7 @@
 	    app:mdMenuSize="150dp">
 	    
 	    <ViewFlipper
-	        android:id="@id/md__menu"
+	        android:id="@id/mdMenu"
 	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
     		android:background="@color/gray7" >

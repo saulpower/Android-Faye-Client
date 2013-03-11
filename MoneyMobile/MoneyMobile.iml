@@ -41,10 +41,9 @@
     <orderEntry type="library" name="libs" level="project" />
     <orderEntry type="module" module-name="MenuDrawerLibrary" />
     <orderEntry type="module" module-name="Communication" />
-    <orderEntry type="module" module-name="devsmartlib" />
     <orderEntry type="module" module-name="FayeClient" />
     <orderEntry type="module" module-name="ViewPagerIndicator" />
-    <orderEntry type="module" module-name="library" />
+    <orderEntry type="module" module-name="NineOldAndroids" />
   </component>
 </module>
 

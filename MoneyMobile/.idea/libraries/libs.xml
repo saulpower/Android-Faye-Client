@@ -9,6 +9,7 @@
       <root url="jar://$PROJECT_DIR$/libs/android-support-v4.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/eventbus-V1.0.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/crittercism_v3_0_3_sdkonly.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/devsmartlib.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

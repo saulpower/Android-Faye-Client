@@ -500,7 +500,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	 * back button if necessary.
 	 * 
 	 * @param titleString the title for the navigation bar
-	 * @param navButtons 
+	 * @param fragmentTitle
 	 * @return 
 	 */
 	public void updateNavBar(String titleString, boolean fragmentTitle) {

@@ -6,8 +6,8 @@
       <module fileurl="file://$PROJECT_DIR$/../FayeClient/FayeClient.iml" filepath="$PROJECT_DIR$/../FayeClient/FayeClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/../MenuDrawerLibrary/MenuDrawerLibrary.iml" filepath="$PROJECT_DIR$/../MenuDrawerLibrary/MenuDrawerLibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/MoneyMobile.iml" filepath="$PROJECT_DIR$/MoneyMobile.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../NineOldAndroids/NineOldAndroids.iml" filepath="$PROJECT_DIR$/../NineOldAndroids/NineOldAndroids.iml" />
       <module fileurl="file://$PROJECT_DIR$/../ViewPagerIndicator/ViewPagerIndicator.iml" filepath="$PROJECT_DIR$/../ViewPagerIndicator/ViewPagerIndicator.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../devsmartlib/devsmartlib.iml" filepath="$PROJECT_DIR$/../devsmartlib/devsmartlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/../NineOldAndroids/library.iml" filepath="$PROJECT_DIR$/../NineOldAndroids/library.iml" />
     </modules>
   </component>

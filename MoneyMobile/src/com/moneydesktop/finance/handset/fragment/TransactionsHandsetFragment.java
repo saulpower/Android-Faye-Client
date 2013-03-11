@@ -1,9 +1,5 @@
 package com.moneydesktop.finance.handset.fragment;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -19,11 +15,11 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.TextView;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.TxFilter;
+import com.moneydesktop.finance.database.TagInstance;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
@@ -33,8 +29,11 @@ import com.moneydesktop.finance.shared.adapter.FilterAdapter;
 import com.moneydesktop.finance.shared.fragment.TransactionsFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.UltimateListView;
-
 import de.greenrobot.event.EventBus;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class TransactionsHandsetFragment extends TransactionsFragment implements OnItemClickListener, OnChildClickListener {
 	
@@ -296,7 +295,10 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 	
 	public void onEvent(DatabaseSaveEvent event) {
 	    
-	    if (mFilterAdapter != null && event.didDatabaseChange()) {
+	    if (mFilterAdapter != null && event.didDatabaseChange()
+                && (event.getChangedClassesList().contains(Transactions.class)
+                || event.getChangedClassesList().contains(TagInstance.class))) {
+
 	        mFilterAdapter.reloadSections();
     		refreshTransactionsList(false);
 	    }

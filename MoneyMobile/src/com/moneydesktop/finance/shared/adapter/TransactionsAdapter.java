@@ -1,25 +1,17 @@
 package com.moneydesktop.finance.shared.adapter;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Pair;
-
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.DataState;
-import com.moneydesktop.finance.database.BankAccountDao;
-import com.moneydesktop.finance.database.BusinessObjectBaseDao;
-import com.moneydesktop.finance.database.CategoryDao;
-import com.moneydesktop.finance.database.PowerQuery;
-import com.moneydesktop.finance.database.QueryProperty;
-import com.moneydesktop.finance.database.TagInstanceDao;
-import com.moneydesktop.finance.database.Transactions;
-import com.moneydesktop.finance.database.TransactionsDao;
+import com.moneydesktop.finance.database.*;
 import com.moneydesktop.finance.views.AmazingListView;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public abstract class TransactionsAdapter extends AmazingAdapter {
     
@@ -174,14 +166,14 @@ public abstract class TransactionsAdapter extends AmazingAdapter {
 	private void loadPage(final int page) {
 	    
 	    if (mBackgroundTask != null) {
-            mBackgroundTask.cancel(false);
+            mBackgroundTask.cancel(true);
         }
 
         mBackgroundTask = new AsyncTask<Integer, Void, Pair<Boolean, List<Transactions>>>() {
             
             @Override
             protected Pair<Boolean, List<Transactions>> doInBackground(Integer... params) {
-                
+
                 int page = params[0];
 
                 Pair<Boolean, List<Transactions>> rows = Transactions.getRows(generateQuery(page));
@@ -241,49 +233,55 @@ public abstract class TransactionsAdapter extends AmazingAdapter {
 	}
 	
 	private PowerQuery generateQuery(int page) {
-	    
-	    int offset = (page - 1) * Constant.QUERY_LIMIT;
-	    
-	    boolean category = false;
-	    boolean transactionTitle = false;
-	    
-	    PowerQuery subQuery = new PowerQuery(true);
-	    
-        PowerQuery query = new PowerQuery(mDao);
-        query.join(mCategoryId)
-            .join(mBankAccountId)
-            .join(mTagInstance)
-            .join(mBusinessObjectBase)
-            .where(subQuery).and();
-            
-        for (PowerQuery powerQuery : mQueries) {
-        	
-        	if (powerQuery == null) continue;
-        	
-        	query.where(powerQuery).and();
-        	
-	        category = powerQuery.hasQueryProperty(mCategoryName) || category;
-	        transactionTitle = powerQuery.hasQueryProperty(mTransactionTitle) || transactionTitle;
+
+        synchronized (mQueries) {
+
+            int offset = (page - 1) * Constant.QUERY_LIMIT;
+
+            boolean category = false;
+            boolean transactionTitle = false;
+
+            PowerQuery subQuery = new PowerQuery(true);
+
+            PowerQuery query = new PowerQuery(mDao);
+            query.join(mCategoryId)
+                .join(mBankAccountId)
+                .join(mTagInstance)
+                .join(mBusinessObjectBase);
+
+            for (PowerQuery powerQuery : mQueries) {
+
+                if (powerQuery == null) continue;
+
+                query.where(powerQuery).and();
+
+                category = powerQuery.hasQueryProperty(mCategoryName) || category;
+                transactionTitle = powerQuery.hasQueryProperty(mTransactionTitle) || transactionTitle;
+            }
+
+            query.where(mDataState, Integer.toString(DataState.DATA_STATE_DELETED.index())).and()
+                .orderBy(mOrderBy, mDirection)
+                .limit(Constant.QUERY_LIMIT)
+                .offset(offset);
+
+            if (mStart != null && mEnd != null) {
+                query.between(mTransactionDate, mStart, mEnd).and();
+            }
+
+            if (!category) {
+                subQuery.or().whereLike(mCategoryName, mSearch);
+            }
+
+            if (!transactionTitle) {
+                subQuery.or().whereLike(mTransactionTitle, mSearch);
+            }
+
+            if (!category || !transactionTitle) {
+                query.where(subQuery);
+            }
+
+            return query;
         }
-        
-        query.where(mDataState, Integer.toString(DataState.DATA_STATE_DELETED.index())).and()
-            .orderBy(mOrderBy, mDirection)
-            .limit(Constant.QUERY_LIMIT)
-            .offset(offset);
-    	
-    	if (!category) {
-	        subQuery.or().whereLike(mCategoryName, mSearch);
-	    }
-    	
-        if (!transactionTitle) {
-            subQuery.or().whereLike(mTransactionTitle, mSearch);
-        }
-        
-        if (mStart != null && mEnd != null) {
-            query.between(mTransactionDate, mStart, mEnd);
-        }
-        
-        return query;
 	}
     
     public interface OnDataLoadedListener {

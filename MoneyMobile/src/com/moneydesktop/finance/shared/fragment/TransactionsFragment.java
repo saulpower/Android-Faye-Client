@@ -1,8 +1,5 @@
 package com.moneydesktop.finance.shared.fragment;
 
-import java.util.ArrayList;
-import java.util.Date;
-
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,16 +10,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.TxFilter;
-import com.moneydesktop.finance.database.CategoryDao;
-import com.moneydesktop.finance.database.PowerQuery;
-import com.moneydesktop.finance.database.QueryProperty;
-import com.moneydesktop.finance.database.Transactions;
-import com.moneydesktop.finance.database.TransactionsDao;
+import com.moneydesktop.finance.database.*;
 import com.moneydesktop.finance.handset.adapter.TransactionsHandsetAdapter;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.model.EventMessage.FilterEvent;
@@ -35,8 +27,10 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.AmazingListView;
 import com.moneydesktop.finance.views.DateRangeView.FilterChangeListener;
-
 import de.greenrobot.event.EventBus;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 public abstract class TransactionsFragment extends BaseFragment implements FilterChangeListener, OnDataLoadedListener {
     
@@ -261,7 +255,7 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
             return;
         }
         
-        if (mQueries.size() == 0) {
+        if (mQueries.size() == 0 && (mAccountId != null || (mTxFilter != null && mTxFilter == TxFilter.UNCLEARED))) {
             mQueries.add(new PowerQuery(false));
         }
         

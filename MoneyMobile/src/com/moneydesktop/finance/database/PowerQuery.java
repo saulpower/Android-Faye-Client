@@ -1,12 +1,8 @@
 package com.moneydesktop.finance.database;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import de.greenrobot.dao.AbstractDao;
+
+import java.util.*;
 
 public class PowerQuery {
 
@@ -22,6 +18,7 @@ public class PowerQuery {
 
     private List<QueryProperty> mJoins = new ArrayList<QueryProperty>();
     private List<QueryProperty> mWhereQueries = new ArrayList<QueryProperty>();
+    private List<PowerQuery> mQueries = new ArrayList<PowerQuery>();
     private String mConnector = "WHERE ";
     private QueryProperty mOrder;
     private boolean mIsDescending = false;
@@ -42,6 +39,10 @@ public class PowerQuery {
     public PowerQuery(AbstractDao<?, Long> dao) {
     	mDao = dao;
         mTableMap.put(dao.getTablename(), "T");
+    }
+
+    public void addTables(Map<String, String> tables) {
+        mTableMap.putAll(tables);
     }
     
     private int getCount() {
@@ -101,10 +102,8 @@ public class PowerQuery {
         if (where == null) {
             return this;
         }
-        
-        whereCheck();
-        
-        mWhereQueries.addAll(where.getQueryProperties());
+
+        mQueries.add(where);
         
         return this;
     }
@@ -193,40 +192,48 @@ public class PowerQuery {
     public String toString() {
         return buildQuery();
     }
+
+    public void addQueryString(StringBuilder builder) {
+
+        mSelectionArgs.clear();
+
+        builder.append(mGroup ? " (" : "");
+
+        for (int i = 0; i < mWhereQueries.size(); i++) {
+
+            QueryProperty field = mWhereQueries.get(i);
+
+            builder.append(field.getConnector(i) + " " + getTableRef(field.getTablename()) + "." + field.getColumnName() + " " + field
+                    .getComparator());
+
+            mSelectionArgs.addAll(field.getSelectionArgs());
+        }
+
+        builder.append(mGroup ? ")" : "");
+    }
     
     private String buildQuery() {
-        
-    	mSelectionArgs.clear();
+
         StringBuilder builder = new StringBuilder();
 
+        // Process all of the JOIN statements
         for (QueryProperty prop : mJoins) {
             String tableRef = addTable(prop.getTablename());
             builder.append(" LEFT JOIN " + prop.getTablename() + " " + tableRef + " ON T." + prop.getColumnName() + " = " + tableRef + "." + prop.getForeignKey());
         }
-        
+
+        // Add the where statement
         builder.append(" WHERE");
         
-        boolean isGroup = false;
-        boolean isEnd = false;
-        
-        for (int i = 0; i < mWhereQueries.size(); i++) {
-            
-            QueryProperty field = mWhereQueries.get(i);
-            
-            String grouper = "";
-            
-            if (!isGroup && field.isGroup()) {
-                grouper = "(";
-                isEnd = false;
-            } else if (isGroup && !field.isGroup()) {
-                grouper = ")";
-                isEnd = true;
-            }
-            
-            isGroup = field.isGroup();
-            
-            mSelectionArgs.addAll(field.getSelectionArgs());
-            builder.append((isEnd ? grouper : "") + field.getConnector(i) + " " + (isEnd ? "" : grouper) + getTableRef(field.getTablename()) + "." + field.getColumnName() + " " + field.getComparator());
+        addQueryString(builder);
+
+        // Add any grouped WHERE statements
+        for (PowerQuery powerQuery : mQueries) {
+            builder.append(" AND");
+            powerQuery.addTables(mTableMap);
+            powerQuery.addQueryString(builder);
+
+            mSelectionArgs.addAll(powerQuery.getSelectionArgsList());
         }
         
         builder.append(" GROUP BY T._ID");
