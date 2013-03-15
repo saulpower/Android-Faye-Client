@@ -1,17 +1,14 @@
-package com.moneydesktop.finance.views;
+package com.moneydesktop.finance.shared.adapter;
 
-import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import com.moneydesktop.finance.model.BarViewModel;
+import com.moneydesktop.finance.views.BarView;
 
-import java.util.ArrayList;
-abstract public class BaseBarChartAdapter{
-    public interface DataSetChangeListener{
+abstract public class BaseBarChartAdapter {
+    public interface DataSetChangeListener {
         public void dataSetDidChange();
     }
+
     private DataSetChangeListener mDataSetChangeListener;
+
     public DataSetChangeListener getDataSetChangeListener() {
         return mDataSetChangeListener;
     }
@@ -19,8 +16,9 @@ abstract public class BaseBarChartAdapter{
     public void setDataSetChangeListener(DataSetChangeListener mDataSetChangeListener) {
         this.mDataSetChangeListener = mDataSetChangeListener;
     }
-    public void notifyDataSetChange(){
-        if(mDataSetChangeListener != null){
+
+    public void notifyDataSetChange() {
+        if (mDataSetChangeListener != null) {
             mDataSetChangeListener.dataSetDidChange();
         }
     }

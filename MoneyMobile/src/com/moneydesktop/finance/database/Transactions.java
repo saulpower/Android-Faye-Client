@@ -819,10 +819,10 @@ public class Transactions extends BusinessObject  {
         String query = String.format(Constant.QUERY_DAILY_TRANSACTIONS, SQLQuery);
         SQLiteDatabase db = ApplicationContext.getDb();
         Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
+        cal.setTime(end);
         cal.add(Calendar.DAY_OF_YEAR, -30);
         Date start = cal.getTime();
-        Cursor cursor = db.rawQuery(query, new String[] {
+        Cursor cursor = db.rawQuery(query, new String[]{
 
                 Long.toString(start.getTime()), Long.toString(end.getTime())
         });
@@ -830,16 +830,17 @@ public class Transactions extends BusinessObject  {
         List<Double[]> retVal = new ArrayList<Double[]>();
         while (cursor.isAfterLast() == false) {
             Double[] d = new Double[2];
-            d[0] = (double) cursor.getInt(0);
-            d[1] = cursor.getDouble(1);
+            d[0] = Double.valueOf(cursor.getString(0));
+            d[1] = Double.valueOf(cursor.getDouble(1));
             retVal.add(d);
             cursor.moveToNext();
         }
-        
+
         cursor.close();
-        
+
         return retVal;
     }
+
     public static List<Double[]> getQuarterlyExpenseTotals(Date end) {
         CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
         Set<Long> catIDs = new HashSet<Long>();
@@ -859,11 +860,10 @@ public class Transactions extends BusinessObject  {
         String query = String.format(Constant.QUERY_QUARTERLY_TRANSACTIONS, SQLQuery);
         SQLiteDatabase db = ApplicationContext.getDb();
         Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
+        cal.setTime(end);
         cal.add(Calendar.YEAR, -1);
-        cal.set(Calendar.DAY_OF_MONTH, 1);
         Date start = cal.getTime();
-        Cursor cursor = db.rawQuery(query, new String[] {
+        Cursor cursor = db.rawQuery(query, new String[]{
 
                 Long.toString(start.getTime()), Long.toString(end.getTime())
         });
@@ -877,50 +877,51 @@ public class Transactions extends BusinessObject  {
             retVal.add(d);
             cursor.moveToNext();
         }
-        
+
         cursor.close();
-        
+
         return retVal;
     }
+
     public static List<Double[]> getMonthlyExpenseTotals(Date end) {
-        
+
         List<Double[]> totals = new ArrayList<Double[]>();
-    	
+
         CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
         List<Long> catIds = new ArrayList<Long>();
         List<Category> cats = cat.loadAll();
-        
+
         for (int i = 0; i < cats.size(); i++) {
             if (isCategoryIncome(cats.get(i))) {
                 catIds.add(cats.get(i).getId());
             }
         }
-        
+
         if (catIds.size() == 0) {
-        	return totals;
+            return totals;
         }
-        
+
         StringBuilder sqlQuery = new StringBuilder();
         for (Long catId : catIds) {
             sqlQuery = sqlQuery.append("CATEGORY_ID != " + catId + " AND ");
         }
-        
+
         String sql = sqlQuery.substring(0, (sqlQuery.length() - 4));
         String query = String.format(Constant.QUERY_MONTHLY_TRANSACTIONS, sql);
-        
+
         SQLiteDatabase db = ApplicationContext.getDb();
-        
+
         Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.YEAR, -1);
+        cal.setTime(end);
+        cal.add(Calendar.MONTH, -5);
         cal.set(Calendar.DAY_OF_MONTH, 1);
         Date start = cal.getTime();
-        
-        Cursor cursor = db.rawQuery(query, new String[] {
+
+        Cursor cursor = db.rawQuery(query, new String[]{
                 Long.toString(start.getTime()), Long.toString(end.getTime())
         });
         cursor.moveToFirst();
-        
+
         while (cursor.isAfterLast() == false) {
             Double[] d = new Double[2];
             d[0] = cursor.getDouble(0);
@@ -928,11 +929,12 @@ public class Transactions extends BusinessObject  {
             totals.add(d);
             cursor.moveToNext();
         }
-        
+
         cursor.close();
-        
+
         return totals;
     }
+
     public static List<Double[]> getYearlyExpenseTotals(Date end) {
         CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
         Set<Long> catIDs = new HashSet<Long>();
@@ -952,12 +954,12 @@ public class Transactions extends BusinessObject  {
         String query = String.format(Constant.QUERY_YEARLY_TRANSACTIONS, SQLQuery);
         SQLiteDatabase db = ApplicationContext.getDb();
         Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
+        cal.setTime(end);
         cal.add(Calendar.YEAR, -2);
-        cal.set(Calendar.MONTH,1);
+        cal.set(Calendar.MONTH, 1);
         cal.set(Calendar.DAY_OF_MONTH, 1);
         Date start = cal.getTime();
-        Cursor cursor = db.rawQuery(query, new String[] {
+        Cursor cursor = db.rawQuery(query, new String[]{
 
                 Long.toString(start.getTime()), Long.toString(end.getTime())
         });
@@ -970,11 +972,12 @@ public class Transactions extends BusinessObject  {
             retVal.add(d);
             cursor.moveToNext();
         }
-        
+
         cursor.close();
-        
+
         return retVal;
     }
+
     public static Double getExpensesTotal() {
         double retVal = 0;
         SQLiteDatabase db = ApplicationContext.getDb();

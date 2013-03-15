@@ -1,27 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center|top" >
+                xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center|top">
 
     <RelativeLayout
         android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:background="@color/white" >
+        android:background="@color/white">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tablet_transaction_summary_title"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight=".08" />
+                android:layout_weight=".10"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="10dp" />
 
             <com.moneydesktop.finance.views.LineView
                 android:layout_width="match_parent"
@@ -32,64 +34,82 @@
 
             <com.moneydesktop.finance.views.BarGraphView
                 android:id="@+id/tablet_transaction_summary_graph"
+                android:background="@drawable/grid_repeat"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight=".75" />
+                android:layout_weight=".75"
+                android:layout_margin="10dp" />
 
             <LinearLayout
                 android:id="@+id/tablet_transaction_button_layout"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight=".16"
-                android:gravity="left"
-                android:layout_gravity="left"
+                android:gravity="right"
+                android:layout_gravity="right"
+                android:layout_marginRight="10dp"
                 android:orientation="horizontal">
-	                
-	            <Button
-	                android:id="@+id/tablet_transaction_daily_button"
-	                style="@style/button"
-	                android:layout_width="wrap_content"
-	                android:layout_height="50dp"
-	                android:layout_margin="5dp"
-	                android:text="@string/button_daily"
-	                android:layout_gravity="center_vertical"
-	                android:gravity="center" />
-	             <Button
-	                android:id="@+id/tablet_transaction_monthly_button"
-	                style="@style/button"
-	                android:layout_width="wrap_content"
-	                android:layout_height="50dp"
-	                android:layout_margin="5dp"
-	                android:text="@string/button_monthly"
-	                android:layout_gravity="center_vertical"
-	                android:gravity="center" />
-	             <Button
-	                android:id="@+id/tablet_transaction_quarterly_button"
-	                style="@style/button"
-	                android:layout_width="wrap_content"
-	                android:layout_height="50dp"
-	                android:layout_margin="5dp"
-	                android:text="@string/button_quarterly"
-	                android:layout_gravity="center_vertical"
-	                android:gravity="center" />
-	              <Button
-	                android:id="@+id/tablet_transaction_yearly_button"
-	                style="@style/button"
-	                android:layout_width="wrap_content"
-	                android:layout_height="50dp"
-	                android:layout_margin="5dp"
-	                android:text="@string/button_yearly"
-	                android:layout_gravity="center_vertical"
-	                android:gravity="center" />
-                </LinearLayout>
-            
+
+                <com.moneydesktop.finance.views.UpArrowButton
+                    android:id="@+id/tablet_transaction_daily_button"
+                    style="@style/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_margin="2dp"
+                    android:padding="10dp"
+                    android:background="@color/gray2"
+                    android:textColor="@color/white"
+                    android:text="@string/button_daily"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center" />
+
+                <com.moneydesktop.finance.views.UpArrowButton
+                    android:id="@+id/tablet_transaction_monthly_button"
+                    style="@style/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_margin="2dp"
+                    android:padding="10dp"
+                    android:background="@color/gray2"
+                    android:textColor="@color/white"
+                    android:text="@string/button_monthly"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center" />
+
+                <com.moneydesktop.finance.views.UpArrowButton
+                    android:id="@+id/tablet_transaction_quarterly_button"
+                    style="@style/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_margin="2dp"
+                    android:padding="10dp"
+                    android:background="@color/gray2"
+                    android:textColor="@color/white"
+                    android:text="@string/button_quarterly"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center" />
+
+                <com.moneydesktop.finance.views.UpArrowButton
+                    android:id="@+id/tablet_transaction_yearly_button"
+                    style="@style/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_margin="2dp"
+                    android:padding="10dp"
+                    android:background="@color/gray2"
+                    android:textColor="@color/white"
+                    android:text="@string/button_yearly"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center" />
+            </LinearLayout>
+
         </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/cover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white" >
+            android:background="@color/white">
 
             <LinearLayout
                 android:id="@+id/left"
@@ -98,7 +118,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:orientation="horizontal"
-                android:padding="25dp" >
+                android:padding="25dp">
 
                 <com.moneydesktop.finance.views.VerticalTextView
                     android:id="@+id/title_left"
@@ -126,7 +146,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:orientation="horizontal"
-                android:padding="25dp" >
+                android:padding="25dp">
 
                 <com.moneydesktop.finance.views.CaretView
                     android:layout_width="wrap_content"

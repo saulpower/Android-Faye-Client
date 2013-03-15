@@ -1,34 +1,31 @@
-
 package com.moneydesktop.finance.views;
 
-import android.R.interpolator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewPropertyAnimator;
-import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.R.color;
+import com.moneydesktop.finance.model.EventMessage;
+import com.moneydesktop.finance.model.EventMessage.GraphBarTouchEvent;
+import com.moneydesktop.finance.model.EventMessage.GraphDataZoomEvent;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
-import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
-
-import java.util.ArrayList;
+import de.greenrobot.event.EventBus;
 
 public class BarView extends View {
     private String mLabelText;
+
+
+    private String mPopupText;
     private float mTextSize;
-    private Paint mPaint;
-    private Paint mBPaint;
+    private Paint mTextPaint;
+    private Paint mBarPaint;
     private int mRed;
     private int mBlue;
     private int mGreen;
@@ -38,9 +35,12 @@ public class BarView extends View {
     private int mSelectedColor;
     private Rect mRect;
     private boolean mShowLabel;
-    public BarView(Context context){
+    private long mTime;
+    private GestureDetector mGestureDetector;
+
+    public BarView(Context context) {
         super(context);
-        mTextSize = UiUtils.getScaledPixels(getContext(), 11);
+        mTextSize = UiUtils.getScaledPixels(getContext(), 14);
         makePaint();
         mLabelText = "text";
         mShowLabel = false;
@@ -50,10 +50,13 @@ public class BarView extends View {
         mBlue = Color.blue(defColor);
         mAlpha = Color.alpha(defColor);
         mSelectedColor = getResources().getColor(R.color.primaryColor);
-        mAmount = 50;
+        mAmount = 5;
         mScaleAmount = 100;
+        mGestureDetector = new GestureDetector(getContext(), new GestureListener());
     }
-    public BarView(Context context, String day, double amount, double scale_amount) {
+
+    public BarView(Context context, String day, double amount,
+                   double scale_amount) {
         super(context);
         mTextSize = UiUtils.getScaledPixels(getContext(), 11);
         makePaint();
@@ -66,10 +69,12 @@ public class BarView extends View {
         mAlpha = Color.alpha(defColor);
         mAmount = amount;
         mScaleAmount = scale_amount;
+        mGestureDetector = new GestureDetector(getContext(),
+                new GestureListener());
     }
 
-    public BarView(Context context, double amount, double scale_amount){
-        super(context);     
+    public BarView(Context context, double amount, double scale_amount) {
+        super(context);
         makePaint();
         mShowLabel = false;
         int defColor = getResources().getColor(color.gray3);
@@ -79,139 +84,256 @@ public class BarView extends View {
         mAlpha = Color.alpha(defColor);
         mAmount = amount;
         mScaleAmount = scale_amount;
+        mGestureDetector = new GestureDetector(getContext(),
+                new GestureListener());
     }
-    public void setTextSize(float s){
-        mTextSize = s;
-        mPaint.setTextSize(mTextSize);
+
+    @Override
+    public void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        if (mShowLabel) {
+            Rect bounds = new Rect();
+            mTextPaint.getTextBounds(mLabelText, 0, mLabelText.length(), bounds);
+
+            canvas.drawText(mLabelText,
+                    (getWidth() / 2) - (bounds.width() / 2),
+                    (float) (getHeight() * .95) + (bounds.height() / 2), mTextPaint);
+        }
+        double scalePercentage = mAmount / mScaleAmount;
+        if (mRect == null) {
+            mRect = new Rect();
+        }
+
+        if (mShowLabel) {
+            if (mAmount > 10)
+                mRect.set(
+                        1,
+                        (int) ((getHeight()
+                                - (.90 * (getHeight() * scalePercentage)) - (getHeight() * .10))),
+                        getWidth() - 1, (int) (getHeight() * .90));
+            else {
+                mRect.set(
+                        1,
+                        (int) ((getHeight()
+                                - (.90 * (getHeight() * (10 / mScaleAmount))) - (getHeight() * .10))),
+                        getWidth() - 1, (int) (getHeight() * .90));
+            }
+        } else {
+            if (mAmount > 10) {
+                mRect.set(1,
+                        (int) (getHeight() - (getHeight() * scalePercentage)),
+                        getWidth() - 1, getHeight());
+            } else {
+                mRect.set(1,
+                        (int) (getHeight() - (getHeight() * (10 / mScaleAmount))),
+                        getWidth() - 1, getHeight());
+            }
+        }
+        mBarPaint.setColor(Color.argb(mAlpha, mRed, mGreen, mBlue));
+        canvas.drawRect(mRect, mBarPaint);
+
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        return mGestureDetector.onTouchEvent(e);
+    }
+
+    public void setTime(long time) {
+        mTime = time;
+    }
+
+    public Rect getRect() {
+        return mRect;
+    }
+
+    public long getTime() {
+        return mTime;
+    }
+
+    public void setTextSize(float size) {
+        mTextSize = size;
+        mTextPaint.setTextSize(mTextSize);
         invalidate();
     }
-    public void setLabelText(String s){
-        mLabelText = s;
+
+    public void setLabelText(String text) {
+        mLabelText = text;
     }
-    public void showLabel(boolean s){
-        mShowLabel = s;
+
+    public void showLabel(boolean toShow) {
+        mShowLabel = toShow;
         invalidate();
     }
-    public double getScaleAmount(){
+
+    public double getScaleAmount() {
         return mScaleAmount;
     }
-    public double getAmount(){
-        return (float)mAmount;
+
+    public double getAmount() {
+        return (float) mAmount;
     }
+
     public int getSelectedColor() {
         return mSelectedColor;
     }
+
     public void setSelectedColor(int mSelectedColor) {
         this.mSelectedColor = mSelectedColor;
     }
-    public void setScaleAmount(float a){
-        mScaleAmount = a;
+
+    public void setScaleAmount(float amount) {
+        mScaleAmount = amount;
         invalidate();
     }
-    public void setAmount(float a){
-        mAmount = a;
+
+    public void setAmount(float amount) {
+        mAmount = amount;
         invalidate();
     }
-    private void setRed(int r){
-        mRed = r;
+
+    //These are used by the object animator, do not remove them.
+    private void setRed(int red) {
+        mRed = red;
     }
-    private void setBlue(int b){
-        mBlue = b;
+
+    private void setBlue(int blue) {
+        mBlue = blue;
     }
-    private void setGreen(int g){
-        mGreen = g;
+
+    private void setGreen(int green) {
+        mGreen = green;
     }
-    private void setAlpha(int a){
-        mAlpha = a;
+
+    private void setAlpha(int alpha) {
+        mAlpha = alpha;
     }
-    public void setAmountAnimated(float a){
+
+    public String getPopupText() {
+        return mPopupText;
+    }
+
+    public void setPopupText(String mPopupText) {
+        this.mPopupText = mPopupText;
+    }
+
+    public void setAmountAnimated(float a) {
         final float start = (float) mAmount;
-        ObjectAnimator v = ObjectAnimator.ofFloat(this, "amount", start,(float)a);
-        v.setDuration(500);
-        v.start();
+        ObjectAnimator animator;
+        animator = ObjectAnimator.ofFloat(this, "amount", start,
+                (float) a);
+
+        animator.setDuration(500);
+        animator.start();
+
         invalidate();
     }
-    public void setColorAnimated(int color){
+
+    public void setColorAnimated(int color) {
         final int startR = mRed;
         final int startG = mGreen;
         final int startB = mBlue;
         final int startA = mAlpha;
-        ObjectAnimator vR = ObjectAnimator.ofInt(this, "red", startR,Color.red(color));
-        ObjectAnimator vG = ObjectAnimator.ofInt(this, "green", startG,Color.green(color));
-        ObjectAnimator vB = ObjectAnimator.ofInt(this, "blue", startB,Color.blue(color));
-        ObjectAnimator vA = ObjectAnimator.ofInt(this, "alpha", startA,Color.alpha(color));
-        vR.setDuration(200);
-        vG.setDuration(200);
-        vB.setDuration(200);
-        vA.setDuration(200);
-        vR.start();
-        vG.start();
-        vB.start();
-        vA.start();
+
+        ObjectAnimator redAnimator = ObjectAnimator.ofInt(this, "red", startR,
+                Color.red(color));
+        ObjectAnimator greenAnimator = ObjectAnimator.ofInt(this, "green",
+                startG, Color.green(color));
+        ObjectAnimator blueAnimator = ObjectAnimator.ofInt(this, "blue",
+                startB, Color.blue(color));
+        ObjectAnimator alphaAnimator = ObjectAnimator.ofInt(this, "alpha",
+                startA, Color.alpha(color));
+
+        redAnimator.setDuration(200);
+        greenAnimator.setDuration(200);
+        blueAnimator.setDuration(200);
+        alphaAnimator.setDuration(200);
+
+        redAnimator.start();
+        greenAnimator.start();
+        blueAnimator.start();
+        alphaAnimator.start();
+
         mRed = Color.red(color);
         mGreen = Color.green(color);
         mBlue = Color.blue(color);
         mAlpha = Color.alpha(color);
+
         invalidate();
 
     }
-    public String getLabel(){
-    	return mLabelText;
+
+    public Boolean isShowingLabel() {
+        return mShowLabel;
     }
-    public void setBarColor(int color){
-        if(mBPaint == null){
+
+    public String getLabel() {
+        return mLabelText;
+    }
+
+    public void setBarColor(int color) {
+        if (mBarPaint == null) {
             makePaint();
         }
+
         mRed = Color.red(color);
         mGreen = Color.green(color);
         mBlue = Color.blue(color);
         mAlpha = Color.alpha(color);
+
         invalidate();
     }
-    public void setLabelColor(int color){
-        if(mPaint == null){
+
+    public void setLabelColor(int color) {
+        if (mTextPaint == null) {
             makePaint();
         }
-        mPaint.setColor(color);
+        mTextPaint.setColor(color);
         invalidate();
     }
-    @Override
-    public void onDraw(Canvas c) {
-        super.onDraw(c);
-        if(mShowLabel){
-            Rect bounds = new Rect();
-            mPaint.getTextBounds(mLabelText,0,mLabelText.length(),bounds);
-            
-            c.drawText(mLabelText, (getWidth() / 2)-(bounds.width()/2), (float) (getHeight()*.95)+(bounds.height()/2), mPaint);
-        }
-        double scalePercentage = mAmount / mScaleAmount;
-            if(mRect == null){    
-                   mRect = new Rect();   
-            }
-            
-                if(mShowLabel){
-                    mRect.set(1,
-                        (int) ((getHeight() - (.90 * (getHeight() * scalePercentage)) - (getHeight() * .10))),
-                        getWidth() - 1, (int) (getHeight() * .90));
-                }
-                else{
-                    mRect.set(1,
-                        (int) ((getHeight() - ((getHeight() * scalePercentage)))),
-                        getWidth() - 1, getHeight());
-                }
-                mBPaint.setColor(Color.argb(mAlpha, mRed, mGreen, mBlue));           
-                c.drawRect(mRect, mBPaint);
-        
+
+    public double getMax() {
+        return mScaleAmount;
     }
 
     public void makePaint() {
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setTypeface(Fonts.getFont(Fonts.PRIMARY));
-        mPaint.setTextSize(mTextSize);
-        mPaint.setColor(getContext().getResources().getColor(color.gray7));
-        mBPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBPaint.setStyle(Paint.Style.FILL);
-        //mBPaint.setColor(Color.argb(mAlpha, mRed, mGreen, mBlue));        
+        mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+        mTextPaint.setStyle(Paint.Style.FILL);
+        mTextPaint.setTypeface(Fonts.getFont(Fonts.PRIMARY));
+        mTextPaint.setTextSize(mTextSize);
+        mTextPaint.setColor(getContext().getResources().getColor(color.gray7));
+
+        mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBarPaint.setStyle(Paint.Style.FILL);
+    }
+
+    private BarView getInstance() {
+        return this;
+    }
+
+    private class GestureListener extends
+            GestureDetector.SimpleOnGestureListener {
+
+        public boolean onDown(MotionEvent evt) {
+            return true;
+        }
+
+        public boolean onSingleTapUp(MotionEvent evt) {
+            GraphBarTouchEvent event = new EventMessage().new GraphBarTouchEvent();
+            event.setBar(getInstance());
+            EventBus.getDefault().post(event);
+            return true;
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            GraphDataZoomEvent event = new EventMessage().new GraphDataZoomEvent();
+            event.setDate(mTime);
+
+            EventBus.getDefault().post(event);
+            return true;
+
+        }
     }
 }

@@ -365,6 +365,10 @@
     <string name="signup_bank">Your Financial Institution</string>
     <string name="signup_email">Your Email</string>
     <string name="signup_name">Your Name</string>
+    <string name="spending_daily">SPENDING BY DAY</string>
+    <string name="spending_monthly">SPENDING BY MONTH</string>
+    <string name="spending_quarterly">SPENDING BY QUARTER</string>
+    <string name="spending_yearly">SPENDING BY YEAR</string>
     <string name="status_description_4">An unknown error occurred. Just refresh this bank to try again.</string>
     <string name="status_description_5">Invalid username and password. Click on the button below to try again.</string>
     <string name="status_description_6">Multifactor Authentication Required. Click on the button below to give us these additional pieces of information.</string>

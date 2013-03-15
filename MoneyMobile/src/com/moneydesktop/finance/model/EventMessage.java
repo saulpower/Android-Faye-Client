@@ -1,6 +1,7 @@
 package com.moneydesktop.finance.model;
 
 import android.graphics.Bitmap;
+import android.view.MotionEvent;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.LockType;
 import com.moneydesktop.finance.data.Enums.NavDirection;
@@ -8,6 +9,7 @@ import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.views.AnchorView;
+import com.moneydesktop.finance.views.BarView;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -286,8 +288,42 @@ public class EventMessage {
 			this.mFinished = finished;
 		}
 	}
-	
-   public class BankStatusUpdateEvent extends EventMessage {
+    public class GraphDataZoomEvent extends EventMessage {
+        private long mStartDate;
+        private int mType;
+
+        public long getDate() {
+            return mStartDate;
+        }
+
+        public void setDate(long d) {
+            mStartDate = d;
+        }
+
+        public int getType() {
+            return mType;
+        }
+
+        public void setType(int type) {
+            this.mType = type;
+        }
+
+    }
+
+    public class GraphBarTouchEvent extends EventMessage {
+        private MotionEvent mMotion;
+        private BarView mBar;
+
+        public void setBar(BarView v) {
+            mBar = v;
+        }
+
+        public BarView getBar() {
+            return mBar;
+        }
+    }
+
+    public class BankStatusUpdateEvent extends EventMessage {
         
         protected Bank mBank;
 

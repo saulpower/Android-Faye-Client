@@ -38,7 +38,8 @@ public class Constant {
     public static final String EXTRA_START_DATE = "start_date";
     public static final String EXTRA_TXN_TYPE = "txn_type";
     public static final String EXTRA_VALUES = "values";
-    
+    public static final String EXTRA_START_TIME = "start_time";
+    public static final String EXTRA_END_TIME = "end_time";
     public static final int CATEGORY_TYPE_CHILD = 0;
     public static final int CATEGORY_TYPE_GROUP = 1;
     
@@ -158,6 +159,10 @@ public class Constant {
     public static final float STANDARD_DPI = 160f;
     public static final float LARGE_TABLET_SCALE = 1.43f;
     public static final float XHDPI_SCALE = 0.75f;
+    public static final int DAILY_VIEW = 1;
+    public static final int MONTHLY_VIEW = 2;
+    public static final int QUARTERLY_VIEW = 3;
+    public static final int YEARLY_VIEW = 4;
 
 	/*******************************************************************
 	 * QUERIES
