@@ -24,7 +24,7 @@ public class AnimatedEditText extends EditText {
 	private float mAxisXIn, mAxisXOut;
 	
 	private Camera mCamera;
-	private String mPreviousText;
+	private String mPreviousText = "";
 	private boolean mInit = false;
 	private boolean mAnimating = false;
 	private Rect mBoundsIn = new Rect();

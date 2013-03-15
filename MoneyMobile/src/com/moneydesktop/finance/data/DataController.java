@@ -1,43 +1,20 @@
 package com.moneydesktop.finance.data;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
+import android.database.sqlite.SQLiteConstraintException;
+import android.util.Log;
+import com.moneydesktop.finance.ApplicationContext;
+import com.moneydesktop.finance.data.Enums.DataState;
+import com.moneydesktop.finance.data.Enums.TxType;
+import com.moneydesktop.finance.database.*;
+import com.moneydesktop.finance.model.EventMessage;
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.DaoException;
+import de.greenrobot.event.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.database.sqlite.SQLiteConstraintException;
-import android.util.Log;
-
-import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.data.Enums.DataState;
-import com.moneydesktop.finance.data.Enums.TxType;
-import com.moneydesktop.finance.database.AccountType;
-import com.moneydesktop.finance.database.AccountTypeGroup;
-import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.database.BankAccount;
-import com.moneydesktop.finance.database.BankAccountBalance;
-import com.moneydesktop.finance.database.BudgetItem;
-import com.moneydesktop.finance.database.BusinessObject;
-import com.moneydesktop.finance.database.BusinessObjectBase;
-import com.moneydesktop.finance.database.Category;
-import com.moneydesktop.finance.database.CategoryType;
-import com.moneydesktop.finance.database.DaoSession;
-import com.moneydesktop.finance.database.DatabaseDefaults;
-import com.moneydesktop.finance.database.Institution;
-import com.moneydesktop.finance.database.Location;
-import com.moneydesktop.finance.database.Tag;
-import com.moneydesktop.finance.database.TagInstance;
-import com.moneydesktop.finance.database.Transactions;
-import com.moneydesktop.finance.model.EventMessage;
-
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoException;
-import de.greenrobot.event.EventBus;
+import java.util.*;
 
 public class DataController {
 	
@@ -67,24 +44,31 @@ public class DataController {
         Transactions.class,
         BusinessObjectBase.class
     };
+
+    private static Object mLock = new Object();
 	
 	/**
 	 * Saves all the pending transactions in a batch fashion
 	 */
 	public static synchronized void save() {
-		
-		processTx(sPendingInsertTx, TxType.INSERT);
-		processTx(sPendingUpdateTx, TxType.UPDATE);
-		processTx(sPendingDeleteTx, TxType.DELETE);
-		
-		if (sPendingDeleteTx.size() > 0) {
-			ApplicationContext.startNewDatabaseSession();
-		}
-		
-		EventBus.getDefault().post(new EventMessage().new DatabaseSaveEvent(new ArrayList<Class<?>>(sChangedClasses)));
-		
-		// Reset pending transaction list
-		clearCache();
+
+        synchronized (mLock) {
+
+            processTx(sPendingInsertTx, TxType.INSERT);
+            processTx(sPendingUpdateTx, TxType.UPDATE);
+            processTx(sPendingDeleteTx, TxType.DELETE);
+
+            if (sPendingDeleteTx.size() > 0) {
+                ApplicationContext.startNewDatabaseSession();
+            }
+
+            EventBus.getDefault().post(new EventMessage().new DatabaseSaveEvent(new ArrayList<Class<?>>(sChangedClasses)));
+
+            // Reset pending transaction list
+            clearCache();
+
+            mLock.notifyAll();
+        }
 	}
 	
 	/**
@@ -102,7 +86,7 @@ public class DataController {
 		if (pendingTx.keySet().size() == 0) {
 			return;
 		}
-		
+
 		for (Class<?> key : sObjectOrder) {
 			
 		    List<Object> entities = pendingTx.get(key);
@@ -456,9 +440,9 @@ public class DataController {
 		Random random = new Random();
 		Long id = guid;
 		
-		if (id == null) random.nextLong();
+		if (id == null) id = random.nextLong();
 		
-		while (dao.load(id) != null) {
+		while (id != null && dao.load(id) != null) {
 			id = random.nextLong();
 		}
 		

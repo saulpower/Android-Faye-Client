@@ -180,8 +180,6 @@ public class LabelEditText extends AnimatedEditText {
         mText = text;
         invalidate();
     }
-    
-
 
     public void setLabelSize(float labelSize) {
 
@@ -278,11 +276,10 @@ public class LabelEditText extends AnimatedEditText {
         	canvas.drawText(mText, getPaddingLeft() + getScrollX(), (getHeight() - getPaddingBottom()) - mTextHeight + (mCancelBounds.height() / 2), mLabelPaint);
         }
 
-        
         if (mCancelShowing) {
-            
+
             float left = getWidth() - (mCancelBounds.width() / 2) - (mPaddingRight * 2 / 3) + getScrollX();
-            float top = (getHeight() - getPaddingBottom()) - (mTextHeight / 2) + (mCancelBounds.height() / 2);
+            float top = getHeight() * 2 / 3;
             
             canvas.drawText(mCancel, left, top, mCancelPaint);
         }

@@ -106,8 +106,6 @@ public class FileIO {
 	        fileOutput.close();
 
 		} catch (Exception e) {
-	        
-	        Log.e(TAG, "Error Downloading", e);
 			
 	        if (outputFile != null)
 	        	outputFile.delete();

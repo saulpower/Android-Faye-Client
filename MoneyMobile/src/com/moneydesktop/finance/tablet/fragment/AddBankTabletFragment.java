@@ -1,16 +1,6 @@
 package com.moneydesktop.finance.tablet.fragment;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,19 +10,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.ViewFlipper;
-
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
@@ -40,32 +20,35 @@ import com.moneydesktop.finance.data.DataBridge;
 import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.SyncEngine;
-import com.moneydesktop.finance.database.AccountType;
-import com.moneydesktop.finance.database.AccountTypeDao;
-import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.database.BankDao;
-import com.moneydesktop.finance.database.Institution;
-import com.moneydesktop.finance.database.InstitutionDao;
-import com.moneydesktop.finance.database.PowerQuery;
-import com.moneydesktop.finance.database.QueryProperty;
+import com.moneydesktop.finance.database.*;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.GetLogonCredentialsFinished;
 import com.moneydesktop.finance.model.EventMessage.SaveInstitutionFinished;
 import com.moneydesktop.finance.model.User;
-import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.shared.adapter.SelectAccountTypesAdapter;
 import com.moneydesktop.finance.shared.adapter.SelectPropertyTypesAdapter;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.AddNewInstitutionAdapter;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.views.navigation.AnimatedNavView;
 import com.moneydesktop.finance.views.navigation.AnimatedNavView.NavigationListener;
-
 import de.greenrobot.event.EventBus;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class AddBankTabletFragment extends BaseFragment implements NavigationListener{
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+public class AddBankTabletFragment extends BaseFragment implements NavigationListener {
+
+    public final String TAG = this.getClass().getSimpleName();
 
 	private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();
+    private AnimatedNavView mNavView;
 	private LinearLayout mAutomaticContainer;
 	private LinearLayout mManualContainer;
 	private static ViewFlipper mFlipper;
@@ -85,9 +68,8 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 	
 	private List<String> mLoginLabels;
 	private HashMap<String, String> mCredentialsHash = new HashMap<String, String>();
-	private boolean mHasRetrievedAccounts;
-	private static AddBankTabletFragment mFragment;
-	private JSONObject mAddManualBankJsonRequest;
+
+    private boolean mForNewTransaction = false;
 	
 	private QueryProperty mWherePopularity = new QueryProperty(InstitutionDao.TABLENAME, InstitutionDao.Properties.Popularity, "!= ?");
 	private QueryProperty mAccountTypeWhereID = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.ParentAccountTypeId, "= ?");
@@ -97,11 +79,18 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 	private QueryProperty mOrderBy = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName);
 	
 	private QueryProperty mWhereBankId = new QueryProperty(BankDao.TABLENAME, BankDao.Properties.BankId, "= ?");
-	private int viewPostion = 0; 
+	private int viewPostion = 0;
+
+    public void setForNewTransaction(boolean forNewTransaction) {
+        mForNewTransaction = forNewTransaction;
+    }
 	
 	@Override
 	public String getFragmentTitle() {
-		return mActivity.getString(R.string.add_account_label);
+
+        int title = mForNewTransaction ? R.string.add_account_type_to_add : R.string.add_account_label;
+
+		return mActivity.getString(title);
 	}
 
 	@Override
@@ -122,7 +111,8 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 	}
 
 	public static AddBankTabletFragment newInstance() {
-		mFragment = new AddBankTabletFragment();
+
+        AddBankTabletFragment mFragment = new AddBankTabletFragment();
 			
         Bundle args = new Bundle();
         mFragment.setArguments(args);
@@ -130,17 +120,30 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
         return mFragment;
 	}
 
+    public static AddBankTabletFragment newInstance(boolean isManual) {
+
+        AddBankTabletFragment mFragment = new AddBankTabletFragment();
+        mFragment.setForNewTransaction(isManual);
+
+        Bundle args = new Bundle();
+        mFragment.setArguments(args);
+
+        return mFragment;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        
-        ((DropDownTabletActivity)mActivity).getAnimatedNavView().setNavigationListener(this);
+
+        mNavView = ((DropDownTabletActivity)mActivity).getAnimatedNavView();
+        mNavView.setNavigationListener(this);
+
         mRoot = inflater.inflate(R.layout.tablet_add_bank, null);
+
         mFlipper = (ViewFlipper)mRoot.findViewById(R.id.add_bank_flipper);
         mSelectImportMethodScreen = (RelativeLayout)mRoot.findViewById(R.id.view1);
         mSelectInstitutionScreen = (RelativeLayout)mRoot.findViewById(R.id.view2);
-        mConnectScreen = (RelativeLayout)mRoot.findViewById(R.id.view3);      
-        mHasRetrievedAccounts = false;  
+        mConnectScreen = (RelativeLayout)mRoot.findViewById(R.id.view3);
         
         setupImportMethodScreen();
        
@@ -148,7 +151,15 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 
         return mRoot;
     }
-   
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mForNewTransaction) {
+            showManualAccounts();
+        }
+    }
 
 	private void setupImportMethodScreen() {
 
@@ -245,7 +256,7 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 					((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(String.format(getString(R.string.add_account_new_account), selectedAccountType.getAccountTypeName().toUpperCase()));
 					
 					viewPostion = 5;
-					setupSaveBankMaunuallyScreen(selectedAccountType);
+					setupSaveBankManuallyScreen(selectedAccountType);
 					Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_right);
 					Animation out = AnimationUtils.loadAnimation(getActivity(), R.anim.out_left);
 					mFlipper.setInAnimation(in);
@@ -292,75 +303,48 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 
 				((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(String.format(getString(R.string.add_account_new_account), selectedAccountType.getAccountTypeName().toUpperCase()));
 				
-				setupSaveBankMaunuallyScreen(selectedAccountType);
+				setupSaveBankManuallyScreen(selectedAccountType);
 				mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view5)));
 			}
 		});
 	}
 
-	private void setupSaveBankMaunuallyScreen(final AccountType selectedAccountType) {
+	private void setupSaveBankManuallyScreen(final AccountType selectedAccountType) {
+
 		TextView accountNameLabel = (TextView)mRoot.findViewById(R.id.tablet_add_bank_manually_account_name_title_txt);
 		TextView currentBalanceLabel = (TextView)mRoot.findViewById(R.id.tablet_add_bank_manually_current_balance_title_txt);
 		mAccountName = (EditText)mRoot.findViewById(R.id.tablet_add_bank_manually_account_name);
 		mCurrentBalance = (EditText)mRoot.findViewById(R.id.tablet_add_bank_manually_current_balance_edittext);
 		TextView save = (TextView)mRoot.findViewById(R.id.tablet_add_bank_manually_save);
-		
+
 		Fonts.applyPrimaryBoldFont(accountNameLabel, 14);
 		Fonts.applyPrimaryBoldFont(currentBalanceLabel, 14);
 		Fonts.applyPrimaryBoldFont(save, 14);
-		
+
 		mCurrentBalance.setText(mFormatter.format(0));
 
-		
 		save.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				mAddManualBankJsonRequest = new JSONObject();
 
-				try {
-					mAddManualBankJsonRequest.putOpt(Constant.KEY_ACCOUNT_TYPE, selectedAccountType.getAccountTypeId());
-				
-					mAddManualBankJsonRequest.putOpt(Constant.KEY_USER_GUID, User.getCurrentUser().getUserId());
-					mAddManualBankJsonRequest.putOpt(Constant.KEY_IS_HIDDEN, false);
-					mAddManualBankJsonRequest.putOpt(Constant.KEY_BALANCE, mCurrentBalance.getText().toString());
-					mAddManualBankJsonRequest.putOpt(Constant.KEY_ORG_BALANCE, mCurrentBalance.getText().toString());
-					mAddManualBankJsonRequest.putOpt(Constant.KEY_IS_DELETED, false);
-					mAddManualBankJsonRequest.putOpt(Constant.KEY_NAME, mAccountName.getText().toString());
-					mAddManualBankJsonRequest.putOpt(Constant.KEY_USER_NAME, mAccountName.getText().toString());
-					
-					//the "." means that its a subtype of the account type "Property"
-					if (selectedAccountType.getAccountTypeId().contains(".")) {
-						
-						String[] splitID = selectedAccountType.getAccountTypeId().split("\\.");
-						mAddManualBankJsonRequest.putOpt(Constant.KEY_PROPERTY_TYPE, splitID[1]);
-						
-					}
-				
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-				
-				((DropDownTabletActivity)mActivity).dismissDropdown();
-				
-				new Thread(new Runnable() {			
-					public void run() {	
-						DataBridge.sharedInstance().saveManualAccount(mAddManualBankJsonRequest);
-						DataController.save();
-						
-						Handler test = new Handler(Looper.getMainLooper());
-			    	    test.post(new Runnable() {
-			        	    public void run()
-			        	    {
-			        	    	Intent intent = new Intent(mActivity, SyncService.class);
-					    		mActivity.startService(intent);
-			        	    }
-			        	});
-					}
-				}).start();
+                createManualBankAccount(selectedAccountType);
 			}
 		});
 	}
+
+    private void createManualBankAccount(AccountType selectedAccountType) {
+
+        double balance = Double.parseDouble(mCurrentBalance.getText().toString());
+        String name = mAccountName.getText().toString();
+
+        BankAccount bankAccount = BankAccount.createBankAccount(selectedAccountType, balance, name);
+        bankAccount.insertSingle();
+
+        SyncEngine.sharedInstance().syncBankAccount(bankAccount, mForNewTransaction);
+
+        ((DropDownTabletActivity) mActivity).dismissDropdown();
+    }
 	
 	private void setupConnectScreen() {
 		mLoginLabels = new ArrayList<String>();
@@ -388,7 +372,8 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 		
 	}
 
-    public void onEvent(final GetLogonCredentialsFinished event) {        
+    public void onEvent(final GetLogonCredentialsFinished event) {
+
         if (event.isAddedForFistTime()) {
         	
 	    	Handler updateFields = new Handler(Looper.getMainLooper());
@@ -484,49 +469,49 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 				
 				@Override
 				public void onClick(View v) {
-					v.setClickable(false);
-					objectToSendToAddInstitution = new JSONObject();
-					JSONArray jsonArray = new JSONArray();
-					
-					try {
-						for (int i = 0; i < event.getLogonLabels().size(); i++) {
-							JSONObject jsonObject = new JSONObject();
-				
-							jsonObject.put("guid", mCredentialsHash.get(event.getLogonLabels().get(i).toString()));
-						
-							switch (i) {
-							case 0:
-								jsonObject.put("value", mEdit1.getText().toString());
-								break;						
-							case 1:
-								jsonObject.put("value", mEdit2.getText().toString());
-								break;
-							case 2:
-								jsonObject.put("value", mEdit3.getText().toString());
-								break;
-							default:
-								break;
-							}
-							
-							jsonArray.put(jsonObject);
-						}
+                v.setClickable(false);
+                objectToSendToAddInstitution = new JSONObject();
+                JSONArray jsonArray = new JSONArray();
 
-						objectToSendToAddInstitution.put(Constant.KEY_CREDENTIALS, jsonArray);
-						objectToSendToAddInstitution.put("institution_guid", mSelectedInstitution.getInstitutionId());
-						objectToSendToAddInstitution.put("user_guid", User.getCurrentUser().getUserId());
-					} catch (JSONException e) {
-						//TODO: update this log to something useful
-						e.printStackTrace(); 
-					}
-					
-					new Thread(new Runnable() {			
-						public void run() {	
-							JSONObject jsonResponse = DataBridge.sharedInstance().saveFinancialInstitute(objectToSendToAddInstitution);
-							
-							//Notify that request is finished and we are now ready to start populating the view.
-							EventBus.getDefault().post(new EventMessage().new SaveInstitutionFinished(jsonResponse));
-						}
-					}).start();
+                try {
+                    for (int i = 0; i < event.getLogonLabels().size(); i++) {
+                        JSONObject jsonObject = new JSONObject();
+
+                        jsonObject.put("guid", mCredentialsHash.get(event.getLogonLabels().get(i).toString()));
+
+                        switch (i) {
+                        case 0:
+                            jsonObject.put("value", mEdit1.getText().toString());
+                            break;
+                        case 1:
+                            jsonObject.put("value", mEdit2.getText().toString());
+                            break;
+                        case 2:
+                            jsonObject.put("value", mEdit3.getText().toString());
+                            break;
+                        default:
+                            break;
+                        }
+
+                        jsonArray.put(jsonObject);
+                    }
+
+                    objectToSendToAddInstitution.put(Constant.KEY_CREDENTIALS, jsonArray);
+                    objectToSendToAddInstitution.put("institution_guid", mSelectedInstitution.getInstitutionId());
+                    objectToSendToAddInstitution.put("user_guid", User.getCurrentUser().getUserId());
+                } catch (JSONException e) {
+                    //TODO: update this log to something useful
+                    e.printStackTrace();
+                }
+
+                new Thread(new Runnable() {
+                    public void run() {
+                        JSONObject jsonResponse = DataBridge.sharedInstance().saveFinancialInstitute(objectToSendToAddInstitution);
+
+                        //Notify that request is finished and we are now ready to start populating the view.
+                        EventBus.getDefault().post(new EventMessage().new SaveInstitutionFinished(jsonResponse));
+                 }
+                }).start();
 					
 				}
 			});
@@ -663,20 +648,25 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 				
 			@Override
 			public void onClick(View v) {
-				((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(getString(R.string.add_account_type_to_add));
-				
-				viewPostion = 4;
-				setupAccountTypeListScreen();
-				
-				Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_right);
-				Animation out = AnimationUtils.loadAnimation(getActivity(), R.anim.out_left);
-				mFlipper.setInAnimation(in);
-				mFlipper.setOutAnimation(out);
-				mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view4)));
+
+                ((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(getString(R.string.add_account_type_to_add));
+
+				showManualAccounts();
 			}
-		});	
-		
+		});
 	}
+
+    private void showManualAccounts() {
+
+        viewPostion = 4;
+        setupAccountTypeListScreen();
+
+        Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_right);
+        Animation out = AnimationUtils.loadAnimation(getActivity(), R.anim.out_left);
+        mFlipper.setInAnimation(in);
+        mFlipper.setOutAnimation(out);
+        mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view4)));
+    }
 
 	@Override
 	public FragmentType getType() {
@@ -686,6 +676,12 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 	
 	@Override
 	public void onNavigationPopped() {
+
+        if (mForNewTransaction && mNavView.getStackSize() == 1) {
+            getFragmentManager().popBackStack();
+            return;
+        }
+
 		animateBackToPrevious();
 	}
 
@@ -709,5 +705,4 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 			mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view4)));	
 		}
 	}
-   
 }

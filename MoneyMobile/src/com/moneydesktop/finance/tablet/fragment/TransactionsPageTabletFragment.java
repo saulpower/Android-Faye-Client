@@ -1,11 +1,6 @@
 package com.moneydesktop.finance.tablet.fragment;
 
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,7 +8,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.MeasureSpec;
@@ -28,7 +22,6 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
@@ -43,16 +36,16 @@ import com.moneydesktop.finance.shared.TransactionViewHolder;
 import com.moneydesktop.finance.shared.fragment.TransactionsFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
-import com.moneydesktop.finance.util.DateRange;
-import com.moneydesktop.finance.util.DialogUtils;
-import com.moneydesktop.finance.util.EmailUtils;
-import com.moneydesktop.finance.util.FileIO;
-import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.util.*;
 import com.moneydesktop.finance.views.DateRangeView;
 import com.moneydesktop.finance.views.HeaderView;
 import com.moneydesktop.finance.views.HorizontalScroller;
 import com.moneydesktop.finance.views.LineView;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @TargetApi(11)
 public class TransactionsPageTabletFragment extends TransactionsFragment implements OnItemClickListener, OnItemLongClickListener {
@@ -78,10 +71,8 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
     private Animation mFadeIn, mFadeOut;
     
     private DateRange mRange;
-    
-    public ParentTransactionInterface getParent() {
-        return mParent;
-    }
+
+    private boolean mAdding = false;
 
     public void setParent(ParentTransactionInterface mParent) {
         this.mParent = mParent;
@@ -156,6 +147,13 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
         });
         
         return mRoot;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mAdding = false;
     }
     
     @Override
@@ -262,7 +260,15 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
             
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "Add");
+
+                if (mAdding) return;
+
+                mAdding = true;
+
+                Intent i = new Intent(mActivity, DropDownTabletActivity.class);
+                i.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.MANUAL_BANK_LIST);
+                i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(i);
             }
         });
         
@@ -292,6 +298,7 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
             public void onAnimationEnd(Animation animation) {
                 
                 mTransactionsList.setVisibility(View.INVISIBLE);
+                mTransactionsList.setSelection(0);
                 mAdapter.applyNewData();
                 mTransactionsList.setVisibility(View.VISIBLE);
                 mTransactionsList.startAnimation(mFadeIn);

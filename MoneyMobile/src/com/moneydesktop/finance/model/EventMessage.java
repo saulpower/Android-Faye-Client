@@ -1,13 +1,6 @@
 package com.moneydesktop.finance.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.json.JSONObject;
-
 import android.graphics.Bitmap;
-
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.LockType;
 import com.moneydesktop.finance.data.Enums.NavDirection;
@@ -15,6 +8,11 @@ import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.views.AnchorView;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class EventMessage {
     
@@ -37,7 +35,6 @@ public class EventMessage {
     }
     
 	public class AuthEvent extends EventMessage {}
-	
 	
 	public class UpdateSpecificBankStatus extends EventMessage {	
 		private Bank mBank;
@@ -136,7 +133,6 @@ public class EventMessage {
     		return mClasses.size() > 0;
     	}
     }
-	public class DefaultsEvent extends EventMessage {}
 	public class FeedbackEvent extends EventMessage {}
 	
 	public class FilterEvent extends EventMessage {

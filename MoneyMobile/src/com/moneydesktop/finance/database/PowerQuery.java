@@ -20,8 +20,7 @@ public class PowerQuery {
     private List<QueryProperty> mWhereQueries = new ArrayList<QueryProperty>();
     private List<PowerQuery> mQueries = new ArrayList<PowerQuery>();
     private String mConnector = "WHERE ";
-    private QueryProperty mOrder;
-    private boolean mIsDescending = false;
+    private List<QueryProperty> mOrders = new ArrayList<QueryProperty>();
     private String mOffset;
     private String mLimit;
     
@@ -87,6 +86,13 @@ public class PowerQuery {
         
         return addWhere(field, value);
     }
+
+    private PowerQuery addWhere(QueryProperty field, String value) {
+
+        field.setSelectionArg(value);
+
+        return where(field);
+    }
     
     public PowerQuery between(QueryProperty field, String value1, String value2) {
         
@@ -94,7 +100,7 @@ public class PowerQuery {
         
         field.setComparator("BETWEEN ? AND ?");
         
-        return addWhere(field);
+        return where(field);
     }
     
     public PowerQuery where(PowerQuery where) {
@@ -108,14 +114,7 @@ public class PowerQuery {
         return this;
     }
     
-    private PowerQuery addWhere(QueryProperty field, String value) {
-        
-    	field.setSelectionArg(value);
-        
-        return addWhere(field);
-    }
-    
-    private PowerQuery addWhere(QueryProperty field) {
+    public PowerQuery where(QueryProperty field) {
 
         String connector = whereCheck();
         
@@ -164,11 +163,18 @@ public class PowerQuery {
         
         return this;
     }
-    
+
     public PowerQuery orderBy(QueryProperty field, boolean isDescending) {
-        
-        mOrder = field;
-        mIsDescending = isDescending;
+
+        field.setDescending(isDescending);
+        mOrders.add(field);
+
+        return this;
+    }
+    
+    public PowerQuery orderBy(QueryProperty field) {
+
+        mOrders.add(field);
         
         return this;
     }
@@ -203,8 +209,7 @@ public class PowerQuery {
 
             QueryProperty field = mWhereQueries.get(i);
 
-            builder.append(field.getConnector(i) + " " + getTableRef(field.getTablename()) + "." + field.getColumnName() + " " + field
-                    .getComparator());
+            builder.append(field.getConnector(i) + " " + getTableRef(field.getTablename()) + "." + field.getColumnName() + " " + field.getComparator());
 
             mSelectionArgs.addAll(field.getSelectionArgs());
         }
@@ -238,8 +243,15 @@ public class PowerQuery {
         
         builder.append(" GROUP BY T._ID");
         
-        if (mOrder != null) {
-            builder.append(" ORDER BY " + getTableRef(mOrder.getTablename()) + "." + mOrder.getColumnName() + (mIsDescending ? " DESC" : ""));
+        if (mOrders.size() > 0) {
+
+            builder.append(" ORDER BY ");
+
+            for (QueryProperty queryProperty : mOrders) {
+                builder.append(getTableRef(queryProperty.getTablename()) + "." + queryProperty.getColumnName() + (queryProperty.isDescending() ? " DESC" : "") + ", ");
+            }
+
+            builder.delete(builder.length() - 2, builder.length());
         }
         
         if (mLimit != null) {

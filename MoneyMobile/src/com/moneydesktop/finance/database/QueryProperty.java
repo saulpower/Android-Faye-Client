@@ -1,16 +1,17 @@
 package com.moneydesktop.finance.database;
 
+import de.greenrobot.dao.Property;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import de.greenrobot.dao.Property;
 
 public class QueryProperty {
 
     public static String EQUALS = "= ?";
     public static String NOT_EQUALS = "!= ?";
     public static String LIKE = "LIKE ?";
+    public static String NOT_NULL = "NOT NULL";
     
     private String mTablename;
     private Property mField;
@@ -18,6 +19,8 @@ public class QueryProperty {
     private String mComparator;
     private String mConnector;
     private boolean mGroup = false;
+
+    private boolean mDescending = false;
     private List<String> mArgs = new ArrayList<String>();
     
     public QueryProperty(String tablename, Property field, Property foreignKey) {
@@ -35,6 +38,20 @@ public class QueryProperty {
     public QueryProperty(String tablename, Property field) {
         mTablename = tablename;
         mField = field;
+    }
+
+    public QueryProperty(String tablename, Property field, boolean isDescending) {
+        mTablename = tablename;
+        mField = field;
+        mDescending = isDescending;
+    }
+
+    public boolean isDescending() {
+        return mDescending;
+    }
+
+    public void setDescending(boolean mDescending) {
+        this.mDescending = mDescending;
     }
     
     public void setSelectionArg(String... args) {

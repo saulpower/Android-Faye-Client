@@ -1,21 +1,18 @@
 package com.moneydesktop.finance.shared.Services;
 
-import java.net.URI;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
-
 import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.shared.activity.DebugActivity;
 import com.saulpower.fayeclient.FayeClient;
 import com.saulpower.fayeclient.FayeClient.FayeListener;
+import org.json.JSONObject;
+
+import java.net.URI;
 
 public class WebSocketService extends IntentService implements FayeListener {
 	
@@ -50,7 +47,9 @@ public class WebSocketService extends IntentService implements FayeListener {
 	        mClient.setFayeListener(this);
 	        mClient.connectToServer(ext);
 	        
-    	} catch (JSONException ex) {}
+    	} catch (Exception ex) {
+            Log.e(TAG, "WebSocketService Error", ex);
+        }
     }
 
     @Override
@@ -76,6 +75,7 @@ public class WebSocketService extends IntentService implements FayeListener {
     	
     	if (mClient != null) {
     		mClient.disconnect();
+            mClient.closeWebSocketConnection();
     	}
     }
 
@@ -101,7 +101,15 @@ public class WebSocketService extends IntentService implements FayeListener {
 
 	@Override
 	public void messageReceived(JSONObject json) {
-		
+
+        Log.i(TAG, "Message Received: " + json.optString("event_type"));
+
+        long current = System.currentTimeMillis();
+        long lastSync = Preferences.getLong(Preferences.KEY_LAST_SYNC, current);
+
+        // Give ourselves a 10 second buffer between syncs
+        if (current - lastSync < 10000) return;
+
 		mHandler.postDelayed(new Runnable() {
 			
 			@Override

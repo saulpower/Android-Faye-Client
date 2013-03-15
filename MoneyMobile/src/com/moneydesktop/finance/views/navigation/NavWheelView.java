@@ -1,8 +1,5 @@
 package com.moneydesktop.finance.views.navigation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,7 +11,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.View;
-
 import com.moneydesktop.finance.data.Enums.NavDirection;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
@@ -24,8 +20,10 @@ import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
-
 import de.greenrobot.event.EventBus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NavWheelView extends View {
 	
@@ -35,7 +33,8 @@ public class NavWheelView extends View {
 	private final int ALPHA = 200;
 	
 	private PointF mCenter;
-	private List<NavItemDrawable> mDrawables;
+
+    private List<NavItemDrawable> mDrawables;
 	private List<Integer> mItems;
 	
 	private float mLastTouchY, mLastTouchX;
@@ -67,6 +66,15 @@ public class NavWheelView extends View {
 	};
 
 	private onNavigationChangeListener listener;
+
+    public List<NavItemDrawable> getDrawables() {
+
+        if (mDrawables == null) {
+            initializeItems();
+        }
+
+        return mDrawables;
+    }
 	
 	public int getMAlpha() {
 		return mBg.getAlpha();
@@ -243,7 +251,7 @@ public class NavWheelView extends View {
 	 */
 	private ObjectAnimator growIcon() {
 		
-		NavItemDrawable item = mDrawables.get(mCurrentIndex + 1);
+		NavItemDrawable item = getDrawables().get(mCurrentIndex + 1);
 		
 		PointF orig = new PointF(1.0f, 1.0f);
 		PointF bigger = new PointF(1.3f, 1.3f);
@@ -262,7 +270,7 @@ public class NavWheelView extends View {
 	 */
 	private boolean itemTouchCheck() {
 
-		for (NavItemDrawable item : mDrawables) {
+		for (NavItemDrawable item : getDrawables()) {
 		    
         	if (item.getBounds().contains((int) mLastTouchX, (int) mLastTouchY)) {
         	
@@ -288,7 +296,7 @@ public class NavWheelView extends View {
 		fade.setDuration(250);
 		fade.start();
 		
-		for (NavItemDrawable item : mDrawables)
+		for (NavItemDrawable item : getDrawables())
 			item.playIntro();
 		
 		// Notify the system the navigation wheel is showing
@@ -326,7 +334,7 @@ public class NavWheelView extends View {
 		});
 		fade.start();
 		
-		for (NavItemDrawable item : mDrawables) {
+		for (NavItemDrawable item : getDrawables()) {
 			item.playOutro(mCurrentIndex);
 		}
 		
@@ -485,7 +493,7 @@ public class NavWheelView extends View {
 		mPointer.draw(c);
 		
 		// Draw all of the navigation items
-		for (NavItemDrawable item : mDrawables)
+		for (NavItemDrawable item : getDrawables())
 			item.draw(c);
 	}
 	

@@ -1,15 +1,19 @@
 package com.moneydesktop.finance.views;
 
 import android.content.Context;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-
+import android.view.MotionEvent;
+import com.moneydesktop.finance.shared.adapter.GrowPagerAdapter;
 import com.moneydesktop.finance.util.UiUtils;
 
 public class GrowViewPager extends ViewPager {
 	
 	public final String TAG = this.getClass().getSimpleName();
+
+    private boolean isPagingEnabled = false;
     
 	private final float MARGIN_SIZE = -0.25f;
 	
@@ -30,6 +34,34 @@ public class GrowViewPager extends ViewPager {
 
         init();
     }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        if (this.isPagingEnabled) {
+            return super.onTouchEvent(event);
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent event) {
+
+        if (this.isPagingEnabled) {
+            return super.onInterceptTouchEvent(event);
+        }
+
+        return false;
+    }
+
+    public void setPagingEnabled(boolean isPagingEnabled) {
+        this.isPagingEnabled = isPagingEnabled;
+    }
+
+    public boolean isPagingEnabled() {
+        return this.isPagingEnabled;
+    }
     
     private void init() {
         
@@ -47,6 +79,15 @@ public class GrowViewPager extends ViewPager {
         // Keep 3 pages loaded up at all times
         setOffscreenPageLimit(3);
     }
+
+    @Override
+    public void setAdapter(PagerAdapter adapter) {
+        super.setAdapter(adapter);
+
+        if (adapter instanceof GrowPagerAdapter) {
+            ((GrowPagerAdapter) adapter).setPager(this);
+        }
+    }
     
     @Override
     public void onScrollChanged(int l, int t, int oldl, int oldt) {
@@ -56,7 +97,7 @@ public class GrowViewPager extends ViewPager {
     	    mListener.onScrollChanged(l, t, oldl, oldt);
     	}
     }
-    
+
     public interface OnScrollChangedListener {
         public void onScrollChanged(int l, int t, int oldl, int oldt);
     }

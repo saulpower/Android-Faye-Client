@@ -10,7 +10,6 @@ import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Enums.DataState;
 import com.moneydesktop.finance.model.User;
-import com.moneydesktop.finance.util.DateRange;
 import com.moneydesktop.finance.views.AnimatedEditText;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
@@ -19,6 +18,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -1115,24 +1116,6 @@ public class Transactions extends BusinessObject  {
     	return list;
     }
     
-    public static Pair<Boolean, List<Transactions>> getRows(int page, String search, Date start, Date end, String orderBy, String direction) {
-        
-        int offset = (page - 1) * Constant.QUERY_LIMIT;
-        
-        if (search == null || search.equals("")) {
-            search = "%";
-        }
-        
-        return getRows(page, String.format(Constant.QUERY_DATE_TRANSACTIONS, orderBy, direction), search, search, Long.toString(start.getTime()), Long.toString(end.getTime()), Integer.toString(Constant.QUERY_LIMIT), Integer.toString(offset));
-    }
-    
-    public static Pair<Boolean, List<Transactions>> getRows(int page, String orderBy, String direction) {
-
-        int offset = (page - 1) * Constant.QUERY_LIMIT;
-        
-        return getRows(page, String.format(Constant.QUERY_TRANSACTIONS, orderBy, direction), Integer.toString(Constant.QUERY_LIMIT), Integer.toString(offset));
-    }
-    
     public static Pair<Boolean, List<Transactions>> getRows(PowerQuery query) {
         
         TransactionsDao dao = (TransactionsDao) DataController.getDao(Transactions.class);
@@ -1146,17 +1129,6 @@ public class Transactions extends BusinessObject  {
         boolean more = (transactions.size() == Constant.QUERY_LIMIT);
         
         return new Pair<Boolean, List<Transactions>>(more, transactions);
-    }
-    
-    private static Pair<Boolean, List<Transactions>> getRows(int page, String query, String... selectionArgs) {
-    	
-    	TransactionsDao dao = (TransactionsDao) DataController.getDao(Transactions.class);
-    	
-    	List<Transactions> transactions = dao.queryRaw(query, selectionArgs);
-    	
-    	boolean more = (transactions.size() == Constant.QUERY_LIMIT);
-    	
-    	return new Pair<Boolean, List<Transactions>>(more, transactions);
     }
     
     public static List<Pair<String, List<Transactions>>> groupTransactions(List<Transactions> transactions) {
@@ -1208,7 +1180,7 @@ public class Transactions extends BusinessObject  {
     	
     	json.put(Constant.KEY_USER_GUID, User.getCurrentUser().getUserId());
     	
-    	if (getBankAccount().getAccountId() != null)
+    	if (getBankAccount() != null && getBankAccount().getAccountId() != null)
     		json.put(Constant.KEY_ACCOUNT_GUID, getBankAccount().getAccountId());
     	
     	if (getCategory().getCategoryId() != null) {
@@ -1395,14 +1367,11 @@ public class Transactions extends BusinessObject  {
      * @return the normalized amount
      */
     public Double normalizedAmount() {
-        
-        if (normalizedAmount == null) {
-        
-            normalizedAmount = Double.valueOf(getAmount());
-            
-            if (normalizedAmount < 0 && getTransactionType() == 1) {
-                normalizedAmount = Math.abs(normalizedAmount);
-            }
+
+        normalizedAmount = Double.valueOf(getAmount());
+
+        if (normalizedAmount < 0 && getTransactionType() == 1) {
+            normalizedAmount = Math.abs(normalizedAmount);
         }
         
         return normalizedAmount;
@@ -1447,24 +1416,51 @@ public class Transactions extends BusinessObject  {
 			
 		}.execute();
     }
-    
-    public static float getTransactionsTotal(String query, DateRange dateRange) {
-    	
-    	float total = 0;
-    	
-        SQLiteDatabase db = ApplicationContext.getDb();
-        Cursor cursor = db.rawQuery(query, new String[] {dateRange.getStartDateString(), dateRange.getEndDateString()});
 
-        cursor.moveToFirst();
-        
-        while (cursor.isAfterLast() == false) {
-        	total = cursor.getFloat(0);
-            cursor.moveToNext();
-        }
-        
-        cursor.close();
-        
-    	return total;
+    public static Transactions createNewTransaction(BankAccount account) {
+
+        Date now = new Date();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+
+        Category category = Category.getUncategorizedCategory();
+
+        SecureRandom random = new SecureRandom();
+        String externalId = new BigInteger(130, random).toString(32).toUpperCase();
+
+        Transactions transactions = new Transactions();
+        transactions.setTransactionId(externalId);
+        transactions.setAmount(0.0);
+        transactions.setRawAmount(0.0);
+        transactions.setAmountReimbursable(0.0);
+        transactions.setTransactionType(2);
+        transactions.setExclusionFlags(0);
+        transactions.setTitle("New Transaction");
+        transactions.setMemo("");
+        transactions.setOriginalTitle("");
+        transactions.setOriginalTitle(null);
+        transactions.setIsProcessed(false);
+        transactions.setHasReceipt(false);
+        transactions.setIsReimbursable(false);
+        transactions.setIsBusiness(false);
+        transactions.setIsExcluded(false);
+        transactions.setIsMatched(false);
+        transactions.setIsCleared(true);
+        transactions.setIsManual(true);
+        transactions.setIsFlagged(false);
+        transactions.setIsVoid(false);
+        transactions.setDate(now);
+        transactions.setDatePosted(now);
+        transactions.setBankAccount(account);
+        transactions.setCategory(category);
+        transactions.setMonthNumber(calendar.get(Calendar.MONTH));
+        transactions.setYearNumber(calendar.get(Calendar.YEAR));
+        transactions.setDayNumber(calendar.get(Calendar.DAY_OF_MONTH));
+        transactions.setWeekNumber(calendar.get(Calendar.WEEK_OF_YEAR));
+        transactions.setQuarterNumber((transactions.getMonthNumber() / 3) + 1);
+
+        return transactions;
     }
     
     // KEEP METHODS END

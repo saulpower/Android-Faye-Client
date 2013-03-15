@@ -1,19 +1,17 @@
 package com.moneydesktop.finance.database;
 
-import java.util.Date;
-import java.util.List;
-
-import org.json.JSONObject;
-
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Enums.DataState;
 import com.moneydesktop.finance.database.CategoryDao.Properties;
-
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.query.Query;
+import org.json.JSONObject;
+
+import java.util.Date;
+import java.util.List;
 
 public abstract class BusinessObject implements BusinessObjectInterface {
 	
@@ -311,8 +309,8 @@ public abstract class BusinessObject implements BusinessObjectInterface {
     	}
     	
     	if (object == null) {
-    		
-    		inserting = true;
+
+            inserting = true;
     		object = DatabaseObjectFactory.createInstance(key, guid);
     		object.insertBatch(guid);
     		object.setExternalId(guid);
@@ -357,7 +355,7 @@ public abstract class BusinessObject implements BusinessObjectInterface {
 
         if (object == null) object = getQuery(key, id).unique();
         if (object == null) object = getByExternalId(key, guid);
-        
+
     	return object;
     }
 

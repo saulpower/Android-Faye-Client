@@ -1,27 +1,21 @@
 package com.moneydesktop.finance.views.navigation;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.*;
+import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.util.AttributeSet;
+import android.view.View;
+import android.view.View.OnClickListener;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.TextDrawable;
 import com.nineoldandroids.animation.ObjectAnimator;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PointF;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.util.AttributeSet;
-import android.view.View;
-import android.view.View.OnClickListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A view providing a navigation controller that animates as navigation items are
@@ -111,7 +105,11 @@ public class AnimatedNavView extends View implements OnClickListener {
 			
 			mTempLabel.setText(mStack.get(last));
 			mStack.remove(last);
-		}
+
+		} else {
+
+            mTempLabel.setText("");
+        }
 		
 		moveTitle(true);
 		moveBack(true);
@@ -142,7 +140,9 @@ public class AnimatedNavView extends View implements OnClickListener {
 	}
 	
 	public void pushNav(String title) {
-		
+
+        if (title != null && title.equals(mBackLabel.getText())) return;
+
 		mStackSize++;
 		
 		mTempLabel.setText(title);
@@ -174,6 +174,10 @@ public class AnimatedNavView extends View implements OnClickListener {
 			}
 		}, 400);
 	}
+
+    public int getStackSize() {
+        return mStackSize;
+    }
 	
 	private void configureArrow(boolean in) {
 		
@@ -311,7 +315,7 @@ public class AnimatedNavView extends View implements OnClickListener {
 		super.onDraw(canvas);
 
 		canvas.save();
-		canvas.translate(mTextBounds.width(), 0);
+		canvas.translate(mTextBounds.width() * 1.5f, 0);
 		
 		mBackLabel.draw(canvas);
 		mTitleLabel.draw(canvas);
