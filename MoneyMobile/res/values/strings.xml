@@ -279,6 +279,7 @@
     <string name="label_category">Category</string>
     <string name="label_change_lock">CHANGE LOCK CODE</string>
     <string name="label_count">Count</string>
+    <string name="label_create">Click here to create one</string>
     <string name="label_daily_spending">Daily Spending - This Month</string>
     <string name="label_date">Date</string>
     <string name="label_delete">Delete</string>
@@ -295,6 +296,7 @@
     <string name="label_new_transactions">New Transactions</string>
     <string name="label_no">no</string>
     <string name="label_no_categories">No Categories Found</string>
+    <string name="label_no_manual_accounts">NO MANUAL ACCOUNTS FOUND</string>
     <string name="label_no_tags">No Tags Found</string>
     <string name="label_other">Other Markers</string>
     <string name="label_others">Other</string>
@@ -393,6 +395,7 @@
     <string name="title_activity_transactions">Transactions</string>
     <string name="title_feedback">Feedback</string>
     <string name="title_filters">FILTERS</string>
+    <string name="title_fragment_add_transaction">Select An Account</string>
     <string name="title_fragment_transaction">Transaction</string>
     <string name="title_fragment_account_summary">Account Balances</string>
     <string name="title_fragment_spending_summary">Spending By Category</string>

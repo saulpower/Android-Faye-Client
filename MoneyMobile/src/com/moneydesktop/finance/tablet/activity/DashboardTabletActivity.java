@@ -1,9 +1,5 @@
 package com.moneydesktop.finance.tablet.activity;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -12,21 +8,15 @@ import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
+import android.widget.*;
 import android.widget.FrameLayout.LayoutParams;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextSwitcher;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ViewFlipper;
 import android.widget.ViewSwitcher.ViewFactory;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
@@ -50,8 +40,11 @@ import com.moneydesktop.finance.views.GrowViewPager;
 import com.moneydesktop.finance.views.navigation.NavBarButtons;
 import com.moneydesktop.finance.views.navigation.NavWheelView;
 import com.moneydesktop.finance.views.navigation.NavWheelView.onNavigationChangeListener;
-
 import de.greenrobot.event.EventBus;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DashboardTabletActivity extends DashboardBaseActivity implements onNavigationChangeListener, ViewFactory {
     
@@ -290,6 +283,26 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
             mScroller.set(mPager, scroller);
             
         } catch (Exception e) {}
+
+        findViewById(R.id.root).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                int action = event.getAction();
+
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        mPager.setPagingEnabled(true);
+                        break;
+                }
+
+                if (mPager.isPagingEnabled()) {
+                    mPager.onTouchEvent(event);
+                }
+
+                return true;
+            }
+        });
         
         List<Integer> items = new ArrayList<Integer>();
         items.add(R.drawable.tablet_newnav_dashboard_white);

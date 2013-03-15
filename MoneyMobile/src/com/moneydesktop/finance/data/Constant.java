@@ -1,23 +1,11 @@
 
 package com.moneydesktop.finance.data;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.DataState;
-import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.database.BankAccount;
-import com.moneydesktop.finance.database.BudgetItem;
-import com.moneydesktop.finance.database.Category;
-import com.moneydesktop.finance.database.PowerQuery;
-import com.moneydesktop.finance.database.QueryProperty;
-import com.moneydesktop.finance.database.Tag;
-import com.moneydesktop.finance.database.Transactions;
-import com.moneydesktop.finance.database.TransactionsDao;
+import com.moneydesktop.finance.database.*;
+
+import java.util.*;
 
 public class Constant {
     
@@ -69,6 +57,7 @@ public class Constant {
      * KEYS
      *******************************************************************/
 
+    public static final String KEY_ACCOUNT = "account";
     public static final String KEY_ACCOUNTS = "accounts";
     public static final String KEY_ACCOUNT_GUID = "account_guid";
     public static final String KEY_ACCOUNT_TYPE = "account_type";

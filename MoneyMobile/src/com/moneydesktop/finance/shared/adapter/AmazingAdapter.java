@@ -32,6 +32,10 @@ public abstract class AmazingAdapter extends BaseAdapter implements SectionIndex
 	public void setHasMorePagesListener(HasMorePagesListener hasMorePagesListener) {
 		this.mHasMorePagesListener = hasMorePagesListener;
 	}
+
+    public int getCurrentPage() {
+        return mPage;
+    }
 	
     /**
      * Pinned header state: don't show the header.

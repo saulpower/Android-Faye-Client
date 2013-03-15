@@ -32,8 +32,8 @@ public abstract class TransactionsAdapter extends AmazingAdapter {
 	
 	private Date mStart, mEnd;
 	
-	private QueryProperty mOrderBy = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Date);
-	private boolean mDirection = true;
+	private QueryProperty mOrderByDate = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Date, false);
+    private QueryProperty mOrderByTitle = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Title, false);
 	private String mSearch = "%";
 	private List<PowerQuery> mQueries;
 
@@ -47,6 +47,7 @@ public abstract class TransactionsAdapter extends AmazingAdapter {
     private QueryProperty mCategoryId = new QueryProperty(CategoryDao.TABLENAME, TransactionsDao.Properties.CategoryId, CategoryDao.Properties.Id);
     private QueryProperty mCategoryName = new QueryProperty(CategoryDao.TABLENAME, CategoryDao.Properties.CategoryName, CategoryDao.Properties.Id);
     private QueryProperty mBankAccountId = new QueryProperty(BankAccountDao.TABLENAME, TransactionsDao.Properties.BankAccountId, BankAccountDao.Properties.Id);
+    private QueryProperty mBankAccount = new QueryProperty(BankAccountDao.TABLENAME, BankAccountDao.Properties.Id, QueryProperty.NOT_NULL);
     private QueryProperty mBusinessObjectBase = new QueryProperty(BusinessObjectBaseDao.TABLENAME, TransactionsDao.Properties.BusinessObjectId, BusinessObjectBaseDao.Properties.Id);
     private TransactionsDao mDao = ApplicationContext.getDaoSession().getTransactionsDao();
 
@@ -93,8 +94,8 @@ public abstract class TransactionsAdapter extends AmazingAdapter {
 	}
 	
 	public void setOrder(QueryProperty orderBy, boolean direction) {
-	    mOrderBy = orderBy;
-	    mDirection = direction;
+	    mOrderByDate = orderBy;
+        mOrderByDate.setDescending(direction);
 	}
 
 	public void setSearch(String search) {
@@ -189,17 +190,7 @@ public abstract class TransactionsAdapter extends AmazingAdapter {
                 }
 
                 if (page == 1) {
-                    mHasMore = rows.first;
-                    mNewTransactions.addAll(rows.second);
-                    
-                    if (mUseSections) {
-	    				List<Pair<String, List<Transactions>>> grouped = Transactions.groupTransactions(mNewTransactions);
-	    				
-	    				mNewSections.clear();
-	    				mNewSections.addAll(grouped);
-                    }
-    				
-                    notifyDataLoaded();
+                    cacheNewData(rows);
                     return;
                 }
 
@@ -225,18 +216,78 @@ public abstract class TransactionsAdapter extends AmazingAdapter {
 
         }.execute(page);
 	}
+
+    public void refreshCurrentSelection() {
+
+        if (mBackgroundTask != null) {
+            mBackgroundTask.cancel(true);
+        }
+
+        mBackgroundTask = new AsyncTask<Integer, Void, Pair<Boolean, List<Transactions>>>() {
+
+            @Override
+            protected Pair<Boolean, List<Transactions>> doInBackground(Integer... params) {
+
+                int limit = getCurrentPage() * Constant.QUERY_LIMIT;
+
+                Pair<Boolean, List<Transactions>> rows = Transactions.getRows(generateQuery(limit, 0));
+
+                return rows;
+            }
+
+            @Override
+            protected void onPostExecute(Pair<Boolean, List<Transactions>> rows) {
+
+                if (isCancelled()) {
+                    return;
+                }
+
+                mAllTransactions.clear();
+                mAllTransactions.addAll(rows.second);
+
+                if (mUseSections) {
+                    List<Pair<String, List<Transactions>>> grouped = Transactions.groupTransactions(mAllTransactions);
+
+                    mSections.clear();
+                    mSections.addAll(grouped);
+                }
+
+                notifyDataSetChanged();
+            }
+
+        }.execute();
+    }
+
+    private void cacheNewData(Pair<Boolean, List<Transactions>> rows) {
+        mHasMore = rows.first;
+        mNewTransactions.addAll(rows.second);
+
+        if (mUseSections) {
+            List<Pair<String, List<Transactions>>> grouped = Transactions.groupTransactions(mNewTransactions);
+
+            mNewSections.clear();
+            mNewSections.addAll(grouped);
+        }
+
+        notifyDataLoaded();
+    }
 	
 	private void notifyDataLoaded() {
 	    if (mOnDataLoadedListener != null) {
             mOnDataLoadedListener.dataLoaded(mInvalidate);
         }
 	}
+
+    private PowerQuery generateQuery(int page) {
+
+        int offset = (page - 1) * Constant.QUERY_LIMIT;
+
+        return generateQuery(Constant.QUERY_LIMIT, offset);
+    }
 	
-	private PowerQuery generateQuery(int page) {
+	private PowerQuery generateQuery(int limit, int offset) {
 
         synchronized (mQueries) {
-
-            int offset = (page - 1) * Constant.QUERY_LIMIT;
 
             boolean category = false;
             boolean transactionTitle = false;
@@ -260,8 +311,10 @@ public abstract class TransactionsAdapter extends AmazingAdapter {
             }
 
             query.where(mDataState, Integer.toString(DataState.DATA_STATE_DELETED.index())).and()
-                .orderBy(mOrderBy, mDirection)
-                .limit(Constant.QUERY_LIMIT)
+                .where(mBankAccount).and()
+                .orderBy(mOrderByDate)
+                .orderBy(mOrderByTitle)
+                .limit(limit)
                 .offset(offset);
 
             if (mStart != null && mEnd != null) {

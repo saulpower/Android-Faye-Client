@@ -1,21 +1,19 @@
 package com.moneydesktop.finance.data;
 
-import java.util.HashMap;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.util.Log;
-
 import com.moneydesktop.communication.HttpRequest;
 import com.moneydesktop.finance.ApplicationContext;
+import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.shared.activity.DebugActivity;
-
 import de.greenrobot.event.EventBus;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 
 public class DataBridge {
 	
@@ -28,36 +26,42 @@ public class DataBridge {
 	private static final String ENDPOINT_SYNC = "sync";
 	private static final String ENDPOINT_ACCOUNTS = "accounts";
 	
-	private static DataBridge sharedInstance;
+	private static DataBridge sSharedInstance;
 	
-	private String protocol = "https";
+	private String mProtocol = "https";
 	
-	private Context context;
+	private Context mContext;
+
+    private boolean mSyncingAccount = false;
+
+    public boolean isSyncingAccount() {
+        return mSyncingAccount;
+    }
 
 	public static DataBridge sharedInstance() {
 		
-		if (sharedInstance == null) {
-    		sharedInstance = new DataBridge();
+		if (sSharedInstance == null) {
+    		sSharedInstance = new DataBridge();
     	}
     	
-    	return sharedInstance;
+    	return sSharedInstance;
 	}
 	
 	public static DataBridge sharedInstance(Context context) {
 		
-		if (sharedInstance == null) {
-    		sharedInstance = new DataBridge(context);
+		if (sSharedInstance == null) {
+    		sSharedInstance = new DataBridge(context);
     	}
     	
-    	return sharedInstance;
+    	return sSharedInstance;
 	}
 	
 	public DataBridge() {
-		this.context = ApplicationContext.getContext();
+		this.mContext = ApplicationContext.getContext();
 	}
 	
 	public DataBridge(Context context) {
-		this.context = context;
+		this.mContext = context;
 	}
 	
 	/**
@@ -69,12 +73,12 @@ public class DataBridge {
 	 */
 	public void authenticateUser(String userName, String password) throws Exception {
 		
-		AuthObject auth = new AuthObject(context, userName, password);
+		AuthObject auth = new AuthObject(mContext, userName, password);
         String body = auth.toString();
         
         String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
         		
-        String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_DEVICE);
+        String url = String.format("%s://%s/%s", mProtocol, baseUrl, ENDPOINT_DEVICE);
         
         String response = HttpRequest.sendPost(url, getHeaders(), null, body);
         
@@ -85,7 +89,7 @@ public class DataBridge {
         	JSONObject data = json.getJSONObject(Constant.KEY_DEVICE);
         	data.put(Constant.KEY_USERNAME, userName);
         	
-        	User.registerUser(data, context);
+        	User.registerUser(data, mContext);
         	
         	EventBus.getDefault().post(new EventMessage().new AuthEvent());
         }
@@ -104,7 +108,7 @@ public class DataBridge {
         
         String baseUrl = Preferences.getString(Preferences.KEY_SYNC_HOST, DebugActivity.PROD_SYNC_HOST);
         		
-        String url = String.format("%s://%s/%s", protocol, baseUrl, endpoint);
+        String url = String.format("%s://%s/%s", mProtocol, baseUrl, endpoint);
         String response = "";
         
 		try {
@@ -128,7 +132,7 @@ public class DataBridge {
 		
 		String baseUrl = Preferences.getString(Preferences.KEY_SYNC_HOST, DebugActivity.PROD_SYNC_HOST);
 		
-		String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_SYNC);
+		String url = String.format("%s://%s/%s", mProtocol, baseUrl, ENDPOINT_SYNC);
 		
 		try {
 			
@@ -147,7 +151,7 @@ public class DataBridge {
 
 		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
 		
-		String url = String.format("%s://%s/%s/%s", protocol, baseUrl, ENDPOINT_MEMBERS, bankId);
+		String url = String.format("%s://%s/%s/%s", mProtocol, baseUrl, ENDPOINT_MEMBERS, bankId);
 		
 		try {
 			
@@ -164,25 +168,24 @@ public class DataBridge {
 		return null;
 	}
 	
-	public JSONObject saveManualAccount (JSONObject json) {
-		
-		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
-		
-		String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_ACCOUNTS);
-		
-		try {
-			
-			String response = HttpRequest.sendPost(url, getHeaders(), null, json.toString());
-			
-			JSONObject jsonResponse = new JSONObject(response);
-			
-			return jsonResponse;
-			
-		} catch (Exception e) {
-			Log.e(TAG, "Error saving manual bank account", e);
-		}
-		
-		return null;
+	public JSONObject saveManualBankAccount(BankAccount bankAccount) {
+
+        String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
+
+        String url = String.format("%s://%s/%s", mProtocol, baseUrl, ENDPOINT_ACCOUNTS);
+
+        try {
+
+            String response = HttpRequest.sendPost(url, getHeaders(), null, bankAccount.getJson().toString());
+
+            JSONObject jsonResponse = new JSONObject(response);
+
+            return jsonResponse;
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error saving manual bank account", e);
+            return null;
+        }
 	}
 	
 	/**
@@ -196,7 +199,7 @@ public class DataBridge {
 		
 		try {
 			
-			PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+			PackageInfo pInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
 			version = pInfo.versionName;
 			
 		} catch (Exception e) {
@@ -220,14 +223,14 @@ public class DataBridge {
 	 * Returns a JSON array of the credential fields necessary to login with
 	 * the passed in institution ID.
 	 * 
-	 * @param guid
+	 * @param institutionId
 	 * @return
 	 */
 	public JSONArray getInstituteLoginFields(String institutionId) {
 		
 		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
 		
-		String url = String.format("%s://%s/%s/%s", protocol, baseUrl, ENDPOINT_INSTITUTIONS, institutionId);
+		String url = String.format("%s://%s/%s/%s", mProtocol, baseUrl, ENDPOINT_INSTITUTIONS, institutionId);
 		
 		try {
 			
@@ -256,7 +259,7 @@ public class DataBridge {
 		
 		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
 		
-		String url = String.format("%s://%s/%s/%s", protocol, baseUrl, ENDPOINT_MEMBERS, bankId);
+		String url = String.format("%s://%s/%s/%s", mProtocol, baseUrl, ENDPOINT_MEMBERS, bankId);
 		
 		try {
 			
@@ -280,16 +283,16 @@ public class DataBridge {
 	public void setUseSSL(boolean useSSL) {
 		
 		if (!useSSL)
-			protocol = "http";
+			mProtocol = "http";
 		else
-			protocol = "https";
+			mProtocol = "https";
 	}
 	
 	public JSONObject saveFinancialInstitute(JSONObject data) {
 
 		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
 		
-		String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_MEMBERS);
+		String url = String.format("%s://%s/%s", mProtocol, baseUrl, ENDPOINT_MEMBERS);
 		
 		try {
 			
@@ -310,7 +313,7 @@ public class DataBridge {
 
 		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
 		
-		String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_INSTITUTIONS);
+		String url = String.format("%s://%s/%s", mProtocol, baseUrl, ENDPOINT_INSTITUTIONS);
 		
 		try {
 			
@@ -332,7 +335,7 @@ public class DataBridge {
 		
 		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
 		
-		String url = String.format("%s://%s/%s/%s", protocol, baseUrl, ENDPOINT_MEMBERS, bankId);
+		String url = String.format("%s://%s/%s/%s", mProtocol, baseUrl, ENDPOINT_MEMBERS, bankId);
 		
 		try {
 			
@@ -353,7 +356,7 @@ public class DataBridge {
 		
 		String baseUrl = Preferences.getString(Preferences.KEY_API_HOST, DebugActivity.PROD_API_HOST);
 		
-		String url = String.format("%s://%s/%s/%s", protocol, baseUrl, ENDPOINT_MEMBERS, bankId);
+		String url = String.format("%s://%s/%s/%s", mProtocol, baseUrl, ENDPOINT_MEMBERS, bankId);
 		
 		try {
 			
@@ -377,7 +380,7 @@ public class DataBridge {
 		
 		String baseUrl = Preferences.getString(Preferences.KEY_SYNC_HOST, DebugActivity.PROD_SYNC_HOST);
 		
-        String url = String.format("%s://%s/%s", protocol, baseUrl, ENDPOINT_SYNC);
+        String url = String.format("%s://%s/%s", mProtocol, baseUrl, ENDPOINT_SYNC);
         
 		try {
 			

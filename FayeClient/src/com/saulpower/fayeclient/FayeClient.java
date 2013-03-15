@@ -26,17 +26,15 @@
 
 package com.saulpower.fayeclient;
 
-import java.net.URI;
-import java.util.Date;
-
+import android.os.Handler;
+import android.util.Log;
+import com.saulpower.fayeclient.WebSocketClient.Listener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.Handler;
-import android.util.Log;
-
-import com.saulpower.fayeclient.WebSocketClient.Listener;
+import java.net.URI;
+import java.util.Date;
 
 public class FayeClient implements Listener {
 	
@@ -79,6 +77,8 @@ public class FayeClient implements Listener {
     private JSONObject mConnectionExtension;
     
     private boolean mRunning = false;
+    private boolean mReconnecting = false;
+
     private Handler mHandler;
     private Runnable mConnectionMonitor = new Runnable() {
 		
@@ -99,6 +99,7 @@ public class FayeClient implements Listener {
 				getHandler().removeCallbacks(this);
 				mRunning = false;
 				mConnectionAttempts = 0;
+                mReconnecting = false;
 			}
 		}
 	};
@@ -171,12 +172,15 @@ public class FayeClient implements Listener {
     	mClient.connect();
     }
     
-    private void closeWebSocketConnection() {
+    public void closeWebSocketConnection() {
+
+        Log.i(TAG, "socket disconnected");
+
     	mClient.disconnect();
     }
     
     private void resetWebSocketConnection() {
-    	
+
     	if (!mConnected) {
     		
     		if (!mRunning) {
@@ -260,6 +264,8 @@ public class FayeClient implements Listener {
 	 * }
 	 */
 	public void disconnect() {
+
+        Log.i(TAG, "socket disconnected");
 
 		try {
 	    	
@@ -386,6 +392,7 @@ public class FayeClient implements Listener {
 	public void onConnect() {
 		
 		mConnected = true;
+        mReconnecting = false;
 		handshake();
 	}
 
@@ -428,9 +435,16 @@ public class FayeClient implements Listener {
 	 */
 	@Override
 	public void onError(Exception error) {
-        
-		mConnected = false;
-		resetWebSocketConnection();
+
+        Log.w(TAG, "resetWebSocketConnection " + error.getMessage(), error);
+
+        if (!mReconnecting) {
+
+            mReconnecting = true;
+            mConnected = false;
+
+            resetWebSocketConnection();
+        }
 	}
 	
 	/**

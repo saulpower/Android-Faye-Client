@@ -188,7 +188,7 @@ public class AccountTypesTabletFragment extends AccountTypesFragment implements 
 	        	for (BankAccount bankAccount : accountType.getBankAccounts()) {	        		
 	        		if (bankAccount.getBank() == null) {
 	        			counter++;
-	        			bankAccount.softDeleteSingle(); 
+//	        			bankAccount.softDeleteSingle();
 	        		}
 	        	}
 	        	if (counter == accountType.getBankAccounts().size()) {
@@ -607,7 +607,9 @@ public class AccountTypesTabletFragment extends AccountTypesFragment implements 
 		        	}
 		        	
 		        	BankRefreshStatus type = BankRefreshStatus.fromInteger(bank.getProcessStatus().intValue());
-		        	
+
+                    if (type == null) return;
+
 		        	switch (type) {
 					case STATUS_SUCCEEDED:
 						status.setVisibility(View.GONE);

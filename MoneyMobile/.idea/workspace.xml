@@ -32,26 +32,65 @@
     <ignored path=".idea/workspace.xml" />
     <file path="/attrs.xml" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1362769467858" ignored="false" />
     <file path="/handset_dashboard_view.xml" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363026540496" ignored="false" />
-    <file path="/fragment.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363038782352" ignored="false" />
+    <file path="/fragment.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363304500838" ignored="false" />
     <file path="/SlidingView.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1362769887804" ignored="false" />
     <file path="/LineView.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1362770114530" ignored="false" />
     <file path="/CaretView.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1362770140782" ignored="false" />
     <file path="/VerticalTextView.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1362770160440" ignored="false" />
     <file path="/SlidingDrawerRightSide.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1362770178605" ignored="false" />
     <file path="/HomeButton.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1362770211513" ignored="false" />
-    <file path="/ApplicationContext.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1362773276621" ignored="false" />
+    <file path="/ApplicationContext.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363308283079" ignored="false" />
     <file path="$PROJECT_DIR$/gen/com/moneydesktop/finance/BuildConfig.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1362775967465" ignored="false" />
-    <file path="$PROJECT_DIR$/gen/com/moneydesktop/finance/R.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1362775967465" ignored="false" />
+    <file path="$PROJECT_DIR$/gen/com/moneydesktop/finance/R.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363059479886" ignored="false" />
     <file path="$PROJECT_DIR$/../ViewPagerIndicator/project.properties" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363024342580" ignored="false" />
     <file path="/a.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363024981714" ignored="false" />
     <file path="/a.html" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363024988844" ignored="false" />
     <file path="/a.xml" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363026437383" ignored="false" />
     <file path="/SpendingChartHandsetFragment.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363027400497" ignored="false" />
-    <file path="/TransactionsAdapter.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363039797590" ignored="false" />
-    <file path="/TransactionsFragment.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363036222824" ignored="false" />
-    <file path="/PowerQuery.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363040336443" ignored="false" />
-    <file path="/Transactions.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363035500181" ignored="false" />
+    <file path="/TransactionsAdapter.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363149527308" ignored="false" />
+    <file path="/TransactionsFragment.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363230761779" ignored="false" />
+    <file path="/PowerQuery.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363148818381" ignored="false" />
+    <file path="/Transactions.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363290403631" ignored="false" />
     <file path="/TransactionsHandsetFragment.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363039188211" ignored="false" />
+    <file path="/Enums.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363046515982" ignored="false" />
+    <file path="/DropDownTabletActivity.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363119230219" ignored="false" />
+    <file path="/TransactionsPageTabletFragment.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363150645479" ignored="false" />
+    <file path="/tablet_manual_bank_list.xml" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363122809009" ignored="false" />
+    <file path="/BankListTabletFragment.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363124894380" ignored="false" />
+    <file path="/BankAccountTabletAdapter.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363122030014" ignored="false" />
+    <file path="/manual_bank_item" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363122132266" ignored="false" />
+    <file path="/strings.xml" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363122053593" ignored="false" />
+    <file path="/AddBankTabletFragment.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363296766017" ignored="false" />
+    <file path="/AnimatedNavView.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363131004778" ignored="false" />
+    <file path="/Category.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363124571889" ignored="false" />
+    <file path="/TransactionsTabletAdapter.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363124846160" ignored="false" />
+    <file path="/TransactionDetailBaseFragment.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363307976531" ignored="false" />
+    <file path="/SyncEngine.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363294142369" ignored="false" />
+    <file path="/a.dummy" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363190495826" ignored="false" />
+    <file path="/QueryProperty.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363147824950" ignored="false" />
+    <file path="/WebSocketService.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363309182014" ignored="false" />
+    <file path="/FayeClient.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363309615283" ignored="false" />
+    <file path="/WebSocketClient.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363308448091" ignored="false" />
+    <file path="/AmazingAdapter.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363146100638" ignored="false" />
+    <file path="/txns.csv" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363149773147" ignored="false" />
+    <file path="/BankAccount.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363296311555" ignored="false" />
+    <file path="/AccountTypesManualSaveHandsetFragment.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363284138463" ignored="false" />
+    <file path="/DataBridge.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363283835522" ignored="false" />
+    <file path="/EventMessage.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363196670269" ignored="false" />
+    <file path="/DataController.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363303469476" ignored="false" />
+    <file path="/NavWheelView.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363224540781" ignored="false" />
+    <file path="/AccountTypesTabletFragment.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363280233441" ignored="false" />
+    <file path="/FileIO.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363289992486" ignored="false" />
+    <file path="/BusinessObject.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363291814319" ignored="false" />
+    <file path="/tablet_transaction_detail_view.xml" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363300957453" ignored="false" />
+    <file path="/LabelEditCurrency.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363303126963" ignored="false" />
+    <file path="/LabelEditText.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363312405527" ignored="false" />
+    <file path="/GrowViewPager.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363320676773" ignored="false" />
+    <file path="/DashboardTabletActivity.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363317509426" ignored="false" />
+    <file path="/tablet_dashboard_view.xml" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363316219168" ignored="false" />
+    <file path="/TouchViewFlipper.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363316667153" ignored="false" />
+    <file path="/GrowPagerAdapter.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363320735751" ignored="false" />
+    <file path="/BusinessObjectInterface.java" changelist="aec16954-a130-4518-925c-bab4cbf3c87c" time="1363321946306" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +105,120 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
+    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
+      <breakpoint url="file://$PROJECT_DIR$/src/com/moneydesktop/finance/shared/fragment/TransactionsFragment.java" line="177" class="com.moneydesktop.finance.shared.fragment.TransactionsFragment" package="com.moneydesktop.finance.shared.fragment">
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="&#13;&#13;JAVA" />
+        <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/moneydesktop/finance/database/BankAccount.java" line="578" class="com.moneydesktop.finance.database.BankAccount" package="com.moneydesktop.finance.database">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/moneydesktop/finance/tablet/fragment/AddBankTabletFragment.java" line="343" class="com.moneydesktop.finance.tablet.fragment.AddBankTabletFragment" package="com.moneydesktop.finance.tablet.fragment">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/moneydesktop/finance/data/SyncEngine.java" line="617" class="com.moneydesktop.finance.data.SyncEngine$4" package="com.moneydesktop.finance.data">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/moneydesktop/finance/data/SyncEngine.java" line="639" class="com.moneydesktop.finance.data.SyncEngine$4" package="com.moneydesktop.finance.data">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/moneydesktop/finance/data/SyncEngine.java" line="446" class="com.moneydesktop.finance.data.SyncEngine" package="com.moneydesktop.finance.data">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/moneydesktop/finance/database/BusinessObject.java" line="212" class="com.moneydesktop.finance.database.BusinessObject" package="com.moneydesktop.finance.database">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/moneydesktop/finance/ApplicationContext.java" line="57" class="com.moneydesktop.finance.ApplicationContext$1" package="com.moneydesktop.finance">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+    </line_breakpoints>
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -101,50 +253,7 @@
         <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
       </breakpoint>
     </breakpoint_any>
-    <line_breakpoints>
-      <breakpoint url="file://$PROJECT_DIR$/src/com/moneydesktop/finance/shared/fragment/TransactionsFragment.java" line="69" class="com.moneydesktop.finance.shared.fragment.TransactionsFragment$1" package="com.moneydesktop.finance.shared.fragment">
-        <option name="ENABLED" value="false" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="&#13;&#13;JAVA" />
-        <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/com/moneydesktop/finance/shared/fragment/TransactionsFragment.java" line="181" class="com.moneydesktop.finance.shared.fragment.TransactionsFragment" package="com.moneydesktop.finance.shared.fragment">
-        <option name="ENABLED" value="false" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="&#13;&#13;JAVA" />
-        <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/com/moneydesktop/finance/shared/adapter/TransactionsAdapter.java" line="167" class="com.moneydesktop.finance.shared.adapter.TransactionsAdapter" package="com.moneydesktop.finance.shared.adapter">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-    </line_breakpoints>
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -153,32 +262,74 @@
     <favorites_list name="MoneyMobile" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5079618">
+    <splitter split-orientation="horizontal" split-proportion="0.49567354">
       <split-first>
         <leaf>
-          <file leaf-file-name="ApplicationContext.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/ApplicationContext.java">
+          <file leaf-file-name="SyncEngine.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/data/SyncEngine.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="138" column="130" selection-start="4284" selection-end="4284" vertical-scroll-proportion="0.0">
+                <state line="350" column="0" selection-start="8304" selection-end="8304" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="TransactionsHandsetFragment.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/handset/fragment/TransactionsHandsetFragment.java">
+          <file leaf-file-name="BankAccount.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/database/BankAccount.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="302" column="31" selection-start="10020" selection-end="10020" vertical-scroll-proportion="0.0">
+                <state line="346" column="78" selection-start="9558" selection-end="9558" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="TransactionsFragment.java" pinned="false" current="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/shared/fragment/TransactionsFragment.java">
+          <file leaf-file-name="BusinessObjectBase.java" pinned="false" current="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/database/BusinessObjectBase.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="179" column="35" selection-start="6141" selection-end="6141" vertical-scroll-proportion="0.33333334">
+                <state line="119" column="5" selection-start="3694" selection-end="3785" vertical-scroll-proportion="2.34375">
                   <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Category.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/database/Category.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="26" column="13" selection-start="840" selection-end="840" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="LabelEditCurrency.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/views/LabelEditCurrency.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="14" column="45" selection-start="344" selection-end="344" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="GrowViewPager.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/views/GrowViewPager.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="87" column="54" selection-start="2275" selection-end="2275" vertical-scroll-proportion="0.0">
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="DashboardTabletActivity.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/tablet/activity/DashboardTabletActivity.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="110" column="44" selection-start="3736" selection-end="3736" vertical-scroll-proportion="0.0">
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                    <element signature="e#9322#9843#0" expanded="true" />
+                    <element signature="e#9832#9833#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -187,63 +338,37 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="DashboardHandsetActivity.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/handset/activity/DashboardHandsetActivity.java">
+          <file leaf-file-name="TransactionsPageTabletFragment.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/tablet/fragment/TransactionsPageTabletFragment.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="470" column="16" selection-start="14373" selection-end="14373" vertical-scroll-proportion="0.0">
-                  <folding>
-                    <element signature="e#9130#9264#0" expanded="true" />
-                    <element signature="e#9258#9259#0" expanded="true" />
-                    <element signature="e#10026#10275#0" expanded="true" />
-                    <element signature="e#10270#10271#0" expanded="true" />
-                    <element signature="e#13418#13680#0" expanded="true" />
-                    <element signature="e#13675#13676#0" expanded="true" />
-                    <element signature="e#13714#13831#0" expanded="true" />
-                    <element signature="e#13826#13827#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="SpendingChartHandsetFragment.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/handset/fragment/SpendingChartHandsetFragment.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="103" column="29" selection-start="3145" selection-end="3145" vertical-scroll-proportion="0.0">
+                <state line="50" column="61" selection-start="2145" selection-end="2145" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="ChartListBridge.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/views/chart/ChartListBridge.java">
+          <file leaf-file-name="TransactionDetailBaseFragment.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/shared/fragment/TransactionDetailBaseFragment.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="350" column="57" selection-start="9797" selection-end="9797" vertical-scroll-proportion="0.0">
-                  <folding>
-                    <element signature="imports" expanded="false" />
-                    <element signature="e#3356#3508#0" expanded="false" />
-                    <element signature="e#3503#3504#0" expanded="false" />
-                    <element signature="e#10655#10661#0" expanded="false" />
-                  </folding>
+                <state line="53" column="0" selection-start="2080" selection-end="2080" vertical-scroll-proportion="0.0">
+                  <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="TransactionsAdapter.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/shared/adapter/TransactionsAdapter.java">
+          <file leaf-file-name="DashboardBaseActivity.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/shared/activity/DashboardBaseActivity.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="255" column="34" selection-start="8128" selection-end="8128" vertical-scroll-proportion="0.0">
-                  <folding>
-                    <element signature="e#4609#5481#0" expanded="true" />
-                    <element signature="e#5470#5471#0" expanded="true" />
-                  </folding>
+                <state line="40" column="34" selection-start="1632" selection-end="1632" vertical-scroll-proportion="0.0">
+                  <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Transactions.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/database/Transactions.java">
+          <file leaf-file-name="GrowPagerAdapter.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/shared/adapter/GrowPagerAdapter.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="1142" column="8" selection-start="37453" selection-end="37453" vertical-scroll-proportion="0.0">
+                <state line="51" column="30" selection-start="1600" selection-end="1600" vertical-scroll-proportion="0.0">
                   <folding>
                     <element signature="imports" expanded="true" />
                   </folding>
@@ -251,14 +376,41 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="PowerQuery.java" pinned="false" current="true" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/database/PowerQuery.java">
+          <file leaf-file-name="TransactionsDetailTabletFragment.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/tablet/fragment/TransactionsDetailTabletFragment.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="268" column="13" selection-start="6837" selection-end="6837" vertical-scroll-proportion="0.33295584">
+                <state line="283" column="31" selection-start="9326" selection-end="9326" vertical-scroll-proportion="0.0">
                   <folding>
-                    <element signature="e#320#336#0" expanded="true" />
-                    <element signature="e#663#675#0" expanded="true" />
+                    <element signature="e#7848#8009#0" expanded="true" />
+                    <element signature="e#7998#7999#0" expanded="true" />
                   </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="BusinessObject.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/database/BusinessObject.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="243" column="45" selection-start="5833" selection-end="5833" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="BusinessObjectInterface.java" pinned="false" current="true" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/database/BusinessObjectInterface.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="10" column="34" selection-start="275" selection-end="275" vertical-scroll-proportion="0.19823788">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="DataController.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/data/DataController.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="180" column="23" selection-start="5351" selection-end="5351" vertical-scroll-proportion="0.0">
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -275,29 +427,29 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/res/layout/handset_intro_view.xml" />
-        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/views/LineView.java" />
-        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/views/CaretView.java" />
-        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/views/VerticalTextView.java" />
-        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/views/SlidingDrawerRightSide.java" />
-        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/views/navigation/HomeButton.java" />
+        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/data/DataController.java" />
+        <option value="$PROJECT_DIR$/res/layout/tablet_transaction_detail_view.xml" />
+        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/shared/fragment/TransactionDetailBaseFragment.java" />
         <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/ApplicationContext.java" />
-        <option value="$PROJECT_DIR$/../Communication/pom.xml" />
-        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/handset/activity/DashboardHandsetActivity.java" />
-        <option value="$PROJECT_DIR$/res/layout/handset_dashboard_view.xml" />
-        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/handset/fragment/SpendingChartHandsetFragment.java" />
-        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/shared/fragment/TransactionsFragment.java" />
-        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/handset/fragment/TransactionsHandsetFragment.java" />
-        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/shared/adapter/TransactionsAdapter.java" />
-        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/database/Transactions.java" />
-        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/database/PowerQuery.java" />
+        <option value="$PROJECT_DIR$/../FayeClient/src/com/saulpower/fayeclient/FayeClient.java" />
+        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/shared/Services/WebSocketService.java" />
+        <option value="$PROJECT_DIR$/../FayeClient/src/com/saulpower/fayeclient/WebSocketClient.java" />
+        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/views/LabelEditText.java" />
+        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/views/TouchViewFlipper.java" />
+        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/views/TouchRelativeLayout.java" />
+        <option value="$PROJECT_DIR$/res/layout/tablet_dashboard_view.xml" />
+        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/tablet/activity/DashboardTabletActivity.java" />
+        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/views/GrowViewPager.java" />
+        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/shared/adapter/GrowPagerAdapter.java" />
+        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/database/BusinessObjectBase.java" />
+        <option value="$PROJECT_DIR$/src/com/moneydesktop/finance/database/BusinessObjectInterface.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="y" value="22" />
-    <option name="width" value="2560" />
-    <option name="height" value="1414" />
+    <option name="width" value="1920" />
+    <option name="height" value="1174" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -383,7 +535,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="handset" />
+              <option name="myItemId" value="tablet" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -409,7 +561,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="handset" />
+              <option name="myItemId" value="tablet" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -431,25 +583,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="handset" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="activity" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MoneyMobile" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MoneyMobile" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
+              <option name="myItemId" value="database" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -459,18 +593,19 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SHOW_ALL_PROCESSES" value="false" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="SDKs" />
     <property name="GoToFile.includeJavaFiles" value="false" />
+    <property name="OverrideImplement.combined" value="false" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="options.lastSelected" value="editor.preferences.import" />
+    <property name="options.lastSelected" value="editor" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../NineOldAndroids" />
     <property name="AndroidLayoutSelectedEditor" value="text-editor" />
     <property name="project.structure.side.proportion" value="0.21561772" />
-    <property name="DEBUGGABLE_DEVICE" value="017c8a0556de1382" />
     <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="DEBUGGABLE_DEVICE" value="R32CB05CYRR" />
     <property name="DEBUGGABLE_PROCESS" value="com.moneydesktop.finance" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="restartRequiresConfirmation" value="true" />
@@ -481,8 +616,15 @@
     <property name="options.searchVisible" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.moneydesktop.finance.tablet.fragment" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/res/layout" />
       <recent name="$PROJECT_DIR$/libs" />
+    </key>
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.moneydesktop.finance.shared.fragment" />
     </key>
   </component>
   <component name="RunManager" selected="Android Application.MoneyMobile">
@@ -661,36 +803,37 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="2560" height="1414" extended-state="6" />
+    <frame x="0" y="22" width="1920" height="1174" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32975337" sideWeight="0.7465224" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32975337" sideWeight="0.7465224" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32975337" sideWeight="0.67045456" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32637572" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3995363" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23863636" sideWeight="0.4988067" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32542694" sideWeight="0.5981857" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32637572" sideWeight="0.39807898" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23802164" sideWeight="0.4984089" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27820712" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23339659" sideWeight="0.4984089" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29886147" sideWeight="0.9018143" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13683373" sideWeight="0.7217929" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2534776" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.15314835" sideWeight="0.7163188" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2836812" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13020277" sideWeight="0.6736243" order="3" side_tool="false" content_ui="tabs" x="100" y="122" width="1720" height="854" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32975337" sideWeight="0.7465224" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32975337" sideWeight="0.7465224" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32921174" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -726,7 +869,7 @@
     <option name="INCLUDE_TEXT_INTO_PATCH" value="false" />
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
     <option name="SHOW_FILE_HISTORY_DETAILS" value="true" />
-    <option name="SHOW_VCS_ERROR_NOTIFICATIONS" value="true" />
+    <option name="SHOW_VCS_ERROR_NOTIFICATIONS" value="false" />
     <option name="SHOW_DIRTY_RECURSIVELY" value="false" />
     <option name="LIMIT_HISTORY" value="true" />
     <option name="MAXIMUM_HISTORY_ROWS" value="1000" />
@@ -758,146 +901,129 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../MenuDrawerLibrary/res/values/ids.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="43" selection-start="609" selection-end="609" vertical-scroll-proportion="0.31982943">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/handset_dashboard_view.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="40" selection-start="815" selection-end="815" vertical-scroll-proportion="0.32491767">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/ApplicationContext.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="138" column="130" selection-start="4284" selection-end="4284" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/handset_transactions_view.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/tablet_transactions_view.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/tablet/fragment/TransactionsTabletFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="107" column="72" selection-start="3090" selection-end="3090" vertical-scroll-proportion="0.7450331">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/handset/fragment/AccountTypesHandsetFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="634" column="55" selection-start="22465" selection-end="22465" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/handset/fragment/SpendingChartHandsetFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="103" column="29" selection-start="3145" selection-end="3145" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/views/chart/ChartListBridge.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="350" column="57" selection-start="9797" selection-end="9797" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#3356#3508#0" expanded="false" />
-            <element signature="e#3503#3504#0" expanded="false" />
-            <element signature="e#10655#10661#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/handset/activity/DashboardHandsetActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="470" column="16" selection-start="14373" selection-end="14373" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#9130#9264#0" expanded="true" />
-            <element signature="e#9258#9259#0" expanded="true" />
-            <element signature="e#10026#10275#0" expanded="true" />
-            <element signature="e#10270#10271#0" expanded="true" />
-            <element signature="e#13418#13680#0" expanded="true" />
-            <element signature="e#13675#13676#0" expanded="true" />
-            <element signature="e#13714#13831#0" expanded="true" />
-            <element signature="e#13826#13827#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/database/QueryProperty.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="48" column="18" selection-start="1282" selection-end="1282" vertical-scroll-proportion="0.33333334">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/handset/fragment/TransactionsHandsetFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="302" column="31" selection-start="10020" selection-end="10020" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/shared/fragment/TransactionsFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="179" column="35" selection-start="6141" selection-end="6141" vertical-scroll-proportion="0.33333334">
+        <state line="217" column="0" selection-start="7183" selection-end="7183" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/shared/adapter/TransactionsAdapter.java">
+    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/tablet/fragment/AddBankTabletFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="255" column="34" selection-start="8128" selection-end="8128" vertical-scroll-proportion="0.0">
+        <state line="351" column="8" selection-start="15032" selection-end="15032" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/layout/tablet_dashboard_view.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="49" column="2" selection-start="1745" selection-end="1745" vertical-scroll-proportion="1.0745614">
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/shared/fragment/TransactionDetailBaseFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="53" column="0" selection-start="2080" selection-end="2080" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/tablet/fragment/SpendingChartTabletFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="94" column="17" selection-start="3034" selection-end="3034" vertical-scroll-proportion="0.33333334">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/data/SyncEngine.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="350" column="0" selection-start="8304" selection-end="8304" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/shared/activity/DashboardBaseActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="40" column="34" selection-start="1632" selection-end="1632" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/tablet/activity/DashboardTabletActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="110" column="44" selection-start="3736" selection-end="3736" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="e#4609#5481#0" expanded="true" />
-            <element signature="e#5470#5471#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#9322#9843#0" expanded="true" />
+            <element signature="e#9832#9833#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/database/Transactions.java">
+    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/shared/adapter/GrowPagerAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1142" column="8" selection-start="37453" selection-end="37453" vertical-scroll-proportion="0.0">
+        <state line="51" column="30" selection-start="1600" selection-end="1600" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/database/PowerQuery.java">
+    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/tablet/fragment/TransactionsDetailTabletFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="268" column="13" selection-start="6837" selection-end="6837" vertical-scroll-proportion="0.33295584">
+        <state line="283" column="31" selection-start="9326" selection-end="9326" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="e#320#336#0" expanded="true" />
-            <element signature="e#663#675#0" expanded="true" />
+            <element signature="e#7848#8009#0" expanded="true" />
+            <element signature="e#7998#7999#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/data/DataController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="180" column="23" selection-start="5351" selection-end="5351" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/database/BusinessObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="243" column="45" selection-start="5833" selection-end="5833" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/views/GrowViewPager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="87" column="54" selection-start="2275" selection-end="2275" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/database/Category.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="13" selection-start="840" selection-end="840" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/database/BusinessObjectBase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="119" column="5" selection-start="3694" selection-end="3785" vertical-scroll-proportion="2.34375">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/moneydesktop/finance/database/BusinessObjectInterface.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="34" selection-start="275" selection-end="275" vertical-scroll-proportion="0.19823788">
+          <folding />
         </state>
       </provider>
     </entry>
@@ -910,7 +1036,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.2" />
+                <option value="0.21561772" />
               </list>
             </option>
           </splitter-proportions>
@@ -922,7 +1048,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.23776224" />
+                <option value="0.21561772" />
               </list>
             </option>
           </splitter-proportions>
@@ -933,7 +1059,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.2" />
+                <option value="0.21561772" />
               </list>
             </option>
           </splitter-proportions>
@@ -941,7 +1067,7 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
-          <last-edited>Android 4.2 Platform</last-edited>
+          <last-edited>1.6</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

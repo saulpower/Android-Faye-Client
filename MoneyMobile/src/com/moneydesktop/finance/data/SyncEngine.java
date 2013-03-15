@@ -3,79 +3,65 @@ package com.moneydesktop.finance.data;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
-
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.data.Enums.DataState;
-import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.database.BankAccount;
-import com.moneydesktop.finance.database.BusinessObject;
-import com.moneydesktop.finance.database.BusinessObjectBase;
-import com.moneydesktop.finance.database.DatabaseDefaults;
-import com.moneydesktop.finance.database.Institution;
+import com.moneydesktop.finance.database.*;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.util.Comparators;
-
 import de.greenrobot.event.EventBus;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SyncEngine {
 	
 	public final String TAG = "SyncEngine";
 
-	private static SyncEngine sharedInstance;
+	private static SyncEngine sSharedInstance;
 
 	/** We want to wait 5 minutes in between regular sync checks */
 	private static final long MINIMUM_SYNC_WAIT = 300000;
 	
 	private final int TIMER_DELAY = 10000;
 	
-	private DataBridge db;
-	private EventBus eventBus;
+	private DataBridge mDataBridge;
+	private EventBus mEventBus;
 	
-	private ArrayList<Bank> banksUpdating = null;
-	private Handler bankStatusTimer = null;
-	private Runnable bankStatusTask = new Runnable() {
+	private ArrayList<Bank> mBanksUpdating = null;
+	private Handler mBankStatusTimer = null;
+	private Runnable mBankStatusTask = new Runnable() {
 		
 		public void run() {
 
 			bankStatusTimerFired();
 			
-			if (bankStatusTimer != null)
-				bankStatusTimer.postDelayed(this, TIMER_DELAY);
+			if (mBankStatusTimer != null)
+				mBankStatusTimer.postDelayed(this, TIMER_DELAY);
 		}
 	};
 	
-	private boolean isRunning = false;
-	private boolean shouldSync = false;
+	private boolean mRunning = false;
+    private boolean mAccountRunning = false;
+	private boolean mShouldSync = false;
 
 	public static SyncEngine sharedInstance() {
 		
-		if (sharedInstance == null) {
-    		sharedInstance = new SyncEngine();
+		if (sSharedInstance == null) {
+    		sSharedInstance = new SyncEngine();
     	}
     	
-    	return sharedInstance;
+    	return sSharedInstance;
 	}
 	
 	public SyncEngine() {
 		
-		this.db = DataBridge.sharedInstance();
-		this.eventBus = EventBus.getDefault();
+		this.mDataBridge = DataBridge.sharedInstance();
+		this.mEventBus = EventBus.getDefault();
 		
-		this.banksUpdating = new ArrayList<Bank>();
+		this.mBanksUpdating = new ArrayList<Bank>();
 	}
 	
 	public boolean needsFullSync() {
@@ -95,16 +81,16 @@ public class SyncEngine {
 	}
 
 	public boolean isSyncing() {
-		return isRunning;
+		return mRunning;
 	}
 
 	public boolean hasPendingSync() {
-		return shouldSync;
+		return mShouldSync;
 	}
 	
 	public void syncIfNeeded() {
 		
-		if (shouldSync && !isRunning && User.getCurrentUser().getCanSync()) {
+		if (mShouldSync && !mRunning && User.getCurrentUser().getCanSync()) {
 			beginSync();
 		}
 	}
@@ -125,11 +111,11 @@ public class SyncEngine {
 	
 	public void beginBankStatusUpdate(Bank bank) {
 		
-		if (!banksUpdating.contains(bank)) {
-			banksUpdating.add(bank);
+		if (!mBanksUpdating.contains(bank)) {
+			mBanksUpdating.add(bank);
 		}
 		
-		if (bankStatusTimer != null)
+		if (mBankStatusTimer != null)
 			return;
 		
 		startBankStatusTimer();
@@ -137,23 +123,23 @@ public class SyncEngine {
 	
 	private void startBankStatusTimer() {
 		
-		if (User.getCurrentUser() != null && User.getCurrentUser().getCanSync() && banksUpdating.size() > 0 && bankStatusTimer == null) {
+		if (User.getCurrentUser() != null && User.getCurrentUser().getCanSync() && mBanksUpdating.size() > 0 && mBankStatusTimer == null) {
 			
-			bankStatusTimer = new Handler();
-			bankStatusTimer.postDelayed(bankStatusTask, TIMER_DELAY);
+			mBankStatusTimer = new Handler();
+			mBankStatusTimer.postDelayed(mBankStatusTask, TIMER_DELAY);
 			
-		} else if (bankStatusTimer != null) {
+		} else if (mBankStatusTimer != null) {
 			
-			bankStatusTimer.removeCallbacks(bankStatusTask);
+			mBankStatusTimer.removeCallbacks(mBankStatusTask);
 		}
 	}
 	
 	public void endBankStatusTimer() {
 		
-		if (bankStatusTimer != null) {
+		if (mBankStatusTimer != null) {
 			
-			bankStatusTimer.removeCallbacks(bankStatusTask);
-			bankStatusTimer = null;
+			mBankStatusTimer.removeCallbacks(mBankStatusTask);
+			mBankStatusTimer = null;
 		}
 		//DataController.save();
 	}
@@ -164,13 +150,13 @@ public class SyncEngine {
 			
 			public void run() {
 				
-				synchronized(banksUpdating) {
+				synchronized(mBanksUpdating) {
 					
 					List<Bank> updatingCopy = new ArrayList<Bank>();
 					
-					updatingCopy = Arrays.asList(new Bank[banksUpdating.size()]);  
+					updatingCopy = Arrays.asList(new Bank[mBanksUpdating.size()]);
 					
-					Collections.copy(updatingCopy, banksUpdating);
+					Collections.copy(updatingCopy, mBanksUpdating);
 					
 					for (int i = updatingCopy.size() -1; i >= 0; i--) {
 						
@@ -180,12 +166,12 @@ public class SyncEngine {
 						bank.updateStatus(json);
 
 						if (bank.getProcessStatus().intValue()  >= 3){
-							banksUpdating.remove(i);
-						    eventBus.post(new EventMessage().new BankStatusUpdateEvent(bank));
+							mBanksUpdating.remove(i);
+						    mEventBus.post(new EventMessage().new BankStatusUpdateEvent(bank));
 						}
 					}
 					
-					if (banksUpdating.size() == 0) {
+					if (mBanksUpdating.size() == 0) {
 						
 						// Run code on main thread
 						new Handler(ApplicationContext.getContext().getMainLooper()).post(new Runnable() {
@@ -221,13 +207,13 @@ public class SyncEngine {
 			return;
 		}
 		
-		if (!isRunning) {
+		if (!mRunning && !mAccountRunning) {
 			
 		    Log.i(TAG, "Sync Started");
 		    
-			isRunning = true;
+			mRunning = true;
 			
-			eventBus.post(new EventMessage().new SyncEvent(false));
+			mEventBus.post(new EventMessage().new SyncEvent(false));
 			
 			new AsyncTask<Void, Void, Boolean>() {
 	    		
@@ -238,10 +224,10 @@ public class SyncEngine {
 						
 						performSync();
 						
-					} catch (JSONException e) {
+					} catch (Exception e) {
 						Log.e(TAG, "Could not perform sync", e);
 					} finally {
-						isRunning = false;
+						mRunning = false;
 					}
 
 					return true;
@@ -249,7 +235,7 @@ public class SyncEngine {
 	    		
 	    		@Override
 	    		protected void onPostExecute(Boolean result) {
-	    			eventBus.post(new EventMessage().new SyncEvent(true));
+	    			mEventBus.post(new EventMessage().new SyncEvent(true));
 	    		}
 				
 			}.execute();
@@ -262,13 +248,13 @@ public class SyncEngine {
 		
 		if (needsFullSync()) {
 			
-			data = db.downloadSync(true);
+			data = mDataBridge.downloadSync(true);
 			
 		} else if (User.getCurrentUser() != null && User.getCurrentUser().getCanSync()) {
 			
 			processChangeSync();
 			
-			data = db.downloadSync(false);
+			data = mDataBridge.downloadSync(false);
 			
 		} else {
 			
@@ -284,7 +270,7 @@ public class SyncEngine {
 		} else if (needsFullSync()) {
 		
 			setNeedsFullSync(true);
-			shouldSync = true;
+			mShouldSync = true;
 		}
 		
 		// Save the sync date to preferences
@@ -362,7 +348,7 @@ public class SyncEngine {
 			uploadData.put(Constant.KEY_DEVICE, deviceData);
 			
 			// Send data to server
-			JSONObject savePackage = db.uploadSync(uploadData);
+			JSONObject savePackage = mDataBridge.uploadSync(uploadData);
 			
 			// User server response and update local objects (DataState)
 			if (savePackage != null) {
@@ -447,6 +433,7 @@ public class SyncEngine {
 			if (externalId.equals("")) {
 				externalId = guid;
 			}
+
 			BusinessObject bo = null;
 			
 			for (Object object : objects) {
@@ -455,6 +442,10 @@ public class SyncEngine {
 					break;
 				}
 			}
+
+            if (bo == null) {
+                continue;
+            }
 			
 			int status = 200;
 			
@@ -524,12 +515,12 @@ public class SyncEngine {
 		preprocessSyncData(device);
 		DataController.saveSyncData(device, isFullSync);
 		
-		if (syncToken != null) db.endSync(syncToken);
+		if (syncToken != null) mDataBridge.endSync(syncToken);
 		
 		// Process updating account balances
 		BankAccount.buildAccountBalances();
 		
-		shouldSync = false;
+		mShouldSync = false;
 		setNeedsFullSync(false);
 	}
 	
@@ -584,7 +575,7 @@ public class SyncEngine {
 		
 		DataController.deleteData(Institution.class);
 		
-		JSONArray json = db.syncInstitutions();
+		JSONArray json = mDataBridge.syncInstitutions();
 		
 		if (json != null) {
 			
@@ -608,4 +599,49 @@ public class SyncEngine {
 		
 		Preferences.saveLong(Preferences.KEY_LAST_INSTITUTION_SYNC, (new Date()).getTime());
 	}
+
+    public void syncBankAccount(BankAccount bankAccount) {
+        syncBankAccount(bankAccount, false);
+    }
+
+    public void syncBankAccount(BankAccount bankAccount, final boolean addNewTransaction) {
+
+        Log.i(TAG, "Sync Running: " + mRunning);
+
+        mAccountRunning = true;
+
+        new AsyncTask<BankAccount, Void, Boolean>() {
+
+            @Override
+            protected Boolean doInBackground(BankAccount... params) {
+
+                BankAccount bankAccount = params[0];
+
+                JSONObject jsonResponse = mDataBridge.saveManualBankAccount(bankAccount);
+
+                if (jsonResponse != null) {
+
+                    bankAccount.updateManualAccount(jsonResponse);
+
+                    if (addNewTransaction) {
+                        Transactions transactions = Transactions.createNewTransaction(bankAccount);
+                        transactions.insertSingle();
+                    }
+                }
+
+                return true;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean success) {
+
+                mAccountRunning = false;
+
+                if (addNewTransaction) {
+                    beginSync();
+                }
+            }
+
+        }.execute(bankAccount);
+    }
 }

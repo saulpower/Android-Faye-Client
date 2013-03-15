@@ -221,7 +221,8 @@ public class Enums {
         ADD_BANK(20),
         FIX_BANK(21),
         SHOW_HIDE_DATA(22),
-        UPDATE_USERNAME_PASSWORD(23);
+        UPDATE_USERNAME_PASSWORD(23),
+        MANUAL_BANK_LIST(24);
         
         private final int index;
         

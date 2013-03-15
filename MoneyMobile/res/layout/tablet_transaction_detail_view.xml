@@ -200,13 +200,14 @@
 	            android:layout_weight="17"
 	            android:orientation="horizontal">
 	
-	            <com.moneydesktop.finance.views.LabelEditText
+	            <com.moneydesktop.finance.views.LabelEditCurrency
 	                android:id="@+id/amount"
 	                android:layout_width="0dp"
 	                android:layout_height="match_parent"
 	                android:layout_weight="50"
 	                android:background="@drawable/transparent_to_primary"
-	                android:inputType="none"
+	                android:inputType="numberDecimal"
+                    android:imeOptions="actionDone"
 	                android:paddingLeft="10dp"
 	                android:paddingRight="10dp"
 	                android:singleLine="true"

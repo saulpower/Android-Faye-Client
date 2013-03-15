@@ -2,9 +2,10 @@ package com.moneydesktop.finance.shared.adapter;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-
 import com.moneydesktop.finance.shared.fragment.GrowFragment;
+import com.moneydesktop.finance.views.GrowViewPager;
 import com.moneydesktop.finance.views.GrowViewPager.OnScrollChangedListener;
 
 public abstract class GrowPagerAdapter extends FragmentPagerAdapter implements OnPageChangeListener, OnScrollChangedListener {
@@ -20,6 +21,12 @@ public abstract class GrowPagerAdapter extends FragmentPagerAdapter implements O
 	private GrowFragment[] mFragments;
 
 	private OnScrollStateChangedListener mOnScrollStateChangedListener;
+
+    private GrowViewPager mPager;
+
+    public void setPager(GrowViewPager mPager) {
+        this.mPager = mPager;
+    }
 
 	public int getCurrentPage() {
 		return mCurrentPage;
@@ -41,7 +48,11 @@ public abstract class GrowPagerAdapter extends FragmentPagerAdapter implements O
 
     @Override
     public void onPageScrollStateChanged(int state) {
-    	
+
+        if (mPager != null && state == ViewPager.SCROLL_STATE_IDLE) {
+            mPager.setPagingEnabled(false);
+        }
+
     	if (mOnScrollStateChangedListener != null) {
     		mOnScrollStateChangedListener.onScrollStateChanged(state);
     	}

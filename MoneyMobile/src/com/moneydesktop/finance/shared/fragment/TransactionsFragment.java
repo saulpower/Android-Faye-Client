@@ -3,6 +3,7 @@ package com.moneydesktop.finance.shared.fragment;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -54,6 +55,8 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
     
     protected boolean mLoaded = false;
     protected boolean mWaiting = true;
+
+    protected Handler mHandler;
     
     protected AsyncTask<Integer, Void, TransactionsTabletAdapter> mBackgroundTask;
     
@@ -103,7 +106,9 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        
+
+        mHandler = new Handler();
+
         if (mTransactionsList == null) {
         	setupView();
         	refreshTransactionsList();
@@ -164,15 +169,6 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
     	}
     }
     
-    protected void updateTransactionCategory(int position, long categoryId) {
-        
-        Transactions transaction = (Transactions) mTransactionsList.getItemAtPosition(position);
-        transaction.setCategoryId(categoryId);
-        transaction.updateSingle();
-        
-        mAdapter.notifyDataSetChanged();
-    }
-    
     protected void refreshTransactionsList() {
     	refreshTransactionsList(true);
     }
@@ -180,7 +176,7 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
     protected void refreshTransactionsList(boolean invalidate) {
     	
         mLoaded = false;
-        
+
         if (mAdapter == null) {
         	
         	if (getChildInstance() instanceof TransactionsPageTabletFragment) {
@@ -217,16 +213,23 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
     }
     
     public void onEvent(DatabaseSaveEvent event) {
-    	
+
     	if (mAdapter != null && event.getChangedClassesList().contains(Transactions.class)) {
-    		mAdapter.notifyDataSetChanged();
+
+            mHandler.post(new Runnable() {
+
+                @Override
+                public void run() {
+                    mAdapter.refreshCurrentSelection();
+                }
+            });
     	}
     }
     
     public void onEvent(SyncEvent event) {
         
     	if (mAdapter != null && event.isFinished()) {
-    		refreshTransactionsList(false);
+            mAdapter.refreshCurrentSelection();
     	}
     }
     

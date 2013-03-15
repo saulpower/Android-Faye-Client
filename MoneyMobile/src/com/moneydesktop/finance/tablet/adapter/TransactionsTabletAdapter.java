@@ -1,15 +1,11 @@
 package com.moneydesktop.finance.tablet.adapter;
 
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-
 import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.shared.TransactionViewHolder;
@@ -18,6 +14,9 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.AmazingListView;
 import com.moneydesktop.finance.views.CaretView;
 import com.moneydesktop.finance.views.VerticalTextView;
+
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 
 public class TransactionsTabletAdapter extends TransactionsAdapter {
     
@@ -87,7 +86,8 @@ public class TransactionsTabletAdapter extends TransactionsAdapter {
             }
 
 			viewHolder.type.setImageResource(transactions.getIsBusiness() ? R.drawable.ipad_txndetail_icon_business_color : R.drawable.ipad_txndetail_icon_personal_grey);
-			viewHolder.flag.setVisibility(transactions.getIsFlagged() ? View.VISIBLE : View.INVISIBLE);
+            boolean isFlagged = (transactions.getIsFlagged() != null && transactions.getIsFlagged());
+			viewHolder.flag.setVisibility(isFlagged ? View.VISIBLE : View.INVISIBLE);
 			viewHolder.category.setText(transactions.getCategory() != null ? transactions.getCategory().getCategoryName() : "");
 		}
 

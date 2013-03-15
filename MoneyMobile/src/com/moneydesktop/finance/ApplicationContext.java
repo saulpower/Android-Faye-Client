@@ -50,10 +50,12 @@ public class ApplicationContext extends Application {
 		public void onReceive(Context context, Intent intent) {
 			
 			if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+                startFayeClient();
 				sScreenOn = true;
 			}
 			
 			if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+                stopFayeClient();
 				sScreenOn = false;
 			}
 			
@@ -73,8 +75,7 @@ public class ApplicationContext extends Application {
         Crittercism.init(this, "50258d166c36f91a1b000004");
         Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler());
 
-        Intent intent = new Intent(this, WebSocketService.class);
-		startService(intent);
+        startFayeClient();
         
         initializeDatabase();
 		DatabaseDefaults.ensureInstitutionsLoaded();
@@ -91,12 +92,23 @@ public class ApplicationContext extends Application {
 		super.onTerminate();
 		
 		EventBus.getDefault().unregister(this);
-		
-        Intent intent = new Intent(this, WebSocketService.class);
-		stopService(intent);
-		
+
+		stopFayeClient();
+
 		unregisterReceiver(sScreenLock);
 	}
+
+    private void startFayeClient() {
+
+        Intent intent = new Intent(this, WebSocketService.class);
+        startService(intent);
+    }
+
+    private void stopFayeClient() {
+
+        Intent intent = new Intent(this, WebSocketService.class);
+        stopService(intent);
+    }
 	
 	private void initializeDatabase() {
 
