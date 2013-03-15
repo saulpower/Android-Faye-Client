@@ -28,6 +28,9 @@ import com.moneydesktop.finance.util.UiUtils;
 
 import de.greenrobot.event.EventBus;
 
+import java.util.HashMap;
+import java.util.Map;
+
 abstract public class BaseActivity extends FragmentActivity {
 	
 	public final String TAG = this.getClass().getSimpleName();
@@ -81,6 +84,8 @@ abstract public class BaseActivity extends FragmentActivity {
 	private static long sPause;
 	
 	public static boolean sInForeground = false;
+
+    protected Map<FragmentType, BaseFragment> mFragments = new HashMap<FragmentType, BaseFragment>();
     
     public void setCurrentFragment(BaseFragment fragment) {
     	mFragment = fragment;
@@ -179,7 +184,19 @@ abstract public class BaseActivity extends FragmentActivity {
 	 * @param fragment
 	 */
 	public void onFragmentAttached(BaseFragment fragment) {
+
+        if (fragment.getType() != null) {
+            mFragments.put(fragment.getType(), fragment);
+        }
+
         setCurrentFragment(fragment);
+    }
+
+    public void onFragmentDetached(BaseFragment fragment) {
+
+        if (fragment.getType() != null) {
+            mFragments.remove(fragment.getType());
+        }
     }
 	
 	public void modalActivity(Class<?> key) {

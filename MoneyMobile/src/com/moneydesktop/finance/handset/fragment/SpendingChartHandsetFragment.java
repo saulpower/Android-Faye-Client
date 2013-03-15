@@ -1,7 +1,5 @@
 package com.moneydesktop.finance.handset.fragment;
 
-import android.util.Log;
-import net.simonvt.menudrawer.MenuDrawer;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,7 +7,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Transactions;
@@ -22,8 +19,8 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.chart.ChartListBridge;
 import com.moneydesktop.finance.views.chart.ExpandablePieChartView;
 import com.moneydesktop.finance.views.chart.PieChartView.OnPieChartReadyListener;
-
 import de.greenrobot.event.EventBus;
+import net.simonvt.menudrawer.MenuDrawer;
 
 public class SpendingChartHandsetFragment extends BaseFragment implements OnMenuChangeListener {
 	
@@ -135,7 +132,10 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
     
     @Override
     public void isShowing(boolean fromBackstack) {
-    	super.isShowing(fromBackstack);
+
+        if (mActivity != null) {
+            mActivity.updateNavBar(getFragmentTitle(), true);
+        }
 		
 		mPaused = false;
 		configureChart(true);

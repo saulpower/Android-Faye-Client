@@ -24,7 +24,7 @@ public class SettingsHandsetFragment extends BaseFragment {
 	private TextView mLockIcon, mFeedbackIcon, mLogoutIcon, mLogoutLabel, mLockLabel, mFeedbackLabel;
 	private LinearLayout mLock, mFeedback, mLogout;
 	
-	public static SettingsHandsetFragment getInstance() {
+	public static SettingsHandsetFragment newInstance() {
 	    
 		SettingsHandsetFragment fragment = new SettingsHandsetFragment();
 		fragment.setRetainInstance(true);
@@ -125,6 +125,14 @@ public class SettingsHandsetFragment extends BaseFragment {
 			}
 		});
 	}
+
+    @Override
+    public void isShowing(boolean fromBackstack) {
+
+        if (mActivity != null) {
+            mActivity.updateNavBar(getFragmentTitle(), true);
+        }
+    }
 	
 	@Override
 	public String getFragmentTitle() {

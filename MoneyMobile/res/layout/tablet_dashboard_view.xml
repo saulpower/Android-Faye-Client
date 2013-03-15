@@ -20,7 +20,17 @@
             android:layout_marginTop="20dp" />
 
         <FrameLayout
-            android:id="@+id/fragment"
+            android:id="@+id/accounts_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <FrameLayout
+            android:id="@+id/transactions_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <FrameLayout
+            android:id="@+id/settings_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
         

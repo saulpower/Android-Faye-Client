@@ -106,8 +106,8 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 	@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
         EventBus.getDefault().register(this);
-        mActivity.onFragmentAttached(this);
 	}
 
 	public static AddBankTabletFragment newInstance() {

@@ -1,15 +1,5 @@
 package com.moneydesktop.finance.handset.activity;
 
-import java.text.DateFormatSymbols;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import net.simonvt.menudrawer.MenuDrawer;
-import net.simonvt.menudrawer.MenuDrawer.OnDrawerStateChangeListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -19,13 +9,8 @@ import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.ViewFlipper;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
@@ -51,8 +36,13 @@ import com.moneydesktop.finance.views.GrowViewPager;
 import com.moneydesktop.finance.views.UltimateListView;
 import com.moneydesktop.finance.views.ViewAnimator;
 import com.moneydesktop.finance.views.navigation.NavBarView;
-
 import de.greenrobot.event.EventBus;
+import net.simonvt.menudrawer.MenuDrawer;
+import net.simonvt.menudrawer.MenuDrawer.OnDrawerStateChangeListener;
+
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class DashboardHandsetActivity extends DashboardBaseActivity implements OnItemClickListener {
 	
@@ -67,7 +57,6 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	private TextView mUpdateLabel, mUpdate;
 	private NavBarView mRefresh;
 	private UltimateListView mRightMenuList;
-	private FragmentType mCurrentFragmentType;
 	
 	private MenuRightHandsetAdapter mRightMenuAdapter;
 
@@ -85,37 +74,6 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     private OnMenuChangeListener mOnMenuChangeListener;
 
     protected SimpleDateFormat mDateFormatter = new SimpleDateFormat("MM.dd.yyyy '@' h:mma", Locale.US);
-    
-    private Map<FragmentType, BaseFragment> mFragments = new HashMap<FragmentType, BaseFragment>();
-	
-	private AnimationListener mStart = new AnimationListener() {
-		
-		@Override
-		public void onAnimationStart(Animation animation) {
-			EventBus.getDefault().post(new EventMessage().new NavigationEvent());
-		}
-		
-		@Override
-		public void onAnimationRepeat(Animation animation) {}
-		
-		@Override
-		public void onAnimationEnd(Animation animation) {}
-	};
-    
-    private AnimationListener mFinish = new AnimationListener() {
-
-		@Override
-		public void onAnimationEnd(Animation animation) {
-			
-			fragmentShowing();
-		}
-
-		@Override
-		public void onAnimationRepeat(Animation animation) {}
-
-		@Override
-		public void onAnimationStart(Animation animation) {}
-	};
 	
 	public FragmentType getCurrentFragmentType() {
 		return mCurrentFragmentType;
@@ -132,10 +90,6 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	@Override
     public void onFragmentAttached(BaseFragment fragment) {
     	super.onFragmentAttached(fragment);
-    	
-    	if (fragment.getType() != null) {
-    		mFragments.put(fragment.getType(), fragment);
-    	}
     	
     	resetRightMenu();
     }
@@ -270,10 +224,10 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     
     private void loadFragments() {
     	
-    	loadFragment(R.id.accounts_fragment, AccountTypesHandsetFragment.getInstance());
+    	loadFragment(R.id.accounts_fragment, AccountTypesHandsetFragment.newInstance());
     	loadFragment(R.id.transactions_fragment, TransactionsHandsetFragment.newInstance());
     	loadFragment(R.id.spending_fragment, SpendingChartHandsetFragment.newInstance());
-    	loadFragment(R.id.settings_fragment, SettingsHandsetFragment.getInstance());
+    	loadFragment(R.id.settings_fragment, SettingsHandsetFragment.newInstance());
     }
     
     private void loadFragment(int containerViewId, BaseFragment fragment) {
@@ -281,21 +235,6 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     	FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.add(containerViewId, fragment);
 		ft.commit();
-    }
-    
-    private void fragmentShowing() {
-    	
-    	if (mFragments.containsKey(mCurrentFragmentType)) {
-			
-			mFlipper.post(new Runnable() {
-				
-				@Override
-				public void run() {
-
-		    		mFragments.get(mCurrentFragmentType).isShowing(false);
-				}
-			});
-    	}
     }
 	
 	private void resetRightMenu() {

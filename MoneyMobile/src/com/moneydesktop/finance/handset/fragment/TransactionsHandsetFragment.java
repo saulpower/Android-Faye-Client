@@ -113,7 +113,10 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 
 	@Override
     public void isShowing(boolean fromBackstack) {
-    	super.isShowing(fromBackstack);
+
+        if (mActivity != null) {
+            mActivity.updateNavBar(getFragmentTitle(), true);
+        }
 
 		setupMenuItems();
     }

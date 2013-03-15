@@ -30,7 +30,6 @@ import com.moneydesktop.finance.database.CategoryDao;
 import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
-import com.moneydesktop.finance.model.EventMessage.ParentAnimationEvent;
 import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
 import com.moneydesktop.finance.shared.TransactionViewHolder;
 import com.moneydesktop.finance.shared.fragment.TransactionsFragment;
@@ -363,18 +362,12 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
         
         return true;
     }
-    
-    public void onEvent(ParentAnimationEvent event) {
-        
-        if (!event.isOutAnimation() && !event.isFinished()) {
-            mWaiting = true;
-        }
-        
-        if (event.isOutAnimation() && event.isFinished()) {
 
-            mWaiting = false;
-            configureView();
-        }
+    @Override
+    public void isShowing(boolean fromBackstack) {
+
+        mWaiting = false;
+        configureView();
     }
 
     private void configureView() {
@@ -391,6 +384,11 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
                     mTransactionsList.startAnimation(mFadeIn);
                 }
             }, 100);
+
+        } else if (mLoaded && !mWaiting) {
+
+            mTransactionsList.setSelection(0);
+            mAdapter.refreshCurrentSelection();
         }
     }
     

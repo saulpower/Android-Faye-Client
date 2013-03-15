@@ -1,36 +1,26 @@
 package com.moneydesktop.finance.handset.fragment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
-
+import android.widget.ListView;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
-import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.database.QueryProperty;
-import com.moneydesktop.finance.shared.adapter.SelectAccountTypesAdapter;
 import com.moneydesktop.finance.shared.adapter.SelectPropertyTypesAdapter;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
-import com.moneydesktop.finance.shared.fragment.FixBankFragment;
-import com.moneydesktop.finance.util.Fonts;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddAccountPropertyTypesHandsetFragment extends BaseFragment{
 
@@ -59,6 +49,14 @@ public class AddAccountPropertyTypesHandsetFragment extends BaseFragment{
         super.onAttach(activity);
 
     //    EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void isShowing(boolean fromBackstack) {
+
+        if (mActivity != null) {
+            mActivity.updateNavBar(getFragmentTitle(), true);
+        }
     }
     
     @Override

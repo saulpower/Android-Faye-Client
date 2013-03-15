@@ -1,36 +1,28 @@
 package com.moneydesktop.finance.handset.fragment;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
-
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
-import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.Institution;
 import com.moneydesktop.finance.database.InstitutionDao;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
-import com.moneydesktop.finance.shared.fragment.FixBankFragment;
-import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.AddNewInstitutionAdapter;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.LabelEditText;
+
+import java.util.List;
 
 public class AccountInstitutionListHandsetFragment extends BaseFragment{
 
@@ -53,6 +45,14 @@ public class AccountInstitutionListHandsetFragment extends BaseFragment{
 	public String getFragmentTitle() {
 		return null;
 	}
+
+    @Override
+    public void isShowing(boolean fromBackstack) {
+
+        if (mActivity != null) {
+            mActivity.updateNavBar(getFragmentTitle(), true);
+        }
+    }
 
     @Override
     public void onAttach(Activity activity) {

@@ -1,7 +1,5 @@
 package com.moneydesktop.finance.shared.activity;
 
-import java.util.List;
-
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -9,7 +7,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Pair;
 import android.view.View;
-
+import android.view.animation.Animation;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.DataController;
@@ -27,6 +25,8 @@ import com.moneydesktop.finance.tablet.fragment.TransactionsTabletFragment;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.views.GrowViewPager;
 
+import java.util.List;
+
 @TargetApi(11)
 public abstract class DashboardBaseActivity extends BaseActivity {
 
@@ -36,9 +36,40 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 	
 	protected boolean mLoggingOut = false;
 	protected boolean mOnHome = true;
+
+    protected FragmentType mCurrentFragmentType = FragmentType.DASHBOARD;
     
 	protected GrowViewPager mPager;
 	protected GrowPagerAdapter mAdapter;
+
+    protected Animation.AnimationListener mStart = new Animation.AnimationListener() {
+
+        @Override
+        public void onAnimationStart(Animation animation) {
+//            EventBus.getDefault().post(new EventMessage().new NavigationEvent());
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {}
+
+        @Override
+        public void onAnimationEnd(Animation animation) {}
+    };
+
+    protected Animation.AnimationListener mFinish = new Animation.AnimationListener() {
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+
+            fragmentShowing();
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {}
+
+        @Override
+        public void onAnimationStart(Animation animation) {}
+    };
 	
     public boolean isOnHome() {
 		return mOnHome;
@@ -60,6 +91,14 @@ public abstract class DashboardBaseActivity extends BaseActivity {
         super.onPause();
         
     	SyncEngine.sharedInstance().syncCheck();
+    }
+
+    private void fragmentShowing() {
+
+        if (mFragments.containsKey(mCurrentFragmentType)) {
+
+            mFragments.get(mCurrentFragmentType).isShowing(false);
+        }
     }
     
     public void setDetailFragment(TransactionsDetailTabletFragment fragment) {

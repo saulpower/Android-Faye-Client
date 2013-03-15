@@ -1,8 +1,5 @@
 package com.moneydesktop.finance.tablet.fragment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Bundle;
@@ -15,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.Toast;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
@@ -25,8 +21,10 @@ import com.moneydesktop.finance.shared.FilterViewHolder;
 import com.moneydesktop.finance.shared.adapter.FilterAdapter;
 import com.moneydesktop.finance.views.UltimateListView;
 import com.moneydesktop.finance.views.navigation.NavBarButtons;
-
 import de.greenrobot.event.EventBus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @TargetApi(11)
 public class TransactionsTabletFragment extends ParentTransactionFragment implements OnChildClickListener {
@@ -35,6 +33,8 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
 	
     private UltimateListView mFiltersList;
     private FilterAdapter mAdapter;
+
+    private TransactionsPageTabletFragment mPageFragment;
 	
 	public static TransactionsTabletFragment newInstance() {
 			
@@ -66,15 +66,23 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
 		
 		setupView();
 		setupFilterList();
-		
-		TransactionsPageTabletFragment frag = TransactionsPageTabletFragment.newInstance(this);
+
+        mPageFragment = TransactionsPageTabletFragment.newInstance(this);
       
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment, frag);
+        ft.replace(R.id.fragment, mPageFragment);
         ft.commit();
 		
 		return mRoot;
 	}
+
+    @Override
+    public void isShowing(boolean fromBackstack) {
+
+        if (mPageFragment != null) {
+            mPageFragment.isShowing(fromBackstack);
+        }
+    }
     
     @Override
     public void onResume() {

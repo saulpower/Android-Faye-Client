@@ -1,16 +1,7 @@
 package com.moneydesktop.finance.shared.fragment;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Intent;
-
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataBridge;
 import com.moneydesktop.finance.data.DataController;
@@ -19,8 +10,14 @@ import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.shared.Services.SyncService;
-
 import de.greenrobot.event.EventBus;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public abstract class FixBankFragment extends BaseFragment{
     
@@ -34,7 +31,14 @@ public abstract class FixBankFragment extends BaseFragment{
 	public FragmentType getType() {
 		return null;
 	}
- 
+
+    @Override
+    public void isShowing(boolean fromBackstack) {
+
+        if (mActivity != null) {
+            mActivity.updateNavBar(getFragmentTitle(), true);
+        }
+    }
   
     protected void getLoginQuestions(final String institutionID) {
     	mLoginLabels = new ArrayList<String>();

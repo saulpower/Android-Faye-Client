@@ -1,13 +1,5 @@
 package com.moneydesktop.finance.tablet.fragment;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,34 +7,32 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.CheckBox;
+import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataBridge;
-import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.database.BankAccountDao;
 import com.moneydesktop.finance.database.BankDao;
 import com.moneydesktop.finance.model.EventMessage;
-import com.moneydesktop.finance.model.EventMessage.UpdateCredentialsFinished;
-import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.model.EventMessage.GetLogonCredentialsFinished;
-import com.moneydesktop.finance.model.EventMessage.SaveInstitutionFinished;
+import com.moneydesktop.finance.model.EventMessage.UpdateCredentialsFinished;
 import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.Fonts;
-
 import de.greenrobot.event.EventBus;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class UpdateUsernamePassowrdTabletFragment extends BaseFragment{
 
@@ -57,11 +47,12 @@ public class UpdateUsernamePassowrdTabletFragment extends BaseFragment{
 	public String getFragmentTitle() {
 		return String.format(getString(R.string.add_account_institution_connect), mBank.getBankName());
 	}
+
 	@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
         EventBus.getDefault().register(this);
-        mActivity.onFragmentAttached(this);
 	}
 
 	@Override

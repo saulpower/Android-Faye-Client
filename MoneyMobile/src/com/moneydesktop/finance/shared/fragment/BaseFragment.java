@@ -24,14 +24,14 @@ public abstract class BaseFragment extends Fragment {
             mActivity.onFragmentAttached(this);
         }
 	}
-    
+
     @Override
-    public void onResume() {
-        super.onResume();
-        
+    public void onDetach() {
+        super.onDetach();
+
         if (mActivity != null) {
-            mActivity.setCurrentFragment(this);
-            mActivity.updateNavBar(getFragmentTitle(), true);
+            mActivity.setFragmentCount(mActivity.getFragmentCount() - 1);
+            mActivity.onFragmentDetached(this);
         }
     }
     
@@ -44,12 +44,7 @@ public abstract class BaseFragment extends Fragment {
     	}
     }
     
-    public void isShowing(boolean fromBackstack) {
-    	
-    	if (mActivity != null) {
-    		mActivity.updateNavBar(getFragmentTitle(), true);
-    	}
-    }
+    public void isShowing(boolean fromBackstack) {}
     
     public void isHiding() {}
 	

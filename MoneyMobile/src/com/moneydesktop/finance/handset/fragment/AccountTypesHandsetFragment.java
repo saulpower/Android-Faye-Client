@@ -1,10 +1,5 @@
 package com.moneydesktop.finance.handset.fragment;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,7 +20,6 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.devsmart.android.ui.HorizontalListView;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
@@ -33,21 +27,12 @@ import com.moneydesktop.finance.data.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.SlideFrom;
 import com.moneydesktop.finance.data.SyncEngine;
-import com.moneydesktop.finance.database.AccountType;
-import com.moneydesktop.finance.database.AccountTypeDao;
-import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.database.BankAccount;
-import com.moneydesktop.finance.database.PowerQuery;
+import com.moneydesktop.finance.database.*;
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
 import com.moneydesktop.finance.handset.adapter.AccountBankListAdapter;
 import com.moneydesktop.finance.handset.adapter.AccountTypesHandsetAdapter;
 import com.moneydesktop.finance.handset.adapter.BankOptionsAdapter;
-import com.moneydesktop.finance.model.EventMessage.BankStatusUpdateEvent;
-import com.moneydesktop.finance.model.EventMessage.CheckRemoveBankEvent;
-import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
-import com.moneydesktop.finance.model.EventMessage.MenuEvent;
-import com.moneydesktop.finance.model.EventMessage.SyncEvent;
-import com.moneydesktop.finance.model.EventMessage.UpdateSpecificBankStatus;
+import com.moneydesktop.finance.model.EventMessage.*;
 import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.shared.fragment.AccountTypesFragment;
 import com.moneydesktop.finance.util.DialogUtils;
@@ -55,8 +40,12 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.SlidingView;
 import com.moneydesktop.finance.views.UltimateListView;
-
 import de.greenrobot.event.EventBus;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class AccountTypesHandsetFragment extends AccountTypesFragment{
     
@@ -79,12 +68,12 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
 
     @Override
     public void isShowing(boolean fromBackstack) {
-    	super.isShowing(fromBackstack);
+        super.isShowing(fromBackstack);
 
 		setupMenuItems();
     }
 	
-    public static AccountTypesHandsetFragment getInstance() {
+    public static AccountTypesHandsetFragment newInstance() {
 
         AccountTypesHandsetFragment fragment = new AccountTypesHandsetFragment();
         fragment.setRetainInstance(true);

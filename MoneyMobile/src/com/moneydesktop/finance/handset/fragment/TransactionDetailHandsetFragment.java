@@ -44,6 +44,14 @@ public class TransactionDetailHandsetFragment extends TransactionDetailBaseFragm
 		mRoot = activity.getLayoutInflater().inflate(R.layout.handset_transaction_detail_view, null);
         initialize();
 	}
+
+    @Override
+    public void isShowing(boolean fromBackstack) {
+
+        if (mActivity != null) {
+            mActivity.updateNavBar(getFragmentTitle(), true);
+        }
+    }
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

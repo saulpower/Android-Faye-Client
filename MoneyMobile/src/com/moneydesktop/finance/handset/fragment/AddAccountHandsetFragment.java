@@ -49,6 +49,14 @@ public class AddAccountHandsetFragment extends BaseFragment{
 		return false;
 	}
 
+    @Override
+    public void isShowing(boolean fromBackstack) {
+
+        if (mActivity != null) {
+            mActivity.updateNavBar(getFragmentTitle(), true);
+        }
+    }
+
 	public static AddAccountHandsetFragment newInstance() {
 		
 		AddAccountHandsetFragment frag = new AddAccountHandsetFragment();

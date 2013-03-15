@@ -130,7 +130,6 @@ public class AccountTypesTabletFragment extends AccountTypesFragment implements 
 	
     private void setupView() {
 		setupTitleBar((getActivity() != null) ? getActivity() : mActivity);
-		mActivity.updateNavBar(mActivity.getString(R.string.title_activity_accounts), true);
     	
     	//clears out any previous adapter it had
     	mListView.setAdapter(null);
