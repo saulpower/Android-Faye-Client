@@ -1,40 +1,27 @@
 package com.moneydesktop.finance.handset.fragment;
 
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.EditText;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
-import com.moneydesktop.finance.data.Constant;
-import com.moneydesktop.finance.data.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.model.User;
-import com.moneydesktop.finance.model.EventMessage.GetLogonCredentialsFinished;
 import com.moneydesktop.finance.model.EventMessage.MfaQuestionsRecieved;
 import com.moneydesktop.finance.shared.fragment.FixBankFragment;
-import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.LabelEditText;
-import com.moneydesktop.finance.views.LineView;
-
 import de.greenrobot.event.EventBus;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class AccountOptionMfaQuestionHandsetFragment extends FixBankFragment{
 
@@ -144,8 +131,8 @@ public class AccountOptionMfaQuestionHandsetFragment extends FixBankFragment{
 				sendAnsweredMFAQuestion(mBank, mJsonCredentialsArray);
 				
 				
-				mActivity.popBackStack();
-				mActivity.popBackStack();
+				mActivity.popFragment();
+				mActivity.popFragment();
 			}
 			
 		});		

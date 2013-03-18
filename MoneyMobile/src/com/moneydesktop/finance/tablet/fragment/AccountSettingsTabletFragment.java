@@ -67,7 +67,7 @@ public class AccountSettingsTabletFragment extends BaseFragment {
 
 	@Override
 	public FragmentType getType() {
-		return null;
+		return FragmentType.ACCOUNT_SETTINGS;
 	}
 
 	public static AccountSettingsTabletFragment newInstance(Intent intent) {

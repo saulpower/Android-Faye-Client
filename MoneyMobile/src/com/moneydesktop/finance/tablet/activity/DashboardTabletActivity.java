@@ -50,24 +50,6 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	private TextSwitcher mNavTitle;
     private RelativeLayout mNavBar;
 	
-//	private Handler mHandler = new Handler();
-//	private Runnable mTask = new Runnable() {
-//
-//        @Override
-//        public void run() {
-//            viewDidAppear();
-//        }
-//    };
-//
-//	private Animation mIn, mOut, mInHome;
-    
-    @Override
-    public void onFragmentAttached(BaseFragment fragment) {
-    	super.onFragmentAttached(fragment);
-
-        if (mOnHome && mCurrentFragmentType != FragmentType.DASHBOARD) showFragment(FragmentType.DASHBOARD, true);
-    }
-	
 	@Override
 	public void onBackPressed() {
 		
@@ -80,7 +62,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 		    
             return;
             
-        } else if (!mOnHome) {
+        } else if (mCurrentFragmentType != FragmentType.DASHBOARD) {
 			
         	showFragment(FragmentType.DASHBOARD, true);
 			return;
@@ -99,21 +81,18 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         
         setupView();
         setupNavigation();
-//        loadAnimations();
 
         setupDashboard();
         
         if (savedInstanceState != null) {
         	
             mPager.setCurrentItem(savedInstanceState.getInt(KEY_PAGER));
-            mOnHome = savedInstanceState.getBoolean(KEY_ON_HOME);
             mCurrentFragmentType = (FragmentType) savedInstanceState.getSerializable(KEY_NAVIGATION);
             
             mNavigation.post(new Runnable() {
 				
 				@Override
 				public void run() {
-
 		            mNavigation.setCurrentIndex(mCurrentFragmentType.index());
 				}
 			});
@@ -122,7 +101,8 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 
     private void setupDashboard() {
 
-        mAdapter = new TabletGrowPagerAdapter(mFm);
+        mAdapter = new TabletGrowPagerAdapter(mFragmentManager);
+        mAdapter.setDisablePaging(true);
 
         mPager.setOnPageChangeListener(mAdapter);
         mPager.setOnScrollChangedListener(mAdapter);
@@ -134,13 +114,10 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
     protected void onResume() {
         super.onResume();
         
-        if (mOnHome) {
+        if (mCurrentFragmentType == FragmentType.DASHBOARD) {
             
-            updateNavBar(getActivityTitle(), false);
-            
-            if (getActivityTitle().toLowerCase().contains(getResources().getString(R.string.title_activity_dashboard).toLowerCase())) {
-                setupTitleBar();
-            }
+            updateNavBar(getActivityTitle());
+            setupTitleBar();
         }
     }
 	
@@ -149,69 +126,11 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 		super.onSaveInstanceState(outState);
 		
 		outState.putInt(KEY_PAGER, mPager.getCurrentItem());
-		outState.putBoolean(KEY_ON_HOME, mOnHome);
 		outState.putSerializable(KEY_NAVIGATION, mCurrentFragmentType);
 	}
     
-//    public void configureView(final boolean home) {
-//
-//    	if (mFlipper == null) return;
-//
-//
-//    	if (home && mFlipper.getDisplayedChild() == 1) {
-//
-//    		setupTitleBar();
-//
-//    		mNavigation.setCurrentIndex(0);
-//
-//    		mInHome.setAnimationListener(new AnimationListener() {
-//
-//    			public void onAnimationStart(Animation animation) {}
-//
-//	            public void onAnimationRepeat(Animation animation) {}
-//
-//	            public void onAnimationEnd(Animation animation) {
-//
-//	                mOnHome = home;
-//
-//	            	NavigationEvent navEvent = new EventMessage().new NavigationEvent();
-//	                navEvent.setMovingHome(mOnHome);
-//	                EventBus.getDefault().post(navEvent);
-//	        	}
-//			});
-//
-//			mFlipper.setInAnimation(mInHome);
-//			mFlipper.setOutAnimation(mOut);
-//			mFlipper.setDisplayedChild(0);
-//
-//            mNavTitle.setInAnimation(this, R.anim.in_down_fade);
-//            mNavTitle.setOutAnimation(this, R.anim.out_down_fade);
-//
-//            updateNavBar(getActivityTitle(), false);
-//
-//    	} else if (!home && mFlipper.getDisplayedChild() == 0) {
-//
-//            mOnHome = home;
-//
-//    		NavigationEvent navEvent = new EventMessage().new NavigationEvent();
-//            navEvent.setMovingHome(home);
-//
-//    		EventBus.getDefault().post(navEvent);
-//			EventBus.getDefault().post(new EventMessage().new ParentAnimationEvent(false, false));
-//
-//            mFlipper.setInAnimation(mIn);
-//            mFlipper.setOutAnimation(this, R.anim.out_up);
-//            mFlipper.setDisplayedChild(1);
-//
-//            mNavTitle.setInAnimation(this, R.anim.in_up_fade);
-//            mNavTitle.setOutAnimation(this, R.anim.out_up_fade);
-//    	}
-//    }
-    
     @Override
-    public void updateNavBar(String titleString, boolean fragmentTitle) {
-
-        if (fragmentTitle && mFragmentCount == 0) return;
+    public void updateNavBar(String titleString) {
         
         TextView tv = (TextView) mNavTitle.getCurrentView();
         
@@ -227,39 +146,6 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 			toggleNavigation();
 		}
 	}
-	
-//	private void loadAnimations() {
-//
-//        AnimationListener finish = new AnimationListener() {
-//
-//            public void onAnimationStart(Animation animation) {}
-//
-//            public void onAnimationRepeat(Animation animation) {}
-//
-//            public void onAnimationEnd(Animation animation) {
-//                viewDidAppear();
-//            }
-//        };
-//
-//        mIn = AnimationUtils.loadAnimation(this, R.anim.in_up);
-//        mIn.setAnimationListener(finish);
-//
-//        finish = new AnimationListener() {
-//
-//            public void onAnimationStart(Animation animation) {}
-//
-//            public void onAnimationRepeat(Animation animation) {}
-//
-//            public void onAnimationEnd(Animation animation) {
-//        		clearBackStack();
-//        	}
-//        };
-//
-//        mOut = AnimationUtils.loadAnimation(this, R.anim.out_down);
-//        mOut.setAnimationListener(finish);
-//
-//        mInHome = AnimationUtils.loadAnimation(this, R.anim.in_down);
-//	}
 
 	private void setupView() {
 		
@@ -281,6 +167,8 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
             mScroller.set(mPager, scroller);
             
         } catch (Exception e) {}
+
+        mPager.setPagingEnabled(false);
 
         findViewById(R.id.root).setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -325,8 +213,9 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
             @Override
             public void onClick(View v) {
 
-                if (!mOnHome) {
-                    showFragment(FragmentType.DASHBOARD, true);
+                if (mCurrentFragmentType != FragmentType.DASHBOARD) {
+                    mNavigation.setCurrentIndex(FragmentType.DASHBOARD.index());
+                    onNavigationChanged(FragmentType.DASHBOARD.index());
                 }
             }
         });
@@ -396,7 +285,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         loadFragment(R.id.settings_fragment, SettingsTabletFragment.newInstance());
     }
 
-    private void loadFragment(int containerViewId, BaseFragment fragment) {
+    protected void loadFragment(int containerViewId, BaseFragment fragment) {
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.add(containerViewId, fragment);
@@ -410,12 +299,11 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 
         mCurrentFragmentType = fragmentType;
 
-        mOnHome = (FragmentType.DASHBOARD == fragmentType);
-
         String title = getActivityTitle();
 
-        if (mOnHome) {
+        if (mCurrentFragmentType == FragmentType.DASHBOARD) {
 
+            setupTitleBar();
             SyncEngine.sharedInstance().syncCheck();
 
         } else {
@@ -423,7 +311,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
             title = mFragments.get(mCurrentFragmentType).getFragmentTitle();
         }
 
-        updateNavBar(title, false);
+        updateNavBar(title);
 
         AnimationFactory.slideTransition(mFlipper, fragmentType.index(), mStart, mFinish, moveUp ? AnimationFactory.FlipDirection.BOTTOM_TOP : AnimationFactory.FlipDirection.TOP_BOTTOM, TRANSITION_DURATION);
     }

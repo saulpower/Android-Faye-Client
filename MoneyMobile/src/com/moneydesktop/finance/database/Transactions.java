@@ -1141,7 +1141,6 @@ public class Transactions extends BusinessObject  {
     	
     	String currentDate = sdf.format(transactions.get(0).getDate());
     	List<Transactions> tempList = new ArrayList<Transactions>();
-    	boolean added = false;
     	
     	for (Transactions transaction : transactions) {
     		
@@ -1150,7 +1149,6 @@ public class Transactions extends BusinessObject  {
     		if (tempDate.equals(currentDate)) {
     			
     			tempList.add(transaction);
-    			added = false;
     			
     		} else {
     			
@@ -1158,12 +1156,10 @@ public class Transactions extends BusinessObject  {
     			currentDate = tempDate;
     			tempList = new ArrayList<Transactions>();
     			tempList.add(transaction);
-    			added = true;
     		}
     	}
-    	
-    	if (!added)
-    		byDate.add(new Pair<String, List<Transactions>>(currentDate, tempList));
+
+    	byDate.add(new Pair<String, List<Transactions>>(currentDate, tempList));
     	
     	return byDate;
     }

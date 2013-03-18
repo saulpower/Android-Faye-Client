@@ -43,7 +43,7 @@ public class PopupHandsetActivity extends DashboardBaseActivity {
         		break;
         }
         
-        FragmentTransaction ft = mFm.beginTransaction();
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
         ft.replace(R.id.fragment, mFragment);
         ft.commit();
     }

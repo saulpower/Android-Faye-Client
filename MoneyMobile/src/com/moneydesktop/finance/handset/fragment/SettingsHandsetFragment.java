@@ -125,14 +125,6 @@ public class SettingsHandsetFragment extends BaseFragment {
 			}
 		});
 	}
-
-    @Override
-    public void isShowing(boolean fromBackstack) {
-
-        if (mActivity != null) {
-            mActivity.updateNavBar(getFragmentTitle(), true);
-        }
-    }
 	
 	@Override
 	public String getFragmentTitle() {

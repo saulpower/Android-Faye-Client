@@ -2,7 +2,6 @@ package com.moneydesktop.finance.handset.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +45,8 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
     private UltimateListView mFiltersList;
     private FilterAdapter mFilterAdapter;
     private Date mStart, mEnd;
+
+    private boolean mSubList = false;
     
     private int mFragmentResource = R.id.transactions_fragment;
 	
@@ -77,6 +78,7 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
     	
 	    TransactionsHandsetFragment fragment = new TransactionsHandsetFragment();
 	    fragment.setRetainInstance(true);
+        fragment.setSubList(true);
 	    fragment.setFragmentResource(fragmentResource);
         fragment.setAccountId(intent.getStringExtra(Constant.EXTRA_ACCOUNT_ID));
         fragment.setCategories((ArrayList<Long>) intent.getSerializableExtra(Constant.EXTRA_CATEGORY_ID));
@@ -93,6 +95,10 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
         
         return fragment;
 	}
+
+    public void setSubList(boolean mSubList) {
+        this.mSubList = mSubList;
+    }
     
     public void setFragmentResource(int resource) {
     	mFragmentResource = resource;
@@ -100,7 +106,7 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 
 	@Override
 	public FragmentType getType() {
-		return FragmentType.TRANSACTIONS;
+		return mSubList ? FragmentType.TRANSACTIONS_SUB : FragmentType.TRANSACTIONS;
 	}
     
     public void setStart(Date mStart) {
@@ -112,11 +118,8 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 	}
 
 	@Override
-    public void isShowing(boolean fromBackstack) {
-
-        if (mActivity != null) {
-            mActivity.updateNavBar(getFragmentTitle(), true);
-        }
+    public void isShowing() {
+        super.isShowing();
 
 		setupMenuItems();
     }
@@ -144,6 +147,8 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 	}
 	
 	private void setupMenuItems() {
+
+        if (mSubList) return;
 		
 		List<Pair<Integer, List<int[]>>> data = new ArrayList<Pair<Integer, List<int[]>>>();
 
@@ -255,12 +260,8 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 			
 			TransactionDetailHandsetFragment frag = getDetailFragment();
 			frag.setTransactionId(transaction.getId());
-			
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-			ft.replace(mFragmentResource, frag);
-			ft.addToBackStack(null);
-			ft.commit();
+
+            mActivity.pushFragment(mFragmentResource, frag);
 		}
 	}
 	
@@ -275,7 +276,7 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 
 	@Override
 	public String getFragmentTitle() {
-		return mActivity.getString(R.string.title_activity_transactions).toUpperCase();
+		return getString(R.string.title_activity_transactions).toUpperCase();
 	}
 	
 	public void onEvent(MenuEvent event) {

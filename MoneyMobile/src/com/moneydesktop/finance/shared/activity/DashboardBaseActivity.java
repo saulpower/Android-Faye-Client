@@ -31,11 +31,9 @@ import java.util.List;
 public abstract class DashboardBaseActivity extends BaseActivity {
 
 	protected final String KEY_PAGER = "pager";
-	protected final String KEY_ON_HOME = "on_home";
 	protected final String KEY_NAVIGATION = "navigation";
 	
 	protected boolean mLoggingOut = false;
-	protected boolean mOnHome = true;
 
     protected FragmentType mCurrentFragmentType = FragmentType.DASHBOARD;
     
@@ -61,7 +59,7 @@ public abstract class DashboardBaseActivity extends BaseActivity {
         @Override
         public void onAnimationEnd(Animation animation) {
 
-            fragmentShowing();
+            fragmentShowing(mCurrentFragmentType);
         }
 
         @Override
@@ -72,8 +70,12 @@ public abstract class DashboardBaseActivity extends BaseActivity {
     };
 	
     public boolean isOnHome() {
-		return mOnHome;
+		return mCurrentFragmentType == FragmentType.DASHBOARD;
 	}
+
+    public FragmentType getCurrentFragmentType() {
+        return mCurrentFragmentType;
+    }
 
 	public GrowPagerAdapter getPagerAdapter() {
 	    return mAdapter;
@@ -91,14 +93,6 @@ public abstract class DashboardBaseActivity extends BaseActivity {
         super.onPause();
         
     	SyncEngine.sharedInstance().syncCheck();
-    }
-
-    private void fragmentShowing() {
-
-        if (mFragments.containsKey(mCurrentFragmentType)) {
-
-            mFragments.get(mCurrentFragmentType).isShowing(false);
-        }
     }
     
     public void setDetailFragment(TransactionsDetailTabletFragment fragment) {
@@ -203,16 +197,10 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 		}.execute();
 	}
 	
-	public abstract void showFragment(FragmentType fragment, boolean moveUp);
-	
-	public void showFragment(FragmentType fragment) {
-		showFragment(fragment, false);
-	}
-	
 	public void addMenuItems(List<Pair<Integer, List<int[]>>> data) {}
 	public void pushMenuView(View view) {}
 	public void popMenuView() {}
-	public View getmenuParent() {
+	public View getMenuParent() {
 		return null;
 	}
 

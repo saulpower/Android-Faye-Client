@@ -31,14 +31,6 @@ public abstract class FixBankFragment extends BaseFragment{
 	public FragmentType getType() {
 		return null;
 	}
-
-    @Override
-    public void isShowing(boolean fromBackstack) {
-
-        if (mActivity != null) {
-            mActivity.updateNavBar(getFragmentTitle(), true);
-        }
-    }
   
     protected void getLoginQuestions(final String institutionID) {
     	mLoginLabels = new ArrayList<String>();

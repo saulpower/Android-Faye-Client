@@ -670,7 +670,7 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 
 	@Override
 	public FragmentType getType() {
-		return null;
+		return FragmentType.ADD_BANK;
 	}
 
 	

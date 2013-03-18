@@ -13,7 +13,7 @@ public class GrowViewPager extends ViewPager {
 	
 	public final String TAG = this.getClass().getSimpleName();
 
-    private boolean isPagingEnabled = false;
+    private boolean isPagingEnabled = true;
     
 	private final float MARGIN_SIZE = -0.25f;
 	

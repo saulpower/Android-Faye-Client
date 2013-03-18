@@ -20,7 +20,6 @@ public abstract class BaseFragment extends Fragment {
         
         if (activity instanceof DashboardBaseActivity){
             mActivity = (DashboardBaseActivity) activity;
-        	mActivity.setFragmentCount(mActivity.getFragmentCount() + 1);
             mActivity.onFragmentAttached(this);
         }
 	}
@@ -30,23 +29,23 @@ public abstract class BaseFragment extends Fragment {
         super.onDetach();
 
         if (mActivity != null) {
-            mActivity.setFragmentCount(mActivity.getFragmentCount() - 1);
             mActivity.onFragmentDetached(this);
         }
     }
-    
+
     @Override
-    public void onDestroy() {
-    	super.onDestroy();
-    	
-    	if (mActivity != null) {
-    		mActivity.setFragmentCount(mActivity.getFragmentCount() - 1);
-    	}
+    public void onStart() {
+        super.onStart();
+
+        isShowing();
     }
     
-    public void isShowing(boolean fromBackstack) {}
-    
-    public void isHiding() {}
+    public void isShowing() {
+
+        if (mActivity != null) {
+            mActivity.updateNavBar(getFragmentTitle());
+        }
+    }
 	
 	public abstract String getFragmentTitle();
 	public abstract boolean onBackPressed();

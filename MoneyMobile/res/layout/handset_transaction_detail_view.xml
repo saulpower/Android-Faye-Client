@@ -87,7 +87,7 @@
             app:lineStrokeWidth="2dp"
             app:dashLength="2dp" />
 	
-        <com.moneydesktop.finance.views.LabelEditText
+        <com.moneydesktop.finance.views.LabelEditCurrency
             android:id="@+id/amount"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"

@@ -7,76 +7,43 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.BankRefreshStatus;
-import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.data.Enums.FragmentType;
-import com.moneydesktop.finance.database.AccountType;
-import com.moneydesktop.finance.database.AccountTypeDao;
-import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.database.BankAccount;
-import com.moneydesktop.finance.database.BankAccountDao;
-import com.moneydesktop.finance.database.BankDao;
-import com.moneydesktop.finance.database.BusinessObjectBaseDao;
-import com.moneydesktop.finance.database.QueryProperty;
-import com.moneydesktop.finance.database.PowerQuery;
-import com.moneydesktop.finance.database.TransactionsDao;
+import com.moneydesktop.finance.data.SyncEngine;
+import com.moneydesktop.finance.database.*;
 import com.moneydesktop.finance.model.EventMessage;
-import com.moneydesktop.finance.model.EventMessage.CheckRemoveBankEvent;
-import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
-import com.moneydesktop.finance.model.EventMessage.RemoveAccountTypeEvent;
-import com.moneydesktop.finance.model.EventMessage.UpdateSpecificBankStatus;
-import com.moneydesktop.finance.model.FragmentVisibilityListener;
+import com.moneydesktop.finance.model.EventMessage.*;
 import com.moneydesktop.finance.model.User;
-import com.moneydesktop.finance.model.EventMessage.BankStatusUpdateEvent;
-import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.shared.adapter.AccountsExpandableListAdapter;
 import com.moneydesktop.finance.shared.fragment.AccountTypesFragment;
-import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.AnimatedListView.SlideExpandableListAdapter;
 import com.moneydesktop.finance.views.PopupWindowAtLocation;
 import com.moneydesktop.finance.views.SlidingDrawerRightSide;
-import com.moneydesktop.finance.views.AnimatedListView.SlideExpandableListAdapter;
 import com.moneydesktop.finance.views.navigation.NavBarButtons;
-
 import de.greenrobot.event.EventBus;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public class AccountTypesTabletFragment extends AccountTypesFragment implements FragmentVisibilityListener{
+public class AccountTypesTabletFragment extends AccountTypesFragment {
 	
     private ListView mListView;
     private static SlidingDrawerRightSide sRightDrawer;
@@ -129,7 +96,7 @@ public class AccountTypesTabletFragment extends AccountTypesFragment implements 
 	}
 	
     private void setupView() {
-		setupTitleBar((getActivity() != null) ? getActivity() : mActivity);
+		setupTitleBar();
     	
     	//clears out any previous adapter it had
     	mListView.setAdapter(null);
@@ -254,9 +221,9 @@ public class AccountTypesTabletFragment extends AccountTypesFragment implements 
         initializeDrawer();
 	}
 		
-	private void setupTitleBar(final Activity activity) {
+	private void setupTitleBar() {
 	    
-	    String[] icons = activity.getResources().getStringArray(R.array.account_types_title_bar_icons);
+	    String[] icons = mActivity.getResources().getStringArray(R.array.account_types_title_bar_icons);
 	    
 	    ArrayList<OnClickListener> onClickListeners = new ArrayList<OnClickListener>();
 	    
@@ -293,16 +260,15 @@ public class AccountTypesTabletFragment extends AccountTypesFragment implements 
         onClickListeners.add(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(activity, "help", Toast.LENGTH_LONG).show();
+                Toast.makeText(mActivity, "help", Toast.LENGTH_LONG).show();
             }
         });
 	    
-	    new NavBarButtons(activity, icons, onClickListeners);
+	    new NavBarButtons(mActivity, icons, onClickListeners);
     }
 
     /**
 	 * Setup the Panel/Drawer to show all banks attached.
-	 * @param panelLayoutHolder -- the panel container
 	 */
 	private void initializeDrawer () {
 	    mBanksForDeletion = new ArrayList<Bank>();
@@ -419,7 +385,7 @@ public class AccountTypesTabletFragment extends AccountTypesFragment implements 
     @Override
     public void onResume() {
         super.onResume();
-        setupTitleBar(getActivity());
+        setupTitleBar();
     }
     
     public void setAllBanksToUpdate() {
@@ -466,7 +432,7 @@ public class AccountTypesTabletFragment extends AccountTypesFragment implements 
     /**
      * Creates a View of a bank represented on the right panel.
      * @param bank -the bank to be added
-     * @param panelLayoutHolder 
+     *
      * @return bank view 
      */
 	private View populateDrawerView (final Bank bank) {
@@ -844,7 +810,7 @@ public class AccountTypesTabletFragment extends AccountTypesFragment implements 
     /**
 	 * Drawer's width is set to a percentage of screen.
 	 * @param layoutParams
-	 * @param activity
+     *
 	 * @return the drawer
 	 */
     public SlidingDrawerRightSide setupDrawer (final ViewGroup.LayoutParams layoutParams) {
@@ -867,12 +833,10 @@ public class AccountTypesTabletFragment extends AccountTypesFragment implements 
     public boolean onBackPressed() {
         return false;
     }
-    
-    @Override
-    public void onShow(Activity activity) {
-        if (activity != null) {
-            setupTitleBar(activity);
-        } 
+
+    public void isShowing(boolean fromBackstack) {
+
+        setupTitleBar();
     }
 
 	private void removeBank(final Bank bank, final View bankView) {

@@ -188,8 +188,7 @@ public class ShowHideDataTabletFragment extends BaseFragment {
 
 	@Override
 	public FragmentType getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return FragmentType.SHOW_HIDE_DATA;
 	}
 
 }

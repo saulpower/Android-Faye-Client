@@ -1,19 +1,13 @@
 package com.moneydesktop.finance.shared.fragment;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Pair;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.SoundEffectConstants;
-import android.view.View;
+import android.view.*;
 import android.view.View.OnFocusChangeListener;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -23,7 +17,6 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataController;
@@ -37,8 +30,9 @@ import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.ClearEditText;
 import com.moneydesktop.finance.views.SpinnerView;
 import com.moneydesktop.finance.views.UltimateListView;
-
 import de.greenrobot.event.EventBus;
+
+import java.util.List;
 
 public class CategoriesFragment extends PopupFragment implements OnChildClickListener, OnGroupClickListener {
     
@@ -95,7 +89,7 @@ public class CategoriesFragment extends PopupFragment implements OnChildClickLis
     public void onResume() {
     	super.onResume();
     	
-    	if (mActivity == null) {
+    	if (mPopupActivity == null) {
     		
     		mRoot.postDelayed(new Runnable() {
 				
@@ -161,8 +155,8 @@ public class CategoriesFragment extends PopupFragment implements OnChildClickLis
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 
-                if (hasFocus && mActivity != null) {
-                    mActivity.setEditText(null);
+                if (hasFocus && mPopupActivity != null) {
+                    mPopupActivity.setEditText(null);
                 }
             }
         });

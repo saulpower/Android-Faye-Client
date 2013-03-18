@@ -217,7 +217,7 @@ public class PopupTabletActivity extends DialogBaseActivity implements OnKeyboar
         mFragment = getFragment(index);
         
         if (mFragment != null) {
-            FragmentTransaction ft = mFm.beginTransaction();
+            FragmentTransaction ft = mFragmentManager.beginTransaction();
             ft.replace(R.id.fragment, mFragment);
             ft.commit();
         }

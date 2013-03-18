@@ -278,7 +278,7 @@ public class AccountOptionsCredentialsHandsetFragment extends FixBankFragment{
 			}).start();
 		}
 		
-		mActivity.popBackStackTo(0);
+		mActivity.clearBackStack();
 	}
 	
 	

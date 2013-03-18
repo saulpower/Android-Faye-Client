@@ -347,8 +347,7 @@ public class FixBankTabletFragment extends FixBankFragment{
 
 	@Override
 	public FragmentType getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return FragmentType.FIX_BANK;
 	}
 
 }

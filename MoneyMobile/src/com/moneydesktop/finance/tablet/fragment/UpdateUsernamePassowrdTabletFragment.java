@@ -290,8 +290,7 @@ public class UpdateUsernamePassowrdTabletFragment extends BaseFragment{
     }
 	@Override
 	public FragmentType getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return FragmentType.UPDATE_USERNAME_PASSWORD;
 	}
 
 }

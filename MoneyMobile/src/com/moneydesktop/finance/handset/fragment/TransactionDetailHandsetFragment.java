@@ -2,11 +2,9 @@ package com.moneydesktop.finance.handset.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
@@ -44,14 +42,6 @@ public class TransactionDetailHandsetFragment extends TransactionDetailBaseFragm
 		mRoot = activity.getLayoutInflater().inflate(R.layout.handset_transaction_detail_view, null);
         initialize();
 	}
-
-    @Override
-    public void isShowing(boolean fromBackstack) {
-
-        if (mActivity != null) {
-            mActivity.updateNavBar(getFragmentTitle(), true);
-        }
-    }
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -90,13 +80,8 @@ public class TransactionDetailHandsetFragment extends TransactionDetailBaseFragm
     public boolean onBackPressed() {
         return false;
     }
-    
-    @Override
+
     protected void showFragment(BaseFragment fragment) {
-    	FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-		ft.replace(mFragmentResource, fragment);
-		ft.addToBackStack(null);
-		ft.commit();
+        mActivity.pushFragment(mFragmentResource, fragment);
     }
 }

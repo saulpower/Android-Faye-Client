@@ -36,7 +36,7 @@ public class TransactionTotalsFragment extends BaseFragment {
 
 	@Override
 	public FragmentType getType() {
-		return null;
+		return FragmentType.TRANSACTION_SUMMARY;
 	}
 	
 	@Override

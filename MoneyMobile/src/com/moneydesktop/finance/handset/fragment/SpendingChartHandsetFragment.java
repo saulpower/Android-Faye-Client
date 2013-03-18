@@ -86,34 +86,39 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
 		
 		mTitle = (TextView) mRoot.findViewById(R.id.title);
 		Fonts.applySecondaryItalicFont(mTitle, 8);
-		
-		mChart = (ExpandablePieChartView) mRoot.findViewById(R.id.chart);
-		mChart.setOnPieChartReadyListener(new OnPieChartReadyListener() {
-			
-			@Override
-			public void onPieChartReady() {
 
-				configureChart(true);
-				EventBus.getDefault().post(new EventMessage().new ChartImageEvent(mChart.getDrawingCache()));
-			}
-		});
-
-		mBridge = new ChartListBridge(getActivity(), mChart);
-		mBridge.setFragmentManager(getFragmentManager());
-		
-		mRoot.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				
-				if (mChart.isExpanded()) {
-					mChart.toggleGroup();
-				}
-			}
-		});
+        configureChart();
 		
 		return mRoot;
 	}
+
+    private void configureChart() {
+
+        mChart = (ExpandablePieChartView) mRoot.findViewById(R.id.chart);
+        mChart.setOnPieChartReadyListener(new OnPieChartReadyListener() {
+
+            @Override
+            public void onPieChartReady() {
+
+                configureChart(true);
+                EventBus.getDefault().post(new EventMessage().new ChartImageEvent(mChart.getDrawingCache()));
+            }
+        });
+
+        mBridge = new ChartListBridge(mActivity, mChart);
+        mBridge.setFragmentManager(getFragmentManager());
+
+        mRoot.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if (mChart.isExpanded()) {
+                    mChart.toggleGroup();
+                }
+            }
+        });
+    }
 	
 	public void onEvent(DatabaseSaveEvent event) {
 	    
@@ -131,21 +136,11 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
 	}
     
     @Override
-    public void isShowing(boolean fromBackstack) {
-
-        if (mActivity != null) {
-            mActivity.updateNavBar(getFragmentTitle(), true);
-        }
+    public void isShowing() {
+        super.isShowing();
 		
 		mPaused = false;
 		configureChart(true);
-    }
-    
-    @Override
-    public void isHiding() {
-
-		mPaused = true;
-		configureChart(false);
     }
 	
 	@Override
@@ -180,7 +175,7 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
 	
 	private void configureChart(boolean showChart) {
 		
-		if (showChart && ((DashboardHandsetActivity) mActivity).getCurrentFragmentType() == getType() && !mPaused) {
+		if (showChart && mActivity.getCurrentFragmentType() == getType() && !mPaused) {
             mChart.onResume();
 		} else {
 			mChart.onPause();

@@ -22,7 +22,6 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Transactions;
-import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.shared.TransactionDetailController;
 import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
@@ -35,7 +34,6 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.navigation.AnimatedNavView;
 import com.moneydesktop.finance.views.navigation.AnimatedNavView.NavigationListener;
-import de.greenrobot.event.EventBus;
 
 public class DropDownTabletActivity extends DialogBaseActivity implements onBackPressedListener, ParentTransactionInterface, OnKeyboardStateChangeListener, NavigationListener {
 
@@ -128,8 +126,7 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
 
             @Override
             public void onAnimationEnd(Animation animation) {
-
-                EventBus.getDefault().post(new EventMessage().new ParentAnimationEvent(true, true));
+                mFragments.get(mCurrentFragmentType).isShowing();
             }
         });
         mOut = AnimationUtils.loadAnimation(this, R.anim.out_up);
@@ -204,7 +201,7 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
         mBase.setDetailFragment(TransactionsDetailTabletFragment.newInstance());
         mBase.getDetailFragment().setListener(this);
 
-        FragmentTransaction ft = mFm.beginTransaction();
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
         ft.replace(R.id.detail_fragment, mBase.getDetailFragment());
         ft.commit();
     }
@@ -239,11 +236,14 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
     }
 
     @Override
-    public void showFragment(FragmentType type, boolean moveUp) {
+    public void showFragment(FragmentType fragmentType, boolean moveUp) {
+        super.showFragment(fragmentType, moveUp);
 
-        BaseFragment fragment = getFragment(type);
+        mCurrentFragmentType = fragmentType;
 
-        FragmentTransaction ft = mFm.beginTransaction();
+        BaseFragment fragment = getFragment(fragmentType);
+
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
         ft.replace(R.id.fragment, fragment);
         ft.commit();
     }
@@ -378,7 +378,7 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
     }
 
     @Override
-    public void updateNavBar(final String titleString, boolean fragmentTitle) {
+    public void updateNavBar(final String titleString) {
 
         if (!mPopped && mNavView.getVisibility() == View.VISIBLE) {
 
@@ -395,8 +395,8 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
     }
 
     @Override
-    public void popBackStack() {
-        super.popBackStack();
+    public void popFragment() {
+        super.popFragment();
 
         UiUtils.hideKeyboard(this, mContainer);
 
@@ -407,6 +407,6 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
 
     @Override
     public void onNavigationPopped() {
-        popBackStack();
+        popFragment();
     }
 }

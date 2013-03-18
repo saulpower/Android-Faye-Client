@@ -110,7 +110,7 @@ public class LockCodeFragment extends BaseFragment implements ProcessCodeListene
 			
 		} else {
 
-	    	mActivity.popBackStack();
+	    	mActivity.popFragment();
 		    return true;
 		}
 	}
@@ -274,7 +274,7 @@ public class LockCodeFragment extends BaseFragment implements ProcessCodeListene
 	    if (mLockActivity != null) {
 	        mLockActivity.dismissModal();
 	    } else {
-	    	mActivity.popBackStack();
+	    	mActivity.popFragment();
 	    }
 	}
 

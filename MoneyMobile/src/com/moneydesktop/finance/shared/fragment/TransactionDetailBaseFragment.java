@@ -2,7 +2,6 @@ package com.moneydesktop.finance.shared.fragment;
 
 import android.app.Activity;
 import android.os.Handler;
-import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -307,11 +306,7 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
     }
     
     protected void showFragment(BaseFragment fragment) {
-    	FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-		ft.replace(R.id.fragment, fragment);
-		ft.addToBackStack(null);
-		ft.commit();
+        mActivity.pushFragment(R.id.fragment, fragment);
     }
     
     private void finishEditing(View v) {
@@ -339,7 +334,7 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
 
         if (mTransaction == null) return;
 
-        boolean isManual = mTransaction.getIsManual();
+        boolean isManual = (mTransaction.getIsManual() != null && mTransaction.getIsManual());
 
         mCleared.setEnabled(isManual);
         mAmount.setFocusable(isManual);

@@ -47,14 +47,6 @@ public class AccountInstitutionListHandsetFragment extends BaseFragment{
 	}
 
     @Override
-    public void isShowing(boolean fromBackstack) {
-
-        if (mActivity != null) {
-            mActivity.updateNavBar(getFragmentTitle(), true);
-        }
-    }
-
-    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 

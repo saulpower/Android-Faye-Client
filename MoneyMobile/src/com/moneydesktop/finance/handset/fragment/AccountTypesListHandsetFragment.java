@@ -58,14 +58,6 @@ public class AccountTypesListHandsetFragment extends BaseFragment{
         
      //   EventBus.getDefault().unregister(this);
     }
-
-    @Override
-    public void isShowing(boolean fromBackstack) {
-
-        if (mActivity != null) {
-            mActivity.updateNavBar(getFragmentTitle(), true);
-        }
-    }
     
 	@Override
 	public boolean onBackPressed() {

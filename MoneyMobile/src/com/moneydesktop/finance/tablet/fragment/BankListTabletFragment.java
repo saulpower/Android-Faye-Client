@@ -87,7 +87,7 @@ public class BankListTabletFragment extends BaseFragment implements NavigationLi
 
 	@Override
 	public FragmentType getType() {
-		return null;
+		return FragmentType.MANUAL_BANK_LIST;
 	}
 
 	@Override

@@ -25,14 +25,6 @@ public abstract class AccountTypesFragment extends BaseFragment{
 	public FragmentType getType() {
 		return FragmentType.ACCOUNT_TYPES;
 	}
-
-    @Override
-    public void isShowing(boolean fromBackstack) {
-
-        if (mActivity != null) {
-            mActivity.updateNavBar(getFragmentTitle(), true);
-        }
-    }
 	
 	protected void getAllBanks() {
 		BankDao bankDao = ApplicationContext.getDaoSession().getBankDao();

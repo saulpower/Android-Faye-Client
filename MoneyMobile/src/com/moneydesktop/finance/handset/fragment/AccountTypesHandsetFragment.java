@@ -67,8 +67,8 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
 	private AccountBankListAdapter mBankListAdapter;
 
     @Override
-    public void isShowing(boolean fromBackstack) {
-        super.isShowing(fromBackstack);
+    public void isShowing() {
+        super.isShowing();
 
 		setupMenuItems();
     }

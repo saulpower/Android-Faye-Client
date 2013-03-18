@@ -50,14 +50,6 @@ public class AccountTypesManualSaveHandsetFragment extends BaseFragment{
         
      //   EventBus.getDefault().unregister(this);
     }
-
-    @Override
-    public void isShowing(boolean fromBackstack) {
-
-        if (mActivity != null) {
-            mActivity.updateNavBar(getFragmentTitle(), true);
-        }
-    }
     
 	@Override
 	public boolean onBackPressed() {
@@ -116,7 +108,7 @@ public class AccountTypesManualSaveHandsetFragment extends BaseFragment{
 			UiUtils.hideKeyboard(mActivity, v);
             createManualBankAccount(mSelectedAccountType);
 			
-			mActivity.popBackStackTo(0);
+			mActivity.clearBackStack();
 		}
 	}
 

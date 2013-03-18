@@ -364,7 +364,7 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
     }
 
     @Override
-    public void isShowing(boolean fromBackstack) {
+    public void isShowing() {
 
         mWaiting = false;
         configureView();

@@ -1,7 +1,6 @@
 package com.moneydesktop.finance.tablet.fragment;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
@@ -77,10 +76,12 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
 	}
 
     @Override
-    public void isShowing(boolean fromBackstack) {
+    public void isShowing() {
+
+        setupTitleBar();
 
         if (mPageFragment != null) {
-            mPageFragment.isShowing(fromBackstack);
+            mPageFragment.isShowing();
         }
     }
     
@@ -88,7 +89,7 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
     public void onResume() {
         super.onResume();
         
-        setupTitleBar(getActivity());
+        setupTitleBar();
     }
     
     @Override
@@ -145,7 +146,7 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
         mFiltersList.setSelectedChild(0, 0, true);
 	}
 
-    private void setupTitleBar(final Activity activity) {
+    private void setupTitleBar() {
         
         String[] icons = getResources().getStringArray(R.array.transactions_title_bar_icons);
         
@@ -155,11 +156,11 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
         	
             @Override
             public void onClick(View v) {
-                Toast.makeText(activity, "help", Toast.LENGTH_LONG).show();
+                Toast.makeText(mActivity, "help", Toast.LENGTH_LONG).show();
             }
         });
         
-        new NavBarButtons(activity, icons, onClickListeners);
+        new NavBarButtons(mActivity, icons, onClickListeners);
      }
     
 	@Override

@@ -1,15 +1,11 @@
 package com.moneydesktop.finance.tablet.fragment;
 
-import java.util.ArrayList;
-
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.model.EventMessage;
@@ -17,8 +13,9 @@ import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.views.SettingButton;
 import com.moneydesktop.finance.views.navigation.NavBarButtons;
-
 import de.greenrobot.event.EventBus;
+
+import java.util.ArrayList;
 
 @TargetApi(11)
 public class SettingsTabletFragment extends BaseFragment {
@@ -57,9 +54,15 @@ public class SettingsTabletFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         
-        setupTitleBar(getActivity());
+        setupTitleBar();
     }
-    
+
+    @Override
+    public void isShowing() {
+
+        setupTitleBar();
+    }
+
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
@@ -72,13 +75,13 @@ public class SettingsTabletFragment extends BaseFragment {
         super.onSaveInstanceState(outState);
     }
 
-    private void setupTitleBar(final Activity activity) {
+    private void setupTitleBar() {
         
         String[] icons = new String[0];
         
         ArrayList<OnClickListener> onClickListeners = new ArrayList<OnClickListener>();
         
-        new NavBarButtons(activity, icons, onClickListeners);
+        new NavBarButtons(mActivity, icons, onClickListeners);
      }
 	
 	private void setupViews() {

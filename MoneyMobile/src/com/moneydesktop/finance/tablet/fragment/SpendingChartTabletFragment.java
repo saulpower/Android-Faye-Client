@@ -61,7 +61,7 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 		
 		configureChart(false);
 		
-		mBridge = new ChartListBridge(getActivity(), mChart, mList, mTotalAmount, mBackButton);
+		mBridge = new ChartListBridge(mActivity, mChart, mList, mTotalAmount, mBackButton);
 		
 		return mRoot;
 	}

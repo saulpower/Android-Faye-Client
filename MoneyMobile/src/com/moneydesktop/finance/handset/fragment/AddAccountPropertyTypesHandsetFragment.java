@@ -50,14 +50,6 @@ public class AddAccountPropertyTypesHandsetFragment extends BaseFragment{
 
     //    EventBus.getDefault().register(this);
     }
-
-    @Override
-    public void isShowing(boolean fromBackstack) {
-
-        if (mActivity != null) {
-            mActivity.updateNavBar(getFragmentTitle(), true);
-        }
-    }
     
     @Override
     public void onDestroy() {

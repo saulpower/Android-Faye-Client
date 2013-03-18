@@ -1,12 +1,7 @@
 
 package com.moneydesktop.finance.handset.fragment;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -19,28 +14,17 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.ViewFlipper;
-
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.data.Constant;
-import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Enums.AccountExclusionFlags;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.SyncEngine;
-import com.moneydesktop.finance.database.AccountType;
-import com.moneydesktop.finance.database.AccountTypeDao;
-import com.moneydesktop.finance.database.BankAccount;
-import com.moneydesktop.finance.database.PowerQuery;
-import com.moneydesktop.finance.database.QueryProperty;
+import com.moneydesktop.finance.database.*;
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
 import com.moneydesktop.finance.handset.adapter.AccountExclusionsAdapter;
 import com.moneydesktop.finance.model.EventMessage.MenuEvent;
@@ -51,8 +35,11 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.LabelEditText;
 import com.moneydesktop.finance.views.LineView;
-
 import de.greenrobot.event.EventBus;
+
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 	
@@ -603,7 +590,7 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 			    	((DashboardHandsetActivity)mActivity).getMenuDrawer().closeMenu();
 			    	mBankAccount.softDeleteSingle();
 			    	mActivity.popMenuView();
-			    	mActivity.popBackStack();
+			    	mActivity.popFragment();
 			    	
 			    	SyncEngine.sharedInstance().beginSync();
 			    	break;
