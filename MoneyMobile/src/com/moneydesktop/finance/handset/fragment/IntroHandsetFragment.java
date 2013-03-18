@@ -15,13 +15,9 @@ import com.moneydesktop.finance.util.Fonts;
 
 public class IntroHandsetFragment extends BaseFragment {
     private final int mIntroImageResourceId;
-    private final int mIntroTitle;
-    private final int mIntroDescription;
 
-    public IntroHandsetFragment(int introImageResourceId, int mIntroTitle, int mIntroDescription) {
+    public IntroHandsetFragment(int introImageResourceId) {
         this.mIntroImageResourceId = introImageResourceId;
-        this.mIntroTitle = mIntroTitle;
-        this.mIntroDescription = mIntroDescription;
     }
 
 	@Override
@@ -45,15 +41,6 @@ public class IntroHandsetFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.handset_intro_fragment, container, false);
         ImageView introImage = (ImageView) view.findViewById(R.id.introImage);
         introImage.setImageDrawable(getResources().getDrawable(mIntroImageResourceId));
-        TextView introTextTitle = (TextView) view.findViewById(R.id.handset_intro_text_title);
-        String Title = getResources().getString(mIntroTitle);
-        introTextTitle.setText(Title);
-        Fonts.applyPrimaryBoldFont(introTextTitle, 18);
-        String Description = getResources().getString(mIntroDescription);
-        TextView introTextDescription = (TextView) view
-                .findViewById(R.id.handset_intro_text_description);
-        introTextDescription.setText(Description);
-        Fonts.applyPrimaryFont(introTextDescription, 16);
         return view;
     }
 

@@ -27,9 +27,9 @@ import java.util.List;
 
 @TargetApi(11)
 public class TransactionsTabletFragment extends ParentTransactionFragment implements OnChildClickListener {
-	
-	public final String TAG = this.getClass().getSimpleName();
-	
+
+    public final String TAG = this.getClass().getSimpleName();
+
     private UltimateListView mFiltersList;
     private FilterAdapter mAdapter;
 
@@ -41,19 +41,19 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
 	    
         Bundle args = new Bundle();
         fragment.setArguments(args);
-        
-        return fragment;
-	}
 
-	@Override
-	public FragmentType getType() {
-		return FragmentType.TRANSACTIONS;
-	}
-	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
-	    
+        return fragment;
+    }
+
+    @Override
+    public FragmentType getType() {
+        return FragmentType.TRANSACTIONS;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         EventBus.getDefault().register(this);
 	}
 	
@@ -91,39 +91,39 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
         
         setupTitleBar();
     }
-    
+
     @Override
     public void onDestroy() {
         super.onDestroy();
 
         EventBus.getDefault().unregister(this);
     }
-	
-	@Override
-	public void setupView() {
-	    super.setupView();
-	    
+
+    @Override
+    public void setupView() {
+        super.setupView();
+
         mFiltersList = (UltimateListView) mRoot.findViewById(R.id.filters);
         mFiltersList.setDividerHeight(0);
         mFiltersList.setDivider(null);
         mFiltersList.setChildDivider(null);
-	}
-	
-	public void onEvent(DatabaseSaveEvent event) {
-	    
-	    if (mAdapter != null && event.didDatabaseChange()) {
-	        mAdapter.reloadSections();
-	    }
-	}
-	
-	private void setupFilterList() {
+    }
 
-	    List<Pair<String, List<FilterViewHolder>>> data = new ArrayList<Pair<String, List<FilterViewHolder>>>();
-        
+    public void onEvent(DatabaseSaveEvent event) {
+
+        if (mAdapter != null && event.didDatabaseChange()) {
+            mAdapter.reloadSections();
+        }
+    }
+
+    private void setupFilterList() {
+
+        List<Pair<String, List<FilterViewHolder>>> data = new ArrayList<Pair<String, List<FilterViewHolder>>>();
+
         for (int j = 0; j < Constant.FILTERS.length; j++) {
 
             List<FilterViewHolder> subItems = new ArrayList<FilterViewHolder>();
-            
+
             if (j == 0) {
 
                 for (int i = 0; i < Constant.FOLDER_TITLE.length; i++) {
@@ -134,39 +134,39 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
                     subItems.add(holder);
                 }
             }
-            
+
             Pair<String, List<FilterViewHolder>> temp = new Pair<String, List<FilterViewHolder>>(getString(Constant.FILTERS[j]).toUpperCase(), subItems);
             data.add(temp);
         }
-        
+
         mAdapter = new FilterAdapter(mActivity, mFiltersList, data);
         mAdapter.setAutomaticSectionLoading(true);
         mFiltersList.setAdapter(mAdapter);
         mFiltersList.setOnChildClickListener(this);
         mFiltersList.setSelectedChild(0, 0, true);
-	}
+    }
 
     private void setupTitleBar() {
         
         String[] icons = getResources().getStringArray(R.array.transactions_title_bar_icons);
-        
+
         ArrayList<OnClickListener> onClickListeners = new ArrayList<OnClickListener>();
-       
+
         onClickListeners.add(new OnClickListener() {
-        	
+
             @Override
             public void onClick(View v) {
                 Toast.makeText(mActivity, "help", Toast.LENGTH_LONG).show();
             }
         });
-        
-        new NavBarButtons(mActivity, icons, onClickListeners);
-     }
-    
-	@Override
-	public String getFragmentTitle() {
-		return getString(R.string.title_activity_transactions).toUpperCase();
-	}
+
+        new NavBarButtons(activity, icons, onClickListeners);
+    }
+
+    @Override
+    public String getFragmentTitle() {
+        return getString(R.string.title_activity_transactions).toUpperCase();
+    }
 
     @Override
     public boolean onBackPressed() {
@@ -178,15 +178,15 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
 
         mFiltersList.setSelectedChild(groupPosition, childPosition, true);
         FilterViewHolder holder = (FilterViewHolder) v.getTag();
-        
+
         // Notify transaction list view of new filter
         EventBus.getDefault().post(new EventMessage().new FilterEvent(holder.mQuery));
-        
+
         // Expand any existing sub sections (PAYEES)
         if (holder != null && holder.mSubSection != null) {
             mAdapter.expandSubSection(groupPosition, childPosition, holder.mSubSection);
         }
-        
+
         return true;
     }
 }

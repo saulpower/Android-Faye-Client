@@ -210,17 +210,13 @@ public class IntroTabletActivity extends BaseActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new IntroTabletFragment(R.drawable.intro1, R.string.intro_title_1,
-                            R.string.intro_desc_1);
+                    return new IntroTabletFragment(R.drawable.tablet_tips1);
                 case 1:
-                    return new IntroTabletFragment(R.drawable.intro2, R.string.intro_title_2,
-                            R.string.intro_desc_2);
+                    return new IntroTabletFragment(R.drawable.tablet_tips2);
                 case 2:
-                    return new IntroTabletFragment(R.drawable.intro3, R.string.intro_title_3,
-                            R.string.intro_desc_3);
+                    return new IntroTabletFragment(R.drawable.tablet_tips3);
                 case 3:
-                    return new IntroTabletFragment(R.drawable.intro4, R.string.intro_title_4,
-                            R.string.intro_desc_4);
+                    return new IntroTabletFragment(R.drawable.tablet_tips4);
                 default:
                     return null;
             }
