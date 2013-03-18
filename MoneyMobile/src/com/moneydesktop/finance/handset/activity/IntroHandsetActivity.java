@@ -151,17 +151,11 @@ public class IntroHandsetActivity extends BaseActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new IntroHandsetFragment(R.drawable.handset_intro_1,
-                            R.string.handset_intro_title_1,
-                            R.string.handset_intro_desc_1);
+                    return new IntroHandsetFragment(R.drawable.handset_tips1);
                 case 1:
-                    return new IntroHandsetFragment(R.drawable.handset_intro_2,
-                            R.string.handset_intro_title_2,
-                            R.string.handset_intro_desc_2);
+                    return new IntroHandsetFragment(R.drawable.handset_tips2);
                 case 2:
-                    return new IntroHandsetFragment(R.drawable.handset_intro_3,
-                            R.string.handset_intro_title_3,
-                            R.string.handset_intro_desc_3);
+                    return new IntroHandsetFragment(R.drawable.handset_tips3);
                 default:
                     return null;
             }

@@ -12,34 +12,7 @@
 		android:orientation="horizontal">
         	<ImageView
             android:id="@+id/introImage"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-
-
-        	<LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:gravity="center">
-
-            <TextView
-                android:id="@+id/intro_text_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-               	android:layout_gravity="center"
-               	android:gravity="center"
-                android:textColor="@color/gray9" />
-
-            <TextView
-                android:id="@+id/intro_text_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-               	android:gravity="center"
-                android:textColor="@color/gray9" />
-            </LinearLayout>
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
         </LinearLayout>
 </RelativeLayout>
