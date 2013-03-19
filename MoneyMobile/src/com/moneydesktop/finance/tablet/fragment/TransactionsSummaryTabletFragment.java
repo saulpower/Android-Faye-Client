@@ -196,6 +196,9 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
             Log.d("databaseRefresh","Calling databaseSaveEvent for transactions");
         }
     }
+    /**
+     * Changes all of the button colors back to gray2.
+     */
     private void clearButtonColors() {
         mDaily.setBackgroundColor(getResources().getColor(R.color.gray2));
         mDaily.showArrow(false);
@@ -206,7 +209,11 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
         mYearly.setBackgroundColor(getResources().getColor(R.color.gray2));
         mYearly.showArrow(false);
     }
-
+    /**
+     * Displays the expense transaction totals for the last 30 days of transactions
+     *
+     * @param  end the Date to count back from
+     */
     private void setGraphViewDaily(Date end) {
         clearButtonColors();
         mDaily.setBackgroundColor(getResources().getColor(R.color.primaryColor));
@@ -249,7 +256,7 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
                     mTransitioning = false;
                 }
 
-            }, 1400);
+            }, 1100);
         }
     }
 
@@ -292,10 +299,14 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
                 }
                 mTransitioning = false;
             }
-        }, 1300);
+        }, 1000);
 
     }
-
+    /**
+     * Returns the expense transaction totals for the last 4 quarters of transactions
+     *
+     * @param  end the Date to count back from
+     */
     private void setGraphViewQuarterly(Date end) {
         clearButtonColors();
         mQuarterly.showArrow(true);
@@ -336,13 +347,19 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
                 @Override
                 public void run() {
                     mTransitioning = false;
+                    //The quarterly view takes a bit more time to initialize because of the multiple DB lookups,
+                    //so we're giving it a little extra time.
                     mGraph.handleTransactionsTouch(mGraph.getBar(mGraph.getBarCount() - 1));
                 }
 
-            }, 1300);
+            }, 1100);
         }
     }
-
+    /**
+     * Returns the expense transaction totals for the last 2 years of transactions
+     *
+     * @param  end the Date to count back from
+     */
     private void setGraphViewYearly(Date end) {
         clearButtonColors();
         mYearly.showArrow(true);
@@ -381,35 +398,27 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
                 public void run() {
                     mGraph.handleTransactionsTouch(mGraph.getBar(mGraph.getBarCount() - 1));
                     mTransitioning = false;
-                }}, 1300);
+                }}, 1000);
         }
     }
+    /**
+     * Animates a change in the label at the top of the view.
+     *
+     * @param  newText the string that the label text should be changed to.
+     */
     private void setLabelText(final String newText) {
         Animation outAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.out_right_fade);
-        final Animation inAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in_fast);
-        outAnim.setAnimationListener(new AnimationListener() {
-
+        final Animation inAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.in_left);
+        outAnim.setFillAfter(true);
+        final Handler handler = new Handler();
+        mFragmentLabel.startAnimation(outAnim);
+        handler.postDelayed(new Runnable() {
             @Override
-            public void onAnimationEnd(Animation animation) {
+            public void run() {
                 mFragmentLabel.setText(newText);
                 mFragmentLabel.setVisibility(View.VISIBLE);
                 mFragmentLabel.startAnimation(inAnim);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void onAnimationStart(Animation animation) {
-                // TODO Auto-generated method stub
-
-            }
-
-        });
-        mFragmentLabel.startAnimation(outAnim);
+            }}, 600);
     }
 
 }

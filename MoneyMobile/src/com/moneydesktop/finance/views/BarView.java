@@ -223,7 +223,7 @@ public class BarView extends View {
         animator = ObjectAnimator.ofFloat(this, "amount", start,
                 (float) a);
 
-        animator.setDuration(500);
+        animator.setDuration(250);
         animator.start();
 
         invalidate();

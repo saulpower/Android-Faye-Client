@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.view.animation.OvershootInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -113,7 +114,8 @@ public class PopupWindowAtLocation extends FrameLayout {
 
         Animation backgroundFadeIn = new ScaleAnimation((float) .5, 1, (float) .5, 1, mX+UiUtils.convertDpToPixel(120,mContext), mY+UiUtils.convertDpToPixel(50,mContext));
         //backgroundFadeIn.initialize(mRoot.getWidth(), mRoot.getHeight(), this.getWidth(), this.getHeight());
-        backgroundFadeIn.setDuration(100);
+        backgroundFadeIn.setDuration(200);
+        backgroundFadeIn.setInterpolator(new OvershootInterpolator());
         mRoot.startAnimation(backgroundFadeIn);
 
         mParentView.addView(mRoot);

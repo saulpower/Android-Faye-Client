@@ -40,7 +40,7 @@ public class BarGraphView extends RelativeLayout implements
     boolean mLabel;
     float mFontSize;
     double mGraphMax;
-    private BarView mBar;
+    private BarView mSelectedBar;
 
     public BarGraphView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -66,6 +66,7 @@ public class BarGraphView extends RelativeLayout implements
         if (mPopup != null) {
             mPopup.fadeOutTransparency();
         }
+        mSelectedBar = null;
         for (int i = 0; i < mBarContainer.getChildCount(); i++) {
             ((BarView) mBarContainer.getChildAt(i)).setAmountAnimated(0);
         }
@@ -121,7 +122,7 @@ public class BarGraphView extends RelativeLayout implements
         mPopup.setVisibility(GONE);
     }
 
-    public boolean handleTransactionsTouch(BarView bar) {
+    public boolean handleTransactionsTouch(BarView touchedBar) {
         final Animation bounce = AnimationUtils.loadAnimation(getContext(),
                 R.anim.scale_bounce);
         bounce.setDuration(100);
@@ -129,55 +130,58 @@ public class BarGraphView extends RelativeLayout implements
             return true;
         }
         changeBarColor(mBColor);
-        mBar = bar;
-        mBar.setBarColor(mSelectedColor);
-        mBar.startAnimation(bounce);
-        final int index = mBarContainer.indexOfChild(mBar);
-        int pX = (int) ((mBar.getLeft() + mBar.getWidth() / 2) - ((UiUtils
-                .convertDpToPixel(240, getContext()) / 2)));
-        int pY = (int) (barActualHeight(mBar) - (UiUtils.convertDpToPixel(110,
-                getContext())));
+        Boolean sameBar = false;
+        if(mSelectedBar == touchedBar){
+             sameBar = true;
+        }
+        mSelectedBar = touchedBar;
+        mSelectedBar.setBarColor(mSelectedColor);
+        mSelectedBar.startAnimation(bounce);
+        if(!sameBar){
+            final int index = mBarContainer.indexOfChild(mSelectedBar);
+            int pX = (int) ((mSelectedBar.getLeft() + mSelectedBar.getWidth() / 2) - ((UiUtils
+                    .convertDpToPixel(240, getContext()) / 2)));
+            int pY = (int) (barActualHeight(mSelectedBar) - (UiUtils.convertDpToPixel(110,
+                    getContext())));
 
+            BarGraphPopUpView popup = new BarGraphPopUpView(getContext(), touchedBar.getLeft() + ((touchedBar.getRect().left + touchedBar.getRect().right) / 2) - 20, touchedBar.getRect().top - 50);
 
-        BarGraphPopUpView popup = new BarGraphPopUpView(getContext(), bar.getLeft() + ((bar.getRect().left + bar.getRect().right) / 2) - 20, bar.getRect().top - 50);
+            popup.mTopLine.setText(mSelectedBar.getPopupText());
+            NumberFormat formatter = NumberFormat.getCurrencyInstance();
+            String amountString = formatter.format(mSelectedBar.getAmount());
+            popup.mMidLine.setText(amountString);
+            popup.mBottomLine.setText(getResources().getString(
+                    R.string.button_transactions));
+            if (mPopup != null) {
+                mPopup.fadeOutTransparency();
+            }
+            mPopup = new PopupWindowAtLocation(getContext(), BarGraphView.this, pX,
+                    pY, mSelectedBar, popup);
+            mPopup.setVisibility(VISIBLE);
+            popup.mLayout.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) { // View All transactions
 
-        popup.mTopLine.setText(mBar.getPopupText());
-        NumberFormat formatter = NumberFormat.getCurrencyInstance();
-        String amountString = formatter.format(mBar.getAmount());
-        popup.mMidLine.setText(amountString);
-        popup.mBottomLine.setText(getResources().getString(
-                R.string.button_transactions));
-        if (mPopup != null) {
-            mPopup.fadeOutTransparency();
+                    Intent clickIntent = new Intent(getContext(),
+                            DropDownTabletActivity.class);
+                    clickIntent.putExtra(Constant.EXTRA_FRAGMENT,
+                            FragmentType.TRANSACTIONS_PAGE);
+                    clickIntent.putExtra(Constant.EXTRA_TXN_TYPE, TxFilter.ALL);
+                    clickIntent.putExtra(Constant.EXTRA_START_TIME, mSelectedBar.getTime());
+
+                    if (index + 1 >= mBarContainer.getChildCount()) {
+                        clickIntent.putExtra(Constant.EXTRA_END_TIME, new Date());
+                    } else {
+                        clickIntent.putExtra(Constant.EXTRA_END_TIME,
+                                ((BarView) mBarContainer.getChildAt(index + 1))
+                                        .getTime());
+                    }
+
+                    getContext().startActivity(clickIntent);
+                }
+            });
         }
 
-
-        mPopup = new PopupWindowAtLocation(getContext(), BarGraphView.this, pX,
-                pY, mBar, popup);
-        mPopup.setVisibility(VISIBLE);
-
-        popup.mLayout.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) { // View All transactions
-
-                Intent clickIntent = new Intent(getContext(),
-                        DropDownTabletActivity.class);
-                clickIntent.putExtra(Constant.EXTRA_FRAGMENT,
-                        FragmentType.TRANSACTIONS_PAGE);
-                clickIntent.putExtra(Constant.EXTRA_TXN_TYPE, TxFilter.ALL);
-                clickIntent.putExtra(Constant.EXTRA_START_TIME, mBar.getTime());
-
-                if (index + 1 >= mBarContainer.getChildCount()) {
-                    clickIntent.putExtra(Constant.EXTRA_END_TIME, new Date());
-                } else {
-                    clickIntent.putExtra(Constant.EXTRA_END_TIME,
-                            ((BarView) mBarContainer.getChildAt(index + 1))
-                                    .getTime());
-                }
-
-                getContext().startActivity(clickIntent);
-            }
-        });
 
         return true;
     }

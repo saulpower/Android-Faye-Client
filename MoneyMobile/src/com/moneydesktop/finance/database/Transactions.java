@@ -773,7 +773,10 @@ public class Transactions extends BusinessObject  {
     	
     	return transaction;
     }
-    
+    /**
+     * Returns the top spending/expense category icon for the last 30 days among all transactions.
+     * To be used with the Symbols font in the UI.
+     */
     public static String topCategory() {
         SQLiteDatabase db = ApplicationContext.getDb();
         Calendar cal = Calendar.getInstance();
@@ -799,7 +802,11 @@ public class Transactions extends BusinessObject  {
         
         return "S";
     }
-
+    /**
+     * Returns the expense transaction totals for the last 30 days of transactions
+     *
+     * @param  end the Date to count back from
+     */
     public static List<Double[]> get30DayExpenseTotals(Date end) {
         CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
         Set<Long> catIDs = new HashSet<Long>();
@@ -840,7 +847,11 @@ public class Transactions extends BusinessObject  {
 
         return retVal;
     }
-
+    /**
+     * Returns the expense transaction totals associated with the last 4 quarters of transactions.
+     *
+     * @param  end the Date to count back from
+     */
     public static List<Double[]> getQuarterlyExpenseTotals(Date end) {
         CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
         Set<Long> catIDs = new HashSet<Long>();
@@ -861,28 +872,55 @@ public class Transactions extends BusinessObject  {
         SQLiteDatabase db = ApplicationContext.getDb();
         Calendar cal = Calendar.getInstance();
         cal.setTime(end);
-        cal.add(Calendar.YEAR, -1);
-        Date start = cal.getTime();
-        Cursor cursor = db.rawQuery(query, new String[]{
-
-                Long.toString(start.getTime()), Long.toString(end.getTime())
-        });
-        cursor.moveToFirst();
         List<Double[]> retVal = new ArrayList<Double[]>();
-        while (cursor.isAfterLast() == false) {
-            Double[] d = new Double[3];
-            d[0] = cursor.getDouble(0);
-            d[1] = cursor.getDouble(1);
-            d[2] = (double) cursor.getInt(2);
-            retVal.add(d);
-            cursor.moveToNext();
+        for(int counter = 0; counter < 4; counter++){
+            Cursor cursor = db.rawQuery(query, new String[]{
+
+                    Long.toString(cal.get(Calendar.YEAR)), Integer.toString(getQuarterNumber(cal))
+            });
+            Double[] entry = new Double[3];
+            //Contains Date for entry
+            entry[0] = (double)cal.getTimeInMillis();
+            //Contains Amount for entry
+            if(cursor.moveToFirst() != false){
+                entry[1] = cursor.getDouble(0);
+            }
+            else{
+                entry[1] = 0.00;
+            }
+            //Contains quarter for entry
+            entry[2] = (double)getQuarterNumber(cal);
+            retVal.add(entry);
+            //Setting cal to the previous quarter
+            cal.add(Calendar.MONTH, -3);
+            cursor.close();
         }
-
-        cursor.close();
-
+        //Reversing the results to read out in ascending order to the graph.
+        Collections.reverse(retVal);
         return retVal;
     }
-
+    /**
+     * Returns the Quarter Number associated with a Date as an int. Used by getQuarterlyExpenseTotals
+     *
+     * @param  cal the Calendar object to get the quarter number for
+     */
+    private static int getQuarterNumber(Calendar cal){;
+            if(cal.get(Calendar.MONTH) == 1 || cal.get(Calendar.MONTH) == 2 || cal.get(Calendar.MONTH) == 3){
+                return 1;
+            }
+            if(cal.get(Calendar.MONTH) == 4 || cal.get(Calendar.MONTH) == 5 || cal.get(Calendar.MONTH) == 6){
+                return 2;
+            }
+            if(cal.get(Calendar.MONTH) == 7 || cal.get(Calendar.MONTH) == 8 || cal.get(Calendar.MONTH) == 9){
+                return 3;
+            }
+            if(cal.get(Calendar.MONTH) == 10 || cal.get(Calendar.MONTH) == 11 || cal.get(Calendar.MONTH) == 12){
+                return 4;
+            }
+        else{
+                return 0;
+            }
+    }
     public static List<Double[]> getMonthlyExpenseTotals(Date end) {
 
         List<Double[]> totals = new ArrayList<Double[]>();
