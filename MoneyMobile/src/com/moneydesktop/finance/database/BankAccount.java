@@ -11,8 +11,6 @@ import de.greenrobot.dao.DaoException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -886,8 +884,7 @@ public class BankAccount extends BusinessObject  {
 
     public static BankAccount createBankAccount(AccountType accountType, double balance, String accountName) {
 
-        SecureRandom random = new SecureRandom();
-        String externalId = new BigInteger(130, random).toString(32).toUpperCase();
+        String externalId = DataController.createRandomGuid();
 
         BankAccount bankAccount = new BankAccount();
         bankAccount.setAccountId(externalId);
@@ -927,6 +924,11 @@ public class BankAccount extends BusinessObject  {
         String institutionId = account.optString(Constant.KEY_INSTITUTION_GUID);
         int version = account.optInt(Constant.KEY_REVISION);
 
+        updateManualAccount(accountId, memberId, institutionId, version);
+    }
+
+    public void updateManualAccount(String accountId, String memberId, String institutionId, int version) {
+
         setExternalId(accountId);
         getBusinessObjectBase().setVersion(version);
 
@@ -953,6 +955,9 @@ public class BankAccount extends BusinessObject  {
                 bank.setBankName("Manual Bank");
                 bank.setProcessStatus(Enums.BankRefreshStatus.STATUS_SUCCEEDED.index());
                 bank.setBankId(memberId);
+                bank.setDefaultClassId(Constant.PERSONAL);
+                bank.setIsLinked(true);
+                bank.setInstitutionId(institution.getId());
                 bank.acceptChanges();
                 bank.insertBatch();
 
@@ -969,8 +974,12 @@ public class BankAccount extends BusinessObject  {
                 bank.setDataStateEnum(DataState.DATA_STATE_MODIFIED);
             }
 
+            setInstitutionId(institution.getInstitutionId());
+            setBankName(bank.getBankName());
             setBank(bank);
             bank.resetBankAccounts();
+
+            updateBatch();
 
             DataController.save();
         }

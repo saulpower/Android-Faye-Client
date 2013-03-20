@@ -16,6 +16,7 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.TextView;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
+import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.TxFilter;
 import com.moneydesktop.finance.database.TagInstance;
@@ -26,6 +27,7 @@ import com.moneydesktop.finance.model.EventMessage.MenuEvent;
 import com.moneydesktop.finance.shared.FilterViewHolder;
 import com.moneydesktop.finance.shared.adapter.FilterAdapter;
 import com.moneydesktop.finance.shared.fragment.TransactionsFragment;
+import com.moneydesktop.finance.tablet.fragment.BankListTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.UltimateListView;
 import de.greenrobot.event.EventBus;
@@ -122,6 +124,16 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
         super.isShowing();
 
 		setupMenuItems();
+
+        if (mLoaded) {
+            mAdapter.refreshCurrentSelection();
+        }
+    }
+
+    @Override
+    public void isHiding() {
+
+        mTransactionsList.setSelection(0);
     }
 	
 	@Override
@@ -148,20 +160,59 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 	
 	private void setupMenuItems() {
 
-        if (mSubList) return;
-		
-		List<Pair<Integer, List<int[]>>> data = new ArrayList<Pair<Integer, List<int[]>>>();
+		List<Pair<Integer, List<int[]>>> menu = new ArrayList<Pair<Integer, List<int[]>>>();
 
-    	List<int[]> items = new ArrayList<int[]>();
-    	items.add(new int[] {R.string.nav_icon_filter, R.string.label_show_filters });
-    	items.add(new int[] {R.string.nav_icon_mark, R.string.label_mark_read });
+    	List<int[]> communication = new ArrayList<int[]>();
+        List<int[]> edit = new ArrayList<int[]>();
+        List<int[]> filter = new ArrayList<int[]>();
+
+        communication.add(new int[]{R.string.nav_icon_email, R.string.label_email_transactions});
+        edit.add(new int[]{R.string.nav_icon_mark, R.string.label_mark_read});
+
+        if (!mSubList) {
+            edit.add(new int[]{R.string.nav_icon_add, R.string.label_add_transaction});
+            filter.add(new int[]{R.string.nav_icon_filter, R.string.label_show_filters});
+        }
     	
-    	data.add(new Pair<Integer, List<int[]>>(R.string.menu_transactions, items));
-    	
-    	//mActivity.
-    	mActivity.addMenuItems(data);
-    	mActivity.setMenuFragment(FragmentType.TRANSACTIONS);
+    	menu.add(new Pair<Integer, List<int[]>>(R.string.label_communication, communication));
+        menu.add(new Pair<Integer, List<int[]>>(R.string.label_edit, edit));
+        if (!mSubList) {
+            menu.add(new Pair<Integer, List<int[]>>(R.string.label_filter, filter));
+        }
+
+    	mActivity.configureRightMenu(menu, getType());
 	}
+
+    public void onEvent(MenuEvent event) {
+
+        if (event.getFragmentType().equals(getType())) {
+
+            switch (event.getAction()) {
+                case ((0 << 8) + 0):
+                    emailTransactions(null);
+                    break;
+                case ((1 << 8) + 0):
+
+                    if (!mSubList) Transactions.setAllRead();
+
+                    for (Transactions t : mAdapter.getTransactions()) {
+                        t.setIsProcessed(true);
+                        if (mSubList) t.updateBatch();
+                    }
+
+                    if (mSubList) DataController.save();
+
+                    refreshTransactionsList();
+                    break;
+                case ((1 << 8) + 1):
+                    mActivity.pushFragment(getId(), BankListTabletFragment.newInstance());
+                    break;
+                case ((2 << 8) + 0):
+                    mActivity.pushMenuView(mFilterListView);
+                    break;
+            }
+        }
+    }
 	
 	private void setupFilterList() {
 
@@ -249,7 +300,7 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		
-		Transactions transaction = (Transactions) parent.getItemAtPosition(position - 1);
+		Transactions transaction = (Transactions) parent.getItemAtPosition(position);
 		
 		if (transaction != null) {
 			
@@ -277,24 +328,6 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 	@Override
 	public String getFragmentTitle() {
 		return getString(R.string.title_activity_transactions).toUpperCase();
-	}
-	
-	public void onEvent(MenuEvent event) {
-	    
-		if (event.getFragmentType().equals(FragmentType.TRANSACTIONS)) {
-		    switch (event.getChildPosition()) {
-			    case 0:
-			    	mActivity.pushMenuView(mFilterListView);
-			    	break;
-			    case 1:
-			    	Transactions.setAllRead();
-			    	for (Transactions t : mAdapter.getTransactions()) {
-			    		t.setIsProcessed(true);
-			    	}
-			    	refreshTransactionsList();
-			    	break;
-		    }
-		}
 	}
 	
 	public void onEvent(DatabaseSaveEvent event) {

@@ -606,8 +606,6 @@ public class SyncEngine {
 
     public void syncBankAccount(BankAccount bankAccount, final boolean addNewTransaction) {
 
-        Log.i(TAG, "Sync Running: " + mRunning);
-
         mAccountRunning = true;
 
         new AsyncTask<BankAccount, Void, Boolean>() {
@@ -617,16 +615,28 @@ public class SyncEngine {
 
                 BankAccount bankAccount = params[0];
 
-                JSONObject jsonResponse = mDataBridge.saveManualBankAccount(bankAccount);
+                // If we can sync send the manual bank to the server
+                if (User.getCurrentUser() != null && User.getCurrentUser().getCanSync()) {
 
-                if (jsonResponse != null) {
+                    JSONObject jsonResponse = mDataBridge.saveManualBankAccount(bankAccount);
 
-                    bankAccount.updateManualAccount(jsonResponse);
-
-                    if (addNewTransaction) {
-                        Transactions transactions = Transactions.createNewTransaction(bankAccount);
-                        transactions.insertSingle();
+                    if (jsonResponse != null) {
+                        bankAccount.updateManualAccount(jsonResponse);
                     }
+
+                } else {
+
+                    String accountId = DataController.createRandomGuid();
+                    String memberId = DataController.createRandomGuid();
+                    String institutionId = Constant.VALUE_MANUAL_INS_ID;
+                    int version = 1;
+
+                    bankAccount.updateManualAccount(accountId, memberId, institutionId, version);
+                }
+
+                if (addNewTransaction) {
+                    Transactions transactions = Transactions.createNewTransaction(bankAccount);
+                    transactions.insertSingle();
                 }
 
                 return true;

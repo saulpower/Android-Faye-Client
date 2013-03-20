@@ -10,6 +10,7 @@
       <directory url="file://$PROJECT_DIR$/../devsmartlib/gen" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/../Communication/gen" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/../NineOldAndroids/gen" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/../TimesSquare/gen" includeSubdirectories="true" />
     </excludeFromCompile>
     <resourceExtensions />
     <wildcardResourcePatterns>
@@ -31,6 +32,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="android-times-square" />
         <module name="Communication" />
       </profile>
     </annotationProcessing>

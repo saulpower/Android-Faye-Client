@@ -15,11 +15,11 @@ import android.view.WindowManager.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.widget.RelativeLayout;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.shared.fragment.CalendarFragment;
 import com.moneydesktop.finance.shared.fragment.CategoriesFragment;
 import com.moneydesktop.finance.shared.fragment.PopupFragment;
 import com.moneydesktop.finance.shared.fragment.TagsFragment;
@@ -232,6 +232,8 @@ public class PopupTabletActivity extends DialogBaseActivity implements OnKeyboar
                 return CategoriesFragment.newInstance(getIntent().getLongExtra(Constant.EXTRA_ID, -1));
             case POPUP_TAGS:
                 return TagsFragment.newInstance(getIntent().getLongExtra(Constant.EXTRA_ID, -1));
+            case POPUP_CALENDAR:
+                return CalendarFragment.newInstance(getIntent().getLongExtra(Constant.EXTRA_ID, -1));
             default:
                 dismissPopup();
         }

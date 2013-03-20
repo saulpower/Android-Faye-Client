@@ -1,14 +1,12 @@
 package com.moneydesktop.finance.handset.fragment;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Preferences;
@@ -16,7 +14,6 @@ import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.shared.fragment.LockFragment;
 import com.moneydesktop.finance.util.Fonts;
-
 import de.greenrobot.event.EventBus;
 
 public class SettingsHandsetFragment extends BaseFragment {
@@ -98,12 +95,8 @@ public class SettingsHandsetFragment extends BaseFragment {
 			
 			@Override
 			public void onClick(View v) {
-				
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-				ft.replace(R.id.settings_fragment, LockFragment.newInstance(false));
-				ft.addToBackStack(null);
-				ft.commit();
+
+                mActivity.pushFragment(R.id.settings_fragment, LockFragment.newInstance(false));
 			}
 		});
 		

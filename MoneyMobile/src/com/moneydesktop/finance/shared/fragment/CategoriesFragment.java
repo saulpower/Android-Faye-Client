@@ -8,9 +8,6 @@ import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.*;
 import android.view.View.OnFocusChangeListener;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -43,9 +40,10 @@ public class CategoriesFragment extends PopupFragment implements OnChildClickLis
     private ClearEditText mSearch;
     private SpinnerView mSpinner;
     
-    private Animation mFadeIn, mFadeOut;
-    
     private Transactions mTransaction;
+
+    private boolean mLoading = true;
+    private boolean mShowing = false;
     
     public static CategoriesFragment newInstance(long transactionId) {
 
@@ -78,8 +76,7 @@ public class CategoriesFragment extends PopupFragment implements OnChildClickLis
         
         long id = getArguments().getLong(Constant.KEY_ID);
         mTransaction = (Transactions) DataController.getDao(Transactions.class).load(id);
-        
-        loadAnimations();
+
         setupView();
         
         return mRoot;
@@ -88,17 +85,8 @@ public class CategoriesFragment extends PopupFragment implements OnChildClickLis
     @Override
     public void onResume() {
     	super.onResume();
-    	
-    	if (mPopupActivity == null) {
-    		
-    		mRoot.postDelayed(new Runnable() {
-				
-				@Override
-				public void run() {
-		    		setupCategoryList();
-				}
-			}, 450);
-    	}
+
+        setupCategoryList();
     }
     
     @Override
@@ -107,11 +95,20 @@ public class CategoriesFragment extends PopupFragment implements OnChildClickLis
         
         EventBus.getDefault().unregister(this);
     }
+
+    @Override
+    public void isShowing() {
+        super.isShowing();
+
+        mShowing = true;
+        configureView();
+    }
     
     @Override
     public void popupVisible() {
 
-        setupCategoryList();
+        mShowing = true;
+        configureView();
     }
     
     public void onEvent(DatabaseSaveEvent event) {
@@ -119,24 +116,6 @@ public class CategoriesFragment extends PopupFragment implements OnChildClickLis
     	if (mAdapter != null && event.didDatabaseChange() && event.getChangedClassesList().contains(Category.class)) {
     		setupCategoryList();
     	}
-    }
-    
-    private void loadAnimations() {
-        mFadeIn = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in_fast);
-        mFadeOut = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out_fast);
-        mFadeOut.setAnimationListener(new AnimationListener() {
-            
-            @Override
-            public void onAnimationStart(Animation animation) {}
-            
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-            
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                mSpinner.setVisibility(View.GONE);
-            }
-        });
     }
     
     private void setupView() {
@@ -229,15 +208,22 @@ public class CategoriesFragment extends PopupFragment implements OnChildClickLis
                 }
                 
                 mCategoryList.expandAll();
-                
-                if (mCategoryList.getVisibility() != View.VISIBLE) {
-	                mCategoryList.setVisibility(View.VISIBLE);
-	                mCategoryList.startAnimation(mFadeIn);
-	                mSpinner.startAnimation(mFadeOut);
-                }
+
+                mLoading = false;
+
+                configureView();
             }
 
         }.execute();
+    }
+
+    private void configureView() {
+
+        if (!mLoading && mShowing && mCategoryList.getVisibility() != View.VISIBLE) {
+
+            mCategoryList.setVisibility(View.VISIBLE);
+            mSpinner.setVisibility(View.GONE);
+        }
     }
     
     @Override

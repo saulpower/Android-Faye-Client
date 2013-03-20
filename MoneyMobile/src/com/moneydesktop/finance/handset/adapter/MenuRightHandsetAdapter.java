@@ -1,8 +1,5 @@
 package com.moneydesktop.finance.handset.adapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.util.Pair;
 import android.view.View;
@@ -11,7 +8,6 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.TextView;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.model.EventMessage;
@@ -19,8 +15,10 @@ import com.moneydesktop.finance.shared.MenuViewHolder;
 import com.moneydesktop.finance.shared.adapter.UltimateAdapter;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.UltimateListView;
-
 import de.greenrobot.event.EventBus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MenuRightHandsetAdapter extends UltimateAdapter implements OnGroupClickListener, OnChildClickListener {
     
@@ -31,8 +29,9 @@ public class MenuRightHandsetAdapter extends UltimateAdapter implements OnGroupC
     private UltimateListView mListView;
     private FragmentType mCurrentFragmentType;
     
-    public void setData(List<Pair<Integer, List<int[]>>> data) {
+    public void configureMenu(List<Pair<Integer, List<int[]>>> data, FragmentType currentFragmentType) {
         mData = data;
+        mCurrentFragmentType = currentFragmentType;
         addDefaultMenuItems();
     	notifyDataSetChanged();
     	mListView.expandAll();
@@ -49,11 +48,7 @@ public class MenuRightHandsetAdapter extends UltimateAdapter implements OnGroupC
     }
     
     public void resetMenu() {
-    	setData(new ArrayList<Pair<Integer, List<int[]>>>());
-    }
-    
-    public void setCurrentFragmentType (FragmentType currentFragmentType) {
-    	mCurrentFragmentType = currentFragmentType;
+    	configureMenu(new ArrayList<Pair<Integer, List<int[]>>>(), mCurrentFragmentType);
     }
     
     private void addDefaultMenuItems() {

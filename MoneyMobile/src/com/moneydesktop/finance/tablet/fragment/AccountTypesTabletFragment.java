@@ -94,9 +94,14 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
 		
 		return mRoot;
 	}
+
+    @Override
+    public void isShowing() {
+
+        setupTitleBar();
+    }
 	
     private void setupView() {
-		setupTitleBar();
     	
     	//clears out any previous adapter it had
     	mListView.setAdapter(null);
@@ -380,12 +385,6 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
                 }                
             }
         });
-    }
-      
-    @Override
-    public void onResume() {
-        super.onResume();
-        setupTitleBar();
     }
     
     public void setAllBanksToUpdate() {

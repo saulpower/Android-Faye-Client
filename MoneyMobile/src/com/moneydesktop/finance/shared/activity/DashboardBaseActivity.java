@@ -35,30 +35,17 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 	
 	protected boolean mLoggingOut = false;
 
-    protected FragmentType mCurrentFragmentType = FragmentType.DASHBOARD;
+    private FragmentType mPreviousFragmentType = FragmentType.DASHBOARD;
+    private FragmentType mCurrentFragmentType = FragmentType.DASHBOARD;
     
 	protected GrowViewPager mPager;
 	protected GrowPagerAdapter mAdapter;
-
-    protected Animation.AnimationListener mStart = new Animation.AnimationListener() {
-
-        @Override
-        public void onAnimationStart(Animation animation) {
-//            EventBus.getDefault().post(new EventMessage().new NavigationEvent());
-        }
-
-        @Override
-        public void onAnimationRepeat(Animation animation) {}
-
-        @Override
-        public void onAnimationEnd(Animation animation) {}
-    };
 
     protected Animation.AnimationListener mFinish = new Animation.AnimationListener() {
 
         @Override
         public void onAnimationEnd(Animation animation) {
-
+            fragmentHiding(mPreviousFragmentType);
             fragmentShowing(mCurrentFragmentType);
         }
 
@@ -75,6 +62,11 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 
     public FragmentType getCurrentFragmentType() {
         return mCurrentFragmentType;
+    }
+
+    public void setCurrentFragmentType(FragmentType fragmentType) {
+        mPreviousFragmentType = mCurrentFragmentType;
+        mCurrentFragmentType = fragmentType;
     }
 
 	public GrowPagerAdapter getPagerAdapter() {
@@ -197,12 +189,10 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 		}.execute();
 	}
 	
-	public void addMenuItems(List<Pair<Integer, List<int[]>>> data) {}
+	public void configureRightMenu(List<Pair<Integer, List<int[]>>> menuItems, FragmentType fragmentType) {}
 	public void pushMenuView(View view) {}
 	public void popMenuView() {}
 	public View getMenuParent() {
 		return null;
 	}
-
-	public void setMenuFragment(FragmentType fragmentType) {}
 }

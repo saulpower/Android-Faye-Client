@@ -18,8 +18,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -1425,8 +1423,7 @@ public class Transactions extends BusinessObject  {
 
         Category category = Category.getUncategorizedCategory();
 
-        SecureRandom random = new SecureRandom();
-        String externalId = new BigInteger(130, random).toString(32).toUpperCase();
+        String externalId = DataController.createRandomGuid();
 
         Transactions transactions = new Transactions();
         transactions.setTransactionId(externalId);

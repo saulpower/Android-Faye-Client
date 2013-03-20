@@ -1,8 +1,6 @@
 package com.moneydesktop.finance.handset.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,11 +22,8 @@ import java.util.List;
 
 public class AccountTypesListHandsetFragment extends BaseFragment{
 
-	private static AccountTypesListHandsetFragment mCurrentFragment;
 	private ListView mAccountTypesList;
 	private AccountType mSelectedAccountType;
-	private AddAccountPropertyTypesHandsetFragment mPropertyTypesFragment;
-	private AccountTypesManualSaveHandsetFragment mSaveManualBankFragment;
 	
 	private QueryProperty mAccountTypeNotWhere = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName, "!= ?");
 	private QueryProperty mAccountTypeAnd = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.ParentAccountTypeId, "= ?");
@@ -42,22 +37,8 @@ public class AccountTypesListHandsetFragment extends BaseFragment{
 
 	@Override
 	public String getFragmentTitle() {
-		return getString(R.string.label_account_type);
+		return getString(R.string.label_account_type).toUpperCase();
 	}
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-    //    EventBus.getDefault().register(this);
-    }
-    
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        
-     //   EventBus.getDefault().unregister(this);
-    }
     
 	@Override
 	public boolean onBackPressed() {
@@ -67,7 +48,6 @@ public class AccountTypesListHandsetFragment extends BaseFragment{
 	public static AccountTypesListHandsetFragment newInstance() {
 		
 		AccountTypesListHandsetFragment frag = new AccountTypesListHandsetFragment();
-		mCurrentFragment = frag;
 		
         Bundle args = new Bundle();
         frag.setArguments(args);
@@ -89,6 +69,7 @@ public class AccountTypesListHandsetFragment extends BaseFragment{
 	}
 
 	private void setupView() {
+
 		//get List of account types
 		AccountTypeDao accountTypeDao = ApplicationContext.getDaoSession().getAccountTypeDao();
 		
@@ -113,40 +94,20 @@ public class AccountTypesListHandsetFragment extends BaseFragment{
 			}
 		});	
 	}
-		
-	private AddAccountPropertyTypesHandsetFragment getPropertyTypesFragment(AccountType selectedAccountType) {
-
-		if (mPropertyTypesFragment == null) {
-			mPropertyTypesFragment = AddAccountPropertyTypesHandsetFragment.newInstance(selectedAccountType);
-		}
-		
-		return mPropertyTypesFragment;
-	}
-	
-	private AccountTypesManualSaveHandsetFragment getSaveManualBankFragment(AccountType accountType) {
-		mSaveManualBankFragment = AccountTypesManualSaveHandsetFragment.newInstance(accountType);
-		return mSaveManualBankFragment;
-	}
 
 	private void showPropertyTypesOrSaveManualBank(int position) {
-		mSelectedAccountType = ((AccountType)mAccountTypesList.getItemAtPosition(position));
-		
+
+        mSelectedAccountType = ((AccountType)mAccountTypesList.getItemAtPosition(position));
+
+        BaseFragment frag;
+
 		if (mSelectedAccountType.getAccountTypeName().toLowerCase().equals("property")) {
-			
-			AddAccountPropertyTypesHandsetFragment frag = getPropertyTypesFragment(mSelectedAccountType);
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-			ft.replace(mCurrentFragment.getId(), frag);
-			ft.addToBackStack(null);
-			ft.commit();
-		} else {
-			AccountTypesManualSaveHandsetFragment frag = getSaveManualBankFragment(mSelectedAccountType);
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-			ft.replace(mCurrentFragment.getId(), frag);
-			ft.addToBackStack(null);
-			ft.commit();
-		}
+			frag = AddAccountPropertyTypesHandsetFragment.newInstance(mSelectedAccountType);
+        } else {
+            frag = AccountTypesManualSaveHandsetFragment.newInstance(mSelectedAccountType);
+        }
+
+        mActivity.pushFragment(getId(), frag);
 	}
 	
 }

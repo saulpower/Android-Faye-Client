@@ -63,16 +63,16 @@ abstract public class BaseActivity extends FragmentActivity {
 
         DisplayMetrics metrics = UiUtils.getDisplayMetrics(context);
 
-        ApplicationContext.setIsLargeTablet(isLargeTablet(context, metrics));
+        ApplicationContext.setIsLargeTablet(isLargeTablet(metrics));
 
-        int size = getDeviceDisplaySize(context, metrics) > MINIMUM_TABLET_SCREEN_INCHES
+        int size = getDeviceDisplaySize(metrics) > MINIMUM_TABLET_SCREEN_INCHES
                 ? DEVICE_DISPLAY_SIZE_TABLET
                 : DEVICE_DISPLAY_SIZE_PHONE;
 
         return size == DEVICE_DISPLAY_SIZE_TABLET && android.os.Build.VERSION.SDK_INT >= 11;
     }
 
-    public float getDeviceDisplaySize(final Context context, final DisplayMetrics metrics) {
+    public float getDeviceDisplaySize(final DisplayMetrics metrics) {
 
         final float widthInches = metrics.widthPixels / metrics.xdpi;
         final float heightInches = metrics.heightPixels / metrics.ydpi;
@@ -81,9 +81,9 @@ abstract public class BaseActivity extends FragmentActivity {
         return screenSizeInInches;
     }
 
-    private boolean isLargeTablet(Context context, DisplayMetrics metrics) {
+    private boolean isLargeTablet(DisplayMetrics metrics) {
 
-        float size = getDeviceDisplaySize(context, metrics);
+        float size = getDeviceDisplaySize(metrics);
 
         return size > MINIMUM_LARGE_TABLET_SCREEN_INCHES;
     }
@@ -156,8 +156,14 @@ abstract public class BaseActivity extends FragmentActivity {
     protected void fragmentShowing(FragmentType fragmentType) {
 
         if (mFragments.containsKey(fragmentType)) {
-
             mFragments.get(fragmentType).isShowing();
+        }
+    }
+
+    protected void fragmentHiding(FragmentType fragmentType) {
+
+        if (mFragments.containsKey(fragmentType)) {
+            mFragments.get(fragmentType).isHiding();
         }
     }
 	

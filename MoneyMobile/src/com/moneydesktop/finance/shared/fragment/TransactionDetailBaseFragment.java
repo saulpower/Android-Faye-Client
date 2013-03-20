@@ -1,6 +1,8 @@
 package com.moneydesktop.finance.shared.fragment;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
@@ -19,8 +21,7 @@ import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
-import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.util.*;
 import com.moneydesktop.finance.views.LabelEditCurrency;
 import com.moneydesktop.finance.views.LabelEditText;
 import de.greenrobot.event.EventBus;
@@ -55,6 +56,14 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
         @Override
         public void onClick(View v) {
             v.startAnimation(mShake);
+        }
+    };
+
+    private OnClickListener mDateClick = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            selectDate(v);
         }
     };
     
@@ -139,8 +148,8 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
     
     protected void applyFonts() {
         
-        Fonts.applyPrimaryFont(mAccountName, 8);
-        Fonts.applySecondaryItalicFont(mBankName, 6);
+        Fonts.applyPrimaryFont(mAccountName, 12);
+        Fonts.applySecondaryItalicFont(mBankName, 10);
         Fonts.applyPrimarySemiBoldFont(mPayee, 16);
         Fonts.applyPrimaryBoldFont(mAmount, 28);
         Fonts.applyPrimarySemiBoldFont(mDate, 16);
@@ -340,7 +349,7 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
         mAmount.setFocusable(isManual);
         mAmount.setFocusableInTouchMode(isManual);
         mAmount.setOnClickListener(isManual ? null : mShakeClick);
-        mDate.setOnClickListener(isManual ? null : mShakeClick);
+        mDate.setOnClickListener(isManual ? mDateClick : mShakeClick);
 
         mBusiness.setChecked(mTransaction.getIsBusiness() != null && mTransaction.getIsBusiness());
         mPersonal.setChecked(!mBusiness.isChecked());
@@ -381,4 +390,38 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
         mAccountName.setText(mTransaction.getBankAccount().getAccountName());
         mBankName.setText(mTransaction.getBankAccount().getBank().getBankName());
     }
+
+    protected void emailTransaction(View transactionView) {
+
+        Bitmap image = UiUtils.convertViewToBitmap(transactionView);
+        String path = FileIO.saveBitmap(getActivity(), image, mTransaction.getTransactionId());
+
+        EmailUtils.sendEmail(getActivity(), getString(R.string.email_transaction_subject), "", path);
+    }
+
+    protected void confirmDeleteTransaction() {
+
+        DialogUtils.alertDialog(getString(R.string.title_delete_transaction).toUpperCase(), getString(R.string.message_delete_transaction), getString(R.string.label_yes).toUpperCase(), getString(R.string.label_no).toUpperCase(), mActivity, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                switch (which) {
+                    case -1:
+                        deleteTransaction();
+                        break;
+                }
+
+                DialogUtils.dismissAlert();
+            }
+        });
+    }
+
+    protected void deleteTransaction() {
+
+        mTransaction.softDeleteSingle();
+        onBackPressed();
+    }
+
+    protected abstract void selectDate(View view);
 }

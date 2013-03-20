@@ -1,8 +1,6 @@
 package com.moneydesktop.finance.shared.fragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -148,13 +146,8 @@ public class LockFragment extends BaseFragment {
 	
 	private void showFragment(LockType lockType) {
 
-        Fragment fragment = LockCodeFragment.newInstance(lockType);
-        
-	    FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-        ft.replace(R.id.fragment, fragment);
-        ft.addToBackStack(null);
-        ft.commit();
+        BaseFragment fragment = LockCodeFragment.newInstance(lockType);
+        mActivity.pushFragment(R.id.fragment, fragment);
 	}
 
 	@Override

@@ -72,10 +72,6 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     private OnMenuChangeListener mOnMenuChangeListener;
 
     protected SimpleDateFormat mDateFormatter = new SimpleDateFormat("MM.dd.yyyy '@' h:mma", Locale.US);
-	
-	public FragmentType getCurrentFragmentType() {
-		return mCurrentFragmentType;
-	}
 
 	public GrowPagerAdapter getPagerAdapter() {
 	    return mAdapter;
@@ -185,6 +181,13 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
         outState.putParcelable(STATE_MENUDRAWER, mMenuDrawerLeft.saveState());
     }
 
+    @Override
+    public void pushFragment(int containerViewId, BaseFragment fragment) {
+
+        mMenuDrawerRight.closeMenu(true);
+        super.pushFragment(containerViewId, fragment);
+    }
+
     private void loadFragments() {
 
         loadFragment(R.id.accounts_fragment, AccountTypesHandsetFragment.newInstance());
@@ -243,13 +246,8 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     }
     
     @Override
-    public void addMenuItems(List<Pair<Integer, List<int[]>>> data) {
-    	mRightMenuAdapter.setData(data);
-    }
-    
-    @Override
-    public void setMenuFragment(FragmentType fragmentType) {
-    	mRightMenuAdapter.setCurrentFragmentType(fragmentType);
+    public void configureRightMenu(List<Pair<Integer, List<int[]>>> menuItems, FragmentType fragmentType) {
+    	mRightMenuAdapter.configureMenu(menuItems, fragmentType);
     }
 
     @Override
@@ -402,12 +400,12 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	@Override
     public void showFragment(FragmentType type, boolean moveUp) {
     	
-		if (mCurrentFragmentType == type) return;
+		if (getCurrentFragmentType() == type) return;
 
     	resetRightMenu();
-    	mCurrentFragmentType = type;
+    	setCurrentFragmentType(type);
     	
-    	int index = mCurrentFragmentType.index();
+    	int index = getCurrentFragmentType().index();
     	
     	// Adjustment for ordering issues the must remain so
     	// things work properly on the tablet version
@@ -419,13 +417,13 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     	
     	mMenuAdapter.setSelectedIndex(index);
     	
-    	if (FragmentType.DASHBOARD == mCurrentFragmentType) {
+    	if (FragmentType.DASHBOARD == getCurrentFragmentType()) {
 
         	SyncEngine.sharedInstance().syncCheck();
             updateNavBar(getActivityTitle());
     	}
 
-        AnimationFactory.slideTransition(mFlipper, type.index(), mStart, mFinish, moveUp ? FlipDirection.BOTTOM_TOP : FlipDirection.TOP_BOTTOM, TRANSITION_DURATION);
+        AnimationFactory.slideTransition(mFlipper, type.index(), null, mFinish, moveUp ? FlipDirection.BOTTOM_TOP : FlipDirection.TOP_BOTTOM, TRANSITION_DURATION);
     }
 	
 	/**
@@ -436,7 +434,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	 * @return 
 	 */
 	public void updateNavBar(String titleString) {
-		
+
 		if (titleString != null) {
 			mTitle.setText(titleString);
 		}
@@ -445,6 +443,20 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     @Override
     public void stackChange() {
         configureBackButton();
+    }
+
+    @Override
+    public void clearBackStack() {
+        super.clearBackStack();
+
+        configureBackButton();
+    }
+
+    @Override
+    protected void fragmentShowing(FragmentType fragmentType) {
+        super.fragmentShowing(fragmentType);
+
+        mMenuDrawerLeft.closeMenu();
     }
 	
 	private void configureBackButton() {
@@ -464,8 +476,6 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 		if (mMenuAdapter.getSelectedIndex() == position) return;
 		
 		boolean moveUp = (mMenuAdapter.getSelectedIndex() - position) < 0;
-    	
-        mMenuDrawerLeft.closeMenu();
 
         // Adjustment for ordering issues the must remain so
         // things work properly on the tablet version

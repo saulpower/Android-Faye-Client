@@ -34,14 +34,22 @@ import java.util.List;
 
 public class AccountOptionsCredentialsHandsetFragment extends FixBankFragment{
 
-	
-	private static Bank mBank;
+    private Bank mBank;
 	private TextView mSave;
 	private LabelEditText mLabel1, mLabel2, mLabel3;
-	private static Institution mInstitution;
+
+    private Institution mInstitution;
 	
 	private String mBankName;
 	private String mInstitutionID;
+
+    public void setBank(Bank mBank) {
+        this.mBank = mBank;
+    }
+
+    public void setInstitution(Institution mInstitution) {
+        this.mInstitution = mInstitution;
+    }
 	
 	@Override
 	public FragmentType getType() {
@@ -50,7 +58,7 @@ public class AccountOptionsCredentialsHandsetFragment extends FixBankFragment{
 
 	@Override
 	public String getFragmentTitle() {
-		return null;
+		return String.format(getString(R.string.add_account_institution_connect), mBank.getBankName());
 	}
 
     @Override
@@ -76,7 +84,7 @@ public class AccountOptionsCredentialsHandsetFragment extends FixBankFragment{
 	public static AccountOptionsCredentialsHandsetFragment newInstance(Bank bank) {
 		
 		AccountOptionsCredentialsHandsetFragment frag = new AccountOptionsCredentialsHandsetFragment();
-		mBank = bank;
+		frag.setBank(bank);
 		
         Bundle args = new Bundle();
         frag.setArguments(args);
@@ -87,7 +95,7 @@ public class AccountOptionsCredentialsHandsetFragment extends FixBankFragment{
 	public static AccountOptionsCredentialsHandsetFragment newInstance(Institution institution) {
 		
 		AccountOptionsCredentialsHandsetFragment frag = new AccountOptionsCredentialsHandsetFragment();
-		mInstitution = institution;
+		frag.setInstitution(institution);
 		
         Bundle args = new Bundle();
         frag.setArguments(args);
@@ -280,7 +288,4 @@ public class AccountOptionsCredentialsHandsetFragment extends FixBankFragment{
 		
 		mActivity.clearBackStack();
 	}
-	
-	
-	
 }

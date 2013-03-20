@@ -3,11 +3,12 @@ package com.moneydesktop.finance.shared.fragment;
 import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.view.View;
-
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.shared.activity.DashboardBaseActivity;
 
 public abstract class BaseFragment extends Fragment {
+
+    public final String TAG = this.getClass().getSimpleName();
 	
 	protected DashboardBaseActivity mActivity;
 	protected View mRoot;
@@ -46,6 +47,8 @@ public abstract class BaseFragment extends Fragment {
             mActivity.updateNavBar(getFragmentTitle());
         }
     }
+
+    public void isHiding() {}
 	
 	public abstract String getFragmentTitle();
 	public abstract boolean onBackPressed();

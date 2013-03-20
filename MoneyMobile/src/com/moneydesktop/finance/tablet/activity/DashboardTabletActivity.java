@@ -62,7 +62,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 		    
             return;
             
-        } else if (mCurrentFragmentType != FragmentType.DASHBOARD) {
+        } else if (getCurrentFragmentType() != FragmentType.DASHBOARD) {
 			
         	showFragment(FragmentType.DASHBOARD, true);
 			return;
@@ -87,13 +87,13 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         if (savedInstanceState != null) {
         	
             mPager.setCurrentItem(savedInstanceState.getInt(KEY_PAGER));
-            mCurrentFragmentType = (FragmentType) savedInstanceState.getSerializable(KEY_NAVIGATION);
+            setCurrentFragmentType((FragmentType) savedInstanceState.getSerializable(KEY_NAVIGATION));
             
             mNavigation.post(new Runnable() {
 				
 				@Override
 				public void run() {
-		            mNavigation.setCurrentIndex(mCurrentFragmentType.index());
+		            mNavigation.setCurrentIndex(getCurrentFragmentType().index());
 				}
 			});
         }
@@ -114,7 +114,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
     protected void onResume() {
         super.onResume();
         
-        if (mCurrentFragmentType == FragmentType.DASHBOARD) {
+        if (getCurrentFragmentType() == FragmentType.DASHBOARD) {
             
             updateNavBar(getActivityTitle());
             setupTitleBar();
@@ -126,7 +126,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 		super.onSaveInstanceState(outState);
 		
 		outState.putInt(KEY_PAGER, mPager.getCurrentItem());
-		outState.putSerializable(KEY_NAVIGATION, mCurrentFragmentType);
+		outState.putSerializable(KEY_NAVIGATION, getCurrentFragmentType());
 	}
     
     @Override
@@ -213,7 +213,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
             @Override
             public void onClick(View v) {
 
-                if (mCurrentFragmentType != FragmentType.DASHBOARD) {
+                if (getCurrentFragmentType() != FragmentType.DASHBOARD) {
                     mNavigation.setCurrentIndex(FragmentType.DASHBOARD.index());
                     onNavigationChanged(FragmentType.DASHBOARD.index());
                 }
@@ -295,25 +295,25 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	@Override
     public void showFragment(FragmentType fragmentType, boolean moveUp) {
 
-        if (mCurrentFragmentType == fragmentType) return;
+        if (getCurrentFragmentType() == fragmentType) return;
 
-        mCurrentFragmentType = fragmentType;
+        setCurrentFragmentType(fragmentType);
 
         String title = getActivityTitle();
 
-        if (mCurrentFragmentType == FragmentType.DASHBOARD) {
+        if (getCurrentFragmentType() == FragmentType.DASHBOARD) {
 
             setupTitleBar();
             SyncEngine.sharedInstance().syncCheck();
 
         } else {
 
-            title = mFragments.get(mCurrentFragmentType).getFragmentTitle();
+            title = mFragments.get(getCurrentFragmentType()).getFragmentTitle();
         }
 
         updateNavBar(title);
 
-        AnimationFactory.slideTransition(mFlipper, fragmentType.index(), mStart, mFinish, moveUp ? AnimationFactory.FlipDirection.BOTTOM_TOP : AnimationFactory.FlipDirection.TOP_BOTTOM, TRANSITION_DURATION);
+        AnimationFactory.slideTransition(mFlipper, fragmentType.index(), null, mFinish, moveUp ? AnimationFactory.FlipDirection.BOTTOM_TOP : AnimationFactory.FlipDirection.TOP_BOTTOM, TRANSITION_DURATION);
     }
     
     public void showNextPage() {
@@ -329,9 +329,9 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	@Override
 	public void onNavigationChanged(int index) {
 		
-		if (mCurrentFragmentType.index() == index) return;
+		if (getCurrentFragmentType().index() == index) return;
 
-        boolean moveUp = (mCurrentFragmentType.index() - index) < 0;
+        boolean moveUp = (getCurrentFragmentType().index() - index) < 0;
 
         // Update navigation title animation direction
         mNavTitle.setInAnimation(this, moveUp ? R.anim.in_up_fade : R.anim.in_down_fade);

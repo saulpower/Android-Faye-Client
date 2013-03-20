@@ -160,7 +160,7 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
             }
         });
 
-        new NavBarButtons(activity, icons, onClickListeners);
+        new NavBarButtons(mActivity, icons, onClickListeners);
     }
 
     @Override

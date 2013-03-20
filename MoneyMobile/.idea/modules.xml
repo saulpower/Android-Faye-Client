@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/MoneyMobile.iml" filepath="$PROJECT_DIR$/MoneyMobile.iml" />
       <module fileurl="file://$PROJECT_DIR$/../NineOldAndroids/NineOldAndroids.iml" filepath="$PROJECT_DIR$/../NineOldAndroids/NineOldAndroids.iml" />
       <module fileurl="file://$PROJECT_DIR$/../ViewPagerIndicator/ViewPagerIndicator.iml" filepath="$PROJECT_DIR$/../ViewPagerIndicator/ViewPagerIndicator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../TimesSquare/android-times-square.iml" filepath="$PROJECT_DIR$/../TimesSquare/android-times-square.iml" />
     </modules>
   </component>
 </project>

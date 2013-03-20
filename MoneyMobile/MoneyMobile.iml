@@ -38,13 +38,13 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="libs1" level="project" />
     <orderEntry type="module" module-name="NineOldAndroids" />
     <orderEntry type="module" module-name="FayeClient" />
     <orderEntry type="module" module-name="MenuDrawerLibrary" />
     <orderEntry type="module" module-name="ViewPagerIndicator" />
-    <orderEntry type="module" module-name="devsmartlib" />
     <orderEntry type="module" module-name="Communication" />
+    <orderEntry type="library" name="libs" level="project" />
+    <orderEntry type="module" module-name="android-times-square" />
   </component>
 </module>
 

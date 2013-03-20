@@ -207,6 +207,12 @@ public class LabelEditText extends AnimatedEditText {
     	
     	mCancelShowing = !getText().toString().equals("") && hasFocus();
     	adjustPadding();
+
+        if (focused) {
+            UiUtils.showKeyboard(getContext(), this);
+        } else {
+            UiUtils.hideKeyboard(getContext(), this);
+        }
     }
     
     @Override

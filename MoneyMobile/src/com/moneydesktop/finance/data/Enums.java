@@ -223,7 +223,9 @@ public class Enums {
         SHOW_HIDE_DATA(22),
         UPDATE_USERNAME_PASSWORD(23),
         MANUAL_BANK_LIST(24),
-        TRANSACTIONS_SUB(25);
+        TRANSACTIONS_SUB(25),
+        POPUP_CALENDAR(26),
+        TRANSACTION_DETAIL(27);
         
         private final int index;
         

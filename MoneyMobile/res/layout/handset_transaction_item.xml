@@ -66,20 +66,26 @@
 	            app:dashLength="2dp"
 	            app:lineStrokeWidth="2dp"
 	            app:isVertical="true" />
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_weight="45"
+                android:layout_height="match_parent"
+                android:paddingRight="8dp"
+                android:gravity="center_vertical|right" >
 		    
-		    <TextView
-		        android:id="@+id/amount"
-		        android:layout_width="0dp"
-		        android:layout_weight="45"
-		        android:layout_height="match_parent"
-		        android:paddingRight="8dp"
-		        android:gravity="center_vertical|right"
-	            android:text="@string/default_price"
-				android:textColor="@drawable/gray7_to_white"
-				android:textStyle="bold"
-				android:textSize="16sp"
-				android:singleLine="true"
-				android:ellipsize="end" />
+                <TextView
+                    android:id="@+id/amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/default_price"
+                    android:textColor="@drawable/gray7_to_white"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:singleLine="true"
+                    android:ellipsize="end" />
+
+            </RelativeLayout>
 	        
 	    </LinearLayout>
 		        

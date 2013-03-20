@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,10 +53,6 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
     private View mBankOptionsView;
     private SlidingView mSliderView;
     private String[] mOptions;
-    private AccountOptionsCredentialsHandsetFragment mCredentialFragment;
-    private AccountBankDetailsHandsetFragment mBankDetailsFragment;
-    private AccountOptionFixBankHandsetFragment mFixBankFragment; 
-    private AddAccountHandsetFragment mAddAccountFragment;
     private ListView mBankOptionsList;
     private AccountTypesHandsetAdapter mAdapter;
     private BankOptionsAdapter mBankOptionsAdapter;
@@ -125,8 +120,7 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
     	
     	data.add(new Pair<Integer, List<int[]>>(R.string.label_account_menu, items));
     	
-    	mActivity.addMenuItems(data);
-    	mActivity.setMenuFragment(FragmentType.ACCOUNT_TYPES);
+    	mActivity.configureRightMenu(data, getType());
     }
     
 	public void onEvent(MenuEvent event) {
@@ -138,12 +132,8 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
 		    	//add an account
 		        ((DashboardHandsetActivity)mActivity).getMenuDrawer().closeMenu();
 		    	
-				AddAccountHandsetFragment frag = getAddAccountFragment();
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-				ft.replace(R.id.accounts_fragment, frag);
-				ft.addToBackStack(null);
-				ft.commit();
+				AddAccountHandsetFragment frag = AddAccountHandsetFragment.newInstance();
+                mActivity.pushFragment(R.id.accounts_fragment, frag);
 		    	break;
 		    case 1:
 		    	//refresh all accounts
@@ -540,34 +530,6 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
             }
         });
     }
-    
-	private AccountOptionsCredentialsHandsetFragment getCredentialsFragment(Bank bank) {
-		mCredentialFragment = AccountOptionsCredentialsHandsetFragment.newInstance(bank);
-		
-		return mCredentialFragment;
-	}
-	
-	private AccountBankDetailsHandsetFragment getBankDetailsFragment(BankAccount bankAccount) {
-		mBankDetailsFragment = AccountBankDetailsHandsetFragment.newInstance(bankAccount);
-		
-		return mBankDetailsFragment;
-	}
-	
-	private AccountOptionFixBankHandsetFragment getFixBankFragment(Bank bank) {
-
-		mFixBankFragment = AccountOptionFixBankHandsetFragment.newInstance(bank);
-		
-		return mFixBankFragment;
-	}
-	
-	private AddAccountHandsetFragment getAddAccountFragment() {
-
-		if (mAddAccountFragment == null) {
-			mAddAccountFragment = AddAccountHandsetFragment.newInstance();
-		}
-		
-		return mAddAccountFragment;
-	}
 	
 	@Override
 	public FragmentType getType() {
@@ -661,7 +623,7 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
         	for (BankAccount bankAccount : accountType.getBankAccounts()) {	        		
         		if (bankAccount.getBank() == null) {
         			counter++;
-        			bankAccount.softDeleteSingle(); 
+//        			bankAccount.softDeleteSingle();
         		}
         	}
         	if (counter == accountType.getBankAccounts().size()) {
@@ -677,44 +639,34 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
     }
 
 	private void addBankOrShowBankOptions(View view, int position) {
-		if (position == 0) { //this is the add bank button
-			AddAccountHandsetFragment frag = getAddAccountFragment();
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-			ft.replace(R.id.accounts_fragment, frag);
-			ft.addToBackStack(null);
-			ft.commit();
-		} else { // for everything else, open the bank options menu
-			bankImageListener(mBankList.get(position - 1), view);
-		}
+
+        //this is the add bank button
+		if (position == 0) {
+
+			AddAccountHandsetFragment frag = AddAccountHandsetFragment.newInstance();
+            mActivity.pushFragment(R.id.accounts_fragment, frag);
+
+            return;
+        }
+
+        // for everything else, open the bank options menu
+        bankImageListener(mBankList.get(position - 1), view);
 	}
 
 	private void showFixBankFragment(final Bank bank) {
-		AccountOptionFixBankHandsetFragment frag = getFixBankFragment(bank);
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-		ft.replace(R.id.accounts_fragment, frag);
-		ft.addToBackStack(null);
-		ft.commit();
+		AccountOptionFixBankHandsetFragment frag = AccountOptionFixBankHandsetFragment.newInstance(bank);
+        mActivity.pushFragment(R.id.accounts_fragment, frag);
 	}
 	
 	private void showCredentialsFragment(final Bank bank) {
-		AccountOptionsCredentialsHandsetFragment frag = getCredentialsFragment(bank);
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-		ft.replace(R.id.accounts_fragment, frag);
-		ft.addToBackStack(null);
-		ft.commit();
+		AccountOptionsCredentialsHandsetFragment frag = AccountOptionsCredentialsHandsetFragment.newInstance(bank);
+        mActivity.pushFragment(R.id.accounts_fragment, frag);
 	}
 	
 	private void showBankDetails(int groupPosition, int childPosition) {
 		BankAccount bankAccount = mAccountTypesFiltered.get(groupPosition).getBankAccounts().get(childPosition);
-		AccountBankDetailsHandsetFragment frag = getBankDetailsFragment(bankAccount);
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-		ft.replace(R.id.accounts_fragment, frag);
-		ft.addToBackStack(null);
-		ft.commit();
+		AccountBankDetailsHandsetFragment frag = AccountBankDetailsHandsetFragment.newInstance(bankAccount);
+        mActivity.pushFragment(R.id.accounts_fragment, frag);
 	}
 
 }

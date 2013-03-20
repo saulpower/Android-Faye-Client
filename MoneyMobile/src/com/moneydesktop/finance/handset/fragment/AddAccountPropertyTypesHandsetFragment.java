@@ -1,8 +1,6 @@
 package com.moneydesktop.finance.handset.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,15 +22,17 @@ import java.util.List;
 
 public class AddAccountPropertyTypesHandsetFragment extends BaseFragment{
 
-	private static AddAccountPropertyTypesHandsetFragment mCurrentFragment;
 	private ListView mAccountTypesList;
-	private static AccountType mSelectedAccountType;
-	private AccountTypesManualSaveHandsetFragment mSaveManualBankFragment;
+
+    private AccountType mSelectedAccountType;
 	
 	private QueryProperty mAccountTypeNotWhere = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName, "!= ?");
 	private QueryProperty mAccountTypeAnd = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.ParentAccountTypeId, "= ?");
 	private QueryProperty mOrderBy = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName);
-	
+
+    public void setSelectedAccountType(AccountType mSelectedAccountType) {
+        this.mSelectedAccountType = mSelectedAccountType;
+    }
 	
 	@Override
 	public FragmentType getType() {
@@ -41,22 +41,8 @@ public class AddAccountPropertyTypesHandsetFragment extends BaseFragment{
 
 	@Override
 	public String getFragmentTitle() {
-		return getString(R.string.label_account_type);
+		return getString(R.string.add_account_type_of_property).toUpperCase();
 	}
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-    //    EventBus.getDefault().register(this);
-    }
-    
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        
-     //   EventBus.getDefault().unregister(this);
-    }
     
 	@Override
 	public boolean onBackPressed() {
@@ -66,8 +52,7 @@ public class AddAccountPropertyTypesHandsetFragment extends BaseFragment{
 	public static AddAccountPropertyTypesHandsetFragment newInstance(AccountType accountType) {
 		
 		AddAccountPropertyTypesHandsetFragment frag = new AddAccountPropertyTypesHandsetFragment();
-		mCurrentFragment = frag;
-		mSelectedAccountType = accountType;
+		frag.setSelectedAccountType(accountType);
 		
         Bundle args = new Bundle();
         frag.setArguments(args);
@@ -115,21 +100,12 @@ public class AddAccountPropertyTypesHandsetFragment extends BaseFragment{
 		
 		
 	}
-		
-	private AccountTypesManualSaveHandsetFragment getSaveManualBankFragment(AccountType accountType) {
-		mSaveManualBankFragment = AccountTypesManualSaveHandsetFragment.newInstance(accountType);
-		return mSaveManualBankFragment;
-	}
 
 	private void showManualAccountSaveFragment(int position) {
 		mSelectedAccountType = ((AccountType)mAccountTypesList.getItemAtPosition(position));
 		
-		AccountTypesManualSaveHandsetFragment frag = getSaveManualBankFragment(mSelectedAccountType);
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-		ft.replace(mCurrentFragment.getId(), frag);
-		ft.addToBackStack(null);
-		ft.commit();
+		AccountTypesManualSaveHandsetFragment frag = AccountTypesManualSaveHandsetFragment.newInstance(mSelectedAccountType);
+        mActivity.pushFragment(getId(), frag);
 	}
 	
 }

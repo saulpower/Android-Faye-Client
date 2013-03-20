@@ -1,24 +1,20 @@
 package com.moneydesktop.finance.handset.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 
 public class AddAccountHandsetFragment extends BaseFragment{
 
 	private static AddAccountHandsetFragment mCurrentFragment;
 	private LinearLayout mLinkedContainer, mManualContainer;
-	private AccountInstitutionListHandsetFragment mInstitutionFragment;
-	private AccountTypesListHandsetFragment mAccountTypesFragment;
 	
 	@Override
 	public FragmentType getType() {
@@ -27,22 +23,8 @@ public class AddAccountHandsetFragment extends BaseFragment{
 
 	@Override
 	public String getFragmentTitle() {
-		return getString(R.string.label_account_type);
+		return getString(R.string.add_account_label_handset).toUpperCase();
 	}
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-    //    EventBus.getDefault().register(this);
-    }
-    
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        
-     //   EventBus.getDefault().unregister(this);
-    }
     
 	@Override
 	public boolean onBackPressed() {
@@ -75,7 +57,20 @@ public class AddAccountHandsetFragment extends BaseFragment{
 	}
 
 	private void setupView() {
-		
+
+        mManualContainer.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showAccountTypesFragment();
+            }
+        });
+
+        if (User.getCurrentUser() == null || !User.getCurrentUser().getCanSync()) {
+            mLinkedContainer.setVisibility(View.GONE);
+            return;
+        }
+
 		mLinkedContainer.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -83,50 +78,16 @@ public class AddAccountHandsetFragment extends BaseFragment{
 				showInstitutionListFragment();	
 			}
 		});
-		
-		mManualContainer.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				showAccountTypesFragment();	
-			}
-		});
-	}
-	
-	private AccountInstitutionListHandsetFragment getLinkedFragment() {
-
-		if (mInstitutionFragment == null) {
-			mInstitutionFragment = AccountInstitutionListHandsetFragment.newInstance();
-		}
-		
-		return mInstitutionFragment;
-	}
-	
-	private AccountTypesListHandsetFragment getManualFragment() {
-
-		if (mAccountTypesFragment == null) {
-			mAccountTypesFragment = AccountTypesListHandsetFragment.newInstance();
-		}
-		
-		return mAccountTypesFragment;
 	}
 
 	private void showAccountTypesFragment() {
-		AccountTypesListHandsetFragment frag = getManualFragment();
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-		ft.replace(mCurrentFragment.getId(), frag);
-		ft.addToBackStack(null);
-		ft.commit();
+		AccountTypesListHandsetFragment frag = AccountTypesListHandsetFragment.newInstance();
+        mActivity.pushFragment(mCurrentFragment.getId(), frag);
 	}
 
 
 	private void showInstitutionListFragment() {
-		AccountInstitutionListHandsetFragment frag = getLinkedFragment();
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-		ft.replace(mCurrentFragment.getId(), frag);
-		ft.addToBackStack(null);
-		ft.commit();
+		AccountInstitutionListHandsetFragment frag = AccountInstitutionListHandsetFragment.newInstance();
+        mActivity.pushFragment(mCurrentFragment.getId(), frag);
 	}
 }

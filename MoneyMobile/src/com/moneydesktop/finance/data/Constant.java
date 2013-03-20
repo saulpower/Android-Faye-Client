@@ -216,6 +216,7 @@ public class Constant {
      *******************************************************************/
 
     public static final String VALUE_NULL = "null";
+    public static final String VALUE_MANUAL_INS_ID = "INS-MANUAL-cb5c-1d48-741c-b30f4ddd1730";
 
     /*******************************************************************
      * ARRAYS & MAPS

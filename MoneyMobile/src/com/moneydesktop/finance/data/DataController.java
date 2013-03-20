@@ -14,6 +14,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.*;
 
 public class DataController {
@@ -448,4 +450,15 @@ public class DataController {
 		
 		return id;
 	}
+
+    /**
+     * Creates a random alpha-numeric string
+     *
+     * @return Generated string guid
+     */
+    public static String createRandomGuid() {
+
+        SecureRandom random = new SecureRandom();
+        return new BigInteger(130, random).toString(32).toUpperCase();
+    }
 }

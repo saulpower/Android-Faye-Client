@@ -12,6 +12,7 @@ import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
 
+import com.moneydesktop.finance.data.DataController;
 import org.apache.http.conn.util.InetAddressUtils;
 
 public class MacUtil {
@@ -96,8 +97,7 @@ public class MacUtil {
 		
 		// Hardware address only available in API 10
 		if (android.os.Build.VERSION.SDK_INT < 10) {
-			SecureRandom random = new SecureRandom();
-			return new BigInteger(130, random).toString(32).toUpperCase();
+			return DataController.createRandomGuid();
 		}
 		
 		try {
@@ -138,8 +138,8 @@ public class MacUtil {
 	/**
 	 * Get IP address from first non-localhost interface
 	 * 
-	 * @param ipv4
-	 *            true=return ipv4, false=return ipv6
+	 * @param useIPv4 true=return ipv4, false=return ipv6
+     *
 	 * @return address or empty string
 	 */
 	public static String getIPAddress(boolean useIPv4) {

@@ -154,7 +154,9 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 		int groupPosition = mBridgeAdapter.getGroupPosition();
 		InfoDrawable info = mChildChart.getInfoDrawable();
 		PieSliceDrawable slice = mGroupChart.getSlice(groupPosition);
-		
+
+        if (info == null || slice == null) return;
+
 		mBridgeAdapter.getExpandableAdapter().configureGroupInfo(info, slice, groupPosition);
 		updateCache();
 	}

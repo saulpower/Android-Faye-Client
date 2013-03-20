@@ -4,7 +4,6 @@ package com.moneydesktop.finance.handset.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -42,8 +41,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AccountBankDetailsHandsetFragment extends FixBankFragment{
-	
-	private static BankAccount mBankAccount;
+
+    private BankAccount mBankAccount;
 	private ImageView mLogo;
 	private LabelEditText mBalance, mAccountType, mExclusions, mAccountName;
 	private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();	
@@ -65,11 +64,15 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 	private ListView mAccountPropertyTypesList;
 	private ListView mAccountExclusions;
 	
-	private ViewFlipper mFlipper; 
+	private ViewFlipper mFlipper;
+
+    public void setBankAccount(BankAccount mBankAccount) {
+        this.mBankAccount = mBankAccount;
+    }
 		
 	@Override
 	public FragmentType getType() {
-		return null;
+		return FragmentType.ACCOUNT_SETTINGS;
 	}
 	
 	@Override
@@ -99,7 +102,7 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 	public static AccountBankDetailsHandsetFragment newInstance(BankAccount bankAccount) {
 		
 		AccountBankDetailsHandsetFragment frag = new AccountBankDetailsHandsetFragment();
-		mBankAccount = bankAccount;
+		frag.setBankAccount(bankAccount);
 		
         Bundle args = new Bundle();
         frag.setArguments(args);
@@ -567,8 +570,7 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
     	
     	data.add(new Pair<Integer, List<int[]>>(R.string.label_account_details_menu, items));
     	
-    	mActivity.addMenuItems(data);
-    	mActivity.setMenuFragment(FragmentType.ACCOUNT_SETTINGS);
+    	mActivity.configureRightMenu(data, getType());
     }
     
 	public void onEvent(MenuEvent event) {
@@ -579,11 +581,7 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 			        ((DashboardHandsetActivity)mActivity).getMenuDrawer().closeMenu();
 			    	
 			        TransactionsHandsetFragment frag = getViewTransactionFragment();
-					FragmentTransaction ft = getFragmentManager().beginTransaction();
-					ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-					ft.replace(R.id.accounts_fragment, frag);
-					ft.addToBackStack(null);
-					ft.commit();
+                    mActivity.pushFragment(R.id.accounts_fragment, frag);
 			    	break;
 			    case 1:
 			    	//delete account

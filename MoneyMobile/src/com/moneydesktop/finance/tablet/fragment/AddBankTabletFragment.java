@@ -47,6 +47,8 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 
     public final String TAG = this.getClass().getSimpleName();
 
+    private DropDownTabletActivity mDropDownActivity;
+
 	private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();
     private AnimatedNavView mNavView;
 	private LinearLayout mAutomaticContainer;
@@ -95,11 +97,22 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 
 	@Override
 	public boolean onBackPressed() {
+
+        if (mDropDownActivity == null) {
+
+            if (viewPostion == 1 || viewPostion == 0) {
+                mActivity.clearBackStack();
+            }
+
+            return false;
+        }
+
 		if (viewPostion == 1 || viewPostion == 0) {
-			((DropDownTabletActivity)mActivity).dismissDropdown();
+            mDropDownActivity.dismissDropdown();
 		} else {
-			((DropDownTabletActivity)mActivity).getAnimatedNavView().popNav();
+            mDropDownActivity.getAnimatedNavView().popNav();
 		}
+
 		return true;
 	}
 	
@@ -135,8 +148,14 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        mNavView = ((DropDownTabletActivity)mActivity).getAnimatedNavView();
-        mNavView.setNavigationListener(this);
+        if (mActivity instanceof DropDownTabletActivity) {
+            mDropDownActivity = (DropDownTabletActivity) mActivity;
+        }
+
+        if (mDropDownActivity != null) {
+            mNavView = mDropDownActivity.getAnimatedNavView();
+            mNavView.setNavigationListener(this);
+        }
 
         mRoot = inflater.inflate(R.layout.tablet_add_bank, null);
 
@@ -211,10 +230,13 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 		    @Override
 		    public void onItemClick(AdapterView<?> a, View v,int position, long id) 
 		    {
-				((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(String.format(getString(R.string.add_account_institution_connect), ((Institution)a.getItemAtPosition(position)).getName()));
+
+                if (mDropDownActivity != null) {
+                    mDropDownActivity.getAnimatedNavView().pushNav(String.format(getString(R.string.add_account_institution_connect), ((Institution)a.getItemAtPosition(position)).getName()));
+                }
+
 				viewPostion = 3;
-				
-				
+
 				Animation in = AnimationUtils.loadAnimation(getActivity(), R.anim.in_right);
 				Animation out = AnimationUtils.loadAnimation(getActivity(), R.anim.out_left);
 				mFlipper.setInAnimation(in);
@@ -253,7 +275,10 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 				AccountType selectedAccountType= (AccountType)listView.getItemAtPosition(position);
 				
 				if (!selectedAccountType.getAccountTypeName().toUpperCase().equals("PROPERTY")) {
-					((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(String.format(getString(R.string.add_account_new_account), selectedAccountType.getAccountTypeName().toUpperCase()));
+
+                    if (mDropDownActivity != null) {
+                        mDropDownActivity.getAnimatedNavView().pushNav(String.format(getString(R.string.add_account_new_account), selectedAccountType.getAccountTypeName().toUpperCase()));
+                    }
 					
 					viewPostion = 5;
 					setupSaveBankManuallyScreen(selectedAccountType);
@@ -262,9 +287,13 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 					mFlipper.setInAnimation(in);
 					mFlipper.setOutAnimation(out);
 					mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view5)));
+
 				} else {
-					((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(getString(R.string.add_account_type_of_property));
-					
+
+                    if (mDropDownActivity != null) {
+                        mDropDownActivity.getAnimatedNavView().pushNav(getString(R.string.add_account_type_of_property));
+                    }
+
 					viewPostion = 6;
 					setupProptertyTypeListScreen();
 					mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view6)));
@@ -301,7 +330,9 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 			public void onItemClick(AdapterView<?> listView, View view, int position, long id) {
 				AccountType selectedAccountType= (AccountType)listView.getItemAtPosition(position);
 
-				((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(String.format(getString(R.string.add_account_new_account), selectedAccountType.getAccountTypeName().toUpperCase()));
+                if (mDropDownActivity != null) {
+                    mDropDownActivity.getAnimatedNavView().pushNav(String.format(getString(R.string.add_account_new_account), selectedAccountType.getAccountTypeName().toUpperCase()));
+                }
 				
 				setupSaveBankManuallyScreen(selectedAccountType);
 				mFlipper.setDisplayedChild(mFlipper.indexOfChild(mRoot.findViewById(R.id.view5)));
@@ -343,7 +374,11 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 
         SyncEngine.sharedInstance().syncBankAccount(bankAccount, mForNewTransaction);
 
-        ((DropDownTabletActivity) mActivity).dismissDropdown();
+        if (mDropDownActivity != null) {
+            mDropDownActivity.dismissDropdown();
+        } else {
+            mActivity.clearBackStack();
+        }
     }
 	
 	private void setupConnectScreen() {
@@ -523,9 +558,13 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
     	
     	Handler updateFields = new Handler(Looper.getMainLooper());
     	updateFields.post(new Runnable() {
-    	    public void run()
-    	    {
-		    	((DropDownTabletActivity)mActivity).dismissDropdown();
+    	    public void run() {
+
+                if (mDropDownActivity != null) {
+                    mDropDownActivity.dismissDropdown();
+                } else {
+                    mActivity.clearBackStack();
+                }
 		    }
     	});
     	
@@ -600,8 +639,8 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 		mEdit1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
-		        if (mActivity instanceof DropDownTabletActivity && hasFocus) {
-		            ((DropDownTabletActivity) mActivity).setEditText(mEdit1);
+		        if (mDropDownActivity != null && hasFocus) {
+                    mDropDownActivity.setEditText(mEdit1);
 		        }	
 			}
 		});
@@ -609,8 +648,8 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
     	mEdit2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
-		        if (mActivity instanceof DropDownTabletActivity && hasFocus) {
-		            ((DropDownTabletActivity) mActivity).setEditText(mEdit2);
+		        if (mDropDownActivity != null && hasFocus) {
+		            mDropDownActivity.setEditText(mEdit2);
 		        }	
 			}
 		});
@@ -618,8 +657,8 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
     	mEdit3.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
-		        if (mActivity instanceof DropDownTabletActivity && hasFocus) {
-		            ((DropDownTabletActivity) mActivity).setEditText(mEdit3);
+		        if (mDropDownActivity != null && hasFocus) {
+                    mDropDownActivity.setEditText(mEdit3);
 		        }	
 			}
 		});
@@ -631,8 +670,11 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 			
 			@Override
 			public void onClick(View v) {
-				((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(getString(R.string.add_account_institution));
-				
+
+                if (mDropDownActivity != null) {
+                    mDropDownActivity.getAnimatedNavView().pushNav(getString(R.string.add_account_institution));
+                }
+
 				viewPostion = 2;
 				setupInstitutionScreen();
 				
@@ -649,7 +691,9 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 			@Override
 			public void onClick(View v) {
 
-                ((DropDownTabletActivity)mActivity).getAnimatedNavView().pushNav(getString(R.string.add_account_type_to_add));
+                if (mDropDownActivity != null) {
+                    mDropDownActivity.getAnimatedNavView().pushNav(getString(R.string.add_account_type_to_add));
+                }
 
 				showManualAccounts();
 			}

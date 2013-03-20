@@ -141,7 +141,7 @@ public class AnimationFactory {
 	 * @param toView the view transition to
 	 * @param dir the flip direction
 	 * @param duration the transition duration in milliseconds
-	 * @param interpolator the interpolator to use (pass {@code null} to use the {@link AccelerateInterpolator} interpolator) 
+     *
 	 * @return
 	 */
 	public static Animation[] flipAnimation(final View fromView, final View toView, FlipDirection dir, long duration) {
@@ -227,10 +227,10 @@ public class AnimationFactory {
 	
 	public static void slideTransition(final com.moneydesktop.finance.views.ViewAnimator viewAnimator, int index, AnimationListener finish1, AnimationListener finish2, FlipDirection dir, long duration) {   
 
-		Animation[] animc = getAnimations(finish1, finish2, dir, duration);
+		Animation[] animations = getAnimations(finish1, finish2, dir, duration);
 		
-		viewAnimator.setOutAnimation(animc[0]);
-		viewAnimator.setInAnimation(animc[1]);
+		viewAnimator.setOutAnimation(animations[0]);
+		viewAnimator.setInAnimation(animations[1]);
 		
 		viewAnimator.setDisplayedChild(index);
 	}
@@ -238,14 +238,17 @@ public class AnimationFactory {
 	private static Animation[] getAnimations(AnimationListener finish1, AnimationListener finish2, FlipDirection dir, long duration) {
 		
 		Animation in = AnimationUtils.loadAnimation(ApplicationContext.getContext(), FlipDirection.BOTTOM_TOP == dir ? R.anim.in_up : R.anim.in_down);
+        in.setDuration(duration);
 		Animation out = AnimationUtils.loadAnimation(ApplicationContext.getContext(), FlipDirection.BOTTOM_TOP == dir ? R.anim.out_up : R.anim.out_down);
-		Animation[] animc = new Animation[] { out, in };
+        out.setDuration(duration);
+
+		Animation[] animations = new Animation[] { out, in };
   
-		if (finish1 != null) animc[0].setAnimationListener(finish1);
+		if (finish1 != null) animations[0].setAnimationListener(finish1);
 		
-		if (finish2 != null) animc[1].setAnimationListener(finish2);
+		if (finish2 != null) animations[1].setAnimationListener(finish2);
 		
-		return animc;
+		return animations;
 	}
 	
 	//////////////
@@ -359,8 +362,8 @@ public class AnimationFactory {
 	 * 
 	 * @param duration the animation duration in milliseconds
 	 * @param delay how long to wait before starting the animation, in milliseconds
+     *
 	 * @return a fade animation
-	 * @see #fadeInAnimation(View, long)
 	 */
 	public static Animation fadeInAnimation(long duration, long delay) {  
 		
@@ -377,8 +380,8 @@ public class AnimationFactory {
 	 * 
 	 * @param duration the animation duration in milliseconds
 	 * @param delay how long to wait before starting the animation, in milliseconds
+     *
 	 * @return a fade animation
-	 * @see #fadeOutAnimation(View, long)
 	 */
 	public static Animation fadeOutAnimation(long duration, long delay) {   
 
