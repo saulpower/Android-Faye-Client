@@ -34,7 +34,7 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
     
     public final String TAG = this.getClass().getSimpleName();
 
-    private DecimalFormat mFormatter = new DecimalFormat("$#,##0.00;-$#,##0.00");
+    private DecimalFormat mFormatter = new DecimalFormat("#,##0.00;-#,##0.00");
     protected SimpleDateFormat mDateFormatter = new SimpleDateFormat("MM.dd.yyyy", Locale.US);
 
     protected TransactionsDao mDao;
@@ -260,7 +260,7 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
 
                 if (actionId == EditorInfo.IME_ACTION_DONE && mTransaction != null) {
 
-                    mTransaction.setAmount(Double.parseDouble(mAmount.getText().toString()));
+                    mTransaction.setAmount(Double.parseDouble(mAmount.getText().toString().substring(1)));
                     mTransaction.updateSingle();
                     finishEditing(v);
 

@@ -79,7 +79,7 @@ public class CalendarFragment extends PopupFragment {
     private void setupCalendar() {
 
         Calendar minDate = Calendar.getInstance();
-        minDate.add(Calendar.MONTH, -6);
+        minDate.add(Calendar.MONTH, -2);
         minDate.set(Calendar.DAY_OF_MONTH, 1);
 
         Calendar maxDate = Calendar.getInstance();

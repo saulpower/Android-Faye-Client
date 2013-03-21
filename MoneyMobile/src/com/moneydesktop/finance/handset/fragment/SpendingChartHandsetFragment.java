@@ -142,6 +142,14 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
 		mPaused = false;
 		configureChart(true);
     }
+
+    @Override
+    public void isHiding() {
+        super.isHiding();
+
+        mPaused = true;
+        configureChart(false);
+    }
 	
 	@Override
 	public void onPause() {

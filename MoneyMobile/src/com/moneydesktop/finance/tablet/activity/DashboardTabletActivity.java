@@ -63,8 +63,9 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
             return;
             
         } else if (getCurrentFragmentType() != FragmentType.DASHBOARD) {
-			
-        	showFragment(FragmentType.DASHBOARD, true);
+
+            mNavigation.setCurrentIndex(FragmentType.DASHBOARD.index());
+            onNavigationChanged(FragmentType.DASHBOARD.index());
 			return;
 		}
 		
@@ -97,6 +98,12 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 				}
 			});
         }
+
+        if (getCurrentFragmentType() == FragmentType.DASHBOARD) {
+
+            updateNavBar(getActivityTitle());
+            setupTitleBar();
+        }
     }
 
     private void setupDashboard() {
@@ -108,17 +115,6 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         mPager.setOnScrollChangedListener(mAdapter);
         mPager.setAdapter(mAdapter);
         mPager.setOffscreenPageLimit(5);
-    }
-    
-    @Override
-    protected void onResume() {
-        super.onResume();
-        
-        if (getCurrentFragmentType() == FragmentType.DASHBOARD) {
-            
-            updateNavBar(getActivityTitle());
-            setupTitleBar();
-        }
     }
 	
 	@Override
@@ -267,7 +263,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 			}
 		});
 
-		new NavBarButtons(DashboardTabletActivity.this, icons, onClickListeners);
+		new NavBarButtons(this, icons, onClickListeners);
 	}
 	
 	private void sendEmail() {
