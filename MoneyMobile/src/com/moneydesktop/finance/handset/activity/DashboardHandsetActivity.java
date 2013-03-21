@@ -1,31 +1,14 @@
 package com.moneydesktop.finance.handset.activity;
 
-import java.text.DateFormatSymbols;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import net.simonvt.menudrawer.MenuDrawer;
-import net.simonvt.menudrawer.MenuDrawer.OnDrawerStateChangeListener;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.ViewFlipper;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
@@ -40,7 +23,6 @@ import com.moneydesktop.finance.handset.fragment.AccountTypesHandsetFragment;
 import com.moneydesktop.finance.handset.fragment.SettingsHandsetFragment;
 import com.moneydesktop.finance.handset.fragment.SpendingChartHandsetFragment;
 import com.moneydesktop.finance.handset.fragment.TransactionsHandsetFragment;
-import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.shared.activity.DashboardBaseActivity;
 import com.moneydesktop.finance.shared.adapter.GrowPagerAdapter;
@@ -51,8 +33,14 @@ import com.moneydesktop.finance.views.GrowViewPager;
 import com.moneydesktop.finance.views.UltimateListView;
 import com.moneydesktop.finance.views.ViewAnimator;
 import com.moneydesktop.finance.views.navigation.NavBarView;
+import net.simonvt.menudrawer.MenuDrawer;
+import net.simonvt.menudrawer.MenuDrawer.OnDrawerStateChangeListener;
 
-import de.greenrobot.event.EventBus;
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class DashboardHandsetActivity extends DashboardBaseActivity implements OnItemClickListener {
 	
@@ -67,7 +55,6 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	private TextView mUpdateLabel, mUpdate;
 	private NavBarView mRefresh;
 	private UltimateListView mRightMenuList;
-	private FragmentType mCurrentFragmentType;
 	
 	private MenuRightHandsetAdapter mRightMenuAdapter;
 
@@ -85,41 +72,6 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     private OnMenuChangeListener mOnMenuChangeListener;
 
     protected SimpleDateFormat mDateFormatter = new SimpleDateFormat("MM.dd.yyyy '@' h:mma", Locale.US);
-    
-    private Map<FragmentType, BaseFragment> mFragments = new HashMap<FragmentType, BaseFragment>();
-	
-	private AnimationListener mStart = new AnimationListener() {
-		
-		@Override
-		public void onAnimationStart(Animation animation) {
-			EventBus.getDefault().post(new EventMessage().new NavigationEvent());
-		}
-		
-		@Override
-		public void onAnimationRepeat(Animation animation) {}
-		
-		@Override
-		public void onAnimationEnd(Animation animation) {}
-	};
-    
-    private AnimationListener mFinish = new AnimationListener() {
-
-		@Override
-		public void onAnimationEnd(Animation animation) {
-			
-			fragmentShowing();
-		}
-
-		@Override
-		public void onAnimationRepeat(Animation animation) {}
-
-		@Override
-		public void onAnimationStart(Animation animation) {}
-	};
-	
-	public FragmentType getCurrentFragmentType() {
-		return mCurrentFragmentType;
-	}
 
 	public GrowPagerAdapter getPagerAdapter() {
 	    return mAdapter;
@@ -132,10 +84,6 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	@Override
     public void onFragmentAttached(BaseFragment fragment) {
     	super.onFragmentAttached(fragment);
-    	
-    	if (fragment.getType() != null) {
-    		mFragments.put(fragment.getType(), fragment);
-    	}
     	
     	resetRightMenu();
     }
@@ -158,7 +106,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
         applyFonts();
         setupListeners();
         
-        mAdapter = new HandsetGrowPagerAdapter(mFm);
+        mAdapter = new HandsetGrowPagerAdapter(mFragmentManager);
         
         mPager.setOnPageChangeListener(mAdapter);
         mPager.setOnScrollChangedListener(mAdapter);
@@ -166,7 +114,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
         mPager.setOffscreenPageLimit(5);
 
         if (savedInstanceState != null) {
-            mPager.setCurrentItem(savedInstanceState.getInt(KEY_PAGER));
+            mPager.setCurrentItem(savedInstanceState.getInt(KEY_PAGER, 0));
         }
     }
     
@@ -176,8 +124,15 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     	
         // Only run if there are no fragments currently showing
         if (mFlipper.getDisplayedChild() == 0) {
-            updateNavBar(getActivityTitle(), false);
+            updateNavBar(getActivityTitle());
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Log.i(TAG, "onDestroy");
     }
 	
 	@Override
@@ -200,16 +155,14 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 		    
             return;
             
-        } else if (mFlipper.indexOfChild(mFlipper.getCurrentView()) > 0 && mFragmentCount >= DEFAULT_FRAGMENTS) {
+        } else if (getStackCount() > 0) {
 
-			navigateBack();
+			popFragment();
 			
 			return;
 		}
-		
-		Intent intent = new Intent(Intent.ACTION_MAIN);
-	    intent.addCategory(Intent.CATEGORY_HOME);
-	    startActivity(intent);
+
+        super.onBackPressed();
 	}
 
     @Override
@@ -217,6 +170,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
         super.onRestoreInstanceState(inState);
         
         mMenuDrawerLeft.restoreState(inState.getParcelable(STATE_MENUDRAWER));
+        mPager.setCurrentItem(inState.getInt(KEY_PAGER, 0));
     }
 
     @Override
@@ -226,15 +180,74 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
         outState.putInt(KEY_PAGER, mPager.getCurrentItem());
         outState.putParcelable(STATE_MENUDRAWER, mMenuDrawerLeft.saveState());
     }
-    
+
     @Override
-    public void addMenuItems(List<Pair<Integer, List<int[]>>> data) {
-    	mRightMenuAdapter.setData(data);
+    public void pushFragment(int containerViewId, BaseFragment fragment) {
+
+        mMenuDrawerRight.closeMenu(true);
+        super.pushFragment(containerViewId, fragment);
+    }
+
+    private void loadFragments() {
+
+        loadFragment(R.id.accounts_fragment, AccountTypesHandsetFragment.newInstance());
+        loadFragment(R.id.transactions_fragment, TransactionsHandsetFragment.newInstance());
+        loadFragment(R.id.spending_fragment, SpendingChartHandsetFragment.newInstance());
+        loadFragment(R.id.settings_fragment, SettingsHandsetFragment.newInstance());
+    }
+
+    private void setupView() {
+
+        mFlipper = (ViewAnimator) findViewById(R.id.flipper);
+        mPager = (GrowViewPager) findViewById(R.id.pager);
+
+        mNavBar = (RelativeLayout) findViewById(R.id.nav_bar);
+        mTitle = (TextView) mNavBar.findViewById(R.id.title);
+        mLeft = (TextView) mNavBar.findViewById(R.id.left_button);
+        mRight = (TextView) mNavBar.findViewById(R.id.right_button);
+    }
+
+    private void setupListeners() {
+
+        mLeft.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if (getStackCount() <= 0) {
+
+                    mMenuDrawerRight.closeMenu();
+                    mMenuDrawerLeft.toggleMenu();
+
+                } else {
+
+                    onBackPressed();
+                }
+            }
+        });
+
+        mRight.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mMenuDrawerRight.toggleMenu();
+            }
+        });
+    }
+
+    private void applyFonts() {
+
+        Fonts.applyPrimarySemiBoldFont(mTitle, 10);
+        Fonts.applyNavIconFont(mLeft, 24);
+        Fonts.applyNavIconFont(mRight, 24);
+        Fonts.applyNavIconFont(mRefresh, 24);
+        Fonts.applyPrimaryFont(mUpdateLabel, 8);
+        Fonts.applySecondaryItalicFont(mUpdate, 8);
     }
     
     @Override
-    public void setMenuFragment(FragmentType fragmentType) {
-    	mRightMenuAdapter.setCurrentFragmentType(fragmentType);
+    public void configureRightMenu(List<Pair<Integer, List<int[]>>> menuItems, FragmentType fragmentType) {
+    	mRightMenuAdapter.configureMenu(menuItems, fragmentType);
     }
 
     @Override
@@ -260,42 +273,12 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     }
     
     @Override
-    public View getmenuParent() {
+    public View getMenuParent() {
 		return mMenuFlipper;
 	}
     
     public MenuDrawer getMenuDrawer () {
     	return mMenuDrawerRight;
-    }
-    
-    private void loadFragments() {
-    	
-    	loadFragment(R.id.accounts_fragment, AccountTypesHandsetFragment.getInstance());
-    	loadFragment(R.id.transactions_fragment, TransactionsHandsetFragment.newInstance());
-    	loadFragment(R.id.spending_fragment, SpendingChartHandsetFragment.newInstance());
-    	loadFragment(R.id.settings_fragment, SettingsHandsetFragment.getInstance());
-    }
-    
-    private void loadFragment(int containerViewId, BaseFragment fragment) {
-    	
-    	FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.add(containerViewId, fragment);
-		ft.commit();
-    }
-    
-    private void fragmentShowing() {
-    	
-    	if (mFragments.containsKey(mCurrentFragmentType)) {
-			
-			mFlipper.post(new Runnable() {
-				
-				@Override
-				public void run() {
-
-		    		mFragments.get(mCurrentFragmentType).isShowing(false);
-				}
-			});
-    	}
     }
 	
 	private void resetRightMenu() {
@@ -407,55 +390,6 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     	mRightOut = AnimationUtils.loadAnimation(this, R.anim.out_right);
     }
 	
-	private void setupView() {
-		
-		mFlipper = (ViewAnimator) findViewById(R.id.flipper);
-        mPager = (GrowViewPager) findViewById(R.id.pager);
-		
-		mNavBar = (RelativeLayout) findViewById(R.id.nav_bar);
-		mTitle = (TextView) mNavBar.findViewById(R.id.title);
-		mLeft = (TextView) mNavBar.findViewById(R.id.left_button);
-		mRight = (TextView) mNavBar.findViewById(R.id.right_button);
-	}
-	
-	private void setupListeners() {
-		
-		mLeft.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				
-				if (mFragmentCount < DEFAULT_FRAGMENTS) {
-					
-					mMenuDrawerRight.closeMenu();
-					mMenuDrawerLeft.toggleMenu();
-					
-				} else {
-					
-					onBackPressed();
-				}
-			}
-		});
-		
-		mRight.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				mMenuDrawerRight.toggleMenu();
-			}
-		});
-	}
-	
-	private void applyFonts() {
-		
-		Fonts.applyPrimarySemiBoldFont(mTitle, 10);
-		Fonts.applyNavIconFont(mLeft, 24);
-		Fonts.applyNavIconFont(mRight, 24);
-		Fonts.applyNavIconFont(mRefresh, 24);
-		Fonts.applyPrimaryFont(mUpdateLabel, 8);
-		Fonts.applySecondaryItalicFont(mUpdate, 8);
-	}
-	
 	public void onEvent(SyncEvent event) {
 		
 		if (event.isFinished()) {
@@ -466,12 +400,12 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	@Override
     public void showFragment(FragmentType type, boolean moveUp) {
     	
-		if (mCurrentFragmentType == type) return;
+		if (getCurrentFragmentType() == type) return;
 
     	resetRightMenu();
-    	mCurrentFragmentType = type;
+    	setCurrentFragmentType(type);
     	
-    	int index = mCurrentFragmentType.index();
+    	int index = getCurrentFragmentType().index();
     	
     	// Adjustment for ordering issues the must remain so
     	// things work properly on the tablet version
@@ -483,16 +417,13 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     	
     	mMenuAdapter.setSelectedIndex(index);
     	
-    	mOnHome = (FragmentType.DASHBOARD == type);
-    	
-    	if (mOnHome) {
+    	if (FragmentType.DASHBOARD == getCurrentFragmentType()) {
 
         	SyncEngine.sharedInstance().syncCheck();
-            updateNavBar(getActivityTitle(), false);
-    		
+            updateNavBar(getActivityTitle());
     	}
 
-        AnimationFactory.slideTransition(mFlipper, type.index(), mStart, mFinish, moveUp ? FlipDirection.BOTTOM_TOP : FlipDirection.TOP_BOTTOM, TRANSITION_DURATION);
+        AnimationFactory.slideTransition(mFlipper, type.index(), null, mFinish, moveUp ? FlipDirection.BOTTOM_TOP : FlipDirection.TOP_BOTTOM, TRANSITION_DURATION);
     }
 	
 	/**
@@ -500,38 +431,38 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	 * back button if necessary.
 	 * 
 	 * @param titleString the title for the navigation bar
-	 * @param fragmentTitle
 	 * @return 
 	 */
-	public void updateNavBar(String titleString, boolean fragmentTitle) {
-		
-		boolean update = ((!mOnHome && fragmentTitle) || (mOnHome && !fragmentTitle));
-		
-		if (titleString != null && update) {
+	public void updateNavBar(String titleString) {
+
+		if (titleString != null) {
 			mTitle.setText(titleString);
 		}
 	}
-	
-	@Override
-	public void setFragmentCount(int count) {
-		super.setFragmentCount(count);
-		
-		configureBackButton();
-		
-		// Update the menu when fragments have changed
-    	if (mFragments.containsKey(mCurrentFragmentType) && count == (DEFAULT_FRAGMENTS - 1)) {
-    		
-    		mFragments.get(mCurrentFragmentType).isShowing(true);
-    		
-    	} else if (mFragments.containsKey(mCurrentFragmentType) && count >= DEFAULT_FRAGMENTS) {
 
-    		mFragments.get(mCurrentFragmentType).isHiding();
-    	}
-	}
+    @Override
+    public void stackChange() {
+        configureBackButton();
+    }
+
+    @Override
+    public void clearBackStack() {
+        super.clearBackStack();
+
+        configureBackButton();
+    }
+
+    @Override
+    protected void fragmentShowing(FragmentType fragmentType) {
+        super.fragmentShowing(fragmentType);
+
+        mMenuDrawerLeft.closeMenu();
+    }
 	
 	private void configureBackButton() {
-		
-		mLeft.setText(mFragmentCount < DEFAULT_FRAGMENTS ? R.string.nav_icon_menu_left : R.string.nav_icon_back);
+
+		mLeft.setText(getStackCount() > 0 ? R.string
+                .nav_icon_back : R.string.nav_icon_menu_left);
 	}
 
 	@Override
@@ -540,36 +471,22 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View v, final int position, long id) {
+	public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 		
 		if (mMenuAdapter.getSelectedIndex() == position) return;
 		
 		boolean moveUp = (mMenuAdapter.getSelectedIndex() - position) < 0;
-    	
-        mMenuDrawerLeft.closeMenu();
-        
-        switch (position) {
-	        case 0:
-	        	clearBackStack();
-	        	showFragment(FragmentType.DASHBOARD, moveUp);
-	        	break;
-	        case 1:
-	        	clearBackStack();
-	        	showFragment(FragmentType.ACCOUNT_TYPES, moveUp);
-	        	break;
-	        case 2:
-	        	clearBackStack();
-	        	showFragment(FragmentType.TRANSACTIONS, moveUp);
-	        	break;
-	        case 3:
-	        	clearBackStack();
-	        	showFragment(FragmentType.SPENDING, moveUp);
-	        	break;
-	        case 4:
-	        	clearBackStack();
-	        	showFragment(FragmentType.SETTINGS, moveUp);
-	        	break;
+
+        // Adjustment for ordering issues the must remain so
+        // things work properly on the tablet version
+        if (position == 3) {
+            position = 4;
+        } else if (position == 4) {
+            position = 3;
         }
+
+        clearBackStack();
+        showFragment(FragmentType.fromInteger(position), moveUp);
 	}
 	
 	public interface OnMenuChangeListener {

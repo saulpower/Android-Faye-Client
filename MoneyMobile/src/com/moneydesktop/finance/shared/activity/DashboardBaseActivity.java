@@ -1,7 +1,5 @@
 package com.moneydesktop.finance.shared.activity;
 
-import java.util.List;
-
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -9,7 +7,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Pair;
 import android.view.View;
-
+import android.view.animation.Animation;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.DataController;
@@ -27,22 +25,49 @@ import com.moneydesktop.finance.tablet.fragment.TransactionsTabletFragment;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.views.GrowViewPager;
 
+import java.util.List;
+
 @TargetApi(11)
 public abstract class DashboardBaseActivity extends BaseActivity {
 
 	protected final String KEY_PAGER = "pager";
-	protected final String KEY_ON_HOME = "on_home";
 	protected final String KEY_NAVIGATION = "navigation";
 	
 	protected boolean mLoggingOut = false;
-	protected boolean mOnHome = true;
+
+    private FragmentType mPreviousFragmentType = FragmentType.DASHBOARD;
+    private FragmentType mCurrentFragmentType = FragmentType.DASHBOARD;
     
 	protected GrowViewPager mPager;
 	protected GrowPagerAdapter mAdapter;
+
+    protected Animation.AnimationListener mFinish = new Animation.AnimationListener() {
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            fragmentHiding(mPreviousFragmentType);
+            fragmentShowing(mCurrentFragmentType);
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {}
+
+        @Override
+        public void onAnimationStart(Animation animation) {}
+    };
 	
     public boolean isOnHome() {
-		return mOnHome;
+		return mCurrentFragmentType == FragmentType.DASHBOARD;
 	}
+
+    public FragmentType getCurrentFragmentType() {
+        return mCurrentFragmentType;
+    }
+
+    public void setCurrentFragmentType(FragmentType fragmentType) {
+        mPreviousFragmentType = mCurrentFragmentType;
+        mCurrentFragmentType = fragmentType;
+    }
 
 	public GrowPagerAdapter getPagerAdapter() {
 	    return mAdapter;
@@ -164,18 +189,10 @@ public abstract class DashboardBaseActivity extends BaseActivity {
 		}.execute();
 	}
 	
-	public abstract void showFragment(FragmentType fragment, boolean moveUp);
-	
-	public void showFragment(FragmentType fragment) {
-		showFragment(fragment, false);
-	}
-	
-	public void addMenuItems(List<Pair<Integer, List<int[]>>> data) {}
+	public void configureRightMenu(List<Pair<Integer, List<int[]>>> menuItems, FragmentType fragmentType) {}
 	public void pushMenuView(View view) {}
 	public void popMenuView() {}
-	public View getmenuParent() {
+	public View getMenuParent() {
 		return null;
 	}
-
-	public void setMenuFragment(FragmentType fragmentType) {}
 }

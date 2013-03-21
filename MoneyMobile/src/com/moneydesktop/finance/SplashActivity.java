@@ -40,6 +40,11 @@ public class SplashActivity extends BaseActivity {
         
         ApplicationContext.setIsTablet(isTablet(this));
 
+        if (User.getCurrentUser() != null) {
+            endSplash();
+            return;
+        }
+
         int deviceResource = ApplicationContext.isTablet() ? R.layout.tablet_splash_view : R.layout.handset_splash_view;
         int resource = User.getCurrentUser() != null ? deviceResource : R.layout.splash_view;
         
@@ -49,11 +54,6 @@ public class SplashActivity extends BaseActivity {
         
         if (ApplicationContext.isTablet()) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        }
-        
-        if (User.getCurrentUser() != null) {
-        	endSplash();
-        	return;
         }
         
         if (ApplicationContext.isTablet()) {

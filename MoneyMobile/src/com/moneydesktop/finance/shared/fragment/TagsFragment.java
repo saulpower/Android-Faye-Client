@@ -1,7 +1,5 @@
 package com.moneydesktop.finance.shared.fragment;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,7 +20,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
@@ -34,8 +31,9 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.ClearEditText;
 import com.moneydesktop.finance.views.SpinnerView;
-
 import de.greenrobot.event.EventBus;
+
+import java.util.List;
 
 public class TagsFragment extends PopupFragment {
     
@@ -84,9 +82,9 @@ public class TagsFragment extends PopupFragment {
             @Override
             public void onGlobalLayout() {
                 
-                if (mPreviousHeight != mRoot.getHeight() && mShowing && mActivity != null) {
+                if (mPreviousHeight != mRoot.getHeight() && mShowing && mPopupActivity != null) {
                     mPreviousHeight = mRoot.getHeight();
-                    mActivity.setMargin(mPreviousHeight != 0);
+                    mPopupActivity.setMargin(mPreviousHeight != 0);
                 }
              }
         });
@@ -101,7 +99,7 @@ public class TagsFragment extends PopupFragment {
     public void onResume() {
     	super.onResume();
     	
-    	if (mActivity == null) {
+    	if (mPopupActivity == null) {
     		
     		mRoot.postDelayed(new Runnable() {
 				
@@ -166,8 +164,8 @@ public class TagsFragment extends PopupFragment {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 
-                if (hasFocus && mActivity != null) {
-                    mActivity.setEditText(mSearch);
+                if (hasFocus && mPopupActivity != null) {
+                    mPopupActivity.setEditText(mSearch);
                 }
             }
         });
@@ -183,7 +181,7 @@ public class TagsFragment extends PopupFragment {
             @Override
             public void afterTextChanged(Editable s) {
                 mAdapter.getFilter().filter(mSearch.getText().toString());
-                if (mActivity != null) mActivity.setEditText(mSearch);
+                if (mPopupActivity != null) mPopupActivity.setEditText(mSearch);
             }
         });
         
@@ -193,7 +191,7 @@ public class TagsFragment extends PopupFragment {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    UiUtils.hideKeyboard(mActivity, v);
+                    UiUtils.hideKeyboard(mPopupActivity, v);
                     return true;
                 }
                 return false;

@@ -4,7 +4,6 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +15,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
@@ -25,8 +23,6 @@ import com.moneydesktop.finance.shared.activity.DashboardBaseActivity;
 import com.moneydesktop.finance.shared.fragment.TransactionDetailBaseFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
-import com.moneydesktop.finance.util.EmailUtils;
-import com.moneydesktop.finance.util.FileIO;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.LineView;
@@ -76,9 +72,10 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
         
         mCategory.setSelected(false);
         mTags.setSelected(false);
+        mDate.setSelected(false);
         
         if (mActivity != null && mActivity instanceof DashboardBaseActivity) {
-            ((DashboardBaseActivity) mActivity).setDetailFragment(this);
+            mActivity.setDetailFragment(this);
         }
     }
     
@@ -233,7 +230,7 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
             
             @Override
             public void onClick(View v) {
-                deleteTransaction();
+                confirmDeleteTransaction();
             }
         });
         
@@ -241,7 +238,7 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
             
             @Override
             public void onClick(View v) {
-                emailTransaction();
+                emailTransaction(mContainer);
             }
         });
         
@@ -272,30 +269,24 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
         });
     }
     
-    private void emailTransaction() {
-        
-        Bitmap image = UiUtils.convertViewToBitmap(mContainer);
-        String path = FileIO.saveBitmap(getActivity(), image, mTransaction.getTransactionId());
-        
-        EmailUtils.sendEmail(getActivity(), getString(R.string.email_transaction_subject), "", path);
-    }
-    
-    private void deleteTransaction() {
-        mTransaction.softDeleteSingle();
-        onBackPressed();
-    }
-    
     private void showCategoryPopup(View view) {
         
-        showPopup(FragmentType.POPUP_CATEGORIES, Constant.CODE_CATEGORY_DETAIL, view, mTransaction.getId());
+        showPopup(FragmentType.POPUP_CATEGORIES, view, mTransaction.getId());
     }
     
     private void showTagPopup(View view) {
         
-        showPopup(FragmentType.POPUP_TAGS, Constant.CODE_TAG_DETAIL, view, mTransaction.getBusinessObjectId());
+        showPopup(FragmentType.POPUP_TAGS, view, mTransaction.getBusinessObjectId());
+    }
+
+    @Override
+    protected void selectDate(View view) {
+
+        view.setSelected(true);
+        showPopup(FragmentType.POPUP_CALENDAR, view, mTransaction.getId());
     }
     
-    private void showPopup(FragmentType type, int requestCode, View view, long id) {
+    private void showPopup(FragmentType type, View view, long id) {
         
         int[] catLocation = new int[2];
         view.getLocationOnScreen(catLocation);

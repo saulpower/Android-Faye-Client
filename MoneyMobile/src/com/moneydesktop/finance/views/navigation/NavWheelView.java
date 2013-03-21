@@ -60,7 +60,6 @@ public class NavWheelView extends View {
 		
 		@Override
 		public void run() {
-			
 			setVisibility(View.GONE);
 		}
 	};
@@ -340,8 +339,7 @@ public class NavWheelView extends View {
 		
 		// Timer to handle hide animations have completed
 		mHandler.postDelayed(mTask, 1200);
-		
-		
+
 		// Update any listener of the index change
 		if (listener != null) {
 			listener.onNavigationChanged(mCurrentIndex);

@@ -1,15 +1,9 @@
 
 package com.moneydesktop.finance.handset.fragment;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,28 +13,17 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.ViewFlipper;
-
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.data.Constant;
-import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Enums.AccountExclusionFlags;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.SyncEngine;
-import com.moneydesktop.finance.database.AccountType;
-import com.moneydesktop.finance.database.AccountTypeDao;
-import com.moneydesktop.finance.database.BankAccount;
-import com.moneydesktop.finance.database.PowerQuery;
-import com.moneydesktop.finance.database.QueryProperty;
+import com.moneydesktop.finance.database.*;
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
 import com.moneydesktop.finance.handset.adapter.AccountExclusionsAdapter;
 import com.moneydesktop.finance.model.EventMessage.MenuEvent;
@@ -51,12 +34,15 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.LabelEditText;
 import com.moneydesktop.finance.views.LineView;
-
 import de.greenrobot.event.EventBus;
 
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 public class AccountBankDetailsHandsetFragment extends FixBankFragment{
-	
-	private static BankAccount mBankAccount;
+
+    private BankAccount mBankAccount;
 	private ImageView mLogo;
 	private LabelEditText mBalance, mAccountType, mExclusions, mAccountName;
 	private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();	
@@ -78,11 +64,15 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 	private ListView mAccountPropertyTypesList;
 	private ListView mAccountExclusions;
 	
-	private ViewFlipper mFlipper; 
+	private ViewFlipper mFlipper;
+
+    public void setBankAccount(BankAccount mBankAccount) {
+        this.mBankAccount = mBankAccount;
+    }
 		
 	@Override
 	public FragmentType getType() {
-		return null;
+		return FragmentType.ACCOUNT_SETTINGS;
 	}
 	
 	@Override
@@ -112,7 +102,7 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 	public static AccountBankDetailsHandsetFragment newInstance(BankAccount bankAccount) {
 		
 		AccountBankDetailsHandsetFragment frag = new AccountBankDetailsHandsetFragment();
-		mBankAccount = bankAccount;
+		frag.setBankAccount(bankAccount);
 		
         Bundle args = new Bundle();
         frag.setArguments(args);
@@ -580,8 +570,7 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
     	
     	data.add(new Pair<Integer, List<int[]>>(R.string.label_account_details_menu, items));
     	
-    	mActivity.addMenuItems(data);
-    	mActivity.setMenuFragment(FragmentType.ACCOUNT_SETTINGS);
+    	mActivity.configureRightMenu(data, getType());
     }
     
 	public void onEvent(MenuEvent event) {
@@ -592,18 +581,14 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 			        ((DashboardHandsetActivity)mActivity).getMenuDrawer().closeMenu();
 			    	
 			        TransactionsHandsetFragment frag = getViewTransactionFragment();
-					FragmentTransaction ft = getFragmentManager().beginTransaction();
-					ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-					ft.replace(R.id.accounts_fragment, frag);
-					ft.addToBackStack(null);
-					ft.commit();
+                    mActivity.pushFragment(R.id.accounts_fragment, frag);
 			    	break;
 			    case 1:
 			    	//delete account
 			    	((DashboardHandsetActivity)mActivity).getMenuDrawer().closeMenu();
 			    	mBankAccount.softDeleteSingle();
 			    	mActivity.popMenuView();
-			    	mActivity.popBackStack();
+			    	mActivity.popFragment();
 			    	
 			    	SyncEngine.sharedInstance().beginSync();
 			    	break;

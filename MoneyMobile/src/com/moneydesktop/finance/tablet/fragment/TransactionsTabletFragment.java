@@ -1,7 +1,6 @@
 package com.moneydesktop.finance.tablet.fragment;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
@@ -34,10 +33,12 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
     private UltimateListView mFiltersList;
     private FilterAdapter mAdapter;
 
-    public static TransactionsTabletFragment newInstance() {
-
-        TransactionsTabletFragment fragment = new TransactionsTabletFragment();
-
+    private TransactionsPageTabletFragment mPageFragment;
+	
+	public static TransactionsTabletFragment newInstance() {
+			
+	    TransactionsTabletFragment fragment = new TransactionsTabletFragment();
+	    
         Bundle args = new Bundle();
         fragment.setArguments(args);
 
@@ -54,31 +55,41 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
         super.onCreate(savedInstanceState);
 
         EventBus.getDefault().register(this);
-    }
+	}
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		super.onCreateView(inflater, container, savedInstanceState);
+		
+		mRoot = inflater.inflate(R.layout.tablet_transactions_view, null);
+		
+		setupView();
+		setupFilterList();
+
+        mPageFragment = TransactionsPageTabletFragment.newInstance(this);
+      
+        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment, mPageFragment);
+        ft.commit();
+		
+		return mRoot;
+	}
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
+    public void isShowing() {
 
-        mRoot = inflater.inflate(R.layout.tablet_transactions_view, null);
+        setupTitleBar();
 
-        setupView();
-        setupFilterList();
-
-        TransactionsPageTabletFragment frag = TransactionsPageTabletFragment.newInstance(this);
-
-        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment, frag);
-        ft.commit();
-
-        return mRoot;
+        if (mPageFragment != null) {
+            mPageFragment.isShowing();
+        }
     }
-
+    
     @Override
     public void onResume() {
         super.onResume();
-
-        setupTitleBar(getActivity());
+        
+        setupTitleBar();
     }
 
     @Override
@@ -135,8 +146,8 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
         mFiltersList.setSelectedChild(0, 0, true);
     }
 
-    private void setupTitleBar(final Activity activity) {
-
+    private void setupTitleBar() {
+        
         String[] icons = getResources().getStringArray(R.array.transactions_title_bar_icons);
 
         ArrayList<OnClickListener> onClickListeners = new ArrayList<OnClickListener>();
@@ -145,11 +156,11 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(activity, "help", Toast.LENGTH_LONG).show();
+                Toast.makeText(mActivity, "help", Toast.LENGTH_LONG).show();
             }
         });
 
-        new NavBarButtons(activity, icons, onClickListeners);
+        new NavBarButtons(mActivity, icons, onClickListeners);
     }
 
     @Override

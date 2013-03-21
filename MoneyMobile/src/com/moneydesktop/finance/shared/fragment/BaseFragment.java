@@ -3,11 +3,12 @@ package com.moneydesktop.finance.shared.fragment;
 import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.view.View;
-
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.shared.activity.DashboardBaseActivity;
 
 public abstract class BaseFragment extends Fragment {
+
+    public final String TAG = this.getClass().getSimpleName();
 	
 	protected DashboardBaseActivity mActivity;
 	protected View mRoot;
@@ -20,37 +21,33 @@ public abstract class BaseFragment extends Fragment {
         
         if (activity instanceof DashboardBaseActivity){
             mActivity = (DashboardBaseActivity) activity;
-        	mActivity.setFragmentCount(mActivity.getFragmentCount() + 1);
             mActivity.onFragmentAttached(this);
         }
 	}
-    
+
     @Override
-    public void onResume() {
-        super.onResume();
-        
+    public void onDetach() {
+        super.onDetach();
+
         if (mActivity != null) {
-            mActivity.setCurrentFragment(this);
-            mActivity.updateNavBar(getFragmentTitle(), true);
+            mActivity.onFragmentDetached(this);
         }
     }
-    
+
     @Override
-    public void onDestroy() {
-    	super.onDestroy();
-    	
-    	if (mActivity != null) {
-    		mActivity.setFragmentCount(mActivity.getFragmentCount() - 1);
-    	}
+    public void onStart() {
+        super.onStart();
+
+        isShowing();
     }
     
-    public void isShowing(boolean fromBackstack) {
-    	
-    	if (mActivity != null) {
-    		mActivity.updateNavBar(getFragmentTitle(), true);
-    	}
+    public void isShowing() {
+
+        if (mActivity != null) {
+            mActivity.updateNavBar(getFragmentTitle());
+        }
     }
-    
+
     public void isHiding() {}
 	
 	public abstract String getFragmentTitle();

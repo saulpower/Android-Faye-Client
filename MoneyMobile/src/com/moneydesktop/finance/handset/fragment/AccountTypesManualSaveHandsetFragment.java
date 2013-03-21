@@ -1,6 +1,5 @@
 package com.moneydesktop.finance.handset.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,15 +16,16 @@ import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
-import org.json.JSONObject;
 
-public class AccountTypesManualSaveHandsetFragment extends BaseFragment{
+public class AccountTypesManualSaveHandsetFragment extends BaseFragment {
 
-	private static AccountTypesManualSaveHandsetFragment mCurrentFragment;
-	private static AccountType mSelectedAccountType;
+    private AccountType mSelectedAccountType;
 	private EditText mAccountName, mCurrentBalance;
 	private TextView mSave;
-	private JSONObject mAddManualBankJsonRequest;
+
+    public void setSelectedAccountType(AccountType mSelectedAccountType) {
+        this.mSelectedAccountType = mSelectedAccountType;
+    }
 	
 	@Override
 	public FragmentType getType() {
@@ -34,22 +34,8 @@ public class AccountTypesManualSaveHandsetFragment extends BaseFragment{
 
 	@Override
 	public String getFragmentTitle() {
-		return getString(R.string.label_account_type);
+		return getString(R.string.add_account_label_handset).toUpperCase();
 	}
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-    //    EventBus.getDefault().register(this);
-    }
-    
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        
-     //   EventBus.getDefault().unregister(this);
-    }
     
 	@Override
 	public boolean onBackPressed() {
@@ -59,8 +45,7 @@ public class AccountTypesManualSaveHandsetFragment extends BaseFragment{
 	public static AccountTypesManualSaveHandsetFragment newInstance(AccountType accountType) {
 		
 		AccountTypesManualSaveHandsetFragment frag = new AccountTypesManualSaveHandsetFragment();
-		mCurrentFragment = frag;
-		mSelectedAccountType = accountType;
+		frag.setSelectedAccountType(accountType);
 		
         Bundle args = new Bundle();
         frag.setArguments(args);
@@ -108,7 +93,7 @@ public class AccountTypesManualSaveHandsetFragment extends BaseFragment{
 			UiUtils.hideKeyboard(mActivity, v);
             createManualBankAccount(mSelectedAccountType);
 			
-			mActivity.popBackStackTo(0);
+			mActivity.clearBackStack();
 		}
 	}
 

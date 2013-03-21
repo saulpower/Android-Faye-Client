@@ -1229,7 +1229,12 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 		
 		// Unregister the old data change observer
 		if (mAdapter != null && mDataSetObserver != null) {
-			mAdapter.unregisterDataSetObserver(mDataSetObserver);
+
+            try {
+                mAdapter.unregisterDataSetObserver(mDataSetObserver);
+            } catch (Exception ex) {
+                // Workaround for Android bug
+            }
 		}
 		
 		// Perform validation check
@@ -1699,7 +1704,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 			resetChart();
 		}
 
-		public void clearSavedState() {
+        public void clearSavedState() {
 			mInstanceState = null;
 		}
 	}

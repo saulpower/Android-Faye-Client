@@ -1,17 +1,11 @@
 package com.moneydesktop.finance.handset.fragment;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +19,6 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.devsmart.android.ui.HorizontalListView;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
@@ -33,21 +26,12 @@ import com.moneydesktop.finance.data.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.SlideFrom;
 import com.moneydesktop.finance.data.SyncEngine;
-import com.moneydesktop.finance.database.AccountType;
-import com.moneydesktop.finance.database.AccountTypeDao;
-import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.database.BankAccount;
-import com.moneydesktop.finance.database.PowerQuery;
+import com.moneydesktop.finance.database.*;
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
 import com.moneydesktop.finance.handset.adapter.AccountBankListAdapter;
 import com.moneydesktop.finance.handset.adapter.AccountTypesHandsetAdapter;
 import com.moneydesktop.finance.handset.adapter.BankOptionsAdapter;
-import com.moneydesktop.finance.model.EventMessage.BankStatusUpdateEvent;
-import com.moneydesktop.finance.model.EventMessage.CheckRemoveBankEvent;
-import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
-import com.moneydesktop.finance.model.EventMessage.MenuEvent;
-import com.moneydesktop.finance.model.EventMessage.SyncEvent;
-import com.moneydesktop.finance.model.EventMessage.UpdateSpecificBankStatus;
+import com.moneydesktop.finance.model.EventMessage.*;
 import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.shared.fragment.AccountTypesFragment;
 import com.moneydesktop.finance.util.DialogUtils;
@@ -55,8 +39,12 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.SlidingView;
 import com.moneydesktop.finance.views.UltimateListView;
-
 import de.greenrobot.event.EventBus;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class AccountTypesHandsetFragment extends AccountTypesFragment{
     
@@ -65,10 +53,6 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
     private View mBankOptionsView;
     private SlidingView mSliderView;
     private String[] mOptions;
-    private AccountOptionsCredentialsHandsetFragment mCredentialFragment;
-    private AccountBankDetailsHandsetFragment mBankDetailsFragment;
-    private AccountOptionFixBankHandsetFragment mFixBankFragment; 
-    private AddAccountHandsetFragment mAddAccountFragment;
     private ListView mBankOptionsList;
     private AccountTypesHandsetAdapter mAdapter;
     private BankOptionsAdapter mBankOptionsAdapter;
@@ -78,13 +62,13 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
 	private AccountBankListAdapter mBankListAdapter;
 
     @Override
-    public void isShowing(boolean fromBackstack) {
-    	super.isShowing(fromBackstack);
+    public void isShowing() {
+        super.isShowing();
 
 		setupMenuItems();
     }
 	
-    public static AccountTypesHandsetFragment getInstance() {
+    public static AccountTypesHandsetFragment newInstance() {
 
         AccountTypesHandsetFragment fragment = new AccountTypesHandsetFragment();
         fragment.setRetainInstance(true);
@@ -136,8 +120,7 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
     	
     	data.add(new Pair<Integer, List<int[]>>(R.string.label_account_menu, items));
     	
-    	mActivity.addMenuItems(data);
-    	mActivity.setMenuFragment(FragmentType.ACCOUNT_TYPES);
+    	mActivity.configureRightMenu(data, getType());
     }
     
 	public void onEvent(MenuEvent event) {
@@ -149,12 +132,8 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
 		    	//add an account
 		        ((DashboardHandsetActivity)mActivity).getMenuDrawer().closeMenu();
 		    	
-				AddAccountHandsetFragment frag = getAddAccountFragment();
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-				ft.replace(R.id.accounts_fragment, frag);
-				ft.addToBackStack(null);
-				ft.commit();
+				AddAccountHandsetFragment frag = AddAccountHandsetFragment.newInstance();
+                mActivity.pushFragment(R.id.accounts_fragment, frag);
 		    	break;
 		    case 1:
 		    	//refresh all accounts
@@ -551,34 +530,6 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
             }
         });
     }
-    
-	private AccountOptionsCredentialsHandsetFragment getCredentialsFragment(Bank bank) {
-		mCredentialFragment = AccountOptionsCredentialsHandsetFragment.newInstance(bank);
-		
-		return mCredentialFragment;
-	}
-	
-	private AccountBankDetailsHandsetFragment getBankDetailsFragment(BankAccount bankAccount) {
-		mBankDetailsFragment = AccountBankDetailsHandsetFragment.newInstance(bankAccount);
-		
-		return mBankDetailsFragment;
-	}
-	
-	private AccountOptionFixBankHandsetFragment getFixBankFragment(Bank bank) {
-
-		mFixBankFragment = AccountOptionFixBankHandsetFragment.newInstance(bank);
-		
-		return mFixBankFragment;
-	}
-	
-	private AddAccountHandsetFragment getAddAccountFragment() {
-
-		if (mAddAccountFragment == null) {
-			mAddAccountFragment = AddAccountHandsetFragment.newInstance();
-		}
-		
-		return mAddAccountFragment;
-	}
 	
 	@Override
 	public FragmentType getType() {
@@ -672,7 +623,7 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
         	for (BankAccount bankAccount : accountType.getBankAccounts()) {	        		
         		if (bankAccount.getBank() == null) {
         			counter++;
-        			bankAccount.softDeleteSingle(); 
+//        			bankAccount.softDeleteSingle();
         		}
         	}
         	if (counter == accountType.getBankAccounts().size()) {
@@ -688,44 +639,34 @@ public class AccountTypesHandsetFragment extends AccountTypesFragment{
     }
 
 	private void addBankOrShowBankOptions(View view, int position) {
-		if (position == 0) { //this is the add bank button
-			AddAccountHandsetFragment frag = getAddAccountFragment();
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-			ft.replace(R.id.accounts_fragment, frag);
-			ft.addToBackStack(null);
-			ft.commit();
-		} else { // for everything else, open the bank options menu
-			bankImageListener(mBankList.get(position - 1), view);
-		}
+
+        //this is the add bank button
+		if (position == 0) {
+
+			AddAccountHandsetFragment frag = AddAccountHandsetFragment.newInstance();
+            mActivity.pushFragment(R.id.accounts_fragment, frag);
+
+            return;
+        }
+
+        // for everything else, open the bank options menu
+        bankImageListener(mBankList.get(position - 1), view);
 	}
 
 	private void showFixBankFragment(final Bank bank) {
-		AccountOptionFixBankHandsetFragment frag = getFixBankFragment(bank);
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-		ft.replace(R.id.accounts_fragment, frag);
-		ft.addToBackStack(null);
-		ft.commit();
+		AccountOptionFixBankHandsetFragment frag = AccountOptionFixBankHandsetFragment.newInstance(bank);
+        mActivity.pushFragment(R.id.accounts_fragment, frag);
 	}
 	
 	private void showCredentialsFragment(final Bank bank) {
-		AccountOptionsCredentialsHandsetFragment frag = getCredentialsFragment(bank);
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-		ft.replace(R.id.accounts_fragment, frag);
-		ft.addToBackStack(null);
-		ft.commit();
+		AccountOptionsCredentialsHandsetFragment frag = AccountOptionsCredentialsHandsetFragment.newInstance(bank);
+        mActivity.pushFragment(R.id.accounts_fragment, frag);
 	}
 	
 	private void showBankDetails(int groupPosition, int childPosition) {
 		BankAccount bankAccount = mAccountTypesFiltered.get(groupPosition).getBankAccounts().get(childPosition);
-		AccountBankDetailsHandsetFragment frag = getBankDetailsFragment(bankAccount);
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-		ft.replace(R.id.accounts_fragment, frag);
-		ft.addToBackStack(null);
-		ft.commit();
+		AccountBankDetailsHandsetFragment frag = AccountBankDetailsHandsetFragment.newInstance(bankAccount);
+        mActivity.pushFragment(R.id.accounts_fragment, frag);
 	}
 
 }

@@ -1,14 +1,9 @@
 package com.moneydesktop.finance.views.chart;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,17 +11,10 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextSwitcher;
-import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
@@ -34,11 +22,15 @@ import com.moneydesktop.finance.data.Enums.TxFilter;
 import com.moneydesktop.finance.database.Category;
 import com.moneydesktop.finance.handset.fragment.TransactionsHandsetFragment;
 import com.moneydesktop.finance.shared.CategoryViewHolder;
+import com.moneydesktop.finance.shared.activity.BaseActivity;
 import com.moneydesktop.finance.shared.adapter.CategoryPieChartAdapter;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.chart.ExpandablePieChartView.OnExpandablePieChartChangeListener;
 import com.moneydesktop.finance.views.chart.ExpandablePieChartView.OnExpandablePieChartInfoClickListener;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 @SuppressLint("NewApi")
 public class ChartListBridge extends BaseAdapter implements OnExpandablePieChartChangeListener, OnExpandablePieChartInfoClickListener, OnItemClickListener, ViewFactory {
@@ -59,8 +51,6 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 	
 	private CategoryPieChartAdapter mAdapter;
 	
-	private Activity mActivity;
-	
 	private boolean mExpanded = false;
 	
 	private boolean mInit = false;
@@ -70,6 +60,8 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 	private Animation mIn, mOut, mBackIn, mBackOut;
 	
 	private FragmentManager mFragmentManager;
+
+    private BaseActivity mActivity;
 	
 	public FragmentManager getFragmentManager() {
 		return mFragmentManager;
@@ -79,8 +71,11 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 		this.mFragmentManager = mFragmentManager;
 	}
 
-	public ChartListBridge(Activity activity, ExpandablePieChartView chart, ListView list, TextSwitcher total, TextView backButton) {
+	public ChartListBridge(BaseActivity activity, ExpandablePieChartView chart, ListView list, TextSwitcher total,
+                           TextView backButton) {
 		this(activity, chart);
+
+        mActivity = activity;
 
 		mChart.setExpandableChartChangeListener(this);
 		
@@ -111,7 +106,7 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 		loadAnimations();
 	}
 	
-	public ChartListBridge(Activity activity, ExpandablePieChartView chart) {
+	public ChartListBridge(BaseActivity activity, ExpandablePieChartView chart) {
 
 		mActivity = activity;
 		
@@ -354,12 +349,8 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
         intent.putExtra(Constant.EXTRA_END_DATE, mAdapter.getDateRange().getEndDate().getTime());
         
         TransactionsHandsetFragment frag = TransactionsHandsetFragment.newInstance(intent, R.id.spending_fragment);
-        
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-		ft.replace(R.id.spending_fragment, frag);
-		ft.addToBackStack(null);
-		ft.commit();
+
+        mActivity.pushFragment(R.id.spending_fragment, frag);
 	}
 	
 	private ArrayList<Long> getCategories(int groupPosition, int childPosition) {

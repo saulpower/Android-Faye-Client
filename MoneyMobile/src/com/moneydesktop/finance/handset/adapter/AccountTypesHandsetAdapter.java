@@ -1,34 +1,26 @@
 package com.moneydesktop.finance.handset.adapter;
 
-import java.text.NumberFormat;
-import java.util.List;
-
 import android.content.Context;
-import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView.OnGroupCollapseListener;
 import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.AccountType;
-import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.BankAccount;
-import com.moneydesktop.finance.database.QueryProperty;
-import com.moneydesktop.finance.handset.fragment.AccountBankDetailsHandsetFragment;
 import com.moneydesktop.finance.shared.activity.BaseActivity;
 import com.moneydesktop.finance.shared.adapter.UltimateAdapter;
 import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.views.BarGraphView;
-import com.moneydesktop.finance.views.BarView;
 import com.moneydesktop.finance.views.UltimateListView;
+
+import java.text.NumberFormat;
+import java.util.List;
 
 
 public class AccountTypesHandsetAdapter extends UltimateAdapter implements OnGroupExpandListener, OnGroupCollapseListener{

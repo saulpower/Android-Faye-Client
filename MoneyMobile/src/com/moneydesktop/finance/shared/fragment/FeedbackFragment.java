@@ -64,7 +64,7 @@ public class FeedbackFragment extends BaseFragment {
 
 	@Override
 	public FragmentType getType() {
-		return null;
+		return FragmentType.FEEDBACK;
 	}
 	
 	@Override

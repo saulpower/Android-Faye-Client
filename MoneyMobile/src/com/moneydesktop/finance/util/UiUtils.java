@@ -1,7 +1,5 @@
 package com.moneydesktop.finance.util;
 
-import java.util.Random;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -12,7 +10,6 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.data.Constant;
 
@@ -130,10 +127,9 @@ public class UiUtils {
         return metrics.densityDpi;
     }
     
-    public static void hideKeyboard(Activity activity, View view) {
-        activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        InputMethodManager in = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        in.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    public static void hideKeyboard(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
     
     public static void showKeyboard(Context context, View view) {

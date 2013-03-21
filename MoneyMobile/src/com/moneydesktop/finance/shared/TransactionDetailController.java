@@ -3,8 +3,6 @@ package com.moneydesktop.finance.shared;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
@@ -13,7 +11,6 @@ import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory.FlipDirection;
@@ -156,16 +153,6 @@ public class TransactionDetailController {
         mContainerOffset = containerOffset;
     }
     
-    protected void addDetailFragment(FragmentManager manager) {
-        
-        setDetailFragment(TransactionsDetailTabletFragment.newInstance());
-
-        FragmentTransaction ft = manager.beginTransaction();
-        ft = manager.beginTransaction();
-        ft.replace(R.id.detail_fragment, mDetailFragment);
-        ft.commit();
-    }
-    
     public void setDetailFragment(TransactionsDetailTabletFragment fragment) {
         mDetailFragment = fragment;
     }
@@ -204,7 +191,7 @@ public class TransactionDetailController {
     protected boolean mAnimating = false;
     
     public void showTransactionDetails(final View view, final int offset, final Transactions transaction) {
-        
+
         if (mDetailFragment != null && !mShowing) {
             
             mShowing = true;
@@ -213,9 +200,9 @@ public class TransactionDetailController {
             setupContainer(view);
             
         } else return;
-        
+
         mCellView = view;
-        
+
         new AsyncTask<Void, Void, Bitmap>() {
 
             @Override
@@ -223,16 +210,16 @@ public class TransactionDetailController {
 
                 final int[] location = new int[2];
                 mCellView.getLocationOnScreen(location);
-                
-                mHeight = view.getHeight();
-                
+
+                mHeight = mCellView.getHeight();
+
                 mCellY = (location[1] - offset);
                 mCellX = location[0];
-                
-                mCenterX = (int) (view.getWidth() / 2.0f);
-                
+
+                mCenterX = (int) (mCellView.getWidth() / 2.0f);
+
                 Bitmap b = UiUtils.convertViewToBitmap(mCellView);
-                
+
                 return b;
             }
 
@@ -242,7 +229,7 @@ public class TransactionDetailController {
                 mFakeCell.setImageBitmap(b);
                 mFakeCell.setX(mCellX);
                 mFakeCell.setY(mCellY);
-                
+
                 configureDetailView();
             }
 

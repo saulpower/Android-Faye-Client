@@ -8,6 +8,7 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/../Communication/pom.xml" />
+        <option value="$PROJECT_DIR$/../TimesSquare/pom.xml" />
       </list>
     </option>
   </component>

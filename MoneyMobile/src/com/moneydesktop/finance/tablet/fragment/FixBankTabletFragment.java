@@ -1,13 +1,5 @@
 package com.moneydesktop.finance.tablet.fragment;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,33 +12,28 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
-
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
-import com.moneydesktop.finance.data.DataBridge;
-import com.moneydesktop.finance.data.DataController;
-import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.data.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.BankDao;
-import com.moneydesktop.finance.model.EventMessage;
-import com.moneydesktop.finance.model.User;
-import com.moneydesktop.finance.model.EventMessage.BankStatusUpdateEvent;
 import com.moneydesktop.finance.model.EventMessage.GetLogonCredentialsFinished;
 import com.moneydesktop.finance.model.EventMessage.MfaQuestionsRecieved;
-import com.moneydesktop.finance.shared.Services.SyncService;
-import com.moneydesktop.finance.shared.fragment.BaseFragment;
+import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.shared.fragment.FixBankFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.Fonts;
-
 import de.greenrobot.event.EventBus;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.List;
 
 public class FixBankTabletFragment extends FixBankFragment{
 
@@ -74,8 +61,8 @@ public class FixBankTabletFragment extends FixBankFragment{
 	@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
         EventBus.getDefault().register(this);
-        mActivity.onFragmentAttached(this);
 	}
 	
     @Override
@@ -360,8 +347,7 @@ public class FixBankTabletFragment extends FixBankFragment{
 
 	@Override
 	public FragmentType getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return FragmentType.FIX_BANK;
 	}
 
 }

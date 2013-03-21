@@ -169,12 +169,12 @@ public class EventMessage {
 	public class MenuEvent extends EventMessage {
 	    
 	    private int mGroupPosition, mChildPosition;
-	    private FragmentType mFragmenttype;
+	    private FragmentType mFragmentType;
 	    
 	    public MenuEvent(int groupPosition, int childPosition, FragmentType fragmentType) {
 	    	mGroupPosition = groupPosition;
 	    	mChildPosition = childPosition;
-	    	mFragmenttype = fragmentType;
+	    	mFragmentType = fragmentType;
 	    }
 	    
 	    public int getGroupPosition() {
@@ -186,8 +186,17 @@ public class EventMessage {
 	    }
 	    
 	    public FragmentType getFragmentType() {
-	        return mFragmenttype;
+	        return mFragmentType;
 	    }
+
+        /**
+         * Provides a unique int for the combined group and child position
+         *
+         * @return the combined id
+         */
+        public int getAction() {
+            return ((mGroupPosition << 8) + mChildPosition);
+        }
 	}
 	
 	public class NavigationButtonEvent extends EventMessage {}

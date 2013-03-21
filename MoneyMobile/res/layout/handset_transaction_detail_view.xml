@@ -11,7 +11,8 @@
 	    android:id="@+id/root"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:orientation="vertical" >
+	    android:orientation="vertical"
+        android:background="@color/white" >
     
 		<EditText
 	    	android:id="@+id/dummy"
@@ -28,34 +29,40 @@
 	        
 	        <ImageView
 	            android:id="@+id/bank_image"
-				android:layout_width="25dp"
-				android:layout_height="25dp"
+				android:layout_width="50dp"
+				android:layout_height="50dp"
 				android:layout_alignParentLeft="true"
 				android:layout_centerVertical="true"
 				android:layout_marginRight="8dp"
 				android:scaleType="fitCenter"
 				android:src="@drawable/bank"
 	            android:contentDescription="@string/description" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/bank_image"
+                android:layout_centerVertical="true"
+                android:orientation="vertical" >
 	        
-	        <TextView
-	            android:id="@+id/account_name"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_alignParentTop="true"
-	            android:layout_toRightOf="@id/bank_image"
-	            android:textColor="@color/gray7"
-	            android:textSize="12sp"
-	            android:ellipsize="end" />
-	        
-	        <TextView
-	            android:id="@+id/bank_name"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_below="@id/account_name"
-	            android:layout_toRightOf="@id/bank_image"
-	            android:textColor="@color/gray3"
-	            android:textSize="10sp"
-	            android:ellipsize="end" />
+                <TextView
+                    android:id="@+id/account_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/gray7"
+                    android:textSize="12sp"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/bank_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/gray3"
+                    android:textSize="10sp"
+                    android:ellipsize="end" />
+
+            </LinearLayout>
 	        
 	    </RelativeLayout>
 		        
@@ -87,12 +94,13 @@
             app:lineStrokeWidth="2dp"
             app:dashLength="2dp" />
 	
-        <com.moneydesktop.finance.views.LabelEditText
+        <com.moneydesktop.finance.views.LabelEditCurrency
             android:id="@+id/amount"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
             android:background="@drawable/transparent_to_primary"
-            android:inputType="none"
+            android:inputType="numberDecimal"
+            android:imeOptions="actionDone"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="@drawable/gray7_to_white"

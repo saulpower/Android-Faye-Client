@@ -3,14 +3,9 @@ package com.moneydesktop.finance.tablet.fragment;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.MeasureSpec;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -30,13 +25,14 @@ import com.moneydesktop.finance.database.CategoryDao;
 import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
-import com.moneydesktop.finance.model.EventMessage.ParentAnimationEvent;
 import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
 import com.moneydesktop.finance.shared.TransactionViewHolder;
 import com.moneydesktop.finance.shared.fragment.TransactionsFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
-import com.moneydesktop.finance.util.*;
+import com.moneydesktop.finance.util.DateRange;
+import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.DateRangeView;
 import com.moneydesktop.finance.views.HeaderView;
 import com.moneydesktop.finance.views.HorizontalScroller;
@@ -252,7 +248,7 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
             
             @Override
             public void onClick(View v) {
-                emailTransactions();
+                emailTransactions(mHeaders);
             }
         });
         
@@ -363,18 +359,12 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
         
         return true;
     }
-    
-    public void onEvent(ParentAnimationEvent event) {
-        
-        if (!event.isOutAnimation() && !event.isFinished()) {
-            mWaiting = true;
-        }
-        
-        if (event.isOutAnimation() && event.isFinished()) {
 
-            mWaiting = false;
-            configureView();
-        }
+    @Override
+    public void isShowing() {
+
+        mWaiting = false;
+        configureView();
     }
 
     private void configureView() {
@@ -391,6 +381,11 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
                     mTransactionsList.startAnimation(mFadeIn);
                 }
             }, 100);
+
+        } else if (mLoaded && !mWaiting) {
+
+            mTransactionsList.setSelection(0);
+            mAdapter.refreshCurrentSelection();
         }
     }
     
@@ -449,75 +444,6 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
         values[2] = mFormatter.format(Math.abs(amounts[1]));
         
         return values;
-    }
-    
-    private void emailTransactions() {
-        
-        DialogUtils.showProgress(getActivity(), getString(R.string.generate_email));
-
-        new AsyncTask<Void, Void, String>() {
-
-            @Override
-            protected String doInBackground(Void... params) {
-
-                Bitmap image = getWholeListViewItemsToBitmap();
-                String path = FileIO.saveBitmap(getActivity(), image, getString(R.string.transactions_list));
-
-                return path;
-            }
-
-            @Override
-            protected void onPostExecute(String path) {
-
-                DialogUtils.hideProgress();
-                EmailUtils.sendEmail(getActivity(), getString(R.string.email_transactions_subject), "", path);
-            }
-
-        }.execute();
-    }
-    
-    private  Bitmap getWholeListViewItemsToBitmap() {
-
-        final float divider = UiUtils.getDynamicPixels(getActivity(), 1);
-        int allitemsheight = mHeaders.getHeight();
-        Bitmap header = UiUtils.convertViewToBitmap(mHeaders);
-        
-        List<Bitmap> bitmaps = new ArrayList<Bitmap>();
-        bitmaps.add(header);
-
-        for (int i = 0; i < mAdapter.getCount(); i++) {
-
-            View childView = mAdapter.getView(i, null, mTransactionsList);
-            childView.measure(
-                    MeasureSpec.makeMeasureSpec(mTransactionsList.getWidth(), MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-
-            childView.layout(0, 0, childView.getMeasuredWidth(), childView.getMeasuredHeight());
-            childView.setDrawingCacheEnabled(true);
-            childView.buildDrawingCache();
-            
-            bitmaps.add(childView.getDrawingCache());
-            allitemsheight += childView.getMeasuredHeight();
-        }
-
-        Bitmap listBitmap = Bitmap.createBitmap(mTransactionsList.getMeasuredWidth(), (int) (allitemsheight + mAdapter.getCount() * divider), Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(listBitmap);
-        canvas.drawColor(getResources().getColor(R.color.gray1));
-        
-        final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        int currentTop = 0;
-
-        for (int i = 0; i < bitmaps.size(); i++) {
-            
-            Bitmap bmp = bitmaps.get(i);
-            canvas.drawBitmap(bmp, 0, currentTop, paint);
-            currentTop += (bmp.getHeight() + divider);
-
-            bmp.recycle();
-            bmp = null;
-        }
-
-        return listBitmap;
     }
 
 	@Override

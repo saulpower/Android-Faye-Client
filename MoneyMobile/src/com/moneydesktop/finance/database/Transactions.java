@@ -18,8 +18,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -1182,7 +1180,6 @@ public class Transactions extends BusinessObject  {
     	
     	String currentDate = sdf.format(transactions.get(0).getDate());
     	List<Transactions> tempList = new ArrayList<Transactions>();
-    	boolean added = false;
     	
     	for (Transactions transaction : transactions) {
     		
@@ -1191,7 +1188,6 @@ public class Transactions extends BusinessObject  {
     		if (tempDate.equals(currentDate)) {
     			
     			tempList.add(transaction);
-    			added = false;
     			
     		} else {
     			
@@ -1199,12 +1195,10 @@ public class Transactions extends BusinessObject  {
     			currentDate = tempDate;
     			tempList = new ArrayList<Transactions>();
     			tempList.add(transaction);
-    			added = true;
     		}
     	}
-    	
-    	if (!added)
-    		byDate.add(new Pair<String, List<Transactions>>(currentDate, tempList));
+
+    	byDate.add(new Pair<String, List<Transactions>>(currentDate, tempList));
     	
     	return byDate;
     }
@@ -1467,8 +1461,7 @@ public class Transactions extends BusinessObject  {
 
         Category category = Category.getUncategorizedCategory();
 
-        SecureRandom random = new SecureRandom();
-        String externalId = new BigInteger(130, random).toString(32).toUpperCase();
+        String externalId = DataController.createRandomGuid();
 
         Transactions transactions = new Transactions();
         transactions.setTransactionId(externalId);

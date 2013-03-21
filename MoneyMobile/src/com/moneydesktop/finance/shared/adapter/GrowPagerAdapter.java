@@ -17,12 +17,18 @@ public abstract class GrowPagerAdapter extends FragmentPagerAdapter implements O
     
     private int mCurrentPage = 0;
     private boolean mScrollingLeft;
+
+    private boolean mDisablePaging = false;
     
 	private GrowFragment[] mFragments;
 
 	private OnScrollStateChangedListener mOnScrollStateChangedListener;
 
     private GrowViewPager mPager;
+
+    public void setDisablePaging(boolean mDisablePaging) {
+        this.mDisablePaging = mDisablePaging;
+    }
 
     public void setPager(GrowViewPager mPager) {
         this.mPager = mPager;
@@ -49,7 +55,7 @@ public abstract class GrowPagerAdapter extends FragmentPagerAdapter implements O
     @Override
     public void onPageScrollStateChanged(int state) {
 
-        if (mPager != null && state == ViewPager.SCROLL_STATE_IDLE) {
+        if (mDisablePaging && mPager != null && state == ViewPager.SCROLL_STATE_IDLE) {
             mPager.setPagingEnabled(false);
         }
 

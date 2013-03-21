@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -18,11 +17,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Transactions;
-import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.shared.TransactionDetailController;
 import com.moneydesktop.finance.shared.TransactionDetailController.ParentTransactionInterface;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
@@ -35,7 +34,6 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.navigation.AnimatedNavView;
 import com.moneydesktop.finance.views.navigation.AnimatedNavView.NavigationListener;
-import de.greenrobot.event.EventBus;
 
 public class DropDownTabletActivity extends DialogBaseActivity implements onBackPressedListener, ParentTransactionInterface, OnKeyboardStateChangeListener, NavigationListener {
 
@@ -116,22 +114,7 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
 
     private void setupAnimations() {
         mIn = AnimationUtils.loadAnimation(this, R.anim.in_down_bounce);
-        mIn.setAnimationListener(new AnimationListener() {
-
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-                EventBus.getDefault().post(new EventMessage().new ParentAnimationEvent(true, true));
-            }
-        });
+        mIn.setAnimationListener(mFinish);
         mOut = AnimationUtils.loadAnimation(this, R.anim.out_up);
         mOut.setAnimationListener(new AnimationListener() {
 
@@ -204,7 +187,7 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
         mBase.setDetailFragment(TransactionsDetailTabletFragment.newInstance());
         mBase.getDetailFragment().setListener(this);
 
-        FragmentTransaction ft = mFm.beginTransaction();
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
         ft.replace(R.id.detail_fragment, mBase.getDetailFragment());
         ft.commit();
     }
@@ -239,11 +222,14 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
     }
 
     @Override
-    public void showFragment(FragmentType type, boolean moveUp) {
+    public void showFragment(FragmentType fragmentType, boolean moveUp) {
+        super.showFragment(fragmentType, moveUp);
 
-        BaseFragment fragment = getFragment(type);
+        setCurrentFragmentType(fragmentType);
 
-        FragmentTransaction ft = mFm.beginTransaction();
+        BaseFragment fragment = getFragment(fragmentType);
+
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
         ft.replace(R.id.fragment, fragment);
         ft.commit();
     }
@@ -285,16 +271,9 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
      */
     private void configureDropdown(FragmentType type) {
 
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        double x = Math.pow(dm.widthPixels / dm.xdpi, 2);
-        double y = Math.pow(dm.heightPixels / dm.ydpi, 2);
-        double screenInches = Math.sqrt(x + y);
+        float height = ApplicationContext.isLargeTablet() ? 0.7f : 0.8f;
 
         switch (type) {
-            case LOCK_SCREEN:
-                configureSize(0.4f, 0.65f);
-                break;
             case TRANSACTIONS_PAGE:
                 configureSize(0.8f, 0.8f);
                 mNavView.setVisibility(View.GONE);
@@ -303,38 +282,24 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
                 mOffset = location[1];
                 setupTransactionDetail();
                 break;
-            case ACCOUNT_SETTINGS:
-                if (screenInches > 8) {
-                    configureSize(0.6f, 0.7f);
-                } else {
-                    configureSize(0.6f, 0.85f);
-                }
-                break;
             case FEEDBACK:
                 configureSize(0.6f, 0.7f);
                 mNavView.setVisibility(View.GONE);
                 break;
             case TRANSACTION_SUMMARY:
                 mNavView.setVisibility(View.GONE);
-                configureSize(0.4f, 0.4f);
+            case LOCK_SCREEN:
+                configureSize(0.4f, 0.65f);
                 break;
             case MANUAL_BANK_LIST:
             case ADD_BANK:
-                configureSize(0.6f, 0.8f);
-                break;
             case FIX_BANK:
-                configureSize(0.6f, 0.8f);
-                break;
             case SHOW_HIDE_DATA:
                 configureSize(0.6f, 0.8f);
                 break;
+            case ACCOUNT_SETTINGS:
             case UPDATE_USERNAME_PASSWORD:
-                if (screenInches > 8) {
-                    configureSize(0.5f, 0.7f);
-                } else {
-                    configureSize(0.6f, 0.8f);
-                }
-
+                configureSize(0.6f, height);
                 break;
             default:
                 break;
@@ -378,7 +343,7 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
     }
 
     @Override
-    public void updateNavBar(final String titleString, boolean fragmentTitle) {
+    public void updateNavBar(final String titleString) {
 
         if (!mPopped && mNavView.getVisibility() == View.VISIBLE) {
 
@@ -395,8 +360,8 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
     }
 
     @Override
-    public void popBackStack() {
-        super.popBackStack();
+    public void popFragment() {
+        super.popFragment();
 
         UiUtils.hideKeyboard(this, mContainer);
 
@@ -407,6 +372,6 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
 
     @Override
     public void onNavigationPopped() {
-        popBackStack();
+        popFragment();
     }
 }

@@ -1,7 +1,6 @@
 package com.moneydesktop.finance.tablet.fragment;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,9 +34,13 @@ public class BankListTabletFragment extends BaseFragment implements NavigationLi
 	@Override
 	public boolean onBackPressed() {
 
-        ((DropDownTabletActivity)mActivity).dismissDropdown();
+        if (mActivity instanceof DropDownTabletActivity) {
 
-		return true;
+            ((DropDownTabletActivity)mActivity).dismissDropdown();
+            return true;
+        }
+
+		return false;
 	}
 
 	public static BankListTabletFragment newInstance() {
@@ -54,7 +57,9 @@ public class BankListTabletFragment extends BaseFragment implements NavigationLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        mNavView = ((DropDownTabletActivity) mActivity).getAnimatedNavView();
+        if (mActivity instanceof DropDownTabletActivity) {
+            mNavView = ((DropDownTabletActivity) mActivity).getAnimatedNavView();
+        }
 
         mRoot = inflater.inflate(R.layout.tablet_manual_bank_list, null);
 
@@ -77,7 +82,9 @@ public class BankListTabletFragment extends BaseFragment implements NavigationLi
     public void onResume() {
         super.onResume();
 
-        mNavView.setNavigationListener(this);
+        if (mNavView != null) {
+            mNavView.setNavigationListener(this);
+        }
     }
 
     private void setupView() {
@@ -87,7 +94,7 @@ public class BankListTabletFragment extends BaseFragment implements NavigationLi
 
 	@Override
 	public FragmentType getType() {
-		return null;
+		return FragmentType.MANUAL_BANK_LIST;
 	}
 
 	@Override
@@ -128,17 +135,16 @@ public class BankListTabletFragment extends BaseFragment implements NavigationLi
         Transactions transactions = Transactions.createNewTransaction(account);
         transactions.insertSingle();
 
-        ((DropDownTabletActivity)mActivity).dismissDropdown();
+        if (mActivity instanceof DropDownTabletActivity) {
+            ((DropDownTabletActivity)mActivity).dismissDropdown();
+        } else {
+            mActivity.clearBackStack();
+        }
     }
 
     private void addManualAccount() {
 
         BaseFragment fragment = AddBankTabletFragment.newInstance(true);
-
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-        ft.replace(R.id.fragment, fragment);
-        ft.addToBackStack(null);
-        ft.commit();
+        mActivity.pushFragment(getId(), fragment);
     }
 }

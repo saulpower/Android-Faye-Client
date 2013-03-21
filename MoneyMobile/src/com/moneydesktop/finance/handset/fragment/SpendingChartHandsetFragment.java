@@ -1,7 +1,5 @@
 package com.moneydesktop.finance.handset.fragment;
 
-import android.util.Log;
-import net.simonvt.menudrawer.MenuDrawer;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,7 +7,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Transactions;
@@ -22,8 +19,8 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.chart.ChartListBridge;
 import com.moneydesktop.finance.views.chart.ExpandablePieChartView;
 import com.moneydesktop.finance.views.chart.PieChartView.OnPieChartReadyListener;
-
 import de.greenrobot.event.EventBus;
+import net.simonvt.menudrawer.MenuDrawer;
 
 public class SpendingChartHandsetFragment extends BaseFragment implements OnMenuChangeListener {
 	
@@ -89,34 +86,39 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
 		
 		mTitle = (TextView) mRoot.findViewById(R.id.title);
 		Fonts.applySecondaryItalicFont(mTitle, 8);
-		
-		mChart = (ExpandablePieChartView) mRoot.findViewById(R.id.chart);
-		mChart.setOnPieChartReadyListener(new OnPieChartReadyListener() {
-			
-			@Override
-			public void onPieChartReady() {
 
-				configureChart(true);
-				EventBus.getDefault().post(new EventMessage().new ChartImageEvent(mChart.getDrawingCache()));
-			}
-		});
-
-		mBridge = new ChartListBridge(getActivity(), mChart);
-		mBridge.setFragmentManager(getFragmentManager());
-		
-		mRoot.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				
-				if (mChart.isExpanded()) {
-					mChart.toggleGroup();
-				}
-			}
-		});
+        configureChart();
 		
 		return mRoot;
 	}
+
+    private void configureChart() {
+
+        mChart = (ExpandablePieChartView) mRoot.findViewById(R.id.chart);
+        mChart.setOnPieChartReadyListener(new OnPieChartReadyListener() {
+
+            @Override
+            public void onPieChartReady() {
+
+                configureChart(true);
+                EventBus.getDefault().post(new EventMessage().new ChartImageEvent(mChart.getDrawingCache()));
+            }
+        });
+
+        mBridge = new ChartListBridge(mActivity, mChart);
+        mBridge.setFragmentManager(getFragmentManager());
+
+        mRoot.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if (mChart.isExpanded()) {
+                    mChart.toggleGroup();
+                }
+            }
+        });
+    }
 	
 	public void onEvent(DatabaseSaveEvent event) {
 	    
@@ -134,18 +136,19 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
 	}
     
     @Override
-    public void isShowing(boolean fromBackstack) {
-    	super.isShowing(fromBackstack);
+    public void isShowing() {
+        super.isShowing();
 		
 		mPaused = false;
 		configureChart(true);
     }
-    
+
     @Override
     public void isHiding() {
+        super.isHiding();
 
-		mPaused = true;
-		configureChart(false);
+        mPaused = true;
+        configureChart(false);
     }
 	
 	@Override
@@ -180,7 +183,7 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
 	
 	private void configureChart(boolean showChart) {
 		
-		if (showChart && ((DashboardHandsetActivity) mActivity).getCurrentFragmentType() == getType() && !mPaused) {
+		if (showChart && mActivity.getCurrentFragmentType() == getType() && !mPaused) {
             mChart.onResume();
 		} else {
 			mChart.onPause();

@@ -1,46 +1,33 @@
 package com.moneydesktop.finance.handset.fragment;
 
-import java.util.List;
-
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
-
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
-import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.Institution;
 import com.moneydesktop.finance.database.InstitutionDao;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
-import com.moneydesktop.finance.shared.fragment.FixBankFragment;
-import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.AddNewInstitutionAdapter;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.LabelEditText;
 
-public class AccountInstitutionListHandsetFragment extends BaseFragment{
+import java.util.List;
 
-	private static AccountInstitutionListHandsetFragment mCurrentFragment;
+public class AccountInstitutionListHandsetFragment extends BaseFragment{
 
 	private TextView mSearchIcon;
 	private LabelEditText mSearchField;
 	private ListView mInstitutionList;
 	private AddNewInstitutionAdapter mAdapter;
-	private AccountOptionsCredentialsHandsetFragment mConnectAccountFragment;
 	
 	private QueryProperty mWherePopularity = new QueryProperty(InstitutionDao.TABLENAME, InstitutionDao.Properties.Popularity, "!= ?");
 	
@@ -51,22 +38,8 @@ public class AccountInstitutionListHandsetFragment extends BaseFragment{
 
 	@Override
 	public String getFragmentTitle() {
-		return null;
+		return getString(R.string.label_account_add_institution).toUpperCase();
 	}
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-    //    EventBus.getDefault().register(this);
-    }
-    
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        
-     //   EventBus.getDefault().unregister(this);
-    }
     
 	@Override
 	public boolean onBackPressed() {
@@ -76,7 +49,6 @@ public class AccountInstitutionListHandsetFragment extends BaseFragment{
 	public static AccountInstitutionListHandsetFragment newInstance() {
 		
 		AccountInstitutionListHandsetFragment frag = new AccountInstitutionListHandsetFragment();
-		mCurrentFragment = frag;
 		
         Bundle args = new Bundle();
         frag.setArguments(args);
@@ -125,23 +97,12 @@ public class AccountInstitutionListHandsetFragment extends BaseFragment{
 		    }
 		});
 	}
-	
-	private AccountOptionsCredentialsHandsetFragment getConnectScreenFragment(Institution selectedInstitution) {
-
-		mConnectAccountFragment = AccountOptionsCredentialsHandsetFragment.newInstance(selectedInstitution);
-		
-		return mConnectAccountFragment;
-	}
 
 	private void loadConnectScreenFragment(AdapterView<?> a, int position) {
 		Institution selectedInstitution = (Institution)a.getItemAtPosition(position);
 		
-		AccountOptionsCredentialsHandsetFragment frag = getConnectScreenFragment(selectedInstitution);
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.setCustomAnimations(R.anim.in_right, R.anim.out_left, R.anim.in_left, R.anim.out_right);
-		ft.replace(mCurrentFragment.getId(), frag);
-		ft.addToBackStack(null);
-		ft.commit();
+		AccountOptionsCredentialsHandsetFragment frag = AccountOptionsCredentialsHandsetFragment.newInstance(selectedInstitution);
+        mActivity.pushFragment(getId(), frag);
 	}
 	
 }

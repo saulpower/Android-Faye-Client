@@ -1,13 +1,8 @@
 package com.moneydesktop.finance.shared.adapter;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Pair;
-
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.Category;
@@ -17,6 +12,10 @@ import com.moneydesktop.finance.views.chart.BaseExpandablePieChartAdapter;
 import com.moneydesktop.finance.views.chart.InfoDrawable;
 import com.moneydesktop.finance.views.chart.PieChartView;
 import com.moneydesktop.finance.views.chart.PieSliceDrawable;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
     
@@ -288,7 +287,9 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
 	public void configureGroupInfo(InfoDrawable info, PieSliceDrawable slice, int groupPosition) {
 
 		Category cat = (Category) getGroup(groupPosition);
-		
+
+        if (cat == null) return;
+
 		info.animateTransition(mFormatter.format(cat.getParentTotal()), slice.getSliceColor(), cat.getCategoryName());
 	}
 

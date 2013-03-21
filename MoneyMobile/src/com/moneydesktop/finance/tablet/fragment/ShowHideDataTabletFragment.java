@@ -1,55 +1,29 @@
 package com.moneydesktop.finance.tablet.fragment;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
-
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.data.Constant;
-import com.moneydesktop.finance.data.DataBridge;
-import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Enums.AccountExclusionFlags;
 import com.moneydesktop.finance.data.Enums.FragmentType;
-import com.moneydesktop.finance.data.Enums.SlideFrom;
-import com.moneydesktop.finance.database.AccountType;
-import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BankAccountDao;
-import com.moneydesktop.finance.model.EventMessage;
-import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
-import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
-import com.moneydesktop.finance.tablet.adapter.AccountSettingsTypesAdapter;
-import com.moneydesktop.finance.util.EmailUtils;
 import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.views.SettingButton;
-import com.moneydesktop.finance.views.SlidingView;
-import com.moneydesktop.finance.views.navigation.NavBarButtons;
 
-import de.greenrobot.event.EventBus;
+import java.text.NumberFormat;
+import java.util.List;
 
 @TargetApi(11)
 public class ShowHideDataTabletFragment extends BaseFragment {
@@ -71,13 +45,6 @@ public class ShowHideDataTabletFragment extends BaseFragment {
 	@Override
 	public boolean onBackPressed() {
 		return false;
-	}
-		
-	@Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        
-        mActivity.onFragmentAttached(this);
 	}
 
 	public static ShowHideDataTabletFragment newInstance(Intent intent) {
@@ -221,8 +188,7 @@ public class ShowHideDataTabletFragment extends BaseFragment {
 
 	@Override
 	public FragmentType getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return FragmentType.SHOW_HIDE_DATA;
 	}
 
 }

@@ -1,12 +1,18 @@
 package com.moneydesktop.finance.shared.fragment;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,14 +30,14 @@ import com.moneydesktop.finance.shared.adapter.TransactionsAdapter;
 import com.moneydesktop.finance.shared.adapter.TransactionsAdapter.OnDataLoadedListener;
 import com.moneydesktop.finance.tablet.adapter.TransactionsTabletAdapter;
 import com.moneydesktop.finance.tablet.fragment.TransactionsPageTabletFragment;
-import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.util.*;
 import com.moneydesktop.finance.views.AmazingListView;
 import com.moneydesktop.finance.views.DateRangeView.FilterChangeListener;
 import de.greenrobot.event.EventBus;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public abstract class TransactionsFragment extends BaseFragment implements FilterChangeListener, OnDataLoadedListener {
     
@@ -292,6 +298,109 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
         	}
         	
         	mQueries.add(query);
+        }
+    }
+
+    protected void emailTransactions(View headers) {
+
+        DialogUtils.showProgress(getActivity(), getString(R.string.generate_email));
+
+        new AsyncTask<View, Void, String>() {
+
+            @Override
+            protected String doInBackground(View... params) {
+
+                View headers = params[0];
+
+                String path = "";
+                Bitmap image = getWholeListViewItemsToBitmap(headers);
+
+                if (image != null) {
+                    path = FileIO.saveBitmap(getActivity(), image, getString(R.string.transactions_list));
+                }
+
+                return path;
+            }
+
+            @Override
+            protected void onPostExecute(String path) {
+
+                DialogUtils.hideProgress();
+
+                if (path != null && !path.equals("")) {
+                    EmailUtils.sendEmail(getActivity(), getString(R.string.email_transactions_subject), "", path);
+                }
+            }
+
+        }.execute(headers);
+    }
+
+    private  Bitmap getWholeListViewItemsToBitmap(View headers) {
+
+        synchronized (mTransactionsList) {
+
+            Bitmap listBitmap;
+
+            try {
+
+                final float divider = UiUtils.getDynamicPixels(getActivity(), 1);
+                int allItemsHeight = headers == null ? 0 : headers.getHeight();
+
+                List<Bitmap> bitmaps = new ArrayList<Bitmap>();
+
+                if (headers != null) {
+                    Bitmap header = UiUtils.convertViewToBitmap(headers);
+                    bitmaps.add(header);
+                }
+
+                ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                for (int i = 0; i < mAdapter.getCount(); i++) {
+
+                    View childView = mAdapter.getView(i, null, mTransactionsList);
+
+                    if (childView.getLayoutParams() == null) {
+                        childView.setLayoutParams(params);
+                    }
+
+                    int width = View.MeasureSpec.makeMeasureSpec(mTransactionsList.getWidth(),
+                            View.MeasureSpec.EXACTLY);
+                    int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+
+                    childView.measure(width, height);
+
+                    childView.layout(0, 0, childView.getMeasuredWidth(), childView.getMeasuredHeight());
+                    childView.setDrawingCacheEnabled(true);
+                    childView.buildDrawingCache();
+
+                    bitmaps.add(childView.getDrawingCache());
+                    allItemsHeight += childView.getMeasuredHeight();
+                }
+
+                listBitmap = Bitmap.createBitmap(mTransactionsList.getMeasuredWidth(), (int) (allItemsHeight + mAdapter.getCount() * divider), Bitmap.Config.ARGB_8888);
+                final Canvas canvas = new Canvas(listBitmap);
+                canvas.drawColor(getResources().getColor(R.color.gray1));
+
+                final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                int currentTop = 0;
+
+                for (int i = 0; i < bitmaps.size(); i++) {
+
+                    Bitmap bmp = bitmaps.get(i);
+                    canvas.drawBitmap(bmp, 0, currentTop, paint);
+                    currentTop += (bmp.getHeight() + divider);
+
+                    bmp.recycle();
+                    bmp = null;
+                }
+
+            } catch (Exception ex) {
+                Log.e(TAG, "Error creating transactions email", ex);
+                return null;
+            }
+
+            return listBitmap;
         }
     }
 }

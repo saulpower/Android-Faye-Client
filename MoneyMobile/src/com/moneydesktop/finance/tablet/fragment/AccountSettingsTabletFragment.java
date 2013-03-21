@@ -1,23 +1,13 @@
 package com.moneydesktop.finance.tablet.fragment;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
-
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
@@ -35,8 +25,11 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.SlidingView;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public class AccountSettingsTabletFragment extends BaseFragment{
+
+public class AccountSettingsTabletFragment extends BaseFragment {
 
 	private static String mAccountName;
 	private static String mAccountId;
@@ -74,14 +67,7 @@ public class AccountSettingsTabletFragment extends BaseFragment{
 
 	@Override
 	public FragmentType getType() {
-		return null;
-	}
-		
-	@Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        
-        mActivity.onFragmentAttached(this);
+		return FragmentType.ACCOUNT_SETTINGS;
 	}
 
 	public static AccountSettingsTabletFragment newInstance(Intent intent) {
