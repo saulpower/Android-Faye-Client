@@ -143,7 +143,7 @@ public class BarGraphView extends RelativeLayout implements
                     .convertDpToPixel(240, getContext()) / 2)));
             int pY = (int) (barActualHeight(mSelectedBar) - (UiUtils.convertDpToPixel(110,
                     getContext())));
-
+            if(touchedBar.getRect() != null){
             BarGraphPopUpView popup = new BarGraphPopUpView(getContext(), touchedBar.getLeft() + ((touchedBar.getRect().left + touchedBar.getRect().right) / 2) - 20, touchedBar.getRect().top - 50);
 
             popup.mTopLine.setText(mSelectedBar.getPopupText());
@@ -180,6 +180,7 @@ public class BarGraphView extends RelativeLayout implements
                     getContext().startActivity(clickIntent);
                 }
             });
+            }
         }
 
 
@@ -197,7 +198,13 @@ public class BarGraphView extends RelativeLayout implements
     private int barActualHeight(BarView v) {
 
         Rect bar = v.getRect();
-        int retVal = bar.top - 20;
+        int retVal;
+        if(bar != null) {
+            retVal = bar.top - 20;
+        }
+        else{
+            retVal = this.getBottom();
+        }
         return (int) retVal;
     }
 

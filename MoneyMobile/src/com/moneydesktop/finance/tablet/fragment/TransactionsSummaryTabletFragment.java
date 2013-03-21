@@ -86,8 +86,7 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
         mFragmentLabel = (TextView) mRoot
                 .findViewById(R.id.tablet_transaction_summary_title);
         Fonts.applySecondaryItalicFont(mFragmentLabel, 12);
-        mGraph = (BarGraphView) mRoot
-                .findViewById(R.id.tablet_transaction_summary_graph);
+        mGraph = (BarGraphView) mRoot.findViewById(R.id.tablet_transaction_summary_graph);
         mAdapter = new BasicBarChartAdapter(new ArrayList());
         mGraph.setAdapter(mAdapter);
         mDaily = (UpArrowButton) mRoot

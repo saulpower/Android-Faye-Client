@@ -31,15 +31,36 @@
                 app:isVertical="false"
                 app:lineColor="@color/gray5"
                 app:lineStrokeWidth="2dp" />
-
-            <com.moneydesktop.finance.views.BarGraphView
-                android:id="@+id/tablet_transaction_summary_graph"
-                android:background="@drawable/grid_repeat"
+            <RelativeLayout
+                android:id="@+id/graph_container"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight=".75"
-                android:layout_margin="10dp" />
+                android:orientation="horizontal"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp">
+                <com.moneydesktop.finance.views.LineView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    app:isVertical="true"
+                    android:layout_alignParentLeft="true"
+                    app:lineColor="@color/gray1"
+                    app:lineStrokeWidth="2dp" />
 
+                <com.moneydesktop.finance.views.BarGraphView
+                    android:id="@+id/tablet_transaction_summary_graph"
+                    android:background="@drawable/grid_repeat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"/>
+
+                <com.moneydesktop.finance.views.LineView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    app:isVertical="true"
+                    android:layout_alignParentRight="true"
+                    app:lineColor="@color/gray1"
+                    app:lineStrokeWidth="2dp" />
+            </RelativeLayout>
             <LinearLayout
                 android:id="@+id/tablet_transaction_button_layout"
                 android:layout_width="match_parent"
