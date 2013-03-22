@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.views.chart;
+package com.moneydesktop.finance.views.piechart;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -16,18 +16,18 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 
 import com.moneydesktop.finance.views.FrictionDynamics;
-import com.moneydesktop.finance.views.chart.PieChartView.OnInfoClickListener;
-import com.moneydesktop.finance.views.chart.PieChartView.OnPieChartChangeListener;
-import com.moneydesktop.finance.views.chart.PieChartView.OnPieChartExpandListener;
-import com.moneydesktop.finance.views.chart.PieChartView.OnPieChartReadyListener;
-import com.moneydesktop.finance.views.chart.PieChartView.OnRotationStateChangeListener;
-import com.moneydesktop.finance.views.chart.PieChartView.PieChartAnchor;
+import com.moneydesktop.finance.views.piechart.PieChartView.OnInfoClickListener;
+import com.moneydesktop.finance.views.piechart.PieChartView.OnPieChartChangeListener;
+import com.moneydesktop.finance.views.piechart.PieChartView.OnPieChartExpandListener;
+import com.moneydesktop.finance.views.piechart.PieChartView.OnPieChartReadyListener;
+import com.moneydesktop.finance.views.piechart.PieChartView.OnRotationStateChangeListener;
+import com.moneydesktop.finance.views.piechart.PieChartView.PieChartAnchor;
 
 public class ExpandablePieChartView extends AdapterView<Adapter> implements OnInfoClickListener {
     
     public final String TAG = this.getClass().getSimpleName();
     
-    /** The center point of the chart */
+    /** The center point of the piechart */
     private PointF mCenter = new PointF();
 
 	private Bitmap mDrawingCache;
@@ -225,9 +225,9 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 	}
 	
 	/**
-	 * Provides a check to see if the child pie chart is expanded
+	 * Provides a check to see if the child pie piechart is expanded
 	 * 
-	 * @return True if the child pie chart is expanded
+	 * @return True if the child pie piechart is expanded
 	 */
 	public boolean isExpanded() {
 		
@@ -254,7 +254,7 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 	
 	/**
 	 * Create the background drawable for when
-	 * the chart is moved.
+	 * the piechart is moved.
 	 */
 	private void createCache() {
 		
@@ -381,10 +381,11 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 	}
 
     /**
-     * Adds a view as a child view and takes care of measuring it
-     * 
-     * @param child The view to add
-     * @param layoutMode Either LAYOUT_MODE_ABOVE or LAYOUT_MODE_BELOW
+     *
+     * @param chart
+     * @param index
+     * @param width
+     * @param height
      */
     private void addAndMeasureChart(final PieChartView chart, final int index, int width, int height) {
 
@@ -534,14 +535,14 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 	public interface OnExpandablePieChartChangeListener {
 		
 		/**
-		 * Notify that the group chart has changed
+		 * Notify that the group piechart has changed
 		 * 
 		 * @param groupPosition The currently selected groupPosition
 		 */
 		public void onGroupChanged(int groupPosition);
 		
 		/**
-		 * Notify that the child chart has changed
+		 * Notify that the child piechart has changed
 		 * 
 		 * @param groupPosition The currently selected groupPosition
 		 * @param childPosition The currently selected childPosition
@@ -558,7 +559,7 @@ public class ExpandablePieChartView extends AdapterView<Adapter> implements OnIn
 		 * 
 		 * @param groupPosition The currently selected groupPosition
 		 * @param childPosition The currently selected childPosition.  Will return
-		 * 			-1 if child chart is not currently showing.
+		 * 			-1 if child piechart is not currently showing.
 		 */
 		public void onInfoClicked(int groupPosition, int childPosition);
 	}

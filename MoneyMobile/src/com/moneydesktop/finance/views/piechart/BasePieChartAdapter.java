@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.views.chart;
+package com.moneydesktop.finance.views.piechart;
 
 import android.view.View;
 import android.view.ViewGroup;

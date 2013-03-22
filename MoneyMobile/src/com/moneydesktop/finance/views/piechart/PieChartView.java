@@ -1,42 +1,28 @@
-package com.moneydesktop.finance.views.chart;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+package com.moneydesktop.finance.views.piechart;
 
 import android.content.Context;
 import android.database.DataSetObserver;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PixelFormat;
-import android.graphics.PointF;
-import android.graphics.PorterDuff;
-import android.graphics.Rect;
+import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.SoundEffectConstants;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.VelocityTracker;
-import android.view.View;
-import android.view.ViewConfiguration;
+import android.view.*;
 import android.view.animation.AnimationUtils;
 import android.view.animation.OvershootInterpolator;
-
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.CaretDrawable;
 import com.moneydesktop.finance.views.Dynamics;
-import com.moneydesktop.finance.views.chart.ThreadAnimator.AnimationListener;
+import com.moneydesktop.finance.views.piechart.ThreadAnimator.AnimationListener;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A view that creates a Pie Chart which is backed by an adapter providing the
- * data for each slice of the pie chart.  The chart can be rotated by touch and
+ * data for each slice of the pie piechart.  The piechart can be rotated by touch and
  * automatically snaps to one of the compass points, defaults to {@link PieChartAnchor#RIGHT}.  
  * To turn off the rotation feature simply call {@link #setEnabled(boolean)} and
  * set it to false.
@@ -77,13 +63,13 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     /** Represents a touch to the info circle */
     private static final int INFO_INDEX = -2;
 	
-	/** User is not touching the chart */
+	/** User is not touching the piechart */
     public static final int TOUCH_STATE_RESTING = 0;
 
     /** User is touching the list and right now it's still a "click" */
     private static final int TOUCH_STATE_CLICK = 1;
 
-    /** User is rotating the chart */
+    /** User is rotating the piechart */
     public static final int TOUCH_STATE_ROTATE = 2;
     
     public static final int CHART_HIDDEN = 0;
@@ -122,7 +108,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     /** Y-coordinate of the down event */
     private int mTouchStartY;
     
-    /** The degree to snap the chart to when rotating */
+    /** The degree to snap the piechart to when rotating */
     private float mSnapToDegree = DEFAULT_SNAP_DEGREE;
     
     /** Our starting rotation degree */
@@ -131,10 +117,10 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     /** The last rotation degree after touch */
     private float mLastRotation = 0;
     
-    /** The rotating direction of the chart */
+    /** The rotating direction of the piechart */
     private boolean mRotatingClockwise;
     
-    /** The diameter of the chart */
+    /** The diameter of the piechart */
     private int mChartDiameter;
 	
 	private float mInfoRadius;
@@ -142,12 +128,12 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     /** The pixel density of the current device */
     private float mPixelDensity;
     
-    /** The center point of the chart */
+    /** The center point of the piechart */
     private PointF mCenter = new PointF();
 	
 	private float mStrokeWidth;
     
-    /** The current degrees of rotation of the chart */
+    /** The current degrees of rotation of the piechart */
 	private float mRotationDegree = 0;
 	
 	private float mChartScale = 1.0f;
@@ -232,16 +218,16 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     /**
      * Is the current Pie Chart hidden.
      * 
-     * @return True if the chart is hidden, false otherwise.
+     * @return True if the piechart is hidden, false otherwise.
      */
     public boolean isChartHidden() {
     	return mChartHidden;
     }
 	
     /**
-     * Set the rotation degree of the chart.
+     * Set the rotation degree of the piechart.
      * 
-     * @param rotationDegree the degree to rotate the chart to
+     * @param rotationDegree the degree to rotate the piechart to
      */
 	void setRotationDegree(float rotationDegree) {
 		
@@ -1004,7 +990,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
      * Toggle the Pie Chart to show or hide depending on its current
      * state.
      * 
-     * @return True if the chart was hidden, false otherwise.
+     * @return True if the piechart was hidden, false otherwise.
      */
     public int toggleChart() {
     	
@@ -1061,14 +1047,14 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     /**
-     * Snaps the chart rotation to a given snap degree
+     * Snaps the piechart rotation to a given snap degree
      */
     private void snapTo() {
     	snapTo(true);
     }
     
     /**
-     * Snaps the chart rotation to a given snap degree
+     * Snaps the piechart rotation to a given snap degree
      */
     private void snapTo(boolean animated) {
     	
@@ -1086,7 +1072,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     }
     
     /**
-     * Animates the pie chart's rotation to a specific degree
+     * Animates the pie piechart's rotation to a specific degree
      * 
      * @param index the index of the PieSliceView
      */
@@ -1099,7 +1085,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     }
     
     /**
-     * Animates the pie chart's rotation to a specific degree
+     * Animates the pie piechart's rotation to a specific degree
      * 
      * @param slice the PieSliceView to rotate to
      * @param index the index of the PieSliceView
@@ -1172,7 +1158,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     }
     
     /**
-     * Rotate the chart based on a given (x,y) coordinate
+     * Rotate the piechart based on a given (x,y) coordinate
      * 
      * @param x The x-coordinate
      * @param y The y-coordinate
@@ -1186,7 +1172,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     /**
-     * Rotates the chart rotation degree. Takes care of rotation (if enabled) and
+     * Rotates the piechart rotation degree. Takes care of rotation (if enabled) and
      * snapping
      * 
      * @param degree The degree to rotate to
@@ -1201,9 +1187,9 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
     }
     
     /**
-     * Checks which way the chart is rotating.
+     * Checks which way the piechart is rotating.
      * 
-     * @param previous The previous degree the chart was rotated to
+     * @param previous The previous degree the piechart was rotated to
      */
     private void setRotatingClockwise(float previous) {
 
@@ -1257,10 +1243,10 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	/**
 	 * Get the sum of all the percents from the adapter
 	 * to help with validation.  We need an approximate
-	 * total of 1.0f so that the chart can be rendered
+	 * total of 1.0f so that the piechart can be rendered
 	 * properly.
 	 * 
-	 * @param adapter The adapter supplying the chart's data
+	 * @param adapter The adapter supplying the piechart's data
 	 * @return The sum of all percentages provided by the adapter
 	 */
 	private float validAdapter(BasePieChartAdapter adapter) {
@@ -1275,7 +1261,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 	}
 	
 	/**
-	 * Resets the chart and recycles all PieSliceDrawables
+	 * Resets the piechart and recycles all PieSliceDrawables
 	 */
 	private void resetChart() {
 		
@@ -1556,7 +1542,7 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 		
 		/**
 		 * Draw the PieChart to a canvas, making sure that
-		 * all slices have been added and the chart has snapped
+		 * all slices have been added and the piechart has snapped
 		 * to its anchor.
 		 * 
 		 * @param canvas the canvas to draw to
@@ -1583,11 +1569,11 @@ public class PieChartView extends SurfaceView implements SurfaceHolder.Callback 
 		}
 		
 		/**
-		 * Draw the pie chart
+		 * Draw the pie piechart
 		 * 
-		 * @param canvas The canvas to draw the chart on
-		 * @param rotationDegree The current rotation of the chart
-		 * @param scale The scale of the chart
+		 * @param canvas The canvas to draw the piechart on
+		 * @param rotationDegree The current rotation of the piechart
+		 * @param scale The scale of the piechart
 		 * @param showInfo Should the info panel be drawn
 		 */
 		private void doDraw(Canvas canvas, float rotationDegree, float scale, boolean showInfo) {

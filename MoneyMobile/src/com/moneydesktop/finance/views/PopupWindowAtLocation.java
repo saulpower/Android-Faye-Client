@@ -53,7 +53,7 @@ public class PopupWindowAtLocation extends FrameLayout {
      * @param positionY        -- the Y position for the popUp to be aligned with
      * @param buttonTitles     -- the text that will be displayed for each of the buttons. Note** MUST be put in the list in the same order as the onClickListeners
      * @param onClickListeners -- onClick listeners for the buttons supplied. Note** MUST be put in the list in the same order as the Button Titles
-     * @param view
+     * @param touchedView
      */
     public PopupWindowAtLocation(Context context, ViewGroup parentView, int positionX, int positionY, String[] buttonTitles, List<OnClickListener> onClickListeners, View touchedView) {
         super(context);

@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.views.chart;
+package com.moneydesktop.finance.views.piechart;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -26,8 +26,8 @@ import com.moneydesktop.finance.shared.activity.BaseActivity;
 import com.moneydesktop.finance.shared.adapter.CategoryPieChartAdapter;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.views.chart.ExpandablePieChartView.OnExpandablePieChartChangeListener;
-import com.moneydesktop.finance.views.chart.ExpandablePieChartView.OnExpandablePieChartInfoClickListener;
+import com.moneydesktop.finance.views.piechart.ExpandablePieChartView.OnExpandablePieChartChangeListener;
+import com.moneydesktop.finance.views.piechart.ExpandablePieChartView.OnExpandablePieChartInfoClickListener;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -172,7 +172,7 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 				
 				mList.setVisibility(View.INVISIBLE);
 				
-				// Update position and chart expanded state
+				// Update position and piechart expanded state
 				mExpanded = mChart.isExpanded();
 				mGroupPosition = mChart.getSelectedGroup();
 				
@@ -212,7 +212,7 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 	}
 	
 	/**
-	 * Refresh the data backing the expandable chart
+	 * Refresh the data backing the expandable piechart
 	 */
 	public void updateChart() {
 		mAdapter.refreshData();

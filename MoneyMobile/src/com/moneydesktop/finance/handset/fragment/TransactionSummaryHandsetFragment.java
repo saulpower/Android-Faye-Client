@@ -21,7 +21,7 @@ import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.shared.fragment.GrowFragment;
 import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.views.BarGraphView;
+import com.moneydesktop.finance.views.barchart.BarGraphView;
 import com.moneydesktop.finance.views.BarView;
 
 public class TransactionSummaryHandsetFragment extends GrowFragment {

@@ -56,7 +56,7 @@
 			        android:weightSum="7"
 			        android:orientation="horizontal" >
         
-				    <com.moneydesktop.finance.views.chart.ExpandablePieChartView
+				    <com.moneydesktop.finance.views.piechart.ExpandablePieChartView
 				        android:id="@+id/chart"
 				        android:layout_width="0dp"
 				        android:layout_weight="4"

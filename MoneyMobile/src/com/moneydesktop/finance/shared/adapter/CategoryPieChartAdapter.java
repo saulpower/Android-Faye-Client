@@ -8,10 +8,10 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.database.Category;
 import com.moneydesktop.finance.util.DateRange;
 import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.views.chart.BaseExpandablePieChartAdapter;
-import com.moneydesktop.finance.views.chart.InfoDrawable;
-import com.moneydesktop.finance.views.chart.PieChartView;
-import com.moneydesktop.finance.views.chart.PieSliceDrawable;
+import com.moneydesktop.finance.views.piechart.BaseExpandablePieChartAdapter;
+import com.moneydesktop.finance.views.piechart.InfoDrawable;
+import com.moneydesktop.finance.views.piechart.PieChartView;
+import com.moneydesktop.finance.views.piechart.PieSliceDrawable;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

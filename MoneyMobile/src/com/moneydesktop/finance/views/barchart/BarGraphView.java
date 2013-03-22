@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.views;
+package com.moneydesktop.finance.views.barchart;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,17 +17,17 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.TxFilter;
-import com.moneydesktop.finance.shared.adapter.BaseBarChartAdapter;
-import com.moneydesktop.finance.shared.adapter.BaseBarChartAdapter.DataSetChangeListener;
+import com.moneydesktop.finance.views.barchart.BaseBarChartAdapter.DataSetChangeListener;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.BarView;
+import com.moneydesktop.finance.views.PopupWindowAtLocation;
 import com.nineoldandroids.animation.ObjectAnimator;
 
 import java.text.NumberFormat;
 import java.util.Date;
 
-public class BarGraphView extends RelativeLayout implements
-        DataSetChangeListener {
+public class BarGraphView extends RelativeLayout implements DataSetChangeListener {
 
     LinearLayout mBarContainer;
     int mMargin;
@@ -205,7 +205,7 @@ public class BarGraphView extends RelativeLayout implements
         else{
             retVal = this.getBottom();
         }
-        return (int) retVal;
+        return retVal;
     }
 
     public int getGraphChildCount() {

@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.views;
+package com.moneydesktop.finance.views.barchart;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.CaretDrawable;
 
 public class BarGraphPopUpView extends RelativeLayout {
     TextView mTopLine;

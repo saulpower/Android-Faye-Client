@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.views.chart;
+package com.moneydesktop.finance.views.piechart;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -11,7 +11,7 @@ import android.graphics.drawable.Drawable;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.views.chart.ThreadAnimator.AnimationListener;
+import com.moneydesktop.finance.views.piechart.ThreadAnimator.AnimationListener;
 
 /**
  * 

@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import com.moneydesktop.finance.R;
@@ -19,11 +18,10 @@ import com.moneydesktop.finance.model.BarViewModel;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.GraphBarTouchEvent;
 import com.moneydesktop.finance.model.EventMessage.GraphDataZoomEvent;
-import com.moneydesktop.finance.shared.adapter.BaseBarChartAdapter;
 import com.moneydesktop.finance.shared.adapter.BasicBarChartAdapter;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.views.BarGraphView;
+import com.moneydesktop.finance.views.barchart.BarGraphView;
 import com.moneydesktop.finance.views.UpArrowButton;
 import de.greenrobot.event.EventBus;
 
@@ -86,7 +84,7 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
         mFragmentLabel = (TextView) mRoot
                 .findViewById(R.id.tablet_transaction_summary_title);
         Fonts.applySecondaryItalicFont(mFragmentLabel, 12);
-        mGraph = (BarGraphView) mRoot.findViewById(R.id.tablet_transaction_summary_graph);
+        mGraph = (BarGraphView) mRoot.findViewById(R.id.bar_chart);
         mAdapter = new BasicBarChartAdapter(new ArrayList());
         mGraph.setAdapter(mAdapter);
         mDaily = (UpArrowButton) mRoot
@@ -232,8 +230,7 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
         SimpleDateFormat formatLabel = new SimpleDateFormat("d");
         for (int c = 0; c < data.size(); c++) {
             StringBuffer label = new StringBuffer();
-            label = formatLabel
-                    .format(data.get(c)[0], label, new FieldPosition(0));
+            label = formatLabel.format(data.get(c)[0], label, new FieldPosition(0));
             StringBuffer popup = new StringBuffer();
             popup = formatPopup.format(data.get(c)[0], popup, new FieldPosition(0));
             double time = data.get(c)[0];

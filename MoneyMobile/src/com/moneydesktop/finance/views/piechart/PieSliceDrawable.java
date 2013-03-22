@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.views.chart;
+package com.moneydesktop.finance.views.piechart;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -74,7 +74,7 @@ public class PieSliceDrawable extends Drawable {
 	/**
 	 * Returns whether this slice contains the degree supplied.
 	 * 
-	 * @param rotationOffset The overall rotational offset of the chart
+	 * @param rotationOffset The overall rotational offset of the piechart
 	 * @param degree The degree to be checked
 	 * @return True if this slice contains the degree
 	 */
@@ -97,7 +97,7 @@ public class PieSliceDrawable extends Drawable {
 	}
 	
 	/**
-	 * Create a new pie slice to be used in a pie chart.
+	 * Create a new pie slice to be used in a pie piechart.
 	 * 
 	 * @param context the context for this view
 	 * @param degreeOffset the starting degree offset for the slice

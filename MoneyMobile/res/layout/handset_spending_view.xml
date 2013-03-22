@@ -30,7 +30,7 @@
          
      </LinearLayout>
         
-    <com.moneydesktop.finance.views.chart.ExpandablePieChartView
+    <com.moneydesktop.finance.views.piechart.ExpandablePieChartView
         android:id="@+id/chart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -1,22 +1,12 @@
 package com.moneydesktop.finance.tablet.fragment;
 
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.TextSwitcher;
-import android.widget.TextView;
 
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
-import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
-import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.views.chart.ChartListBridge;
-import com.moneydesktop.finance.views.chart.ExpandablePieChartView;
-
-import de.greenrobot.event.EventBus;
 
 public class AccountSummaryTabletFragment extends SummaryTabletFragment {
 

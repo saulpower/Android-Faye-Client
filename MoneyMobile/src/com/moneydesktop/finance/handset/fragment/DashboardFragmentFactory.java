@@ -3,7 +3,7 @@ package com.moneydesktop.finance.handset.fragment;
 import com.moneydesktop.finance.shared.fragment.GrowFragment;
 import com.moneydesktop.finance.tablet.fragment.AccountSummaryTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.SpendingChartTabletFragment;
-import com.moneydesktop.finance.tablet.fragment.TransactionsSummaryTabletFragment;
+import com.moneydesktop.finance.tablet.fragment.TransactionsChartTabletFragment;
 
 public class DashboardFragmentFactory {
 
@@ -27,7 +27,7 @@ public class DashboardFragmentFactory {
         	case 0:
         		return AccountSummaryTabletFragment.newInstance(position);
 	        case 1:
-	            return TransactionsSummaryTabletFragment.newInstance(position);
+	            return TransactionsChartTabletFragment.newInstance(position);
 	        case 2:
 	            return SpendingChartTabletFragment.newInstance(position);
         }

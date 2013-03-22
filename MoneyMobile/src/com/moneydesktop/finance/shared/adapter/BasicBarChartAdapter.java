@@ -3,6 +3,7 @@ package com.moneydesktop.finance.shared.adapter;
 import android.content.Context;
 import com.moneydesktop.finance.model.BarViewModel;
 import com.moneydesktop.finance.views.BarView;
+import com.moneydesktop.finance.views.barchart.BaseBarChartAdapter;
 
 import java.util.ArrayList;
 

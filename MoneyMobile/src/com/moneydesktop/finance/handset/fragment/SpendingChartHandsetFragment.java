@@ -16,9 +16,9 @@ import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.views.chart.ChartListBridge;
-import com.moneydesktop.finance.views.chart.ExpandablePieChartView;
-import com.moneydesktop.finance.views.chart.PieChartView.OnPieChartReadyListener;
+import com.moneydesktop.finance.views.piechart.ChartListBridge;
+import com.moneydesktop.finance.views.piechart.ExpandablePieChartView;
+import com.moneydesktop.finance.views.piechart.PieChartView.OnPieChartReadyListener;
 import de.greenrobot.event.EventBus;
 import net.simonvt.menudrawer.MenuDrawer;
 

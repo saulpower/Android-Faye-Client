@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.shared.adapter;
+package com.moneydesktop.finance.views.barchart;
 
 import com.moneydesktop.finance.views.BarView;
 

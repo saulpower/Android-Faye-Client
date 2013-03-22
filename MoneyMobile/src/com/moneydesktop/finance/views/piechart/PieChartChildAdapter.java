@@ -1,4 +1,4 @@
-package com.moneydesktop.finance.views.chart;
+package com.moneydesktop.finance.views.piechart;
 
 public class PieChartChildAdapter extends BasePieChartAdapter {
     
