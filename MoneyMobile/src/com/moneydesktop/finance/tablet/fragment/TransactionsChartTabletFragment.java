@@ -6,13 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums;
-import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.BarViewModel;
 import com.moneydesktop.finance.tablet.adapter.TransactionChartAdapter;
 import com.moneydesktop.finance.views.UpArrowButton;
 import com.moneydesktop.finance.views.barchart.BarChartView;
 
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,9 +25,9 @@ public class TransactionsChartTabletFragment extends SummaryTabletFragment {
     private BarChartView mGraph;
     private TransactionChartAdapter mAdapter;
 
-    private ArrayList<BarViewModel> mBarList;
+    private ArrayList<BarViewModel> mBarList = new ArrayList<BarViewModel>();
 
-    private UpArrowButton mDay;
+    private UpArrowButton mDay, mMonth;
 
     public static TransactionsChartTabletFragment newInstance(int position) {
 
@@ -61,7 +60,8 @@ public class TransactionsChartTabletFragment extends SummaryTabletFragment {
         setupViews();
         configureView();
 
-        loadDaily();
+        mAdapter = new TransactionChartAdapter(mActivity);
+        mGraph.setAdapter(mAdapter);
 
         return mRoot;
     }
@@ -72,29 +72,19 @@ public class TransactionsChartTabletFragment extends SummaryTabletFragment {
 
         mGraph = (BarChartView) mRoot.findViewById(R.id.bar_chart);
         mDay = (UpArrowButton) mRoot.findViewById(R.id.tablet_transaction_daily_button);
+        mMonth = (UpArrowButton) mRoot.findViewById(R.id.tablet_transaction_monthly_button);
 
         mDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAdapter.reverse();
+                mAdapter.showDaily();
             }
         });
-    }
-
-    private void loadDaily() {
-
-        mBarList = new ArrayList<BarViewModel>();
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-        List<Double[]> data = Transactions.get30DayExpenseTotals(calendar.getTime());
-
-        for (Double[] item : data) {
-            mBarList.add(new BarViewModel(item[1]));
-        }
-
-        mAdapter = new TransactionChartAdapter(mActivity, mBarList);
-        mGraph.setAdapter(mAdapter);
+        mMonth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAdapter.reverse2();
+            }
+        });
     }
 }

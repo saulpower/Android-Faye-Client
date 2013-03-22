@@ -82,6 +82,10 @@ public class BarViewTwo extends View {
         invalidate();
     }
 
+    public int getBarColor() {
+        return mBarPaint.getColor();
+    }
+
     public void setBarAmount(float amount) {
         mBarAmount = amount;
         updateBarBounds();

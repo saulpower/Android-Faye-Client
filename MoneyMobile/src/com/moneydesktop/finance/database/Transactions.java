@@ -14,6 +14,7 @@ import com.moneydesktop.finance.views.AnimatedEditText;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
 import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -800,51 +801,112 @@ public class Transactions extends BusinessObject  {
         
         return "S";
     }
+
     /**
-     * Returns the expense transaction totals for the last 30 days of transactions
+     * Returns the daily expense totals for the last x amount of days.
      *
-     * @param  end the Date to count back from
+     * @param days The amount of days to go back
+     *
+     * @return
      */
-    public static List<Double[]> get30DayExpenseTotals(Date end) {
-        CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
-        Set<Long> catIDs = new HashSet<Long>();
-        List<Category> cats = cat.loadAll();
-        for (int i = 0; i < cats.size(); i++) {
-            if (isCategoryIncome(cats.get(i))) {
-                catIDs.add(cats.get(i).getId());
-            }
-        }
-        String SQLQuery = new String();
-        Iterator<Long> iter = catIDs.iterator();
-        while (iter.hasNext()) {
+    public static List<Transactions> getDailyExpenseTotals(int days) {
 
-            SQLQuery = SQLQuery.toString() + "CATEGORY_ID != " + iter.next() + " AND ";
-        }
-        SQLQuery = SQLQuery.substring(0, (SQLQuery.length() - 4));
-        String query = String.format(Constant.QUERY_DAILY_TRANSACTIONS, SQLQuery);
+        String query = String.format(Constant.QUERY_DAILY_TRANSACTIONS, getCategoryFilter());
+
+        Date today = new Date();
+        Date start = getDate(today, days);
+
         SQLiteDatabase db = ApplicationContext.getDb();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(end);
-        cal.add(Calendar.DAY_OF_YEAR, -30);
-        Date start = cal.getTime();
         Cursor cursor = db.rawQuery(query, new String[]{
-
-                Long.toString(start.getTime()), Long.toString(end.getTime())
+                Long.toString(start.getTime()), Long.toString(today.getTime())
         });
-        cursor.moveToFirst();
-        List<Double[]> retVal = new ArrayList<Double[]>();
-        while (cursor.isAfterLast() == false) {
-            Double[] d = new Double[2];
-            d[0] = Double.valueOf(cursor.getString(0));
-            d[1] = Double.valueOf(cursor.getDouble(1));
-            retVal.add(d);
-            cursor.moveToNext();
-        }
+
+        List<Transactions> expenses = createTransactions(start, cursor);
 
         cursor.close();
 
-        return retVal;
+        return expenses;
     }
+
+    private static List<Transactions> createTransactions(Date start, Cursor cursor) {
+
+        Calendar current = Calendar.getInstance();
+        current.setTime(start);
+
+        List<Transactions> expenses = new ArrayList<Transactions>();
+
+        cursor.moveToFirst();
+
+        while (cursor.isAfterLast() == false) {
+
+            Date date = new Date(cursor.getLong(0));
+            double amount = cursor.getDouble(1);
+
+            while (!DateUtils.isSameDay(current.getTime(), date)) {
+
+                expenses.add(createExpense(current.getTime(), 0.0));
+
+                current.add(Calendar.DAY_OF_YEAR, 1);
+            }
+
+            expenses.add(createExpense(date, amount));
+
+            current.add(Calendar.DAY_OF_YEAR, 1);
+            cursor.moveToNext();
+        }
+
+        // Sort the transactions so they are in order by date
+        Collections.sort(expenses, new Comparator<Transactions>() {
+            public int compare(Transactions t1, Transactions t2) {
+                return t1.getDate().compareTo(t2.getDate());
+            }
+        });
+
+        return expenses;
+    }
+
+    private static Transactions createExpense(Date date, double amount) {
+
+        if (amount < 0f) {
+            amount = 0f;
+        }
+
+        Transactions expense = new Transactions();
+        expense.setDate(date);
+        expense.setAmount(amount);
+
+        return expense;
+    }
+
+    private static Date getDate(Date date, int days) {
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DAY_OF_YEAR, -days);
+
+        return cal.getTime();
+    }
+
+    private static String getCategoryFilter() {
+
+        CategoryDao categoryDao = ApplicationContext.getDaoSession().getCategoryDao();
+        List<Category> categories = categoryDao.loadAll();
+
+        List<Long> categoryIds = new ArrayList<Long>();
+        for (Category category : categories) {
+            if (isCategoryIncome(category)) {
+                categoryIds.add(category.getId());
+            }
+        }
+
+        StringBuilder categoryFilter = new StringBuilder();
+        for (Long id : categoryIds) {
+            categoryFilter.append("CATEGORY_ID != " + id + " AND ");
+        }
+
+        return categoryFilter.substring(0, (categoryFilter.length() - 4));
+    }
+
     /**
      * Returns the expense transaction totals associated with the last 4 quarters of transactions.
      *

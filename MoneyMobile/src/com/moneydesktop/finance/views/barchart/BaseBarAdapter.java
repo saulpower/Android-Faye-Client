@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import com.moneydesktop.finance.model.BarViewModel;
 
 /**
  * Created with IntelliJ IDEA.
@@ -71,8 +72,20 @@ public abstract class BaseBarAdapter extends BaseAdapter {
         return configureBarView(barView, position);
     }
 
+    /**
+     * Get the data item associated with the specified position in the data set.
+     *
+     * @param position Position of the item whose data we want within the adapter's
+     *                 data set.
+     * @return The data at the specified position.
+     */
+    @Override
+    public Object getItem(int position) {
+        return getBarModel(position);
+    }
+
     public abstract View configureBarView(BarViewTwo barView, int position);
 
     public abstract float getMaxAmount();
-    public abstract float getAmount(int position);
+    public abstract BarViewModel getBarModel(int position);
 }

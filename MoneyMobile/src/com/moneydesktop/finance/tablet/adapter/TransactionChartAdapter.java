@@ -4,13 +4,17 @@ import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.BarViewModel;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.barchart.BarViewTwo;
 import com.moneydesktop.finance.views.barchart.BaseBarAdapter;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,15 +36,14 @@ public class TransactionChartAdapter extends BaseBarAdapter {
 
     private int mBarColor = Color.BLUE;
 
-    public TransactionChartAdapter(Context context, List<BarViewModel> data) {
+    public TransactionChartAdapter(Context context) {
         super(context);
 
         mMinHeight = (int) UiUtils.getDynamicPixels(context, MIN_HEIGHT);
 
         mBarColor = getColor(R.color.gray4);
 
-        mData = data;
-        findMax();
+        mData = new ArrayList<BarViewModel>();
     }
 
     public void reverse() {
@@ -48,12 +51,17 @@ public class TransactionChartAdapter extends BaseBarAdapter {
         notifyDataSetChanged();
     }
 
+    public void reverse2() {
+        Collections.reverse(mData);
+        notifyDataSetInvalidated();
+    }
+
     private void findMax() {
 
         for (BarViewModel bar : mData) {
 
-            if (bar.mAmount > mMax) {
-                mMax = bar.mAmount;
+            if (bar.getAmount() > mMax) {
+                mMax = bar.getAmount();
             }
         }
     }
@@ -61,14 +69,14 @@ public class TransactionChartAdapter extends BaseBarAdapter {
     @Override
     public View configureBarView(BarViewTwo barView, int position) {
 
-        float amount = getAmount(position);
+        BarViewModel model = getBarModel(position);
 
         barView.setMinBarHeight(mMinHeight);
 
-        barView.setBarAmount(amount);
-        barView.setBarColor(mBarColor);
+        barView.setBarAmount(model.getAmount());
+        barView.setBarColor(model.getColor());
 
-        barView.setLabelText(position + "");
+        barView.setLabelText(model.getLabelText());
         barView.setLabelTypeface(Fonts.getFont(Fonts.SECONDARY_ITALIC));
         barView.setLabelTextSize(Fonts.getFontSize(16));
         barView.setLabelTextColor(mBarColor);
@@ -82,15 +90,8 @@ public class TransactionChartAdapter extends BaseBarAdapter {
     }
 
     @Override
-    public float getAmount(int position) {
-
-        float amount = mData.get(position).mAmount;
-
-        if (amount < 0f) {
-            amount = 0f;
-        }
-
-        return amount;
+    public BarViewModel getBarModel(int position) {
+        return mData.get(position);
     }
 
     /**
@@ -103,15 +104,36 @@ public class TransactionChartAdapter extends BaseBarAdapter {
         return mData.size();
     }
 
-    /**
-     * Get the data item associated with the specified position in the data set.
-     *
-     * @param position Position of the item whose data we want within the adapter's
-     *                 data set.
-     * @return The data at the specified position.
-     */
-    @Override
-    public Object getItem(int position) {
-        return mData.get(position);
+    public void showDaily() {
+
+        String popupFormat = "M/d/yyyy";
+        String labelFormat = "d";
+
+        mData.clear();
+
+        List<Transactions> data = Transactions.getDailyExpenseTotals(30);
+
+        BarViewModel temp;
+
+        for (Transactions expense : data) {
+
+            temp = new BarViewModel(mData.size(),
+                    formatDate(labelFormat, expense.getDate()),
+                    formatDate(popupFormat, expense.getDate()),
+                    expense.getAmount(),
+                    expense.getDate());
+
+            mData.add(temp);
+        }
+
+        findMax();
+        notifyDataSetInvalidated();
+    }
+
+    private String formatDate(String format, Date date) {
+
+        SimpleDateFormat mFormat = new SimpleDateFormat(format);
+
+        return mFormat.format(date);
     }
 }

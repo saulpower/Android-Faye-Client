@@ -39,11 +39,11 @@ public class BasicBarChartAdapter extends BaseBarChartAdapter {
 
     @Override
     public void getView(int position, BarView convertView) {
-        convertView.setScaleAmount((float) mBarModelList.get(position).mMaxAmount);
-        convertView.setTime((long) mBarModelList.get(position).mDate);
-        convertView.setLabelText(mBarModelList.get(position).mLabelText);
-        convertView.setPopupText(mBarModelList.get(position).mPopupText);
-        convertView.setAmountAnimated((float) mBarModelList.get(position).mAmount);
+//        convertView.setScaleAmount((float) mBarModelList.get(position).mMaxAmount);
+//        convertView.setTime((long) mBarModelList.get(position).mDate);
+//        convertView.setLabelText(mBarModelList.get(position).mLabelText);
+//        convertView.setPopupText(mBarModelList.get(position).mPopupText);
+//        convertView.setAmountAnimated((float) mBarModelList.get(position).mAmount);
 
     }
 

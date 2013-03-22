@@ -14,23 +14,18 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Transactions;
-import com.moneydesktop.finance.model.BarViewModel;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.GraphBarTouchEvent;
 import com.moneydesktop.finance.model.EventMessage.GraphDataZoomEvent;
 import com.moneydesktop.finance.shared.adapter.BasicBarChartAdapter;
 import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.views.barchart.BarGraphView;
 import com.moneydesktop.finance.views.UpArrowButton;
+import com.moneydesktop.finance.views.barchart.BarGraphView;
 import de.greenrobot.event.EventBus;
 
-import java.text.FieldPosition;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
     BarGraphView mGraph;
@@ -212,90 +207,90 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
      * @param  end the Date to count back from
      */
     private void setGraphViewDaily(Date end) {
-        clearButtonColors();
-        mDaily.setBackgroundColor(getResources().getColor(R.color.primaryColor));
-        mDaily.showArrow(true);
-        setLabelText(getResources().getString(
-                R.string.spending_daily));
-        List<Double[]> data = Transactions.get30DayExpenseTotals(end);
-        double max = 0;
-        for (int counter = 0; counter < data.size(); counter++) {
-            if (data.get(counter)[1] > max) {
-                max = data.get(counter)[1];
-            }
-        }
-        mCurrentStatus = Constant.DAILY_VIEW;
-        ArrayList<BarViewModel> barList = new ArrayList<BarViewModel>();
-        SimpleDateFormat formatPopup = new SimpleDateFormat("M/d/yyyy");
-        SimpleDateFormat formatLabel = new SimpleDateFormat("d");
-        for (int c = 0; c < data.size(); c++) {
-            StringBuffer label = new StringBuffer();
-            label = formatLabel.format(data.get(c)[0], label, new FieldPosition(0));
-            StringBuffer popup = new StringBuffer();
-            popup = formatPopup.format(data.get(c)[0], popup, new FieldPosition(0));
-            double time = data.get(c)[0];
-            barList.add(new BarViewModel(label.toString(), popup.toString(), data.get(c)[1],
-                    max, (long) time));
-        }
-        mAdapter.setNewList(barList);
-        mGraph.setMargin((int) UiUtils.getDynamicPixels(getActivity(), 3));
-        mGraph.setMax(max);
-        mGraph.setLabel(true);
-        mTransitioning = true;
-        final Handler handler = new Handler();
-        if(mGraph.getBarCount() > 0)  {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-
-                    mGraph.handleTransactionsTouch(mGraph.getBar(mGraph.getBarCount() - 1));
-                    mTransitioning = false;
-                }
-
-            }, 1100);
-        }
+//        clearButtonColors();
+//        mDaily.setBackgroundColor(getResources().getColor(R.color.primaryColor));
+//        mDaily.showArrow(true);
+//        setLabelText(getResources().getString(
+//                R.string.spending_daily));
+//        List<Double[]> data = Transactions.getDailyExpenseTotals(end);
+//        double max = 0;
+//        for (int counter = 0; counter < data.size(); counter++) {
+//            if (data.get(counter)[1] > max) {
+//                max = data.get(counter)[1];
+//            }
+//        }
+//        mCurrentStatus = Constant.DAILY_VIEW;
+//        ArrayList<BarViewModel> barList = new ArrayList<BarViewModel>();
+//        SimpleDateFormat formatPopup = new SimpleDateFormat("M/d/yyyy");
+//        SimpleDateFormat formatLabel = new SimpleDateFormat("d");
+//        for (int c = 0; c < data.size(); c++) {
+//            StringBuffer label = new StringBuffer();
+//            label = formatLabel.format(data.get(c)[0], label, new FieldPosition(0));
+//            StringBuffer popup = new StringBuffer();
+//            popup = formatPopup.format(data.get(c)[0], popup, new FieldPosition(0));
+//            double time = data.get(c)[0];
+//            barList.add(new BarViewModel(label.toString(), popup.toString(), data.get(c)[1],
+//                    max, (long) time));
+//        }
+//        mAdapter.setNewList(barList);
+//        mGraph.setMargin((int) UiUtils.getDynamicPixels(getActivity(), 3));
+//        mGraph.setMax(max);
+//        mGraph.setLabel(true);
+//        mTransitioning = true;
+//        final Handler handler = new Handler();
+//        if(mGraph.getBarCount() > 0)  {
+//            handler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//
+//                    mGraph.handleTransactionsTouch(mGraph.getBar(mGraph.getBarCount() - 1));
+//                    mTransitioning = false;
+//                }
+//
+//            }, 1100);
+//        }
     }
 
     private void setGraphViewMonthly(Date end) {
-        clearButtonColors();
-        mMonthly.showArrow(true);
-        mMonthly.setBackgroundColor(getResources().getColor(
-                R.color.primaryColor));
-        setLabelText(getResources().getString(
-                R.string.spending_monthly));
-        List<Double[]> data = Transactions.getMonthlyExpenseTotals(end);
-        double max = 0;
-        for (int i = 0; i < data.size(); i++) {
-            if (data.get(i)[1] > max) {
-                max = data.get(i)[1];
-            }
-        }
-        mCurrentStatus = Constant.MONTHLY_VIEW;
-        ArrayList<BarViewModel> barList = new ArrayList<BarViewModel>();
-        SimpleDateFormat format = new SimpleDateFormat("MMM yyyy");
-        for (int c = 0; c < data.size(); c++) {
-            StringBuffer date = new StringBuffer();
-            date = format
-                    .format(data.get(c)[0], date, new FieldPosition(0));
-            double time = data.get(c)[0];
-            barList.add(new BarViewModel(date.toString().toUpperCase(), date.toString().toUpperCase(),
-                    data.get(c)[1], max, (long) time));
-        }
-        mAdapter.setNewList(barList);
-        mGraph.setMax(max);
-        mGraph.setLabel(true);
-        mGraph.setMargin((int) UiUtils.getDynamicPixels(getActivity(), 3));
-        final Handler handler = new Handler();
-        mTransitioning = true;
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if(mGraph.getBarCount() > 0) {
-                    mGraph.handleTransactionsTouch(mGraph.getBar(mGraph.getBarCount() - 1));
-                }
-                mTransitioning = false;
-            }
-        }, 1000);
+//        clearButtonColors();
+//        mMonthly.showArrow(true);
+//        mMonthly.setBackgroundColor(getResources().getColor(
+//                R.color.primaryColor));
+//        setLabelText(getResources().getString(
+//                R.string.spending_monthly));
+//        List<Double[]> data = Transactions.getMonthlyExpenseTotals(end);
+//        double max = 0;
+//        for (int i = 0; i < data.size(); i++) {
+//            if (data.get(i)[1] > max) {
+//                max = data.get(i)[1];
+//            }
+//        }
+//        mCurrentStatus = Constant.MONTHLY_VIEW;
+//        ArrayList<BarViewModel> barList = new ArrayList<BarViewModel>();
+//        SimpleDateFormat format = new SimpleDateFormat("MMM yyyy");
+//        for (int c = 0; c < data.size(); c++) {
+//            StringBuffer date = new StringBuffer();
+//            date = format
+//                    .format(data.get(c)[0], date, new FieldPosition(0));
+//            double time = data.get(c)[0];
+//            barList.add(new BarViewModel(date.toString().toUpperCase(), date.toString().toUpperCase(),
+//                    data.get(c)[1], max, (long) time));
+//        }
+//        mAdapter.setNewList(barList);
+//        mGraph.setMax(max);
+//        mGraph.setLabel(true);
+//        mGraph.setMargin((int) UiUtils.getDynamicPixels(getActivity(), 3));
+//        final Handler handler = new Handler();
+//        mTransitioning = true;
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                if(mGraph.getBarCount() > 0) {
+//                    mGraph.handleTransactionsTouch(mGraph.getBar(mGraph.getBarCount() - 1));
+//                }
+//                mTransitioning = false;
+//            }
+//        }, 1000);
 
     }
     /**
@@ -304,52 +299,52 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
      * @param  end the Date to count back from
      */
     private void setGraphViewQuarterly(Date end) {
-        clearButtonColors();
-        mQuarterly.showArrow(true);
-        mQuarterly.setBackgroundColor(getResources().getColor(
-                R.color.primaryColor));
-        setLabelText(getResources().getString(
-                R.string.spending_quarterly));
-        List<Double[]> data = Transactions.getQuarterlyExpenseTotals(end);
-        double max = 0;
-        for (int i = 0; i < data.size(); i++) {
-            if (data.get(i)[1] > max) {
-                max = data.get(i)[1];
-            }
-        }
-        mCurrentStatus = Constant.QUARTERLY_VIEW;
-        ArrayList<BarViewModel> barList = new ArrayList<BarViewModel>();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy");
-        for (int c = 0; c < data.size(); c++) {
-            StringBuffer date = new StringBuffer();
-            date = format
-                    .format(data.get(c)[0], date, new FieldPosition(0));
-            int quarter = (int) (double) data.get(c)[2];
-            String addVal = getResources().getString(R.string.quarter)
-                    + ": " + Integer.toString(quarter) + ", "
-                    + date.toString();
-            double time = data.get(c)[0];
-            barList.add(new BarViewModel(addVal, addVal, data.get(c)[1], max,
-                    (long) time));
-        }
-        mAdapter.setNewList(barList);
-        mGraph.setMax(max);
-        mGraph.setLabel(true);
-        mGraph.setMargin((int) UiUtils.getDynamicPixels(getActivity(), 3));
-        if(mGraph.getBarCount() > 0)  {
-            final Handler handler = new Handler();
-            mTransitioning = true;
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mTransitioning = false;
-                    //The quarterly view takes a bit more time to initialize because of the multiple DB lookups,
-                    //so we're giving it a little extra time.
-                    mGraph.handleTransactionsTouch(mGraph.getBar(mGraph.getBarCount() - 1));
-                }
-
-            }, 1100);
-        }
+//        clearButtonColors();
+//        mQuarterly.showArrow(true);
+//        mQuarterly.setBackgroundColor(getResources().getColor(
+//                R.color.primaryColor));
+//        setLabelText(getResources().getString(
+//                R.string.spending_quarterly));
+//        List<Double[]> data = Transactions.getQuarterlyExpenseTotals(end);
+//        double max = 0;
+//        for (int i = 0; i < data.size(); i++) {
+//            if (data.get(i)[1] > max) {
+//                max = data.get(i)[1];
+//            }
+//        }
+//        mCurrentStatus = Constant.QUARTERLY_VIEW;
+//        ArrayList<BarViewModel> barList = new ArrayList<BarViewModel>();
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy");
+//        for (int c = 0; c < data.size(); c++) {
+//            StringBuffer date = new StringBuffer();
+//            date = format
+//                    .format(data.get(c)[0], date, new FieldPosition(0));
+//            int quarter = (int) (double) data.get(c)[2];
+//            String addVal = getResources().getString(R.string.quarter)
+//                    + ": " + Integer.toString(quarter) + ", "
+//                    + date.toString();
+//            double time = data.get(c)[0];
+//            barList.add(new BarViewModel(addVal, addVal, data.get(c)[1], max,
+//                    (long) time));
+//        }
+//        mAdapter.setNewList(barList);
+//        mGraph.setMax(max);
+//        mGraph.setLabel(true);
+//        mGraph.setMargin((int) UiUtils.getDynamicPixels(getActivity(), 3));
+//        if(mGraph.getBarCount() > 0)  {
+//            final Handler handler = new Handler();
+//            mTransitioning = true;
+//            handler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mTransitioning = false;
+//                    //The quarterly view takes a bit more time to initialize because of the multiple DB lookups,
+//                    //so we're giving it a little extra time.
+//                    mGraph.handleTransactionsTouch(mGraph.getBar(mGraph.getBarCount() - 1));
+//                }
+//
+//            }, 1100);
+//        }
     }
     /**
      * Returns the expense transaction totals for the last 2 years of transactions
@@ -357,45 +352,45 @@ public class TransactionsSummaryTabletFragment extends SummaryTabletFragment {
      * @param  end the Date to count back from
      */
     private void setGraphViewYearly(Date end) {
-        clearButtonColors();
-        mYearly.showArrow(true);
-        mYearly.setBackgroundColor(getResources()
-                .getColor(R.color.primaryColor));
-        setLabelText(getResources().getString(
-                R.string.spending_yearly));
-        List<Double[]> data = Transactions.getYearlyExpenseTotals(end);
-        double max = 0;
-        for (int i = 0; i < data.size(); i++) {
-            if (data.get(i)[1] > max) {
-                max = data.get(i)[1];
-            }
-        }
-        mCurrentStatus = Constant.YEARLY_VIEW;
-        ArrayList<BarViewModel> barList = new ArrayList<BarViewModel>();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy");
-        for (int c = 0; c < data.size(); c++) {
-            if (data.get(c)[1] > 0) {
-                StringBuffer date = new StringBuffer();
-                date = format
-                        .format(data.get(c)[0], date, new FieldPosition(0));
-                double time = data.get(c)[0];
-                barList.add(new BarViewModel(date.toString(), date.toString(), data.get(c)[1],
-                        max, (long) time));
-            }
-        }
-        mAdapter.setNewList(barList);
-        mGraph.setMax(max);
-        mGraph.setLabel(true);
-        final Handler handler = new Handler();
-        if(mGraph.getBarCount() > 0)  {
-            mTransitioning = true;
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mGraph.handleTransactionsTouch(mGraph.getBar(mGraph.getBarCount() - 1));
-                    mTransitioning = false;
-                }}, 1000);
-        }
+//        clearButtonColors();
+//        mYearly.showArrow(true);
+//        mYearly.setBackgroundColor(getResources()
+//                .getColor(R.color.primaryColor));
+//        setLabelText(getResources().getString(
+//                R.string.spending_yearly));
+//        List<Double[]> data = Transactions.getYearlyExpenseTotals(end);
+//        double max = 0;
+//        for (int i = 0; i < data.size(); i++) {
+//            if (data.get(i)[1] > max) {
+//                max = data.get(i)[1];
+//            }
+//        }
+//        mCurrentStatus = Constant.YEARLY_VIEW;
+//        ArrayList<BarViewModel> barList = new ArrayList<BarViewModel>();
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy");
+//        for (int c = 0; c < data.size(); c++) {
+//            if (data.get(c)[1] > 0) {
+//                StringBuffer date = new StringBuffer();
+//                date = format
+//                        .format(data.get(c)[0], date, new FieldPosition(0));
+//                double time = data.get(c)[0];
+//                barList.add(new BarViewModel(date.toString(), date.toString(), data.get(c)[1],
+//                        max, (long) time));
+//            }
+//        }
+//        mAdapter.setNewList(barList);
+//        mGraph.setMax(max);
+//        mGraph.setLabel(true);
+//        final Handler handler = new Handler();
+//        if(mGraph.getBarCount() > 0)  {
+//            mTransitioning = true;
+//            handler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mGraph.handleTransactionsTouch(mGraph.getBar(mGraph.getBarCount() - 1));
+//                    mTransitioning = false;
+//                }}, 1000);
+//        }
     }
     /**
      * Animates a change in the label at the top of the view.

@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import com.moneydesktop.finance.util.UiUtils;
 import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.ArgbEvaluator;
 import com.nineoldandroids.animation.ObjectAnimator;
 
 import java.util.LinkedList;
@@ -27,10 +28,10 @@ public class BarChartView extends AdapterView<BaseBarAdapter> {
 
     public final String TAG = this.getClass().getSimpleName();
 
-    private static final int PADDING_SIZE = 15;
     private static final int POPUP_WIDTH = 200;
     private static final int POPUP_HEIGHT = 100;
     private static final float SCALE_TRANSITION = 0.5f;
+    private static final int SLOPE = 4;
 
     private BaseBarAdapter mAdapter;
     private AdapterDataSetObserver mDataSetObserver;
@@ -44,9 +45,13 @@ public class BarChartView extends AdapterView<BaseBarAdapter> {
     private int mBarWidth;
 
     private float[] mPreviousAmounts;
+    private int[] mPreviousColors;
+    private float[] mTransitionOffsets;
 
-    private float mScale = 1f;
-    private int mAlpha = 255;
+    private ArgbEvaluator colorEvaluator;
+
+    private int mDirection = 1;
+    private float mOffset = 0f;
 
     private boolean mTransitioning = false;
 
@@ -70,7 +75,8 @@ public class BarChartView extends AdapterView<BaseBarAdapter> {
 
         mPopupWidth = (int) UiUtils.getDynamicPixels(getContext(), POPUP_WIDTH);
         mPopupHeight = (int) UiUtils.getDynamicPixels(getContext(), POPUP_HEIGHT);
-        mBarPadding = (int) UiUtils.getDynamicPixels(getContext(), PADDING_SIZE);
+
+        colorEvaluator = new ArgbEvaluator();
 
         invalidate();
     }
@@ -145,26 +151,29 @@ public class BarChartView extends AdapterView<BaseBarAdapter> {
     @Override
     public boolean drawChild(Canvas canvas, View child, long drawingTime) {
 
-        if (!mTransitioning) {
+        // get the bitmap
+        final Bitmap bitmap = child.getDrawingCache();
+
+        if (!mTransitioning || bitmap == null) {
             // if the is null for some reason, default to the standard
             // drawChild implementation
             return super.drawChild(canvas, child, drawingTime);
         }
 
-        // get the bitmap
-        final Bitmap bitmap = child.getDrawingCache();
+        final Integer index = (Integer) child.getTag();
+        float percent = mTransitionOffsets[index];
 
         // get top left coordinates
         final int left = child.getLeft();
         final int top = child.getTop();
+
+        // get center x, y coordinates for proper scaling
         final int x = child.getRight() - child.getWidth() / 2;
         final int y = child.getBottom() - child.getHeight() / 2;
 
-        final Integer index = (Integer) child.getTag();
-        final float modifier = 1f - index * 0.025f;
-
-        final float scale = mScale * modifier;
-        final int alpha = (int) (mAlpha * modifier);
+        // calculate scale and alpha based on index offset
+        final float scale = (mDirection < 0 ? (1 - SCALE_TRANSITION) : 1f) + SCALE_TRANSITION * percent;
+        final int alpha = (mDirection < 0 ? (0) : 255) - (int) (255 * percent * mDirection);
 
         canvas.save();
 
@@ -182,27 +191,31 @@ public class BarChartView extends AdapterView<BaseBarAdapter> {
     protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
-        initBarSpecs();
-
         // if we don't have an adapter, we don't need to do anything
         if (mAdapter == null) {
             return;
         }
 
+        initBarSpecs();
+
         if (getChildCount() == 0) {
             addBars();
+            positionItems();
+            transitionBars(true);
         }
 
-        positionItems();
         invalidate();
     }
 
+    /**
+     * Add the bars to the BarChartView
+     */
     private void addBars() {
 
         for (int i = 0; i < mAdapter.getCount(); i++) {
 
             final View bar = mAdapter.getView(i, getCachedView(), this);
-            addAndMeasureChild(bar, i, mAdapter.getAmount(i));
+            addAndMeasureChild(bar, i, mAdapter.getBarModel(i).getAmount());
         }
     }
 
@@ -257,31 +270,43 @@ public class BarChartView extends AdapterView<BaseBarAdapter> {
             BarViewTwo barView = (BarViewTwo) getChildAt(i);
 
             float previous = mPreviousAmounts[i];
-            float change = (mAdapter.getAmount(i) - previous) * percent;
+            float change = (mAdapter.getBarModel(i).getAmount() - previous) * percent;
+
+            Integer color = (Integer) colorEvaluator.evaluate(percent, mPreviousColors[i],
+                    mAdapter.getBarModel(i).getColor());
 
             barView.setBarAmount(previous + change);
+            barView.setBarColor(color.intValue());
         }
     }
 
-    void setBarsTransition(float percent) {
+    void setBarsTransition(float timePercent) {
 
-        mScale += SCALE_TRANSITION * percent;
-        mAlpha -= mAlpha * percent;
+        for (int i = 0; i < mTransitionOffsets.length; i++) {
+
+            float percent = SLOPE * timePercent - (mOffset * i);
+
+            if (percent < 0f) {
+                percent = 0f;
+            } else if (percent > 1f) {
+                percent = 1f;
+            }
+
+            mTransitionOffsets[i] = percent;
+        }
 
         invalidate();
     }
 
     private void savePreviousAmounts() {
 
-        if (mAdapter.getCount() != getChildCount()) {
-            throw new IllegalStateException("Bar Count Changed, Call NotifyDataSetInvalidated");
-        }
-
         mPreviousAmounts = new float[getChildCount()];
+        mPreviousColors = new int[getChildCount()];
 
         for (int i = 0; i < getChildCount(); i++) {
             BarViewTwo barView = (BarViewTwo) getChildAt(i);
             mPreviousAmounts[i] = barView.getBarAmount();
+            mPreviousColors[i] = barView.getBarColor();
         }
     }
 
@@ -307,19 +332,32 @@ public class BarChartView extends AdapterView<BaseBarAdapter> {
         transition.start();
     }
 
-    private void transitionBars() {
+    private void transitionBars(final boolean in) {
+
+        if (getChildCount() == 0) {
+            requestLayout();
+            return;
+        }
+
+        mTransitionOffsets = new float[getChildCount()];
+        mOffset = (float) (SLOPE - 1) / (float) getChildCount();
+        mDirection = in ? -1 : 1;
 
         ObjectAnimator transition = ObjectAnimator.ofFloat(this, "barsTransition", 0f, 1f);
-        transition.setDuration(1000);
+        transition.setDuration(600);
         transition.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {}
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                mTransitioning = false;
-                resetChart();
-                requestLayout();
+
+                if (!in) {
+                    resetChart();
+                    requestLayout();
+                } else {
+                    mTransitioning = false;
+                }
             }
 
             @Override
@@ -333,6 +371,10 @@ public class BarChartView extends AdapterView<BaseBarAdapter> {
         transition.start();
     }
 
+    /**
+     * Rebuild the drawing cache of every child as they have
+     * changed.
+     */
     private void rebuildChildDrawingCache() {
 
         for (int i = 0; i < getChildCount(); i++) {
@@ -362,8 +404,10 @@ public class BarChartView extends AdapterView<BaseBarAdapter> {
     private void initBarSpecs() {
 
         mMaxBarHeight = getHeight() - mPopupHeight;
-        float barSpace = getWidth() - ((mAdapter.getCount() - 1) * mBarPadding);
-        mBarWidth = (int) (barSpace / mAdapter.getCount());
+
+        float barSpace = (float) getWidth() * 0.9f;
+        mBarWidth = (int) (barSpace / (float) mAdapter.getCount() + 0.5f);
+        mBarPadding = (int) ((getWidth() - mBarWidth * mAdapter.getCount()) / (float) (mAdapter.getCount() - 1) + 0.5f);
 
         invalidate();
     }
@@ -372,8 +416,9 @@ public class BarChartView extends AdapterView<BaseBarAdapter> {
 
         for (int i = 0; i < getChildCount(); i++) {
             mCachedItemViews.add(getChildAt(i));
-            removeViewAt(i);
         }
+
+        removeAllViewsInLayout();
 
         invalidate();
     }
@@ -393,6 +438,11 @@ public class BarChartView extends AdapterView<BaseBarAdapter> {
                 clearSavedState();
             }
 
+            if (mAdapter.getCount() != getChildCount()) {
+                mAdapter.notifyDataSetInvalidated();
+                return;
+            }
+
             savePreviousAmounts();
             updateBars();
         }
@@ -407,7 +457,7 @@ public class BarChartView extends AdapterView<BaseBarAdapter> {
                 mInstanceState = BarChartView.this.onSaveInstanceState();
             }
 
-            transitionBars();
+            transitionBars(false);
         }
 
         public void clearSavedState() {

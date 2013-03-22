@@ -1,22 +1,66 @@
 package com.moneydesktop.finance.model;
 
-public class BarViewModel {
-    public String mLabelText;
-    public String mPopupText;
-    public float mAmount;
-    public double mMaxAmount;
-    public long mDate;
+import com.moneydesktop.finance.util.UiUtils;
 
-    public BarViewModel(double amount) {
-        mAmount = (float) amount;
+import java.util.Date;
+
+public class BarViewModel {
+
+    private String mLabelText;
+    private String mPopupText;
+
+    private float mAmount;
+
+    private int mColor;
+
+    private Date mDate;
+
+    public String getLabelText() {
+        return mLabelText;
     }
 
-    public BarViewModel(String label, String popup, double amount, double max, long date) {
-        mLabelText = label;
-        mPopupText = popup;
+    public void setLabelText(String mLabelText) {
+        this.mLabelText = mLabelText;
+    }
+
+    public String getPopupText() {
+        return mPopupText;
+    }
+
+    public void setPopupText(String mPopupText) {
+        this.mPopupText = mPopupText;
+    }
+
+    public float getAmount() {
+        return mAmount;
+    }
+
+    public void setAmount(float mAmount) {
+        this.mAmount = mAmount;
+    }
+
+    public int getColor() {
+        return mColor;
+    }
+
+    public void setColor(int mColor) {
+        this.mColor = mColor;
+    }
+
+    public Date getDate() {
+        return mDate;
+    }
+
+    public void setDate(Date mDate) {
+        this.mDate = mDate;
+    }
+
+    public BarViewModel(int index, String labelText, String popupText, double amount, Date date) {
+        mLabelText = labelText;
+        mPopupText = popupText;
         mAmount = (float) amount;
-        mMaxAmount = max + (max * .45);
         mDate = date;
+        mColor = UiUtils.getRandomColor(index);
     }
 
 }
