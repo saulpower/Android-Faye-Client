@@ -159,10 +159,6 @@ public class Constant {
     public static final float STANDARD_DPI = 160f;
     public static final float LARGE_TABLET_SCALE = 1.43f;
     public static final float XHDPI_SCALE = 0.75f;
-    public static final int DAILY_VIEW = 1;
-    public static final int MONTHLY_VIEW = 2;
-    public static final int QUARTERLY_VIEW = 3;
-    public static final int YEARLY_VIEW = 4;
 
 	/*******************************************************************
 	 * QUERIES

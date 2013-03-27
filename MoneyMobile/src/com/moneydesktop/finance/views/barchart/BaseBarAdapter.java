@@ -16,6 +16,8 @@ public abstract class BaseBarAdapter extends BaseAdapter {
 
     private Context mContext;
 
+    private BarChartView mBarChart;
+
     public BaseBarAdapter(Context context) {
         mContext = context;
     }
@@ -24,8 +26,20 @@ public abstract class BaseBarAdapter extends BaseAdapter {
         return mContext;
     }
 
+    public BarChartView getBarChart() {
+        return mBarChart;
+    }
+
+    public void setBarChart(BarChartView mBarChart) {
+        this.mBarChart = mBarChart;
+    }
+
     public int getColor(int colorResource) {
         return mContext.getResources().getColor(colorResource);
+    }
+
+    public String getString(int stringResource) {
+        return mContext.getResources().getString(stringResource);
     }
 
     /**
@@ -60,10 +74,10 @@ public abstract class BaseBarAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        BarViewTwo barView = (BarViewTwo) convertView;
+        BarView barView = (BarView) convertView;
 
         if (barView == null) {
-            barView = new BarViewTwo(mContext);
+            barView = new BarView(mContext);
         }
 
         barView.setMaxAmount(getMaxAmount());
@@ -71,8 +85,20 @@ public abstract class BaseBarAdapter extends BaseAdapter {
         return configureBarView(barView, position);
     }
 
-    public abstract View configureBarView(BarViewTwo barView, int position);
+    /**
+     * Get the data item associated with the specified position in the data set.
+     *
+     * @param position Position of the item whose data we want within the adapter's
+     *                 data set.
+     * @return The data at the specified position.
+     */
+    @Override
+    public Object getItem(int position) {
+        return getBarModel(position);
+    }
+
+    public abstract View configureBarView(BarView barView, int position);
 
     public abstract float getMaxAmount();
-    public abstract float getAmount(int position);
+    public abstract BarViewModel getBarModel(int position);
 }

@@ -1,19 +1,11 @@
 
 package com.moneydesktop.finance.handset.fragment;
 
-import java.text.NumberFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
-
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
@@ -21,8 +13,9 @@ import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.database.TransactionsDao;
 import com.moneydesktop.finance.shared.fragment.GrowFragment;
 import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.views.barchart.BarGraphView;
-import com.moneydesktop.finance.views.BarView;
+
+import java.text.NumberFormat;
+import java.util.List;
 
 public class TransactionSummaryHandsetFragment extends GrowFragment {
 	
@@ -112,36 +105,36 @@ public class TransactionSummaryHandsetFragment extends GrowFragment {
     }
 
     private void setupBarGraphView(View v) {
-        List<Double[]> data = Transactions.get30DayExpenseTotals(new Date());
-        double max = 0;
-        for(int i = 0; i < data.size(); i++){
-            if(data.get(i)[1] > max){
-                max = data.get(i)[1];
-            }
-        }
-        
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
-        cal.set(Calendar.HOUR_OF_DAY,0);
-        cal.set(Calendar.HOUR, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        cal.add(Calendar.DAY_OF_YEAR, -30);
-        BarGraphView l = (BarGraphView) v.findViewById(R.id.daily_spending_graph);
-        
-        for(int c = 0; c < data.size(); c++){
-                if( data.get(c)[1] > 0){
-                    BarView b = new BarView(getActivity(), Integer.toString(data.get(c)[0].intValue()),
-                            data.get(c)[1], max);
-                    LayoutParams layout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 1);
-                    b.setLayoutParams(layout);
-                    l.addView(b);
-                }
-            }
-            cal.add(Calendar.DAY_OF_YEAR, 1);
-        }
+//        List<Double[]> data = Transactions.getDailyExpenseTotals(30);
+//        double max = 0;
+//        for(int i = 0; i < data.size(); i++){
+//            if(data.get(i)[1] > max){
+//                max = data.get(i)[1];
+//            }
+//        }
+//
+//        Calendar cal = Calendar.getInstance();
+//        cal.setTime(new Date());
+//        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
+//        cal.set(Calendar.HOUR_OF_DAY,0);
+//        cal.set(Calendar.HOUR, 0);
+//        cal.set(Calendar.MINUTE, 0);
+//        cal.set(Calendar.SECOND, 0);
+//        cal.set(Calendar.MILLISECOND, 0);
+//        cal.add(Calendar.DAY_OF_YEAR, -30);
+//        BarGraphView l = (BarGraphView) v.findViewById(R.id.daily_spending_graph);
+//
+//        for(int c = 0; c < data.size(); c++){
+//            if( data.get(c)[1] > 0){
+//                BarView b = new BarView(getActivity(), Integer.toString(data.get(c)[0].intValue()),
+//                        data.get(c)[1], max);
+//                LayoutParams layout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 1);
+//                b.setLayoutParams(layout);
+//                l.addView(b);
+//            }
+//        }
+//        cal.add(Calendar.DAY_OF_YEAR, 1);
+    }
 
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {

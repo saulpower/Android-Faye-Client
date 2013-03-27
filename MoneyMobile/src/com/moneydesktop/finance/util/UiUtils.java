@@ -116,7 +116,7 @@ public class UiUtils {
         } else if (dpi == DisplayMetrics.DENSITY_MEDIUM) {
         	adjustment = 1.5f;
         }
-        
+
         return adjustment;
     }
     

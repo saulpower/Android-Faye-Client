@@ -8,12 +8,14 @@ import android.widget.TextView;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataController;
+import com.moneydesktop.finance.data.Enums;
 import com.moneydesktop.finance.data.Enums.DataState;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.views.AnimatedEditText;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
 import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -800,218 +802,296 @@ public class Transactions extends BusinessObject  {
         
         return "S";
     }
+
     /**
-     * Returns the expense transaction totals for the last 30 days of transactions
+     * Returns the daily expense totals for the last x amount of days.
      *
-     * @param  end the Date to count back from
+     * @param days The amount of days to go back
+     *
+     * @return
      */
-    public static List<Double[]> get30DayExpenseTotals(Date end) {
-        CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
-        Set<Long> catIDs = new HashSet<Long>();
-        List<Category> cats = cat.loadAll();
-        for (int i = 0; i < cats.size(); i++) {
-            if (isCategoryIncome(cats.get(i))) {
-                catIDs.add(cats.get(i).getId());
-            }
-        }
-        String SQLQuery = new String();
-        Iterator<Long> iter = catIDs.iterator();
-        while (iter.hasNext()) {
+    public static List<Transactions> getDailyExpenseTotals(Date date, int days) {
 
-            SQLQuery = SQLQuery.toString() + "CATEGORY_ID != " + iter.next() + " AND ";
-        }
-        SQLQuery = SQLQuery.substring(0, (SQLQuery.length() - 4));
-        String query = String.format(Constant.QUERY_DAILY_TRANSACTIONS, SQLQuery);
+        String query = String.format(Constant.QUERY_DAILY_TRANSACTIONS, getCategoryFilter());
+
+        Date start = getPastDateByDays(date, days);
+
         SQLiteDatabase db = ApplicationContext.getDb();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(end);
-        cal.add(Calendar.DAY_OF_YEAR, -30);
-        Date start = cal.getTime();
         Cursor cursor = db.rawQuery(query, new String[]{
-
-                Long.toString(start.getTime()), Long.toString(end.getTime())
+                Long.toString(start.getTime()), Long.toString(date.getTime())
         });
-        cursor.moveToFirst();
-        List<Double[]> retVal = new ArrayList<Double[]>();
-        while (cursor.isAfterLast() == false) {
-            Double[] d = new Double[2];
-            d[0] = Double.valueOf(cursor.getString(0));
-            d[1] = Double.valueOf(cursor.getDouble(1));
-            retVal.add(d);
-            cursor.moveToNext();
-        }
+
+        List<Transactions> expenses = createTransactions(start, date, cursor, Enums.TransactionsReport.DAILY);
 
         cursor.close();
 
-        return retVal;
+        return expenses;
     }
+
+    public static List<Transactions> getMonthlyExpenseTotals(Date date, int months) {
+
+        // We include the current month
+        months--;
+
+        String query = String.format(Constant.QUERY_MONTHLY_TRANSACTIONS, getCategoryFilter());
+
+        Calendar cal = DateUtils.toCalendar(date);
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+        Date end = cal.getTime();
+
+        Date start = getPastDateByMonths(cal.getTime(), months);
+
+        SQLiteDatabase db = ApplicationContext.getDb();
+        Cursor cursor = db.rawQuery(query, new String[]{
+                Long.toString(start.getTime()), Long.toString(cal.getTime().getTime())
+        });
+
+        cal = DateUtils.toCalendar(start);
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+
+        cursor.moveToFirst();
+
+        List<Transactions> expenses = createTransactions(cal.getTime(), end, cursor,
+                Enums.TransactionsReport.MONTHLY);
+
+        cursor.close();
+
+        return expenses;
+    }
+
+    public static List<Transactions> getYearlyExpenseTotals(int years) {
+
+        // include the current year
+        years--;
+
+        String query = String.format(Constant.QUERY_YEARLY_TRANSACTIONS, getCategoryFilter());
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.set(Calendar.DAY_OF_YEAR, cal.getActualMaximum(Calendar.DAY_OF_YEAR));
+
+        Date end = cal.getTime();
+
+        cal.set(Calendar.DAY_OF_YEAR, 1);
+        cal.add(Calendar.YEAR, -years);
+
+        Date start = cal.getTime();
+
+        SQLiteDatabase db = ApplicationContext.getDb();
+        Cursor cursor = db.rawQuery(query, new String[]{
+                Long.toString(start.getTime()), Long.toString(end.getTime())
+        });
+
+        cal.set(Calendar.DAY_OF_YEAR, cal.getActualMaximum(Calendar.DAY_OF_YEAR));
+
+        cursor.moveToFirst();
+
+        List<Transactions> expenses = createTransactions(cal.getTime(), end, cursor, Enums.TransactionsReport.YEARLY);
+
+        cursor.close();
+
+        return expenses;
+    }
+
     /**
      * Returns the expense transaction totals associated with the last 4 quarters of transactions.
      *
-     * @param  end the Date to count back from
+     * @param quarters the number of quarters to report
      */
-    public static List<Double[]> getQuarterlyExpenseTotals(Date end) {
-        CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
-        Set<Long> catIDs = new HashSet<Long>();
-        List<Category> cats = cat.loadAll();
-        for (int i = 0; i < cats.size(); i++) {
-            if (isCategoryIncome(cats.get(i))) {
-                catIDs.add(cats.get(i).getId());
-            }
-        }
-        String SQLQuery = new String();
-        Iterator<Long> iter = catIDs.iterator();
-        while (iter.hasNext()) {
+    public static List<Transactions> getQuarterlyExpenseTotals(Date date, int quarters) {
 
-            SQLQuery = SQLQuery.toString() + "CATEGORY_ID != " + iter.next() + " AND ";
-        }
-        SQLQuery = SQLQuery.substring(0, (SQLQuery.length() - 4));
-        String query = String.format(Constant.QUERY_QUARTERLY_TRANSACTIONS, SQLQuery);
-        SQLiteDatabase db = ApplicationContext.getDb();
+        // include the current quarter
+        quarters--;
+
+        List<Transactions> expenses = new ArrayList<Transactions>();
+
         Calendar cal = Calendar.getInstance();
-        cal.setTime(end);
-        List<Double[]> retVal = new ArrayList<Double[]>();
-        for(int counter = 0; counter < 4; counter++){
-            Cursor cursor = db.rawQuery(query, new String[]{
+        cal.setTime(date);
+        cal.add(Calendar.MONTH, -3 * quarters);
 
-                    Long.toString(cal.get(Calendar.YEAR)), Integer.toString(getQuarterNumber(cal))
+        String query = String.format(Constant.QUERY_QUARTERLY_TRANSACTIONS, getCategoryFilter());
+
+        SQLiteDatabase db = ApplicationContext.getDb();
+
+        for (int counter = 0; counter < 4; counter++) {
+
+            int quarter = getQuarterNumber(cal);
+
+            Cursor cursor = db.rawQuery(query, new String[]{
+                    Long.toString(cal.get(Calendar.YEAR)), Integer.toString(quarter)
             });
-            Double[] entry = new Double[3];
-            //Contains Date for entry
-            entry[0] = (double)cal.getTimeInMillis();
-            //Contains Amount for entry
-            if(cursor.moveToFirst() != false){
-                entry[1] = cursor.getDouble(0);
+
+            double amount = 0.0;
+
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                amount = cursor.getDouble(0);
             }
-            else{
-                entry[1] = 0.00;
-            }
-            //Contains quarter for entry
-            entry[2] = (double)getQuarterNumber(cal);
-            retVal.add(entry);
+
+            expenses.add(createExpense(cal.getTime(), amount, quarter));
+
             //Setting cal to the previous quarter
-            cal.add(Calendar.MONTH, -3);
+            cal.add(Calendar.MONTH, 3);
+
             cursor.close();
         }
-        //Reversing the results to read out in ascending order to the graph.
-        Collections.reverse(retVal);
-        return retVal;
+
+        return expenses;
     }
+
+    private static List<Transactions> createTransactions(Date start, Date end, Cursor cursor, Enums.TransactionsReport report) {
+
+        Calendar current = DateUtils.toCalendar(start);
+
+        List<Transactions> expenses = new ArrayList<Transactions>();
+
+        Date date = null;
+
+        cursor.moveToFirst();
+
+        while (cursor.isAfterLast() == false) {
+
+            date = new Date(cursor.getLong(0));
+            double amount = cursor.getDouble(1);
+
+            while (current.getTime().compareTo(date) < 0) {
+
+                expenses.add(createExpense(current.getTime(), 0.0));
+
+                incrementCalendar(current, report);
+            }
+
+            expenses.add(createExpense(date, amount));
+
+            incrementCalendar(current, report);
+            cursor.moveToNext();
+        }
+
+        while (current.getTime().compareTo(end) < 0) {
+
+            expenses.add(createExpense(current.getTime(), 0.0));
+
+            incrementCalendar(current, report);
+        }
+
+        // Sort the transactions so they are in order by date
+        Collections.sort(expenses, new Comparator<Transactions>() {
+            public int compare(Transactions t1, Transactions t2) {
+                return t1.getDate().compareTo(t2.getDate());
+            }
+        });
+
+        return expenses;
+    }
+
+    private static boolean compareDates(Date current, Date compare, Enums.TransactionsReport report) {
+
+        switch (report) {
+            case DAILY:
+            case MONTHLY:
+            case YEARLY:
+                return current.compareTo(compare) < 0;
+        }
+
+        return false;
+    }
+
+    private static void incrementCalendar(Calendar calendar, Enums.TransactionsReport report) {
+
+        switch (report) {
+            case DAILY:
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+                break;
+            case MONTHLY:
+                calendar.add(Calendar.MONTH, 1);
+                break;
+            case YEARLY:
+                calendar.add(Calendar.YEAR, 1);
+                break;
+        }
+    }
+
+    private static Transactions createExpense(Date date, double amount) {
+        return createExpense(date, amount, -1);
+    }
+
+    private static Transactions createExpense(Date date, double amount, int quarter) {
+
+        if (amount < 0f) {
+            amount = 0f;
+        }
+
+        Transactions expense = new Transactions();
+        expense.setDate(date);
+        expense.setAmount(amount);
+        expense.setQuarterNumber(quarter);
+
+        return expense;
+    }
+
+    private static Date getPastDateByDays(Date date, int days) {
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DAY_OF_YEAR, -days);
+
+        return cal.getTime();
+    }
+
+    private static Date getPastDateByMonths(Date date, int months) {
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.add(Calendar.MONTH, -months);
+
+        return cal.getTime();
+    }
+
+    private static String getCategoryFilter() {
+
+        CategoryDao categoryDao = ApplicationContext.getDaoSession().getCategoryDao();
+        List<Category> categories = categoryDao.loadAll();
+
+        List<Long> categoryIds = new ArrayList<Long>();
+        for (Category category : categories) {
+            if (isCategoryIncome(category)) {
+                categoryIds.add(category.getId());
+            }
+        }
+
+        StringBuilder categoryFilter = new StringBuilder();
+        for (Long id : categoryIds) {
+            categoryFilter.append("CATEGORY_ID != " + id + " AND ");
+        }
+
+        return categoryFilter.substring(0, (categoryFilter.length() - 4));
+    }
+
     /**
      * Returns the Quarter Number associated with a Date as an int. Used by getQuarterlyExpenseTotals
      *
-     * @param  cal the Calendar object to get the quarter number for
+     * @param calendar the date  to get the quarter number for
      */
-    private static int getQuarterNumber(Calendar cal){;
-            if(cal.get(Calendar.MONTH) == 1 || cal.get(Calendar.MONTH) == 2 || cal.get(Calendar.MONTH) == 3){
-                return 1;
-            }
-            if(cal.get(Calendar.MONTH) == 4 || cal.get(Calendar.MONTH) == 5 || cal.get(Calendar.MONTH) == 6){
-                return 2;
-            }
-            if(cal.get(Calendar.MONTH) == 7 || cal.get(Calendar.MONTH) == 8 || cal.get(Calendar.MONTH) == 9){
-                return 3;
-            }
-            if(cal.get(Calendar.MONTH) == 10 || cal.get(Calendar.MONTH) == 11 || cal.get(Calendar.MONTH) == 12){
-                return 4;
-            }
-        else{
-                return 0;
-            }
-    }
-    public static List<Double[]> getMonthlyExpenseTotals(Date end) {
+    private static int getQuarterNumber(Calendar calendar) {
 
-        List<Double[]> totals = new ArrayList<Double[]>();
-
-        CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
-        List<Long> catIds = new ArrayList<Long>();
-        List<Category> cats = cat.loadAll();
-
-        for (int i = 0; i < cats.size(); i++) {
-            if (isCategoryIncome(cats.get(i))) {
-                catIds.add(cats.get(i).getId());
-            }
+        if (calendar.get(Calendar.MONTH) >= 0 && calendar.get(Calendar.MONTH) <= 2) {
+            return 1;
         }
 
-        if (catIds.size() == 0) {
-            return totals;
+        if (calendar.get(Calendar.MONTH) >= 3 && calendar.get(Calendar.MONTH) <= 5) {
+            return 2;
         }
 
-        StringBuilder sqlQuery = new StringBuilder();
-        for (Long catId : catIds) {
-            sqlQuery = sqlQuery.append("CATEGORY_ID != " + catId + " AND ");
+        if (calendar.get(Calendar.MONTH) >= 6 && calendar.get(Calendar.MONTH) <= 8) {
+            return 3;
         }
 
-        String sql = sqlQuery.substring(0, (sqlQuery.length() - 4));
-        String query = String.format(Constant.QUERY_MONTHLY_TRANSACTIONS, sql);
-
-        SQLiteDatabase db = ApplicationContext.getDb();
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(end);
-        cal.add(Calendar.MONTH, -5);
-        cal.set(Calendar.DAY_OF_MONTH, 1);
-        Date start = cal.getTime();
-
-        Cursor cursor = db.rawQuery(query, new String[]{
-                Long.toString(start.getTime()), Long.toString(end.getTime())
-        });
-        cursor.moveToFirst();
-
-        while (cursor.isAfterLast() == false) {
-            Double[] d = new Double[2];
-            d[0] = cursor.getDouble(0);
-            d[1] = cursor.getDouble(1);
-            totals.add(d);
-            cursor.moveToNext();
+        if (calendar.get(Calendar.MONTH) >= 9 && calendar.get(Calendar.MONTH) <= 11) {
+            return 4;
         }
 
-        cursor.close();
-
-        return totals;
-    }
-
-    public static List<Double[]> getYearlyExpenseTotals(Date end) {
-        CategoryDao cat = ApplicationContext.getDaoSession().getCategoryDao();
-        Set<Long> catIDs = new HashSet<Long>();
-        List<Category> cats = cat.loadAll();
-        for (int i = 0; i < cats.size(); i++) {
-            if (isCategoryIncome(cats.get(i))) {
-                catIDs.add(cats.get(i).getId());
-            }
-        }
-        String SQLQuery = new String();
-        Iterator<Long> iter = catIDs.iterator();
-        while (iter.hasNext()) {
-
-            SQLQuery = SQLQuery.toString() + "CATEGORY_ID != " + iter.next() + " AND ";
-        }
-        SQLQuery = SQLQuery.substring(0, (SQLQuery.length() - 4));
-        String query = String.format(Constant.QUERY_YEARLY_TRANSACTIONS, SQLQuery);
-        SQLiteDatabase db = ApplicationContext.getDb();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(end);
-        cal.add(Calendar.YEAR, -2);
-        cal.set(Calendar.MONTH, 1);
-        cal.set(Calendar.DAY_OF_MONTH, 1);
-        Date start = cal.getTime();
-        Cursor cursor = db.rawQuery(query, new String[]{
-
-                Long.toString(start.getTime()), Long.toString(end.getTime())
-        });
-        cursor.moveToFirst();
-        List<Double[]> retVal = new ArrayList<Double[]>();
-        while (cursor.isAfterLast() == false) {
-            Double[] d = new Double[2];
-            d[0] = cursor.getDouble(0);
-            d[1] = cursor.getDouble(1);
-            retVal.add(d);
-            cursor.moveToNext();
-        }
-
-        cursor.close();
-
-        return retVal;
+        return -1;
     }
 
     public static Double getExpensesTotal() {
