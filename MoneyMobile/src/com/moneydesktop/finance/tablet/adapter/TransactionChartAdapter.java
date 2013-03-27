@@ -7,10 +7,11 @@ import android.view.View;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums;
 import com.moneydesktop.finance.database.Transactions;
-import com.moneydesktop.finance.views.barchart.BarViewModel;
+import com.moneydesktop.finance.util.DateRange;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.barchart.BarView;
+import com.moneydesktop.finance.views.barchart.BarViewModel;
 import com.moneydesktop.finance.views.barchart.BaseBarAdapter;
 import org.apache.commons.lang.time.DateUtils;
 
@@ -31,16 +32,18 @@ public class TransactionChartAdapter extends BaseBarAdapter {
 
     public final String TAG = this.getClass().getSimpleName();
 
-    private static final int MIN_HEIGHT = 2;
+    protected static final int MIN_HEIGHT = 2;
 
-    private Enums.TransactionsReport mCurrentReport = Enums.TransactionsReport.MONTHLY;
+    protected Enums.TransactionsReport mCurrentReport = Enums.TransactionsReport.MONTHLY;
+    protected Date mCurrentDate;
+    protected int mCurrentCount;
 
-    private List<BarViewModel> mData;
-    private float mMax = 0f;
-    private int mMinHeight = 0;
+    protected List<BarViewModel> mData;
+    protected float mMax = 0f;
+    protected int mMinHeight = 0;
 
-    private ColorStateList mBarColors;
-    private int mBarLabelColor = Color.BLUE;
+    protected ColorStateList mBarColors;
+    protected int mBarLabelColor = Color.WHITE;
 
     public TransactionChartAdapter(Context context) {
         super(context);
@@ -51,6 +54,11 @@ public class TransactionChartAdapter extends BaseBarAdapter {
         mData = new ArrayList<BarViewModel>();
     }
 
+    @Override
+    public boolean isLongClickable(int position) {
+        return mCurrentReport != Enums.TransactionsReport.DAILY && getBarModel(position).getAmount() != 0;
+    }
+
     public Enums.TransactionsReport getCurrentReport() {
         return mCurrentReport;
     }
@@ -58,7 +66,7 @@ public class TransactionChartAdapter extends BaseBarAdapter {
     /**
      * Find the maximum value in the data set
      */
-    private void findMax() {
+    protected void findMax() {
 
         // We put a max of 1 so our max can never be zero
         mMax = 1f;
@@ -116,23 +124,29 @@ public class TransactionChartAdapter extends BaseBarAdapter {
     public void drillDown() {
 
         Date date = getBarModel(getBarChart().getSelection()).getDate();
-
         Calendar calendar = DateUtils.toCalendar(date);
 
         switch (mCurrentReport) {
+
             case YEARLY:
                 mCurrentReport = Enums.TransactionsReport.QUARTERLY;
                 calendar.set(Calendar.DAY_OF_YEAR, calendar.getActualMaximum(Calendar.DAY_OF_YEAR));
                 showQuarterly(false, false, calendar.getTime());
                 break;
+
             case QUARTERLY:
                 mCurrentReport = Enums.TransactionsReport.MONTHLY;
-                showMonthly(false, false, date);
+                int quarter = DateRange.getQuarterNumber(calendar);
+                calendar.set(Calendar.MONTH, DateRange.getQuarterStartMonth(quarter));
+                calendar.set(Calendar.DAY_OF_MONTH, 1);
+                calendar.add(Calendar.MONTH, 2);
+                showMonthly(false, false, calendar.getTime(), 3);
                 break;
+
             case MONTHLY:
                 mCurrentReport = Enums.TransactionsReport.DAILY;
                 calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-                showDaily(false, false, calendar.getTime());
+                showDaily(false, false, calendar.getTime(), calendar.getActualMaximum(Calendar.DAY_OF_MONTH) - 1);
                 break;
         }
     }
@@ -168,27 +182,27 @@ public class TransactionChartAdapter extends BaseBarAdapter {
         if (getBarChart().isAnimating() || mCurrentReport == report) return;
 
         mCurrentReport = report;
-        updateAdapter(true);
+        updateAdapter(true, true);
     }
 
     /**
      * Refresh the data for the currently selected report
      */
     public void refreshAdapterData() {
-        updateAdapter(false);
+        updateAdapter(false, false);
     }
 
-    private void updateAdapter(boolean invalidate) {
+    private void updateAdapter(boolean invalidate, boolean useDefaults) {
 
         switch (mCurrentReport) {
             case DAILY:
-                showDaily(invalidate);
+                showDaily(invalidate, useDefaults);
                 break;
             case MONTHLY:
-                showMonthly(invalidate);
+                showMonthly(invalidate, useDefaults);
                 break;
             case QUARTERLY:
-                showQuarterly(invalidate);
+                showQuarterly(invalidate, useDefaults);
                 break;
             case YEARLY:
                 showYearly(invalidate);
@@ -196,38 +210,63 @@ public class TransactionChartAdapter extends BaseBarAdapter {
         }
     }
 
-    public void showDaily(boolean invalidate) {
-        showDaily(invalidate, true, new Date());
+    public void showDaily(boolean invalidate, boolean useDefaults) {
+
+        if (useDefaults) {
+            mCurrentDate = new Date();
+            mCurrentCount = 30;
+        }
+
+        showDaily(invalidate, true, mCurrentDate, mCurrentCount);
     }
 
-    private void showDaily(boolean invalidate, boolean report, Date date) {
+    private void showDaily(boolean invalidate, boolean report, Date date, int days) {
+
+        mCurrentDate = date;
+        mCurrentCount = days;
 
         String popupFormat = "M/d/yyyy";
         String labelFormat = "d";
 
-        List<Transactions> data = Transactions.getDailyExpenseTotals(date, 30);
+        List<Transactions> data = Transactions.getDailyExpenseTotals(date, days);
 
         updateData(popupFormat, labelFormat, data, invalidate, report);
     }
 
-    public void showMonthly(boolean invalidate) {
-        showMonthly(invalidate, true, new Date());
+    public void showMonthly(boolean invalidate, boolean useDefaults) {
+
+        if (useDefaults) {
+            mCurrentDate = new Date();
+            mCurrentCount = 6;
+        }
+
+        showMonthly(invalidate, true, mCurrentDate, mCurrentCount);
     }
 
-    private void showMonthly(boolean invalidate, boolean report, Date date) {
+    private void showMonthly(boolean invalidate, boolean report, Date date, int months) {
+
+        mCurrentDate = date;
+        mCurrentCount = months;
 
         String format = "MMM yyyy";
 
-        List<Transactions> data = Transactions.getMonthlyExpenseTotals(date, 6);
+        List<Transactions> data = Transactions.getMonthlyExpenseTotals(date, months);
 
         updateData(format, format, data, invalidate, report);
     }
 
-    public void showQuarterly(boolean invalidate) {
-        showQuarterly(invalidate, true, new Date());
+    public void showQuarterly(boolean invalidate, boolean useDefaults) {
+
+        if (useDefaults) {
+            mCurrentDate = new Date();
+        }
+
+        showQuarterly(invalidate, true, mCurrentDate);
     }
 
     private void showQuarterly(boolean invalidate, boolean report, Date date) {
+
+        mCurrentDate = date;
 
         String format = "yyyy";
 
@@ -241,6 +280,8 @@ public class TransactionChartAdapter extends BaseBarAdapter {
     }
 
     private void showYearly(boolean invalidate, boolean report) {
+
+        mCurrentDate = null;
 
         String format = "yyyy";
 
@@ -259,7 +300,7 @@ public class TransactionChartAdapter extends BaseBarAdapter {
      * @param invalidate Should the adapter notify a data set invalidate or change
      * @param report Whether to report a data change at this time
      */
-    private void updateData(String popupFormat, String labelFormat, List<Transactions> data, boolean invalidate, boolean report) {
+    protected void updateData(String popupFormat, String labelFormat, List<Transactions> data, boolean invalidate, boolean report) {
 
         mData.clear();
 
@@ -287,7 +328,7 @@ public class TransactionChartAdapter extends BaseBarAdapter {
         }
     }
 
-    private String formatDate(String format, Date date, int quarter) {
+    protected String formatDate(String format, Date date, int quarter) {
 
         if (quarter != -1) {
             format = String.format("'%s:' '%d,' %s", getString(R.string.quarter), quarter, format);

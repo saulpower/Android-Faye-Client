@@ -42,6 +42,8 @@ public abstract class BaseBarAdapter extends BaseAdapter {
         return mContext.getResources().getString(stringResource);
     }
 
+    public abstract boolean isLongClickable(int position);
+
     /**
      * Get the row id associated with the specified position in the list.
      *

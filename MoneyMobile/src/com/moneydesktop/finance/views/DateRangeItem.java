@@ -19,6 +19,7 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 
 import de.greenrobot.event.EventBus;
+import org.apache.commons.lang.time.DateUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -66,6 +67,10 @@ public class DateRangeItem extends Drawable {
     
     public Date getDate() {
         return mDate;
+    }
+
+    public Calendar getCalendar() {
+        return DateUtils.toCalendar(mDate);
     }
     
     public Date getEndDate() {

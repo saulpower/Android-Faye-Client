@@ -11,6 +11,7 @@ import com.moneydesktop.finance.data.DataController;
 import com.moneydesktop.finance.data.Enums;
 import com.moneydesktop.finance.data.Enums.DataState;
 import com.moneydesktop.finance.model.User;
+import com.moneydesktop.finance.util.DateRange;
 import com.moneydesktop.finance.views.AnimatedEditText;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
@@ -915,7 +916,7 @@ public class Transactions extends BusinessObject  {
 
         for (int counter = 0; counter < 4; counter++) {
 
-            int quarter = getQuarterNumber(cal);
+            int quarter = DateRange.getQuarterNumber(cal);
 
             Cursor cursor = db.rawQuery(query, new String[]{
                     Long.toString(cal.get(Calendar.YEAR)), Integer.toString(quarter)
@@ -967,7 +968,7 @@ public class Transactions extends BusinessObject  {
             cursor.moveToNext();
         }
 
-        while (current.getTime().compareTo(end) < 0) {
+        while (DateUtils.truncatedCompareTo(current.getTime(), end, Calendar.DAY_OF_MONTH) <= 0) {
 
             expenses.add(createExpense(current.getTime(), 0.0));
 
@@ -1066,32 +1067,6 @@ public class Transactions extends BusinessObject  {
         }
 
         return categoryFilter.substring(0, (categoryFilter.length() - 4));
-    }
-
-    /**
-     * Returns the Quarter Number associated with a Date as an int. Used by getQuarterlyExpenseTotals
-     *
-     * @param calendar the date  to get the quarter number for
-     */
-    private static int getQuarterNumber(Calendar calendar) {
-
-        if (calendar.get(Calendar.MONTH) >= 0 && calendar.get(Calendar.MONTH) <= 2) {
-            return 1;
-        }
-
-        if (calendar.get(Calendar.MONTH) >= 3 && calendar.get(Calendar.MONTH) <= 5) {
-            return 2;
-        }
-
-        if (calendar.get(Calendar.MONTH) >= 6 && calendar.get(Calendar.MONTH) <= 8) {
-            return 3;
-        }
-
-        if (calendar.get(Calendar.MONTH) >= 9 && calendar.get(Calendar.MONTH) <= 11) {
-            return 4;
-        }
-
-        return -1;
     }
 
     public static Double getExpensesTotal() {

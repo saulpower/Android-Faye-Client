@@ -469,6 +469,7 @@ public class BarDrillDown {
             @Override
             public void onAnimationEnd(Animator animation) {
                 mBarChart.removeViewInLayout(mSelectedBar);
+                mBarChart.removeExtraViews();
                 mBarChart.rebuildChildDrawingCache();
                 setIsDrilling(false);
             }
