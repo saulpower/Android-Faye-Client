@@ -1,22 +1,15 @@
 package com.moneydesktop.finance.views;
 
-import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.util.UiUtils;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuff.Mode;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
+import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.util.UiUtils;
 
 public class TransparentView extends View {
 

@@ -1,5 +1,6 @@
-package com.moneydesktop.finance.model;
+package com.moneydesktop.finance.views.barchart;
 
+import android.content.res.ColorStateList;
 import com.moneydesktop.finance.util.UiUtils;
 
 import java.util.Date;
@@ -12,6 +13,8 @@ public class BarViewModel {
     private float mAmount;
 
     private int mColor;
+
+    private ColorStateList mColors;
 
     private Date mDate;
 
@@ -39,6 +42,14 @@ public class BarViewModel {
         this.mAmount = mAmount;
     }
 
+    public ColorStateList getColors() {
+        return mColors;
+    }
+
+    public void setColors(ColorStateList mColors) {
+        this.mColors = mColors;
+    }
+
     public int getColor() {
         return mColor;
     }
@@ -55,12 +66,12 @@ public class BarViewModel {
         this.mDate = mDate;
     }
 
-    public BarViewModel(int index, String labelText, String popupText, double amount, Date date) {
+    public BarViewModel(ColorStateList colors, String labelText, String popupText, double amount, Date date) {
         mLabelText = labelText;
         mPopupText = popupText;
         mAmount = (float) amount;
         mDate = date;
-        mColor = UiUtils.getRandomColor(index);
+        mColors = colors;
     }
 
 }

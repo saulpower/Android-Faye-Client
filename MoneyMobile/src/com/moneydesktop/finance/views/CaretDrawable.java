@@ -98,6 +98,11 @@ public class CaretDrawable extends Drawable {
         mShadowPaint.setStrokeWidth(UiUtils.getDynamicPixels(mContext, STROKE_WIDTH));
         mShadowPaint.setAlpha(50);
     }
+    public CaretDrawable(Callback cb, PointF position, float width, float height) {
+        this(position, width, height);
+
+        setCallback(cb);
+    }
     
     public CaretDrawable(PointF position, float width, float height) {
         
@@ -107,6 +112,14 @@ public class CaretDrawable extends Drawable {
         
         setColor(Color.BLACK);
         createPath();
+    }
+
+    public void setPosition(PointF position) {
+
+        mPosition = position;
+        createPath();
+
+        invalidateSelf();
     }
     
     private void createPath() {

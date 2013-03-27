@@ -283,7 +283,7 @@
     <string name="label_communication">Communication</string>
     <string name="label_count">Count</string>
     <string name="label_create">Click here to create one</string>
-    <string name="label_daily_spending">Daily Spending - This Month</string>
+    <string name="label_spending_daily">Daily Spending - This Month</string>
     <string name="label_date">Date</string>
     <string name="label_delete">Delete</string>
     <string name="label_delete_transaction">Delete Transaction</string>

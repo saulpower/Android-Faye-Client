@@ -196,6 +196,10 @@ public class Enums {
 	public enum LockType {
 		CHANGE, LOCK, NEW
 	}
+
+    public enum TransactionsReport {
+        DAILY, MONTHLY, QUARTERLY, YEARLY
+    }
 	
 	public enum NavDirection {
 		NEXT, PREVIOUS

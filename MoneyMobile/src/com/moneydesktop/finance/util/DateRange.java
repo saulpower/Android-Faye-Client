@@ -1,5 +1,7 @@
 package com.moneydesktop.finance.util;
 
+import org.apache.commons.lang.time.DateUtils;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -22,6 +24,19 @@ public class DateRange {
 	public void setStartDate(Date mStartDate) {
 		this.mStartDate = mStartDate;
 	}
+
+    public void setDayRange(Date start, int days) {
+
+        days--;
+
+        Calendar cal = DateUtils.toCalendar(start);
+        cal.set(Calendar.HOUR_OF_DAY, 1);
+
+        mStartDate = cal.getTime();
+
+        cal.add(Calendar.DAY_OF_YEAR, 1);
+        mEndDate = cal.getTime();
+    }
 	
 	public String getEndDateString() {
 		return Long.toString(mEndDate.getTime());

@@ -17,13 +17,11 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tablet_transaction_summary_title"
+            <TextSwitcher
+                android:id="@+id/transactions_title"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight=".10"
-                android:gravity="center_vertical"
-                android:layout_marginLeft="10dp" />
+                android:layout_weight=".10" />
 
             <com.moneydesktop.finance.views.LineView
                 android:layout_width="match_parent"
@@ -65,13 +63,6 @@
 
             </RelativeLayout>
 
-            <com.moneydesktop.finance.views.LineView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:isVertical="false"
-                app:lineColor="@color/gray5"
-                app:lineStrokeWidth="2dp" />
-
             <LinearLayout
                 android:id="@+id/tablet_transaction_button_layout"
                 android:layout_width="match_parent"
@@ -89,7 +80,7 @@
                     android:layout_height="50dp"
                     android:layout_margin="2dp"
                     android:padding="10dp"
-                    android:background="@color/gray2"
+                    android:background="@drawable/gray2_to_primary"
                     android:textColor="@color/white"
                     android:text="@string/button_daily"
                     android:layout_gravity="center_vertical"
@@ -102,7 +93,7 @@
                     android:layout_height="50dp"
                     android:layout_margin="2dp"
                     android:padding="10dp"
-                    android:background="@color/gray2"
+                    android:background="@drawable/gray2_to_primary"
                     android:textColor="@color/white"
                     android:text="@string/button_monthly"
                     android:layout_gravity="center_vertical"
@@ -115,7 +106,7 @@
                     android:layout_height="50dp"
                     android:layout_margin="2dp"
                     android:padding="10dp"
-                    android:background="@color/gray2"
+                    android:background="@drawable/gray2_to_primary"
                     android:textColor="@color/white"
                     android:text="@string/button_quarterly"
                     android:layout_gravity="center_vertical"
@@ -128,7 +119,7 @@
                     android:layout_height="50dp"
                     android:layout_margin="2dp"
                     android:padding="10dp"
-                    android:background="@color/gray2"
+                    android:background="@drawable/gray2_to_primary"
                     android:textColor="@color/white"
                     android:text="@string/button_yearly"
                     android:layout_gravity="center_vertical"

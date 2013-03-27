@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import com.moneydesktop.finance.model.BarViewModel;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,6 +16,8 @@ public abstract class BaseBarAdapter extends BaseAdapter {
 
     private Context mContext;
 
+    private BarChartView mBarChart;
+
     public BaseBarAdapter(Context context) {
         mContext = context;
     }
@@ -25,8 +26,20 @@ public abstract class BaseBarAdapter extends BaseAdapter {
         return mContext;
     }
 
+    public BarChartView getBarChart() {
+        return mBarChart;
+    }
+
+    public void setBarChart(BarChartView mBarChart) {
+        this.mBarChart = mBarChart;
+    }
+
     public int getColor(int colorResource) {
         return mContext.getResources().getColor(colorResource);
+    }
+
+    public String getString(int stringResource) {
+        return mContext.getResources().getString(stringResource);
     }
 
     /**
@@ -61,10 +74,10 @@ public abstract class BaseBarAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        BarViewTwo barView = (BarViewTwo) convertView;
+        BarView barView = (BarView) convertView;
 
         if (barView == null) {
-            barView = new BarViewTwo(mContext);
+            barView = new BarView(mContext);
         }
 
         barView.setMaxAmount(getMaxAmount());
@@ -84,7 +97,7 @@ public abstract class BaseBarAdapter extends BaseAdapter {
         return getBarModel(position);
     }
 
-    public abstract View configureBarView(BarViewTwo barView, int position);
+    public abstract View configureBarView(BarView barView, int position);
 
     public abstract float getMaxAmount();
     public abstract BarViewModel getBarModel(int position);
