@@ -58,6 +58,7 @@
     </string-array>
     
     <string name="accounts">accounts</string>
+    <string name="account">Account</string>
     <string name="account_types_indicator_hide">HIDE</string>
     <string name="account_types_indicator_show">SHOW</string>
     <string name="account_types_title">Accounts</string>
@@ -81,6 +82,7 @@
     <string name="account_transaction_type">these transactions are primarily:</string>
     <string name="all_accounts">All Accounts</string>
     <string name="app_name">MoneyMobile</string>
+    <string name="assets">Assets:</string>
     <string name="at_app">Appliances</string>
     <string name="at_art">Art</string>
     <string name="at_cash">Cash</string>
@@ -283,9 +285,12 @@
     <string name="label_communication">Communication</string>
     <string name="label_count">Count</string>
     <string name="label_create">Click here to create one</string>
-    <string name="label_spending_daily">Daily Spending - This Month</string>
-    <string name="label_date">Date</string>
+    <string name="label_daily_spending">Daily Spending - This Month</string>
+    <string name="label_date">Date</string> 
+    <string name="label_day_ago">day ago</string>
+    <string name="label_days_ago">days ago</string>
     <string name="label_delete">Delete</string>
+    <string name="label_edit_settings">Edit Settings</string>
     <string name="label_delete_transaction">Delete Transaction</string>
     <string name="label_edit">Edit</string>
     <string name="label_email">Email</string>
@@ -296,11 +301,24 @@
     <string name="label_exit">exit demo</string>
     <string name="label_expense">in expenses</string>
     <string name="label_feedback">FEEDBACK</string>
+    <string name="label_feedback_menu">Submit Feedback</string>    
+    <string name="label_hour_ago">hour ago</string>
+    <string name="label_hours_ago">hours ago</string>
     <string name="label_feedback_menu">Submit Feedback</string>
     <string name="label_filter">Filter</string>
     <string name="label_income">in income</string>
+    <string name="label_last_updated">Last updated:</string>
+    <string name="label_less_than_a_minute_ago">Less than a minute ago</string>
+    <string name="label_liabilities">Liabilities (Debts): </string>
+    <string name="label_linked_account">Linked Account.</string>
+    <string name="label_linked">Linked</string>
+    <string name="label_manual">Manual</string>
     <string name="label_mark_read">Mark All As Read</string>
     <string name="label_memo">Memo</string>
+    <string name="label_minutes_ago">minutes ago</string>
+    <string name="label_minute_ago">minute ago</string>
+    <string name="label_never_refreshed">Never been refreshed</string>
+    <string name="label_net_worth">Net Worth:</string>
     <string name="label_new_transactions">New Transactions</string>
     <string name="label_no">no</string>
     <string name="label_no_categories">No Categories Found</string>

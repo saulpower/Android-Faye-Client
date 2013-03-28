@@ -83,16 +83,7 @@ public class Preferences {
 		
 		return edit.commit();
 	}
-	
-	public static boolean saveStringSet(String key, Set<String> value) {
-		
-		SharedPreferences prefs = getPrefs();
-		Editor edit = prefs.edit();
-		edit.putStringSet(key, value);
-		
-		return edit.commit();
-	}
-	
+
 	public static boolean getBoolean(String key, boolean defaultBool) {
 		
 		boolean value = defaultBool;

@@ -8,6 +8,7 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums;
 import com.moneydesktop.finance.data.Reports;
 import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.shared.activity.DashboardBaseActivity;
 import com.moneydesktop.finance.util.DateUtil;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
@@ -34,6 +35,7 @@ public class TransactionChartAdapter extends BaseBarAdapter {
     public final String TAG = this.getClass().getSimpleName();
 
     protected static final int MIN_HEIGHT = 2;
+    protected String mBankAccountId;
 
     protected Enums.TransactionsReport mCurrentReport = Enums.TransactionsReport.MONTHLY;
     protected Date mCurrentDate;
@@ -53,6 +55,15 @@ public class TransactionChartAdapter extends BaseBarAdapter {
         mBarLabelColor = getColor(R.color.gray5);
         mBarColors = getContext().getResources().getColorStateList(R.drawable.gray5_to_primary_text);
         mData = new ArrayList<BarViewModel>();
+    }
+
+    public TransactionChartAdapter(Context context, String bankAccountID) {
+        super(context);
+        mMinHeight = (int) UiUtils.getDynamicPixels(context, MIN_HEIGHT);
+        mBarLabelColor = getColor(R.color.gray5);
+        mBarColors = getContext().getResources().getColorStateList(R.drawable.gray5_to_primary_text);
+        mData = new ArrayList<BarViewModel>();
+        mBankAccountId = bankAccountID;
     }
 
     @Override
@@ -186,6 +197,15 @@ public class TransactionChartAdapter extends BaseBarAdapter {
         updateAdapter(true, true);
     }
 
+    public void selectReport(Enums.TransactionsReport report, final String bankAccountId) {
+
+        if (getBarChart().isAnimating() || mCurrentReport == report) return;
+
+        mCurrentReport = report;
+        mBankAccountId = bankAccountId;
+        updateAdapter(true, true);
+    }
+
     /**
      * Refresh the data for the currently selected report
      */
@@ -229,7 +249,14 @@ public class TransactionChartAdapter extends BaseBarAdapter {
         String popupFormat = "M/d/yyyy";
         String labelFormat = "d";
 
-        List<Transactions> data = Reports.getDailyExpenseTotals(date, days);
+        List<Transactions> data;
+
+        if (mBankAccountId == null) {
+            data = Reports.getDailyExpenseTotals(date, days);
+        }else {
+            data = Reports.getDailyExpenseTotalsForBankAccount(date, days, mBankAccountId);
+        }
+
 
         updateData(popupFormat, labelFormat, data, invalidate, report);
     }
