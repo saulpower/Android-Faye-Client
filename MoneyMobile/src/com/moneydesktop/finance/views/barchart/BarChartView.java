@@ -718,6 +718,10 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
             mPopup = new BarChartPopup(getContext(), this, mPopupWidth, mPopupHeight, getWidth());
         }
 
+        if (changed) {
+            mPopup.setMaxWidth(getWidth());
+        }
+
         // if we don't have an adapter, we don't need to do anything
         if (mAdapter == null) {
             return;

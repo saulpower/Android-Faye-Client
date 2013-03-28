@@ -80,6 +80,10 @@ public class BarChartPopup extends Drawable {
         mDate = "";
     }
 
+    public void setMaxWidth(int maxWidth) {
+        mMaxWidth = maxWidth;
+    }
+
     private void initializePaints() {
 
         int textGray = getContext().getResources().getColor(R.color.gray3);
