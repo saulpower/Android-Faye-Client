@@ -26,8 +26,6 @@ import com.moneydesktop.finance.views.barchart.BarChartView;
 import com.moneydesktop.finance.views.barchart.BarViewModel;
 import de.greenrobot.event.EventBus;
 
-import java.util.Date;
-
 /**
  * Created with IntelliJ IDEA.
  * User: saulhoward
@@ -168,7 +166,7 @@ public class TransactionsChartTabletFragment extends SummaryTabletFragment imple
         mAdapter = new TransactionChartAdapter(mActivity);
         mBarChart.setAdapter(mAdapter);
 
-        mDay.performClick();
+        selectReport(mDay, Enums.TransactionsReport.DAILY);
         onDataShowing(false);
     }
 
@@ -244,10 +242,13 @@ public class TransactionsChartTabletFragment extends SummaryTabletFragment imple
                 range.setDayRange(model.getDate(), 1);
                 break;
             case MONTHLY:
+                range.setMonthRange(model.getDate(), 1);
                 break;
             case QUARTERLY:
+                range.setQuarterRange(model.getDate(), 1);
                 break;
             case YEARLY:
+                range.setYearRange(model.getDate(), 1);
                 break;
         }
 
@@ -260,11 +261,13 @@ public class TransactionsChartTabletFragment extends SummaryTabletFragment imple
 
         if (model.getAmount() == 0) return;
 
+        DateRange range = getDateRange();
+
         Intent i = new Intent(mActivity, DropDownTabletActivity.class);
         i.putExtra(Constant.EXTRA_FRAGMENT, Enums.FragmentType.TRANSACTIONS_PAGE);
         i.putExtra(Constant.EXTRA_TXN_TYPE, Enums.TxFilter.ALL);
-        i.putExtra(Constant.EXTRA_START_DATE, (new Date()).getTime());
-        i.putExtra(Constant.EXTRA_END_DATE, (new Date()).getTime());
+        i.putExtra(Constant.EXTRA_START_DATE, range.getStartDate().getTime());
+        i.putExtra(Constant.EXTRA_END_DATE, range.getEndDate().getTime());
 
         mActivity.startActivity(i);
     }

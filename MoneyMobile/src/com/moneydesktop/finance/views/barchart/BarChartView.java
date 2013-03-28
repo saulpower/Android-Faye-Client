@@ -73,12 +73,13 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
     private Paint mLabelPaint;
     private Paint mChildPaint;
 
-    private float mLabelPercent = 0.9f;
+    private float mLabelPercent = 0.1f;
     private int mPopupHeight, mPopupWidth;
     private int mBarPadding;
     private int mBarWidth;
     private int mExtraSpace;
 
+    private float mPreviousMax;
     private float[] mPreviousAmounts;
     private int[] mPreviousColors;
     private float[] mTransitionOffsets;
@@ -110,6 +111,8 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
 
     private int mSelectedBarAlpha = 255;
 
+    private boolean mShowPopup = true;
+
     /** A list of cached (re-usable) item views */
     private final LinkedList<BarView> mCachedItemViews = new LinkedList<BarView>();
 
@@ -119,6 +122,16 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
 
     public void setOnPopupClickListener(OnPopupClickListener mOnPopupClickListener) {
         this.mOnPopupClickListener = mOnPopupClickListener;
+    }
+
+    public void setShowPopup(boolean mShowPopup) {
+        this.mShowPopup = mShowPopup;
+
+        if (mShowPopup) {
+            mPopupHeight = (int) UiUtils.getDynamicPixels(getContext(), POPUP_HEIGHT);
+        } else {
+            mPopupHeight = 0;
+        }
     }
 
     public BarChartView(Context context, AttributeSet attrs) {
@@ -149,13 +162,17 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
         invalidate();
     }
 
+    public void showLabel() {
+        setLabelPercent(0.1f);
+    }
+
+    public void hideLabel() {
+        setLabelPercent(0f);
+    }
+
     public void setLabelPercent(float labelPercent) {
         mLabelPercent = labelPercent;
         requestLayout();
-    }
-
-    public float getLabelPercent() {
-        return mLabelPercent;
     }
 
     public boolean isAnimating() {
@@ -206,6 +223,7 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
         resetChart();
 
         mAdapter = adapter;
+        mPreviousMax = mAdapter.getMaxAmount();
         mAdapter.setBarChart(this);
 
         if (mAdapter != null) {
@@ -256,6 +274,9 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
     }
 
     private void showPopup() {
+
+        if (!mShowPopup) return;
+
         BarView bar = ((BarView) getChildAt(mSelectedIndex));
         BarViewModel model = mAdapter.getBarModel(mSelectedIndex);
         mPopup.changePopup(bar, model);
@@ -273,6 +294,8 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
         super.dispatchDraw(canvas);
 
         // Draw popup
+        if (!mShowPopup) return;
+
         mPopup.draw(canvas);
     }
 
@@ -280,7 +303,7 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        canvas.drawRect(0, (int) (getHeight() * mLabelPercent), getWidth(), getHeight(), mLabelPaint);
+        canvas.drawRect(0, (int) (getHeight() * (1f - mLabelPercent)), getWidth(), getHeight(), mLabelPaint);
     }
 
     @Override
@@ -380,6 +403,24 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
     }
 
     /**
+     * During a drill down transition we may have extra views in the layout
+     * that are no longer necessary.  We will remove them so the view group
+     * represents the actual number of views showing.
+     */
+    void removeExtraViews() {
+
+        for (int i = getChildCount() - 1; i >= 0; i--) {
+
+            if (i >= mAdapter.getCount()) {
+                View view = getChildAt(i);
+                removeViewInLayout(view);
+            } else {
+                break;
+            }
+        }
+    }
+
+    /**
      * Animate the children being removed and added when the adapter is
      * set or invalidated and a new data set needs to be displayed.
      *
@@ -417,7 +458,7 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
     @Override
     public boolean onTouchEvent(final MotionEvent event) {
 
-        if (getChildCount() == 0 || mDrillDown.isDrilling()) {
+        if (!isEnabled() || getChildCount() == 0 || mDrillDown.isDrilling()) {
             return false;
         }
 
@@ -503,6 +544,8 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
      * the long click listener
      */
     private void startLongPressCheck() {
+
+        if (!mAdapter.isLongClickable(mSelectedIndex)) return;
 
         // create the runnable if we haven't already
         if (mLongPressRunnable == null) {
@@ -596,19 +639,16 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
      */
     private int clickChildAt(final int x, final int y, boolean clicked) {
 
-        if (mPopup.getBounds().contains(x, y)) {
+        if (mShowPopup && mPopup.getBounds().contains(x, y)) {
             if (clicked) clickPopup();
             return INVALID_INDEX;
         }
 
         final int index = getContainingChildIndex(x, y);
 
-        if (index != INVALID_INDEX) {
+        if (index != INVALID_INDEX && index != mSelectedIndex) {
 
             setSelection(index);
-        }
-
-        if (index != INVALID_INDEX) {
 
             final View itemView = getChildAt(index);
             final int position = index;
@@ -632,7 +672,13 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
      */
     private void beginDrillDown() {
 
-        mPopup.hide();
+        BarViewModel model = mAdapter.getBarModel(mSelectedIndex);
+
+        if (model.getAmount() == 0) return;
+
+        if (mShowPopup) {
+            mPopup.hide();
+        }
         mDrillDown.setSelectedBar(mSelectedIndex);
         mDrillDown.start();
     }
@@ -668,8 +714,12 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
     protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
-        if (mPopup == null) {
+        if (mShowPopup && mPopup == null) {
             mPopup = new BarChartPopup(getContext(), this, mPopupWidth, mPopupHeight, getWidth());
+        }
+
+        if (changed) {
+            mPopup.setMaxWidth(getWidth());
         }
 
         // if we don't have an adapter, we don't need to do anything
@@ -697,7 +747,7 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
 
             final BarView bar = (BarView) mAdapter.getView(i, getCachedView(), this);
             bar.setSelected(false);
-            bar.setLabelPercent(1f - mLabelPercent);
+            bar.setLabelPercent(mLabelPercent);
             addAndMeasureChild(bar, i);
         }
     }
@@ -768,9 +818,17 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
             throw new IllegalStateException("Bar Count Changed While Updating");
         }
 
+        if (mShowPopup && mPopup != null) {
+            mPopup.updateAmount(percent);
+            mPopup.updatePosition();
+        }
+
+        final float currentMax = mAdapter.getMaxAmount();
+
         for (int i = 0; i < getChildCount(); i++) {
 
             BarView barView = (BarView) getChildAt(i);
+            barView.setMaxAmount(mPreviousMax + (currentMax - mPreviousMax) * percent);
             updateBar(barView, i, percent);
         }
     }
@@ -838,6 +896,11 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
      */
     private void updateBars() {
 
+        if (mShowPopup && mPopup != null) {
+            // Update the popup bar model
+            mPopup.setBarModel(mAdapter.getBarModel(mSelectedIndex));
+        }
+
         ObjectAnimator update = ObjectAnimator.ofFloat(this, "barsUpdate", 0f, 1f);
         update.setDuration(UPDATE_DURATION);
         update.addListener(new Animator.AnimatorListener() {
@@ -849,6 +912,7 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
             public void onAnimationEnd(Animator animation) {
 
                 rebuildChildDrawingCache();
+                mPreviousMax = mAdapter.getMaxAmount();
                 mUpdating = false;
 
                 if (mOnDataShowingListener != null) {
@@ -881,7 +945,9 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
             return;
         }
 
-        mPopup.hide();
+        if (mShowPopup && mPopup != null) {
+            mPopup.hide();
+        }
 
         rebuildChildDrawingCache();
 
@@ -911,6 +977,7 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
                 } else {
 
                     refreshSelection();
+                    mPreviousMax = mAdapter.getMaxAmount();
                     mTransitioning = false;
                 }
             }
@@ -928,9 +995,20 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
 
     private void refreshSelection() {
 
-        setSelection(0);
+        // Select the first bar with a non-zero amount
+        int position = mAdapter.getCount() - 1;
+
+        while (mAdapter.getBarModel(position).getAmount() == 0 && position >= 0) {
+            position--;
+        }
+
+        setSelection(position);
+
         BarView bar = (BarView) getChildAt(mSelectedIndex);
         bar.setSelected(true, true);
+
+        if (!mShowPopup || mPopup == null) return;
+
         mPopup.changePopup(bar, mAdapter.getBarModel(mSelectedIndex));
     }
 

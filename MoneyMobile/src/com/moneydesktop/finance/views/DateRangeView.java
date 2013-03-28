@@ -1,32 +1,26 @@
 package com.moneydesktop.finance.views;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PointF;
-import android.graphics.Rect;
-import android.graphics.RectF;
+import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.util.DateRange;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.AnchorView.AnchorMoveListener;
-
 import de.greenrobot.event.EventBus;
+import org.apache.commons.lang.time.DateUtils;
 
-// TODO: Fix this to work with setting date range in Transactions View
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 public class DateRangeView extends View implements AnchorMoveListener {
     
     public final String TAG = this.getClass().getSimpleName();
@@ -54,8 +48,6 @@ public class DateRangeView extends View implements AnchorMoveListener {
     private boolean mAnchorsMoved = false;
     private PointF mAnchorDistance;
     private DateRangeItem mTapped;
-    
-    private DateRangeItem mCurrentItem;
     
     private Date mStart, mEnd, mCurrentMonth;
     
@@ -107,7 +99,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
     	mStart = range.getStartDate();
     	mEnd = range.getEndDate();
 
-        moveScroller(mStart);
+        moveScroller();
         anchorDidMove();
     }
     
@@ -117,13 +109,13 @@ public class DateRangeView extends View implements AnchorMoveListener {
             return;
         }
 
-        Date today = new Date();
-        
-        Calendar c = Calendar.getInstance();
-        c.setTime(getToday());
+        Calendar c = DateUtils.toCalendar(getToday());
         c.add(Calendar.YEAR, -1);
         c.set(Calendar.MONTH, 0);
-        
+
+        int start = 0;
+        int end = 0;
+
         mDates = new ArrayList<DateRangeItem>();
         
         for (int i = 0; i < 24; i++) {
@@ -134,15 +126,19 @@ public class DateRangeView extends View implements AnchorMoveListener {
             temp.setCallback(this);
             mDates.add(temp);
             
-            if (temp.getDate().getMonth() == today.getMonth()) {
-                mCurrentItem = temp;
+            if (DateUtils.truncatedCompareTo(temp.getDate(), mStart, Calendar.MONTH) == 0) {
+                start = i;
+            }
+
+            if (DateUtils.truncatedCompareTo(temp.getDate(), mEnd, Calendar.MONTH) == 0) {
+                end = i;
             }
             
             c.add(Calendar.MONTH, 1);
         }
         
         moveScroller();
-        initAnchors();
+        initAnchors(mDates.get(start), mDates.get(end));
     }
     
     private void initStartEndDates() {
@@ -153,8 +149,7 @@ public class DateRangeView extends View implements AnchorMoveListener {
         
         mStart = c.getTime();
         
-        c.set(Calendar.DAY_OF_MONTH, 1);
-        c.add(Calendar.MONTH, 1);
+        c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
         
         mEnd = c.getTime();
     }
@@ -206,10 +201,12 @@ public class DateRangeView extends View implements AnchorMoveListener {
     }
     
     private void moveScroller() {
-    	moveScroller(new Date());
+    	moveScroller(mEnd);
     }
     
     private void moveScroller(Date date) {
+
+        if (mScroller == null) return;
 
         DateRangeItem item = getItem(date);
         
@@ -218,12 +215,12 @@ public class DateRangeView extends View implements AnchorMoveListener {
         }
     }
     
-    private void initAnchors() {
+    private void initAnchors(DateRangeItem start, DateRangeItem end) {
         
-        mLeft = new AnchorView(getContext(), mCurrentItem.getBounds().left, getHeight(), true);
+        mLeft = new AnchorView(getContext(), start.getBounds().left, getHeight(), true);
         mLeft.setCallback(this);
         mLeft.setAnchorMoveListener(this);
-        mRight = new AnchorView(getContext(), mCurrentItem.getBounds().right, getHeight(), false);
+        mRight = new AnchorView(getContext(), end.getBounds().right, getHeight(), false);
         mRight.setCallback(this);
         mRight.setAnchorMoveListener(this);
         
@@ -232,17 +229,17 @@ public class DateRangeView extends View implements AnchorMoveListener {
     
     public DateRangeItem getItem(Date date) {
         
-        if (mDates == null) {
+        if (mDates == null  || mDates.size() == 0) {
             return null;
         }
         
         for (DateRangeItem item : mDates) {
-            if (item.getDate().getMonth() == date.getMonth() && item.getDate().getYear() == date.getYear()) {
+            if (DateUtils.truncatedCompareTo(item.getDate(), date, Calendar.MONTH) == 0) {
                 return item;
             }
         }
         
-        return null;
+        return mDates.get(mDates.size() - 1);
     }
  
     public DateRangeItem getItem(float positionX) {
@@ -384,17 +381,22 @@ public class DateRangeView extends View implements AnchorMoveListener {
     }
     
     private void moveAnchorsTo(DateRangeItem item) {
-        
-        mLeft.animateToPosition(item.getBounds().left);
-        mRight.animateToPosition(item.getBounds().right);
+        moveAnchorsTo(item, item);
+    }
+
+    private void moveAnchorsTo(DateRangeItem start, DateRangeItem end) {
+
+        mLeft.animateToPosition(start.getBounds().left);
+        mRight.animateToPosition(end.getBounds().right);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
-            
+
             @Override
             public void run() {
                 setAnchors();
             }
         }, 300);
+
     }
     
     /**
@@ -511,7 +513,9 @@ public class DateRangeView extends View implements AnchorMoveListener {
 
     @Override
     public void anchorDidMove() {
-        
+
+        if (mLeft == null || mRight == null) return;
+
         if (mHighlightBounds == null) {
             mHighlightBounds = new RectF(mLeft.getPosition(), getHeight() * 2 / 5, mRight.getPosition(), getHeight());
         }

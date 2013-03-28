@@ -34,7 +34,55 @@ public class DateRange {
 
         mStartDate = cal.getTime();
 
-        cal.add(Calendar.DAY_OF_YEAR, 1);
+        cal.add(Calendar.DAY_OF_YEAR, days);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+
+        mEndDate = cal.getTime();
+    }
+
+    public void setMonthRange(Date start, int months) {
+
+        months--;
+
+        Calendar cal = DateUtils.toCalendar(start);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+
+        mStartDate = cal.getTime();
+
+        cal.add(Calendar.MONTH, months);
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+
+        mEndDate = cal.getTime();
+    }
+
+    public void setQuarterRange(Date start, int quarters) {
+
+        int quarter = DateUtil.getQuarterNumber(start);
+
+        Calendar cal = DateUtils.toCalendar(start);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.set(Calendar.MONTH, DateUtil.getQuarterStartMonth(quarter));
+
+        mStartDate = cal.getTime();
+
+        cal.add(Calendar.MONTH, quarters * 3 - 1);
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+
+        mEndDate = cal.getTime();
+    }
+
+    public void setYearRange(Date start, int years) {
+
+        years--;
+
+        Calendar cal = DateUtils.toCalendar(start);
+        cal.set(Calendar.DAY_OF_YEAR, 1);
+
+        mStartDate = cal.getTime();
+
+        cal.add(Calendar.YEAR, years);
+        cal.set(Calendar.DAY_OF_YEAR, cal.getActualMaximum(Calendar.DAY_OF_YEAR));
+
         mEndDate = cal.getTime();
     }
 	

@@ -406,6 +406,7 @@ public class BarDrillDown {
 
         if (barView == null) {
             barView = new BarView(mBarChart.getContext());
+            barView.setDuplicateParentStateEnabled(false);
         }
 
         float max = mBarChart.getAdapter().getMaxAmount();
@@ -469,6 +470,7 @@ public class BarDrillDown {
             @Override
             public void onAnimationEnd(Animator animation) {
                 mBarChart.removeViewInLayout(mSelectedBar);
+                mBarChart.removeExtraViews();
                 mBarChart.rebuildChildDrawingCache();
                 setIsDrilling(false);
             }

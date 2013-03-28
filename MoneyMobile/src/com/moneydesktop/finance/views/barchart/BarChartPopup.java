@@ -22,6 +22,8 @@ import java.text.DecimalFormat;
  */
 public class BarChartPopup extends Drawable {
 
+    public final String TAG = this.getClass().getSimpleName();
+
     private static final int CARET_SIZE = 20;
 
     private DecimalFormat mFormatter = new DecimalFormat("$#,##0.00;-$#,##0.00");
@@ -49,6 +51,10 @@ public class BarChartPopup extends Drawable {
     private float mScale = 1f;
     private float mCaretSize;
 
+    private float mAmountNum = 0f;
+    private float mPrevAmountNum = 0f;
+    private float mAmountChange = 0f;
+
     private int mMaxWidth;
 
     private ObjectAnimator mShow, mHide;
@@ -72,6 +78,10 @@ public class BarChartPopup extends Drawable {
         mAmount = mFormatter.format(0.0);
         mDetail = mContext.getString(R.string.button_transactions);
         mDate = "";
+    }
+
+    public void setMaxWidth(int maxWidth) {
+        mMaxWidth = maxWidth;
     }
 
     private void initializePaints() {
@@ -125,12 +135,27 @@ public class BarChartPopup extends Drawable {
         invalidateSelf();
     }
 
+    public void setBarModel(BarViewModel model) {
+        mCurrentModel = model;
+
+        mAmountChange = mCurrentModel.getAmount() - mAmountNum;
+
+        mPrevAmountNum = mAmountNum;
+        mAmountNum = mCurrentModel.getAmount();
+    }
+
+    /**
+     * Change the bar the popup is currently representing.
+     *
+     * @param bar The {@link BarView} the popup is placed over
+     * @param model The {@link BarViewModel} the popup represents
+     */
     public void changePopup(BarView bar, BarViewModel model) {
 
         if (mCurrentBar == bar && mCurrentModel == model) return;
 
         mCurrentBar = bar;
-        mCurrentModel = model;
+        setBarModel(model);
 
         if (mBgPaint.getAlpha() != 0) {
             hide(true);
@@ -141,6 +166,9 @@ public class BarChartPopup extends Drawable {
         }
     }
 
+    /**
+     * Show the popup
+     */
     public void show() {
 
         if (mBgPaint.getAlpha() == 255) return;
@@ -155,10 +183,19 @@ public class BarChartPopup extends Drawable {
         mShow.start();
     }
 
+    /**
+     * Hide the popup
+     */
     public void hide() {
         hide(false);
     }
 
+    /**
+     * Hides the popup with the option to show it if it has
+     * changed position and value.
+     *
+     * @param show
+     */
     private void hide(final boolean show) {
 
         if (mBgPaint.getAlpha() == 0 && !show) return;
@@ -201,9 +238,27 @@ public class BarChartPopup extends Drawable {
         }
     }
 
+    /**
+     * Updates the amount as a percentage of change.  Used to animate
+     * changes in a bar the popup is representing.
+     *
+     * @param percent
+     */
+    public void updateAmount(float percent) {
+
+        float newAmount = mPrevAmountNum + mAmountChange * percent;
+        mAmount = mFormatter.format(newAmount);
+        updateTextPositions();
+
+        invalidateSelf();
+    }
+
+    /**
+     * Updates the text values and updates the text layout position
+     */
     private void updateText() {
 
-        mAmount = mFormatter.format(mCurrentModel.getAmount());
+        mAmount = mFormatter.format(mAmountNum);
         mDate = mCurrentModel.getPopupText();
 
         if (mCurrentModel.getAmount() == 0) {
@@ -215,7 +270,11 @@ public class BarChartPopup extends Drawable {
         updateTextPositions();
     }
 
-    private void updatePosition() {
+    /**
+     * Updates the caret and background positions as well as updating
+     * the text positioning as the popup has moved
+     */
+    void updatePosition() {
 
         // Update caret position
         PointF point = new PointF(mCurrentBar.getLeft() + (mCurrentBar.getBarBounds().exactCenterX() - mCaretSize / 2f), mCurrentBar.getBarBounds().top - mCaretSize * 3 / 4);
@@ -237,6 +296,9 @@ public class BarChartPopup extends Drawable {
         updateTextPositions();
     }
 
+    /**
+     * Updates the text positioning of all items
+     */
     private void updateTextPositions() {
 
         mDatePaint.getTextBounds(mDate, 0, mDate.length(), mDateBounds);
