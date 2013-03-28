@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,6 +28,7 @@ import com.moneydesktop.finance.views.LabelEditText;
 import de.greenrobot.event.EventBus;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -258,10 +260,17 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
+                String value = mAmount.getText().toString().substring(1);
+
                 if (actionId == EditorInfo.IME_ACTION_DONE && mTransaction != null) {
 
-                    mTransaction.setAmount(Double.parseDouble(mAmount.getText().toString().substring(1)));
-                    mTransaction.updateSingle();
+                    try {
+                        mTransaction.setAmount(mFormatter.parse(value).doubleValue());
+                        mTransaction.updateSingle();
+                    } catch (ParseException ex) {
+                        Log.e(TAG, "Could not parse number", ex);
+                    }
+
                     finishEditing(v);
 
                     return true;

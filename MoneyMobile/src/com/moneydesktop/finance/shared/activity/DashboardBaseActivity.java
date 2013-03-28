@@ -67,6 +67,8 @@ public abstract class DashboardBaseActivity extends BaseActivity {
     public void setCurrentFragmentType(FragmentType fragmentType) {
         mPreviousFragmentType = mCurrentFragmentType;
         mCurrentFragmentType = fragmentType;
+
+        setCurrentFragment(mFragments.get(mCurrentFragmentType));
     }
 
 	public GrowPagerAdapter getPagerAdapter() {

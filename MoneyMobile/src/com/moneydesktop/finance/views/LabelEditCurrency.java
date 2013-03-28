@@ -68,8 +68,14 @@ public class LabelEditCurrency extends LabelEditText {
     @Override
     public void onEditorAction(int actionCode) {
 
-        if (actionCode == EditorInfo.IME_ACTION_DONE) {
-            setText(mFormatter.format(Double.parseDouble(getText().toString().substring(1))));
+        String value = getText().toString().substring(1);
+
+        if (value.equals("")) {
+            value = Integer.toString(0);
+        }
+
+        if (actionCode == EditorInfo.IME_ACTION_DONE && !value.equals("")) {
+            setText(mFormatter.format(Double.parseDouble(value.replace(",", ""))));
         }
 
         super.onEditorAction(actionCode);

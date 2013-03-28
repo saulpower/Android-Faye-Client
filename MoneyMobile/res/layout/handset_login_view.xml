@@ -60,139 +60,135 @@
                 android:text="@string/text_signup" />
         </LinearLayout>
     </LinearLayout>
+
     <!-- Login Screen that prompts for username and password, ID 1 -->
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" 
-        android:background="@color/white">
+        android:layout_height="match_parent"
+        android:background="@color/white" >
 
-        <RelativeLayout
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
+            android:layout_marginTop="30dp"
+            android:contentDescription="@string/description"
+            android:src="@drawable/phone_logo_small" />
+
+        <TextView
+            android:id="@+id/message_title"
+            style="@style/message_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white" >
+            android:layout_below="@id/logo"
+            android:layout_marginTop="30dp"
+            android:visibility="invisible" />
 
-            <ImageView
-                android:id="@+id/logo"
-                android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/message_body"
+            style="@style/message_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/message_title"
+            android:layout_marginTop="8dp"
+            android:visibility="invisible" />
+
+        <LinearLayout
+            android:id="@+id/credentials"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/logo"
+            android:background="@color/white"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="30dp"
-                android:layout_marginTop="30dp"
-                android:contentDescription="@string/description"
-                android:src="@drawable/phone_logo_small" />
+                app:lineColor="@color/gray2"
+                app:lineStrokeWidth="2dp"
+                app:isDashed="true"
+                app:dashLength="2dp"  />
+
+            <com.moneydesktop.finance.views.LabelEditText
+                android:id="@+id/username_field"
+                style="@style/field"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:inputType="textEmailAddress"
+                android:textSize="25sp"
+                android:nextFocusDown="@+id/password_field"
+                app:labelColor="@drawable/gray3_to_white_text"
+                app:labelSize="8"
+                app:labelText="@string/label_email" />
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:lineColor="@color/gray2"
+                app:lineStrokeWidth="2dp"
+                app:isDashed="true"
+                app:dashLength="2dp"  />
+
+            <com.moneydesktop.finance.views.LabelEditText
+                android:id="@id/password_field"
+                style="@style/field"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:inputType="textPassword"
+                android:password="true"
+                android:textSize="25sp"
+                app:labelColor="@drawable/gray3_to_white_text"
+                app:labelSize="8"
+                app:labelText="@string/label_password" />
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:lineColor="@color/gray2"
+                app:lineStrokeWidth="2dp"
+                app:isDashed="true"
+                app:dashLength="2dp"  />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/button_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/credentials"
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/login_button"
+                style="@style/button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="@string/button_login" />
+
+            <Button
+                android:id="@+id/cancel_button"
+                style="@style/button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="1dp"
+                android:text="@string/button_cancel" />
 
             <TextView
-                android:id="@+id/message_title"
-                style="@style/message_title"
+                android:id="@+id/login_text"
+                style="@style/text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/logo"
-                android:layout_marginTop="30dp"
-                android:visibility="invisible" />
+                android:paddingBottom="20dp"
+                android:paddingTop="20dp"
+                android:text="@string/text_login" />
+        </LinearLayout>
+    </RelativeLayout>
 
-            <TextView
-                android:id="@+id/message_body"
-                style="@style/message_body"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/message_title"
-                android:layout_marginTop="8dp"
-                android:visibility="invisible" />
-
-            <LinearLayout
-                android:id="@+id/credentials"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/logo"
-                android:background="@color/white"
-                android:gravity="center"
-                android:orientation="vertical" >
-        
-		        <com.moneydesktop.finance.views.LineView
-		            android:layout_width="match_parent"
-		            android:layout_height="wrap_content"
-		            app:lineColor="@color/gray2"
-		            app:lineStrokeWidth="2dp"
-		            app:isDashed="true"
-		            app:dashLength="2dp"  />
-
-                <com.moneydesktop.finance.views.LabelEditText
-                    android:id="@+id/username_field"
-                    style="@style/field"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:inputType="textEmailAddress"
-                    android:textSize="25sp"
-		            android:nextFocusDown="@+id/password_field"
-                    app:labelColor="@drawable/gray3_to_white_text"
-                    app:labelSize="8"
-                    app:labelText="@string/label_email" />
-        
-		        <com.moneydesktop.finance.views.LineView
-		            android:layout_width="match_parent"
-		            android:layout_height="wrap_content"
-		            app:lineColor="@color/gray2"
-		            app:lineStrokeWidth="2dp"
-		            app:isDashed="true"
-		            app:dashLength="2dp"  />
-
-                <com.moneydesktop.finance.views.LabelEditText
-                    android:id="@id/password_field"
-                    style="@style/field"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:inputType="textPassword"
-                    android:password="true"
-                    android:textSize="25sp"
-                    app:labelColor="@drawable/gray3_to_white_text"
-                    app:labelSize="8"
-                    app:labelText="@string/label_password" />
-        
-		        <com.moneydesktop.finance.views.LineView
-		            android:layout_width="match_parent"
-		            android:layout_height="wrap_content"
-		            app:lineColor="@color/gray2"
-		            app:lineStrokeWidth="2dp"
-		            app:isDashed="true"
-		            app:dashLength="2dp"  />
-		        
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/button_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/credentials"
-                android:layout_centerHorizontal="true"
-                android:orientation="vertical" >
-
-                <Button
-                    android:id="@+id/login_button"
-                    style="@style/button"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:text="@string/button_login" />
-
-                <Button
-                    android:id="@+id/cancel_button"
-                    style="@style/button"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="1dp"
-                    android:text="@string/button_cancel" />
-
-                <TextView
-                    android:id="@+id/login_text"
-                    style="@style/text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="20dp"
-                    android:paddingTop="20dp"
-                    android:text="@string/text_login" />
-            </LinearLayout>
-        </RelativeLayout>
-    </ScrollView>
     <!-- Screen that allows users to submit their banks' info to us, ID 2 -->
 
     <ScrollView
@@ -342,6 +338,7 @@
             </LinearLayout>
         </RelativeLayout>
     </ScrollView>
+
     <!-- Screen that thanks the user for their submission, and invites them to use the demo. ID 3 -->
 
     <LinearLayout
