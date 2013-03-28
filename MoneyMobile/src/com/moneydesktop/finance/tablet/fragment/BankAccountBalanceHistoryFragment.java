@@ -21,9 +21,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class BankAccountBalanceHistoryFragment extends TransactionsFragment implements BarChartView.OnPopupClickListener, AdapterView.OnItemClickListener {
+public class BankAccountBalanceHistoryFragment extends TransactionsFragment implements BarChartView.OnPopupClickListener {
 
-	private static BankAccount mBankAccount;
+	private BankAccount mBankAccount;
     private BarChartView mBarChart;
     private AccountBalanceAdapter mChartAdapter;
     protected QueryProperty mOrderBy = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Date);
@@ -72,13 +72,17 @@ public class BankAccountBalanceHistoryFragment extends TransactionsFragment impl
         String accountId = intent.getExtras().getString(Constant.EXTRA_ACCOUNT_ID);
 		
         BankAccountDao bankAccountDAO = ApplicationContext.getDaoSession().getBankAccountDao();
-        mBankAccount = bankAccountDAO.load(Long.valueOf(accountId.hashCode()));
+        fragment.setbankAccount(bankAccountDAO.load(Long.valueOf(accountId.hashCode())));
 		
         Bundle args = new Bundle();
         fragment.setArguments(args);
 
         return fragment;
 	}
+
+    public void setbankAccount(BankAccount bankAccount) {
+        mBankAccount = bankAccount;
+    }
 
     @Override
     public void isShowing() {
@@ -99,7 +103,6 @@ public class BankAccountBalanceHistoryFragment extends TransactionsFragment impl
         super.setupView();
 
         mTransactionsList.setPinnedHeaderView(mActivity.getLayoutInflater().inflate(R.layout.handset_item_transaction_header, mTransactionsList, false));
-        mTransactionsList.setOnItemClickListener(this);
     }
 
     @Override
@@ -152,7 +155,6 @@ public class BankAccountBalanceHistoryFragment extends TransactionsFragment impl
 
     @Override
     public void onPopupClicked() {
-        Toast.makeText(mActivity, "popup clicked", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -161,11 +163,7 @@ public class BankAccountBalanceHistoryFragment extends TransactionsFragment impl
         mAdapter.applyNewData();
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(mActivity, "transaction item clicked", Toast.LENGTH_SHORT).show();
-       // ((TransactionsAdapter)parent).get
-
-        mBarChart.setSelection(position);
-    }
+//    @Override
+//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//    }
 }

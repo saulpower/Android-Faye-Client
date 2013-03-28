@@ -107,7 +107,10 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
         setupFonts();
 		getBaseAccountTypes();		
 		getAssetsAndLiabilitiesValue();
+        populateAccountTypeRows();
+    }
 
+    private void populateAccountTypeRows() {
         for (AccountType accountType : mBaseAccountTypes) {
 
             final LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -126,22 +129,13 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
 
             setupBankAccounts(accountType.getBankAccounts(), bankAccountContainer);
 
-            if (accountType.getFinancialAccountType() == 1) {
-                iconContainer.setBackgroundColor(mActivity.getResources().getColor(R.color.secondaryColor));
-                container.setBackgroundColor(mActivity.getResources().getColor(R.color.secondaryColor));
-                sliderContent.setBackgroundColor(mActivity.getResources().getColor(R.color.secondaryColor));
-                handle.setBackgroundColor(mActivity.getResources().getColor(R.color.secondaryColor));
-            } else {
-                iconContainer.setBackgroundColor(mActivity.getResources().getColor(R.color.primaryColor));
-                container.setBackgroundColor(mActivity.getResources().getColor(R.color.primaryColor));
-                sliderContent.setBackgroundColor(mActivity.getResources().getColor(R.color.primaryColor));
-                handle.setBackgroundColor(mActivity.getResources().getColor(R.color.primaryColor));
-            }
+            setAccountTypeRowBackgroundColor(accountType, sliderContent, handle, container, iconContainer);
 
             accountTypeName.setText(accountType.getAccountTypeName());
 
-            double accountTypeBalance = 0;
 
+            //SET ACCOUNT TYPE SUM
+            double accountTypeBalance = 0;
             for (BankAccount bankAccount : accountType.getBankAccounts()) {
                 accountTypeBalance = accountTypeBalance + bankAccount.getBalance();
             }
@@ -149,6 +143,8 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
             String formattedSum = NumberFormat.getCurrencyInstance().format(accountTypeBalance);
             accountTypeSum.setText(formattedSum);
 
+
+            //SET BANK ACCOUNT COUNT
             int bankCount = accountType.getBankAccounts().size();
             if (bankCount > 1 || bankCount == 0) {
                 accountTypeCount.setText(bankCount + " " + mActivity.getString(R.string.account_types_title));
@@ -168,6 +164,7 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
                 }
             });
 
+            //SET ACCOUNT TYPE ICON
             setIconText(accountType, icon);
 
             Fonts.applyPrimaryBoldFont(accountTypeSum, 16);
@@ -184,7 +181,21 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
 
             mListContainer.addView(view);
         }
-	}
+    }
+
+    private void setAccountTypeRowBackgroundColor(AccountType accountType, LinearLayout sliderContent, RelativeLayout handle, LinearLayout container, LinearLayout iconContainer) {
+        if (accountType.getFinancialAccountType() == 1) {
+            iconContainer.setBackgroundColor(mActivity.getResources().getColor(R.color.secondaryColor));
+            container.setBackgroundColor(mActivity.getResources().getColor(R.color.secondaryColor));
+            sliderContent.setBackgroundColor(mActivity.getResources().getColor(R.color.secondaryColor));
+            handle.setBackgroundColor(mActivity.getResources().getColor(R.color.secondaryColor));
+        } else {
+            iconContainer.setBackgroundColor(mActivity.getResources().getColor(R.color.primaryColor));
+            container.setBackgroundColor(mActivity.getResources().getColor(R.color.primaryColor));
+            sliderContent.setBackgroundColor(mActivity.getResources().getColor(R.color.primaryColor));
+            handle.setBackgroundColor(mActivity.getResources().getColor(R.color.primaryColor));
+        }
+    }
 
     private void setupBankAccounts(List<BankAccount> bankAccounts, LinearLayout bankAccountContainer) {
 
@@ -342,7 +353,7 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
         draggableView.setLayoutParams(drawerLayoutParams);
     }
 
-     private void populateBankAccountContainer(BankAccount bankAccount) {
+    private void populateBankAccountContainer(BankAccount bankAccount) {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)UiUtils.getScaledPixels(mActivity, 50), (int)UiUtils.getScaledPixels(mActivity, 50));
         mBankImage.setLayoutParams(layoutParams);
         mAccountName.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
