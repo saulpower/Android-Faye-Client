@@ -406,6 +406,7 @@ public class BarDrillDown {
 
         if (barView == null) {
             barView = new BarView(mBarChart.getContext());
+            barView.setDuplicateParentStateEnabled(false);
         }
 
         float max = mBarChart.getAdapter().getMaxAmount();
