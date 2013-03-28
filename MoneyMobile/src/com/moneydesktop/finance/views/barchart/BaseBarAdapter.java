@@ -80,6 +80,7 @@ public abstract class BaseBarAdapter extends BaseAdapter {
 
         if (barView == null) {
             barView = new BarView(mContext);
+            barView.setDuplicateParentStateEnabled(false);
         }
 
         barView.setMaxAmount(getMaxAmount());
