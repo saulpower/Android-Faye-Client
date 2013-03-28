@@ -6,8 +6,9 @@ import android.graphics.Color;
 import android.view.View;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums;
+import com.moneydesktop.finance.data.Reports;
 import com.moneydesktop.finance.database.Transactions;
-import com.moneydesktop.finance.util.DateRange;
+import com.moneydesktop.finance.util.DateUtil;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.barchart.BarView;
@@ -136,8 +137,8 @@ public class TransactionChartAdapter extends BaseBarAdapter {
 
             case QUARTERLY:
                 mCurrentReport = Enums.TransactionsReport.MONTHLY;
-                int quarter = DateRange.getQuarterNumber(calendar);
-                calendar.set(Calendar.MONTH, DateRange.getQuarterStartMonth(quarter));
+                int quarter = DateUtil.getQuarterNumber(calendar);
+                calendar.set(Calendar.MONTH, DateUtil.getQuarterStartMonth(quarter));
                 calendar.set(Calendar.DAY_OF_MONTH, 1);
                 calendar.add(Calendar.MONTH, 2);
                 showMonthly(false, false, calendar.getTime(), 3);
@@ -228,7 +229,7 @@ public class TransactionChartAdapter extends BaseBarAdapter {
         String popupFormat = "M/d/yyyy";
         String labelFormat = "d";
 
-        List<Transactions> data = Transactions.getDailyExpenseTotals(date, days);
+        List<Transactions> data = Reports.getDailyExpenseTotals(date, days);
 
         updateData(popupFormat, labelFormat, data, invalidate, report);
     }
@@ -250,7 +251,7 @@ public class TransactionChartAdapter extends BaseBarAdapter {
 
         String format = "MMM yyyy";
 
-        List<Transactions> data = Transactions.getMonthlyExpenseTotals(date, months);
+        List<Transactions> data = Reports.getMonthlyExpenseTotals(date, months);
 
         updateData(format, format, data, invalidate, report);
     }
@@ -270,7 +271,7 @@ public class TransactionChartAdapter extends BaseBarAdapter {
 
         String format = "yyyy";
 
-        List<Transactions> data = Transactions.getQuarterlyExpenseTotals(date, 4);
+        List<Transactions> data = Reports.getQuarterlyExpenseTotals(date, 4);
 
         updateData(format, format, data, invalidate, report);
     }
@@ -285,7 +286,7 @@ public class TransactionChartAdapter extends BaseBarAdapter {
 
         String format = "yyyy";
 
-        List<Transactions> data = Transactions.getYearlyExpenseTotals(2);
+        List<Transactions> data = Reports.getYearlyExpenseTotals(2);
 
         updateData(format, format, data, invalidate, report);
     }

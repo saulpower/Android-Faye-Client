@@ -31,21 +31,13 @@ public class Constant {
     public static final String EXTRA_CATEGORY_TYPE = "category_type";
     public static final String EXTRA_END_DATE = "end_date";
     public static final String EXTRA_FRAGMENT = "fragment";
-    public static final String EXTRA_POSITION = "position";
     public static final String EXTRA_POSITION_X = "position_x";
     public static final String EXTRA_POSITION_Y = "position_y";
-    public static final String EXTRA_SOURCE_CODE = "source_code";
     public static final String EXTRA_START_DATE = "start_date";
     public static final String EXTRA_TXN_TYPE = "txn_type";
     public static final String EXTRA_VALUES = "values";
-    public static final String EXTRA_START_TIME = "start_time";
-    public static final String EXTRA_END_TIME = "end_time";
     public static final int CATEGORY_TYPE_CHILD = 0;
     public static final int CATEGORY_TYPE_GROUP = 1;
-    
-    public static final int CODE_CATEGORY_LIST = 1;
-    public static final int CODE_CATEGORY_DETAIL = 2;
-    public static final int CODE_TAG_DETAIL = 3;
     
 	/*******************************************************************
 	 * FLAGS
@@ -64,7 +56,6 @@ public class Constant {
     public static final String KEY_ACCOUNT_TYPE = "account_type";
     public static final String KEY_ACCOUNTTYPE = "accountType";
     public static final String KEY_ACCOUNT_NAME = "account_name";
-    public static final String KEY_ACCOUNT_TYPE_ID = "account_id";
     public static final String KEY_AMOUNT = "amount";
     public static final String KEY_ASSOCIATION_DESTROYED = "_association_destroyed";
     public static final String KEY_BANK_ACCOUNT_ID = "bank_account_id";
@@ -75,7 +66,6 @@ public class Constant {
     public static final String KEY_CREATED = "created";
     public static final String KEY_CREDENTIALS = "credentials";
     public static final String KEY_CREDIT_LIMIT = "credit_limit";
-    public static final String KEY_CUSTOM_FIELDS = "custom_fields";
     public static final String KEY_BALANCE = "balance";
     public static final String KEY_DATE = "date";
     public static final String KEY_DAY_DUE = "day_due";
@@ -88,7 +78,6 @@ public class Constant {
     public static final String KEY_FULL_SYNC = "full_sync_required";
     public static final String KEY_GUID = "guid";
     public static final String KEY_HAS_BEEN_VIEWED = "has_been_viewed";
-    public static final String KEY_HAS_PREVIOUS = "has_previous";
     public static final String KEY_ID = "id";
     public static final String KEY_INCOME = "income";
     public static final String KEY_INSTITUTION = "institution";
@@ -124,7 +113,6 @@ public class Constant {
     public static final String KEY_POPULARITY = "popularity";
     public static final String KEY_POSTED_DATE = "posted_date";
     public static final String KEY_PROCESS_STATUS = "process_status";
-    public static final String KEY_PROPERTY = "property";
     public static final String KEY_PROPERTY_TYPE = "property_type";
     public static final String KEY_RECORDS = "records";
     public static final String KEY_REFERENCE = "reference";
@@ -133,7 +121,6 @@ public class Constant {
     public static final String KEY_STATUS_CODE = "status_code";
     public static final String KEY_SYNC_TOKEN = "sync_token";
     public static final String KEY_TAGS = "tags";
-    public static final String KEY_TITLE = "title";
     public static final String KEY_TRANSACTIONS = "transactions";
     public static final String KEY_TRANSACTION_TYPE = "transaction_type";
     public static final String KEY_UPDATED = "updated";
@@ -150,7 +137,6 @@ public class Constant {
      *******************************************************************/
 
     public static final String BUSINESS = "business";
-    public static final String BUSINESS_OBJECT = "business_object";
     public static final String INCOME = "income";
     public static final String PERSONAL = "personal";
     public static final String TRANSFER = "transfer";
@@ -163,31 +149,13 @@ public class Constant {
 	/*******************************************************************
 	 * QUERIES
 	 *******************************************************************/
-    
-    public static final String ORDER_ASC = "ASC";
-    public static final String ORDER_DESC = "DESC";
-    
-    public static final String FIELD_DATE = "T.DATE";
-    public static final String FIELD_TITLE = "T.TITLE";
-    public static final String FIELD_CATEGORY = "C.CATEGORY_NAME";
-    public static final String FIELD_AMOUNT = "T.AMOUNT";
 	
     public static final String QUERY_SUMMED_TRANSACTIONS = "SELECT DATE, sum(RAW_AMOUNT) FROM TRANSACTIONS WHERE BANK_ACCOUNT_ID = ? GROUP BY DATE ORDER BY DATE ASC";
     public static final String QUERY_BOB_ID = "SELECT MAX(_ID) FROM BUSINESS_OBJECT_BASE";
     public static final String QUERY_BUSINESS_BASE_JOIN = ", BUSINESS_OBJECT_BASE B WHERE T.BUSINESS_OBJECT_ID = B._ID AND B.DATA_STATE = ?";
-    public static final String QUERY_TRANSACTIONS = " ORDER BY %s %s LIMIT ? OFFSET ?";
-    public static final String QUERY_DATE_TRANSACTIONS = ", CATEGORY C WHERE T.CATEGORY_ID = C._ID AND ("
-            + FIELD_TITLE
-            + " LIKE ? OR "
-            + FIELD_CATEGORY
-            + " LIKE ?) AND "
-            + FIELD_DATE
-            + " BETWEEN ? AND ? ORDER BY %s %s LIMIT ? OFFSET ?";
     public static final String QUERY_TOP_SPENDING_CATEGORY = "SELECT CATEGORY_ID, Sum(AMOUNT) As AMOUNT FROM TRANSACTIONS WHERE DATE BETWEEN ? AND ? GROUP BY CATEGORY_ID ORDER BY AMOUNT desc ";
     public static final String QUERY_DATED_TRANSACTIONS = "SELECT * FROM TRANSACTIONS WHERE DATE BETWEEN ? AND ? ORDER BY DATE ASC";
     public static final String QUERY_UNVIEWED_TRANSACTIONS = "SELECT COUNT(IS_PROCESSED) As UnProcessedTrans FROM TRANSACTIONS WHERE IS_PROCESSED='0' AND DATE BETWEEN ? AND ? ";
-    public static final String QUERY_TRANSACTIONS_TOTAL = "SELECT SUM(ABS(AMOUNT)) AS Amount FROM TRANSACTIONS";
-    public static final String QUERY_SPENDING_TOTAL = "SELECT SUM(ABS(T.AMOUNT)) AS TOTAL FROM TRANSACTIONS T JOIN CATEGORY C ON T.CATEGORY_ID = C._ID JOIN CATEGORY C1 ON C.PARENT_CATEGORY_ID = C1._ID WHERE C.CATEGORY_NAME NOT LIKE '%income%' AND C1.CATEGORY_NAME NOT LIKE '%income%'AND C.CATEGORY_NAME NOT LIKE '%transfer%' AND C1.CATEGORY_NAME NOT LIKE '%transfer%' AND T.DATE BETWEEN ? AND ?";
     public static final String QUERY_CATEGORY_CHILD_TOTAL = "SELECT SUM(ABS(T.AMOUNT)) AS Amount FROM TRANSACTIONS T JOIN CATEGORY C ON T.CATEGORY_ID = C._ID WHERE C._ID = ? AND T.DATE BETWEEN ? AND ?";
     public static final String QUERY_CATEGORY_TOTAL = "SELECT SUM(ABS(T.AMOUNT)) AS Amount FROM TRANSACTIONS T JOIN CATEGORY C ON T.CATEGORY_ID = C._ID WHERE (C._ID = ? OR C.PARENT_CATEGORY_ID = ?) AND T.DATE BETWEEN ? AND ?";
     public static final String QUERY_DAILY_TRANSACTIONS = "SELECT DATE, SUM(AMOUNT) AS Amount FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER, MONTH_NUMBER, DAY_NUMBER ORDER BY DATE ASC";

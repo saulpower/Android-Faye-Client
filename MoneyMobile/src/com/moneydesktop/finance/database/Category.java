@@ -431,6 +431,13 @@ public class Category extends BusinessObject  {
 			return false;
 		}
     }
+
+    public boolean excludeTransfer(BankAccount bankAccount) {
+
+        boolean isExcluded = true;
+
+        return isExcluded && isTransfer();
+    }
     
     public static Category saveCategory(JSONObject json, boolean delete) {
     	

@@ -646,12 +646,9 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
 
         final int index = getContainingChildIndex(x, y);
 
-        if (index != INVALID_INDEX) {
+        if (index != INVALID_INDEX && index != mSelectedIndex) {
 
             setSelection(index);
-        }
-
-        if (index != INVALID_INDEX) {
 
             final View itemView = getChildAt(index);
             final int position = index;
