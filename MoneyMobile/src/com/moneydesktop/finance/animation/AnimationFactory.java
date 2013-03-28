@@ -129,7 +129,7 @@ public class AnimationFactory {
 		public float getEndDegreeForSecondView() {
 			return 0;
 		}
-	};
+	}
 	 
 	
 	/**

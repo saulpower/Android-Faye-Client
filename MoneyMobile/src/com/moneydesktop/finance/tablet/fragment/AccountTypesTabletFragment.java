@@ -51,7 +51,7 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
     private PopupWindowAtLocation mPopup;
     private List<Bank> mBanksForDeletion;
     LinearLayout mPanelLayoutHolder;
-    List<AccountType> mAccountTypesFiltered;
+    private List<AccountType> mAccountTypesFiltered;
     private Handler mHandler;    
     private SlideExpandableListAdapter mAdapter;
     private AccountsExpandableListAdapter mAdapter1;
@@ -696,6 +696,8 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
 		//start the sync
 		Intent intent = new Intent(getActivity(), SyncService.class);
 		getActivity().startService(intent);
+		
+		
 
 		
 	}

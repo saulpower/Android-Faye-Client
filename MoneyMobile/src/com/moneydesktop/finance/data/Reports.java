@@ -3,6 +3,7 @@ package com.moneydesktop.finance.data;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.moneydesktop.finance.ApplicationContext;
+import com.moneydesktop.finance.database.BankAccountBalance;
 import com.moneydesktop.finance.database.Category;
 import com.moneydesktop.finance.database.CategoryDao;
 import com.moneydesktop.finance.database.Transactions;
@@ -45,6 +46,42 @@ public class Reports {
         cursor.close();
 
         return expenses;
+    }
+
+    public static List<Transactions> getDailyExpenseTotalsForBankAccount(Date date, int days, final String bankAccountId) {
+
+        Date start = DateUtil.getPastDateByDays(date, days);
+
+        String query = String.format(Constant.QUERY_DAILY_BALANCE_FOR_BANK_ACCOUNT, bankAccountId);
+
+        SQLiteDatabase db = ApplicationContext.getDb();
+        Cursor cursor = db.rawQuery(query, new String[]{
+                Long.toString(start.getTime()), Long.toString(date.getTime())
+        });
+
+        List<Transactions> expenses = createTransactions(start, date, cursor, Enums.TransactionsReport.DAILY);
+
+        cursor.close();
+
+        return expenses;
+    }
+
+    public static List<BankAccountBalance> getDailyBalanceTotalsForBankAccount(Date date, int days, final String bankAccountId) {
+
+        Date start = DateUtil.getPastDateByDays(date, days);
+
+        String query = String.format(Constant.QUERY_DAILY_BALANCE_FOR_BANK_ACCOUNT, bankAccountId);
+
+        SQLiteDatabase db = ApplicationContext.getDb();
+        Cursor cursor = db.rawQuery(query, new String[]{
+                Long.toString(start.getTime()), Long.toString(date.getTime())
+        });
+
+        List<BankAccountBalance> balances = createAccountBalances(start, date, cursor, Enums.AccountBalanceReport.DAILY);
+
+        cursor.close();
+
+        return balances;
     }
 
     public static List<Transactions> getMonthlyExpenseTotals(Date date, int months) {
@@ -203,6 +240,40 @@ public class Reports {
         return expenses;
     }
 
+
+    private static List<BankAccountBalance> createAccountBalances(Date start, Date end, Cursor cursor, Enums.AccountBalanceReport report) {
+
+        Calendar current = DateUtils.toCalendar(start);
+
+        List<BankAccountBalance> balances = new ArrayList<BankAccountBalance>();
+
+        Date date = null;
+
+        cursor.moveToFirst();
+
+        while (cursor.isAfterLast() == false) {
+
+            date = new Date(cursor.getLong(0));
+            double amount = cursor.getDouble(1);
+
+            balances.add(createAccountBalance(date, amount));
+
+            incrementCalendar(current, report);
+            cursor.moveToNext();
+        }
+
+        // Sort the accountBalances so they are in order by date
+        Collections.sort(balances, new Comparator<BankAccountBalance>() {
+            public int compare(BankAccountBalance t1, BankAccountBalance t2) {
+                return t1.getDate().compareTo(t2.getDate());
+            }
+        });
+
+        return balances;
+    }
+
+
+
     private static void incrementCalendar(Calendar calendar, Enums.TransactionsReport report) {
 
         switch (report) {
@@ -214,6 +285,15 @@ public class Reports {
                 break;
             case YEARLY:
                 calendar.add(Calendar.YEAR, 1);
+                break;
+        }
+    }
+
+    private static void incrementCalendar(Calendar calendar, Enums.AccountBalanceReport report) {
+
+        switch (report) {
+            case DAILY:
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
                 break;
         }
     }
@@ -271,5 +351,22 @@ public class Reports {
         expense.setQuarterNumber(quarter);
 
         return expense;
+    }
+
+
+
+
+    private static BankAccountBalance createAccountBalance(Date date, double amount) {
+
+        if (amount < 0f) {
+            amount = 0f;
+        }
+
+        BankAccountBalance balance = new BankAccountBalance();
+        balance.setDate(date);
+        balance.setBalance(amount);
+
+
+        return balance;
     }
 }

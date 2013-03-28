@@ -65,6 +65,12 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		super(context, attrs);
 		initView();
 	}
+
+
+    public HorizontalListView(Context context, int groupPostion) {
+        super(context);
+        initView();
+    }
 	
 	private synchronized void initView() {
 		mLeftViewIndex = -1;

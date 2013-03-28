@@ -193,7 +193,7 @@ public abstract class AbstractSlideExpandableListAdapter extends BaseAdapter{
 				setOpenState(position);
 				view.setAnimation(null);
 				int type = horizontalScrollContainer.getVisibility() == View.VISIBLE ? ExpandCollapseAnimation.COLLAPSE : ExpandCollapseAnimation.EXPAND;
-				Animation anim = new ExpandCollapseAnimation(horizontalScrollContainer, 330, type);
+				Animation anim = new ExpandCollapseAnimation(horizontalScrollContainer, type);
 				((TextView)view.findViewById(com.moneydesktop.finance.R.id.account_type_group_indicator)).setText(mContext.getResources().getString(com.moneydesktop.finance.R.string.account_types_indicator_show));
 				if(type == ExpandCollapseAnimation.EXPAND) {	
 					((TextView)view.findViewById(com.moneydesktop.finance.R.id.account_type_group_indicator)).setText(mContext.getResources().getString(com.moneydesktop.finance.R.string.account_types_indicator_hide));
@@ -213,4 +213,5 @@ public abstract class AbstractSlideExpandableListAdapter extends BaseAdapter{
 	    	horizontalScrollContainer.setVisibility(View.GONE);
 	    }
 	}
+
 }

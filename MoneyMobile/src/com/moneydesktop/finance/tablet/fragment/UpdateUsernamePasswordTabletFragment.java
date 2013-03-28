@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class UpdateUsernamePassowrdTabletFragment extends BaseFragment{
+public class UpdateUsernamePasswordTabletFragment extends BaseFragment{
 
 	private static Bank mBank;
 	private TextView mConnect;
@@ -60,9 +60,9 @@ public class UpdateUsernamePassowrdTabletFragment extends BaseFragment{
 		return false;
 	}
 	
-	public static UpdateUsernamePassowrdTabletFragment newInstance(Intent intent) {
-		
-		UpdateUsernamePassowrdTabletFragment fragment = new UpdateUsernamePassowrdTabletFragment();
+	public static UpdateUsernamePasswordTabletFragment newInstance(Intent intent) {
+
+        UpdateUsernamePasswordTabletFragment fragment = new UpdateUsernamePasswordTabletFragment();
         
 		String bankId = intent.getExtras().getString(Constant.KEY_BANK_ACCOUNT_ID);
 		

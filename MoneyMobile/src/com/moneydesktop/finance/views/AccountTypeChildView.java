@@ -102,8 +102,7 @@ public class AccountTypeChildView extends FrameLayout {
 		        	accountName.setText(account.getAccountName() == null ? "" : account.getAccountName());
 		        	accountSum.setText(account.getBalance() == null ? "" : mFormatter.format(account.getBalance()));
 		        	BankLogoManager.getBankImage(bankLogo, account.getInstitutionId());
-		
-		        	
+
 		        	Fonts.applyPrimaryFont(accountName, 12);
 		        	Fonts.applyPrimaryBoldFont(accountSum, 16);
 		        	Fonts.applyPrimaryFont(propertyType, 12);

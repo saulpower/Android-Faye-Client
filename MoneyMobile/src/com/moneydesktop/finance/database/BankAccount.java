@@ -678,9 +678,8 @@ public class BankAccount extends BusinessObject  {
             bankAccount.setBeginningBalance(json.optDouble(Constant.KEY_ORG_BALANCE));
 
         bankAccount.setIsHolding(false);
-        bankAccount.getBusinessObjectBase().setExternalId(bankAccount.getAccountId());
-        bankAccount.setExclusionFlags(bankAccount.getExclusionFlags()
-                | AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ACCOUNT_LIST.index());
+        //bankAccount.getBusinessObjectBase().setExternalId(bankAccount.getAccountId());
+        //bankAccount.setExclusionFlags(bankAccount.getExclusionFlags());
 
         bankAccount.acceptChanges();
 

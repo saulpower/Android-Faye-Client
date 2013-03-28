@@ -32,7 +32,7 @@ public class AccountTypeGroupDao extends AbstractDao<AccountTypeGroup, Long> {
         public final static Property ImageName = new Property(3, String.class, "imageName", false, "IMAGE_NAME");
         public final static Property SortOrder = new Property(4, Integer.class, "sortOrder", false, "SORT_ORDER");
         public final static Property BusinessObjectId = new Property(5, long.class, "businessObjectId", false, "BUSINESS_OBJECT_ID");
-    };
+    }
 
     private DaoSession daoSession;
 

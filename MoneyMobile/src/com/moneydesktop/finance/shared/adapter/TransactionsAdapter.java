@@ -2,6 +2,7 @@ package com.moneydesktop.finance.shared.adapter;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.util.Pair;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.data.Constant;
@@ -122,7 +123,7 @@ public abstract class TransactionsAdapter extends AmazingAdapter {
 	public void initializeData(boolean invalidate) {
 	    
 		mInvalidate = invalidate;
-		
+
 	    resetPage();
 	    loadPage(1);
 	}
@@ -286,7 +287,6 @@ public abstract class TransactionsAdapter extends AmazingAdapter {
     }
 	
 	private PowerQuery generateQuery(int limit, int offset) {
-
         synchronized (mQueries) {
 
             boolean category = false;

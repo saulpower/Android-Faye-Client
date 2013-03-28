@@ -142,7 +142,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
-                    android:text="@string/label_spending_daily"
+                    android:text="@string/label_daily_spending"
                     android:textColor="@color/gray4" />
 
                 <com.moneydesktop.finance.views.barchart.BarChartView

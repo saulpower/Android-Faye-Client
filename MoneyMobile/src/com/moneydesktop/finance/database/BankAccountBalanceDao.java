@@ -33,7 +33,7 @@ public class BankAccountBalanceDao extends AbstractDao<BankAccountBalance, Long>
         public final static Property Date = new Property(2, java.util.Date.class, "date", false, "DATE");
         public final static Property BusinessObjectId = new Property(3, long.class, "businessObjectId", false, "BUSINESS_OBJECT_ID");
         public final static Property BankAccountId = new Property(4, Long.class, "bankAccountId", false, "BANK_ACCOUNT_ID");
-    };
+    }
 
     private DaoSession daoSession;
 

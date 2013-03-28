@@ -21,6 +21,7 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.data.Enums.AccountExclusionFlags;
+import com.moneydesktop.finance.data.Util;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BankAccountDao;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
@@ -32,6 +33,8 @@ import com.moneydesktop.finance.views.SmallSpinnerView;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -148,13 +151,13 @@ public class IntroTabletActivity extends BaseActivity {
 		BankAccountDao dao = ApplicationContext.getDaoSession().getBankAccountDao();
 		List<BankAccount> bankAccountList = dao.loadAll();
 		    
-		Set<String> transactionsList = new HashSet<String>();
-		Set<String> reports = new HashSet<String>();
-		Set<String> accountList = new HashSet<String>();
-		Set<String> budgets = new HashSet<String>();
-		Set<String> transfersFromIncome = new HashSet<String>();
-		Set<String> transfersFromExpenses = new HashSet<String>();
-		Set<String> all = new HashSet<String>();
+		ArrayList<String> transactionsList = new ArrayList<String>();
+		ArrayList<String> reports = new ArrayList<String> ();
+		ArrayList<String> accountList = new ArrayList<String> ();
+		ArrayList<String> budgets = new ArrayList<String> ();
+		ArrayList<String> transfersFromIncome = new ArrayList<String> ();
+		ArrayList<String> transfersFromExpenses = new ArrayList<String> ();
+		ArrayList<String> all = new ArrayList<String> ();
 		
 		
 		for (BankAccount bankAccount : bankAccountList) {
@@ -186,13 +189,14 @@ public class IntroTabletActivity extends BaseActivity {
 			}
 		}
 		
-		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_ALL, all);
-		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_TRANSFERS_FROM_EXPENSES, transfersFromExpenses);
-		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_TRANSFERS_FROM_INCOME, transfersFromIncome);
-		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_BUDGETS, budgets);
-		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_ACCOUNTS_LIST, accountList);
-		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_REPORTS, reports);
-		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_TRANSACTIONS_LIST, transactionsList);
+		Preferences.saveString(Constant.PREFS_EXCLUSIONS_ALL, Util.serializeObject(all).toString());
+		Preferences.saveString(Constant.PREFS_EXCLUSIONS_TRANSFERS_FROM_EXPENSES, Util.serializeObject(transfersFromExpenses).toString());
+		Preferences.saveString(Constant.PREFS_EXCLUSIONS_TRANSFERS_FROM_INCOME, Util.serializeObject(transfersFromIncome).toString());
+		Preferences.saveString(Constant.PREFS_EXCLUSIONS_BUDGETS, Util.serializeObject(budgets).toString());
+		Preferences.saveString(Constant.PREFS_EXCLUSIONS_ACCOUNTS_LIST, Util.serializeObject(accountList).toString());
+		Preferences.saveString(Constant.PREFS_EXCLUSIONS_REPORTS, Util.serializeObject(reports).toString());
+		Preferences.saveString(Constant.PREFS_EXCLUSIONS_TRANSACTIONS_LIST, Util.serializeObject(transactionsList).toString());
+		
 	}
 
 

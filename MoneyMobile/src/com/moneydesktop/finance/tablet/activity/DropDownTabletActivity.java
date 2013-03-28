@@ -256,7 +256,9 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
             case SHOW_HIDE_DATA:
                 return ShowHideDataTabletFragment.newInstance(getIntent());
             case UPDATE_USERNAME_PASSWORD:
-                return UpdateUsernamePassowrdTabletFragment.newInstance(getIntent());
+                return UpdateUsernamePasswordTabletFragment.newInstance(getIntent());
+            case BANK_ACCOUNT_BALANCE_HISTORY:
+                return BankAccountBalanceHistoryFragment.newInstance(getIntent());
             default:
                 finish();
         }
@@ -300,6 +302,9 @@ public class DropDownTabletActivity extends DialogBaseActivity implements onBack
             case ACCOUNT_SETTINGS:
             case UPDATE_USERNAME_PASSWORD:
                 configureSize(0.6f, height);
+                break;
+            case BANK_ACCOUNT_BALANCE_HISTORY:
+                configureSize(0.8f, 0.8f);
                 break;
             default:
                 break;

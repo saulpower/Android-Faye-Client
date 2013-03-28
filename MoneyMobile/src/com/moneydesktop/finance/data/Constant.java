@@ -113,6 +113,7 @@ public class Constant {
     public static final String KEY_POPULARITY = "popularity";
     public static final String KEY_POSTED_DATE = "posted_date";
     public static final String KEY_PROCESS_STATUS = "process_status";
+    public static final String KEY_PROPERTY = "property";
     public static final String KEY_PROPERTY_TYPE = "property_type";
     public static final String KEY_RECORDS = "records";
     public static final String KEY_REFERENCE = "reference";
@@ -159,11 +160,13 @@ public class Constant {
     public static final String QUERY_CATEGORY_CHILD_TOTAL = "SELECT SUM(ABS(T.AMOUNT)) AS Amount FROM TRANSACTIONS T JOIN CATEGORY C ON T.CATEGORY_ID = C._ID WHERE C._ID = ? AND T.DATE BETWEEN ? AND ?";
     public static final String QUERY_CATEGORY_TOTAL = "SELECT SUM(ABS(T.AMOUNT)) AS Amount FROM TRANSACTIONS T JOIN CATEGORY C ON T.CATEGORY_ID = C._ID WHERE (C._ID = ? OR C.PARENT_CATEGORY_ID = ?) AND T.DATE BETWEEN ? AND ?";
     public static final String QUERY_DAILY_TRANSACTIONS = "SELECT DATE, SUM(AMOUNT) AS Amount FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER, MONTH_NUMBER, DAY_NUMBER ORDER BY DATE ASC";
+    public static final String QUERY_DAILY_TRANSACTIONS_FOR_BANK_ACCOUNT = "SELECT DATE, SUM(AMOUNT) AS Amount FROM TRANSACTIONS WHERE %s AND BANK_ACCOUNT_ID = %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER, MONTH_NUMBER, DAY_NUMBER ORDER BY DATE ASC";
     public static final String QUERY_MONTHLY_TRANSACTIONS = "SELECT DATE, SUM(AMOUNT) AS Amount FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER, MONTH_NUMBER ORDER BY DATE ASC";
     public static final String QUERY_QUARTERLY_TRANSACTIONS = "SELECT SUM(AMOUNT) AS Amount FROM TRANSACTIONS WHERE %s AND YEAR_NUMBER = ? AND QUARTER_NUMBER = ? GROUP BY QUARTER_NUMBER";
     public static final String QUERY_YEARLY_TRANSACTIONS = "SELECT DATE, SUM(AMOUNT) AS Amount FROM TRANSACTIONS WHERE %s AND DATE BETWEEN ? AND ? GROUP BY YEAR_NUMBER ORDER BY DATE ASC";
-    
-    
+    public static final String QUERY_DAILY_BALANCE_FOR_BANK_ACCOUNT = "SELECT DATE, BALANCE FROM BANK_ACCOUNT_BALANCE WHERE BANK_ACCOUNT_ID = %s AND DATE BETWEEN ? AND ? ORDER BY DATE ASC";
+
+
     /*******************************************************************
      * Preferences
      *******************************************************************/

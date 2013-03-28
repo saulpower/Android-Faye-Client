@@ -3,6 +3,7 @@ package com.moneydesktop.finance.database;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.util.Pair;
 import android.widget.TextView;
 import com.moneydesktop.finance.ApplicationContext;
@@ -948,7 +949,7 @@ public class Transactions extends BusinessObject  {
         
         String queryString = query.toString();
         
-//        Log.i(TAG, "Query: " + queryString);
+      //  Log.i(TAG, "Query: " + queryString);
         
         List<Transactions>transactions = dao.queryRaw(queryString, query.getSelectionArgs());
         
