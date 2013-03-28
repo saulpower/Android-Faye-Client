@@ -13,18 +13,10 @@ import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.*;
-import com.moneydesktop.finance.handset.adapter.TransactionsHandsetAdapter;
-import com.moneydesktop.finance.shared.adapter.TransactionsAdapter;
-import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.shared.fragment.TransactionsFragment;
 import com.moneydesktop.finance.tablet.adapter.AccountBalanceAdapter;
-import com.moneydesktop.finance.tablet.adapter.TransactionChartAdapter;
-import com.moneydesktop.finance.views.AmazingListView;
 import com.moneydesktop.finance.views.barchart.BarChartView;
-import com.moneydesktop.finance.views.barchart.TransactionsListAdapter;
-import org.apache.commons.lang.time.DateUtils;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -34,9 +26,6 @@ public class BankAccountBalanceHistoryFragment extends TransactionsFragment impl
 	private static BankAccount mBankAccount;
     private BarChartView mBarChart;
     private AccountBalanceAdapter mChartAdapter;
-    protected ArrayList<PowerQuery> mQueries = new ArrayList<PowerQuery>();
-
-    protected QueryProperty mAccountIdProp = new QueryProperty(BankAccountDao.TABLENAME, TransactionsDao.Properties.BankAccountId);
     protected QueryProperty mOrderBy = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Date);
 
     @Override
