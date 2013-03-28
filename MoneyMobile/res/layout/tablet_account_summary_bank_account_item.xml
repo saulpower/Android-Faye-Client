@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/tablet_account_summary_bank_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"
+            android:paddingRight="15dip">
+
+    <RelativeLayout
+        android:layout_width="300dip"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/bank_account_summary_selector">
+
+        <ImageView
+                android:id="@+id/tablet_account_summary_bank_account_logo"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:paddingLeft="5dip"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"/>
+
+        <TextView
+                android:id="@+id/tablet_account_summary_property_logo"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:paddingLeft="5dip"
+                android:layout_alignParentTop="true"/>
+
+        <!-- account linked-->
+        <TextView
+                android:id="@+id/tablet_account_summary_linked"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_below="@id/tablet_account_summary_bank_account_logo"
+                android:layout_alignLeft="@id/tablet_account_summary_bank_account_logo"
+                android:layout_marginLeft="10dip"
+                android:textColor="@color/gray4"/>
+
+        <!-- account name -->
+        <TextView
+                android:id="@+id/tablet_account_summary_type_name"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="15dip"
+                android:textColor="@color/gray4"
+                android:layout_alignTop="@id/tablet_account_summary_bank_account_logo"
+                android:layout_toRightOf="@id/tablet_account_summary_bank_account_logo"
+                android:maxLines="1"/>
+
+        <!-- account type sum -->
+        <TextView
+                android:id="@+id/tablet_account_summary_account_sum"
+                android:layout_height="wrap_content"
+                android:gravity="right|center_vertical"
+                android:textColor="@color/gray4"
+                android:layout_below="@id/tablet_account_summary_type_name"
+                android:layout_alignLeft="@id/tablet_account_summary_type_name"
+                android:layout_width="wrap_content" />
+
+        <!-- last updated label-->
+        <TextView
+                android:id="@+id/tablet_account_summary_last_updated_label"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textColor="@color/gray4"
+                android:layout_toRightOf="@id/tablet_account_summary_bank_account_logo"
+                android:layout_alignLeft="@id/tablet_account_summary_type_name"
+                android:layout_below="@id/tablet_account_summary_bank_account_logo" />
+
+        <!-- last updated value-->
+        <TextView
+                android:id="@+id/tablet_account_summary_last_updated_value"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="5dip"
+                android:textColor="@color/primaryColor"
+                android:layout_toRightOf="@id/tablet_account_summary_last_updated_label"
+                android:layout_below="@id/tablet_account_summary_bank_account_logo" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

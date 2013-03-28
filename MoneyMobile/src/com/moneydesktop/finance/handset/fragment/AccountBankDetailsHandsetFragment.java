@@ -511,7 +511,7 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
 			}
 		});
 		
-	};
+	}
 		
 	private void setBankAccountValues() {
 		//If mSelectedAccountType is null, that means a new account type wasn't selected. No need to save.

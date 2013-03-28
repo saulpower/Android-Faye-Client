@@ -54,5 +54,6 @@
     <color name="splitsColor">#F16430</color>
     <color name="white">#FFF</color>
     <color name="white_transparent">#7FFFFFFF</color>
+    <color name="white_transparent_light">#CFFFFFFF</color>
 	<color name="account_group_stroke">#717073</color>
 </resources>

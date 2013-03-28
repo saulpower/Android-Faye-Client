@@ -200,6 +200,10 @@ public class Enums {
     public enum TransactionsReport {
         DAILY, MONTHLY, QUARTERLY, YEARLY
     }
+
+    public enum AccountBalanceReport {
+        DAILY
+    }
 	
 	public enum NavDirection {
 		NEXT, PREVIOUS
@@ -229,7 +233,8 @@ public class Enums {
         MANUAL_BANK_LIST(24),
         TRANSACTIONS_SUB(25),
         POPUP_CALENDAR(26),
-        TRANSACTION_DETAIL(27);
+        TRANSACTION_DETAIL(27),
+        BANK_ACCOUNT_BALANCE_HISTORY(28);
         
         private final int index;
         
@@ -278,6 +283,16 @@ public class Enums {
 	        	return SHOW_HIDE_DATA;
 	        case 23:
 	        	return UPDATE_USERNAME_PASSWORD;
+            case 24:
+                return MANUAL_BANK_LIST;
+            case 25:
+                return TRANSACTIONS_SUB;
+            case 26:
+                return POPUP_CALENDAR;
+            case 27:
+                return TRANSACTION_DETAIL;
+            case 28:
+                return BANK_ACCOUNT_BALANCE_HISTORY;
 	        }
             return null;
         }

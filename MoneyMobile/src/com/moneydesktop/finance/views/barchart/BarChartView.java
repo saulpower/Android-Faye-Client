@@ -714,6 +714,11 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
     protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
+        if (changed && getChildCount() > 0) {
+            resetChart();
+        }
+
+
         if (mShowPopup && mPopup == null) {
             mPopup = new BarChartPopup(getContext(), this, mPopupWidth, mPopupHeight, getWidth());
         }

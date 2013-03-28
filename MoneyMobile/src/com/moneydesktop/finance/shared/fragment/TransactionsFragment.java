@@ -51,11 +51,14 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
     protected int mCategoryType;
     protected TxFilter mTxFilter;
     protected QueryProperty mAccountIdProp = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.BankAccountId);
+    protected QueryProperty mAccountIdForBankAccountProp = new QueryProperty(BankAccountDao.TABLENAME, BankAccountDao.Properties.Id);
     protected QueryProperty mIsProcessed = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.IsProcessed);
     protected QueryProperty mOrderBy = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Date);
     protected boolean mDirection = true;
     protected String mSearchTitle = "%";
     protected ArrayList<PowerQuery> mQueries = new ArrayList<PowerQuery>();
+    protected boolean mIsSearchEnabled = true;
+    protected String mBankAccountID;
     
     protected EditText mSearch;
     
@@ -131,23 +134,26 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
             mBackgroundTask.cancel(false);
         }
     }
-    
+
     protected void setupView() {
 
         mTransactionsList = (AmazingListView) mRoot.findViewById(R.id.transactions);
         mTransactionsList.setLoadingView(mActivity.getLayoutInflater().inflate(R.layout.loading_view, null));
         mTransactionsList.setEmptyView(mActivity.getLayoutInflater().inflate(R.layout.empty_view, null));
+
+        if (mIsSearchEnabled) {
+            mSearch = (EditText) mRoot.findViewById(R.id.search);
+
+            if (mSearch == null) {
+                mSearch = getSearchBar();
+            }
+
+            mSearch.addTextChangedListener(mWatcher);
         
-        mSearch = (EditText) mRoot.findViewById(R.id.search);
-        
-        if (mSearch == null) {
-        	mSearch = getSearchBar();
+            setupListeners();
+            applyFonts();
         }
-        
-        mSearch.addTextChangedListener(mWatcher);
-        
-        setupListeners();
-        applyFonts();
+
     }
     
     private void setupListeners() {
@@ -199,7 +205,9 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
         
         mAdapter.setDateRange(getStartDate(), getEndDate());
         mAdapter.setOrder(mOrderBy, mDirection);
-        mAdapter.setSearch(mSearchTitle);
+        if (mIsSearchEnabled) {
+            mAdapter.setSearch(mSearchTitle);
+        }
         mAdapter.setQueries(mQueries);
         mAdapter.initializeData(invalidate);
     }
@@ -263,13 +271,22 @@ public abstract class TransactionsFragment extends BaseFragment implements Filte
         if (mAccountId == null && mCategories == null && mTxFilter != null) {
             return;
         }
-        
-        if (mQueries.size() == 0 && (mAccountId != null || (mTxFilter != null && mTxFilter == TxFilter.UNCLEARED))) {
+
+        if (mBankAccountID != null && mQueries.size() == 0) {
             mQueries.add(new PowerQuery(false));
+        } else {
+            if (mQueries.size() == 0 && (mAccountId != null || (mTxFilter != null && mTxFilter == TxFilter.UNCLEARED))) {
+                mQueries.add(new PowerQuery(false));
+            }
         }
-        
-        if (mAccountId != null) {
-            mQueries.get(0).and().where(mAccountIdProp, mAccountId);
+
+
+        if (mBankAccountID != null) {
+            mQueries.get(0).and().where(mAccountIdForBankAccountProp, mBankAccountID);
+        } else {
+            if (mAccountId != null) {
+                mQueries.get(0).and().where(mAccountIdProp, mAccountId);
+            }
         }
         
         if (mTxFilter != null && mTxFilter == TxFilter.UNCLEARED) {

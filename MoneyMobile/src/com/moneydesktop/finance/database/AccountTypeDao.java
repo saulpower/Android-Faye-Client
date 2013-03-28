@@ -37,7 +37,7 @@ public class AccountTypeDao extends AbstractDao<AccountType, Long> {
         public final static Property BusinessObjectId = new Property(6, long.class, "businessObjectId", false, "BUSINESS_OBJECT_ID");
         public final static Property AccountTypeGroupId = new Property(7, Long.class, "accountTypeGroupId", false, "ACCOUNT_TYPE_GROUP_ID");
         public final static Property ParentAccountTypeId = new Property(8, Long.class, "parentAccountTypeId", false, "PARENT_ACCOUNT_TYPE_ID");
-    };
+    }
 
     private DaoSession daoSession;
 

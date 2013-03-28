@@ -17,6 +17,7 @@ import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BankAccountDao;
+import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
@@ -24,6 +25,7 @@ import com.moneydesktop.finance.tablet.adapter.AccountSettingsTypesAdapter;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.SlidingView;
+import de.greenrobot.event.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +55,6 @@ public class AccountSettingsTabletFragment extends BaseFragment {
 	private static BankAccount mBankAccount;
 	private AccountType mSelectedAccountType;
 	private String mSelectedAccountTypeName;
-	private String mSelectedPropertyTypeName;
 	
 	@Override
 	public String getFragmentTitle() {
@@ -62,6 +63,11 @@ public class AccountSettingsTabletFragment extends BaseFragment {
 
 	@Override
 	public boolean onBackPressed() {
+        if (mSlidingView != null) {
+            mSlidingView.dismiss();
+            mSlidingView = null;
+            return true;
+        }
 		return false;
 	}
 
@@ -308,11 +314,10 @@ public class AccountSettingsTabletFragment extends BaseFragment {
 								
 								((DropDownTabletActivity)mActivity).getAnimatedNavView().popNav();
 								AccountType mSelectedPropertyType = ((AccountType)accountTypesListView.getItemAtPosition(position));
-								
-								mSelectedPropertyTypeName = mSelectedPropertyType.getAccountTypeName();
+
 								setupSecondaryOptions();
 								mField3.setText(mSelectedPropertyType.getAccountTypeName());
-							};
+							}
 					});
 				}
 			});
@@ -361,7 +366,7 @@ public class AccountSettingsTabletFragment extends BaseFragment {
 							mSelectedAccountTypeName = mSelectedAccountType.getAccountTypeName();
 							setupSecondaryOptions();
 							mField2.setText(mSelectedAccountType.getAccountTypeName());
-						};
+						}
 				});
 			}
 		});
@@ -369,21 +374,25 @@ public class AccountSettingsTabletFragment extends BaseFragment {
 		mSave.setOnClickListener(new View.OnClickListener() {			
 			@Override
 			public void onClick(View v) {
-				
-				setBankAccountValues();						
-				mBankAccount.updateSingle();
-				
-        		//start the sync
-        		Intent intent = new Intent(mActivity, SyncService.class);
-        		mActivity.startService(intent);
-        		((DropDownTabletActivity)mActivity).dismissDropdown();
+                saveBankUpdates();
 			}
 
 		});
 	}
 
-	
-	private void setBankAccountValues() {
+    private void saveBankUpdates() {
+        setBankAccountValues();
+        mBankAccount.updateSingle();
+
+        //start the sync
+        Intent intent = new Intent(mActivity, SyncService.class);
+        mActivity.startService(intent);
+
+        ((DropDownTabletActivity) mActivity).dismissDropdown();
+    }
+
+
+    private void setBankAccountValues() {
 		//If mSelectedAccountType is null, that means a new account type wasn't selected. No need to save.
 		if (mSelectedAccountType != null) {
 			mBankAccount.setAccountType(mSelectedAccountType);

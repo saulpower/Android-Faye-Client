@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:moneydesktop="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/tablet_account_summary_type_group_container"
+            android:layout_width="fill_parent"
+            android:layout_height="90dip"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="1" >
+
+        <!-- account type icon -->
+        <TextView
+                android:id="@+id/tablet_account_summary_type_icon"
+                android:layout_height="wrap_content"
+                android:layout_width="0dip"
+                android:layout_weight=".07"
+                android:gravity="center"
+                android:textColor="@color/white"/>
+
+
+            <com.moneydesktop.finance.views.LineView
+                    android:id="@+id/line_border"
+                    android:layout_width="0dip"
+                    android:layout_height="match_parent"
+                    moneydesktop:dashLength="3dp"
+                    moneydesktop:isDashed="true"
+                    moneydesktop:isVertical="true"
+                    moneydesktop:lineColor="@color/white"
+                    android:layout_weight=".002"
+                    moneydesktop:lineStrokeWidth="2dp" />
+
+        <RelativeLayout
+                android:layout_height="match_parent"
+                android:layout_width="0dip"
+                android:background="@color/gray1"
+                android:layout_weight=".928">
+
+            <!--this is the container behind the draggable view-->
+            <HorizontalScrollView
+                    android:id="@+id/tablet_account_summary_bank_accounts_scroll_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="15dip"
+                    android:layout_marginRight="35dip"
+                    android:scrollbars="none"
+                    android:layout_marginTop="5dip"
+                    android:layout_marginBottom="5dip">
+
+                <!--This holds all of the bank accounts for a given account type-->
+                <LinearLayout
+                    android:id="@+id/tablet_account_summary_bank_accounts_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+
+            </HorizontalScrollView>
+
+            <com.moneydesktop.finance.views.SlidingDrawerRightSide
+                    android:id="@+id/slider"
+                    android:layout_width="1dip"
+                    android:layout_height="1dip"
+                    moneydesktop:content="@+id/tablet_account_summary_drag_view_container"
+                    moneydesktop:handle="@+id/handle"
+                    moneydesktop:orientation="horizontal">
+
+                <RelativeLayout
+                        android:id="@+id/handle"
+                        android:layout_width="30dip"
+                        android:layout_height="match_parent"
+                        android:background="@color/primaryColor">
+                    <ImageView
+                            android:layout_width="10dip"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentLeft="true"
+                            android:background="@drawable/handle" />
+                </RelativeLayout>
+
+                <LinearLayout
+                        android:id="@+id/tablet_account_summary_drag_view_container"
+                        android:layout_width="match_parent"
+                        android:background="@color/primaryColor"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                    <TextView
+                            android:id="@+id/tablet_account_summary_type_name"
+                            android:layout_height="match_parent"
+                            android:layout_width="0dip"
+                            android:gravity="center_vertical"
+                            android:textColor="@color/white"
+                            android:layout_weight=".6"
+                            android:layout_marginLeft="15dip"/>
+
+                    <TextView
+                            android:id="@+id/tablet_account_summary_account_count"
+                            android:layout_height="wrap_content"
+                            android:layout_width="0dip"
+                            android:layout_weight=".15"
+                            android:gravity="center_vertical|right"
+                            android:textColor="@color/white"
+                            android:layout_marginRight="10dip"/>
+
+                    <com.moneydesktop.finance.views.LineView
+                            android:id="@+id/line_border"
+                            android:layout_width="0dip"
+                            android:layout_weight=".002"
+                            android:layout_height="match_parent"
+                            moneydesktop:dashLength="3dp"
+                            moneydesktop:isDashed="true"
+                            moneydesktop:isVertical="true"
+                            moneydesktop:lineColor="@color/white"
+                            moneydesktop:lineStrokeWidth="2dp"/>
+
+                    <TextView
+                            android:id="@+id/tablet_account_summary_account_sum"
+                            android:layout_height="match_parent"
+                            android:layout_width="0dip"
+                            android:textColor="@color/white"
+                            android:gravity="center_vertical"
+                            android:layout_weight=".25"
+                            android:layout_marginLeft="10dip"
+                            android:layout_marginRight="30dip"/>
+
+                </LinearLayout>
+
+            </com.moneydesktop.finance.views.SlidingDrawerRightSide>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dip"
+            android:background="@color/white"
+            android:layout_below="@id/tablet_account_summary_type_group_container"/>
+
+</RelativeLayout>
