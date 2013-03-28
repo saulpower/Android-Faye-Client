@@ -996,10 +996,10 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
     private void refreshSelection() {
 
         // Select the first bar with a non-zero amount
-        int position = 0;
+        int position = mAdapter.getCount() - 1;
 
-        while (mAdapter.getBarModel(position).getAmount() == 0 && position < mAdapter.getCount()) {
-            position++;
+        while (mAdapter.getBarModel(position).getAmount() == 0 && position >= 0) {
+            position--;
         }
 
         setSelection(position);

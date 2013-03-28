@@ -246,7 +246,7 @@ public class Reports {
 
         for (Category category : categories) {
 
-            if (category.isIncome() && !category.isTransfer()) {
+            if (category.isIncome() || category.isTransfer()) {
                 categoryFilter.append(String.format("%sCATEGORY_ID != %d AND ", categoryTableVariable,
                         category.getId()));
             }
