@@ -22,7 +22,6 @@ import java.util.*;
  */
 public class Reports {
 
-
     /**
      * Returns the daily expense totals for the last x amount of days.
      *

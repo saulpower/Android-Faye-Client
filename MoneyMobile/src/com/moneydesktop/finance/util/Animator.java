@@ -5,6 +5,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -12,14 +13,26 @@ import java.util.Map;
 
 public class Animator {
 
+    public static final String TAG = "Animator";
+
 	private static Map<View, Animation> animations = new HashMap<View, Animation>();
 	
-	public static void translateView(final View view, final float[] newPosition, long duration) {
+	public static void translateView(final View view, final int[] newPosition, long duration) {
 
-        final int newLeft = (int) (view.getLeft() + newPosition[0]);
-        final int newTop = (int) (view.getTop() + newPosition[1]);
+        int topMargin = newPosition[1];
 
-        view.layout(newLeft, newTop, newLeft + view.getMeasuredWidth(), newTop + view.getMeasuredHeight());
+        if (topMargin < 0) {
+            topMargin = 0;
+        }
+
+        final RelativeLayout.LayoutParams newParams = new RelativeLayout.LayoutParams(view.getLayoutParams());
+        newParams.setMargins(0, topMargin, 0, 0);
+
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
+
+        for (int i = 0; i < params.getRules().length; i++) {
+            newParams.addRule(i, params.getRules()[i]);
+        }
 
 		Animation animation = new TranslateAnimation(0, newPosition[0], 0, newPosition[1]);
 		animation.setDuration(duration);
@@ -43,8 +56,8 @@ public class Animator {
 					view.setEnabled(true);
 					view.setFocusable(true);
 				}
-				
-//				view.layout(newLeft, newTop, newLeft + view.getMeasuredWidth(), newTop + view.getMeasuredHeight());
+
+                view.setLayoutParams(newParams);
 			}
 		});
 		

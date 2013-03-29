@@ -15,9 +15,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.AccountExclusionFlags;
-import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BankAccountDao;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
@@ -239,13 +237,13 @@ public abstract class IntroBaseActivity extends BaseActivity {
 			}
 		}
 		
-		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_ALL, all);
-		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_TRANSFERS_FROM_EXPENSES, transfersFromExpenses);
-		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_TRANSFERS_FROM_INCOME, transfersFromIncome);
-		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_BUDGETS, budgets);
-		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_ACCOUNTS_LIST, accountList);
-		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_REPORTS, reports);
-		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_TRANSACTIONS_LIST, transactionsList);
+//		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_ALL, all);
+//		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_TRANSFERS_FROM_EXPENSES, transfersFromExpenses);
+//		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_TRANSFERS_FROM_INCOME, transfersFromIncome);
+//		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_BUDGETS, budgets);
+//		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_ACCOUNTS_LIST, accountList);
+//		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_REPORTS, reports);
+//		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_TRANSACTIONS_LIST, transactionsList);
 	}
 
     @Override

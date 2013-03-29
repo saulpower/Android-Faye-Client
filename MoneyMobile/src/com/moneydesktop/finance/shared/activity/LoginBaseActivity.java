@@ -29,7 +29,7 @@ import de.greenrobot.event.EventBus;
 
 public abstract class LoginBaseActivity extends BaseActivity {
 
-    private final String TAG = "LoginActivity";
+    public final String TAG = this.getClass().getSimpleName();
 
     private ViewFlipper mViewFlipper;
     private LinearLayout mButtonView, mCredentialView, mSignupView;
@@ -621,7 +621,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
         long duration = 400;
         long delay = reset ? 250 : 0;
 
-        Animator.translateView(mButtonView, new float[] {
+        Animator.translateView(mButtonView, new int[] {
                 0, offset
         }, duration);
         Animator.fadeView(mLoginText, !reset, duration, delay);

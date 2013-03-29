@@ -41,7 +41,7 @@
 	        android:layout_height="match_parent"
 	        android:layout_margin="10dp"
 	        android:scaleType="fitCenter"
-	        android:contentDescription="@string/description" />
+	        android:contentDescription="@string/description"/>
         
     </RelativeLayout>
 
