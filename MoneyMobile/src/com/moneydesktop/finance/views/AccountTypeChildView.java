@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -14,12 +15,9 @@ import android.widget.*;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
-import com.moneydesktop.finance.data.Util;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.database.BankDao;
-import com.moneydesktop.finance.database.BusinessObjectBase;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.data.Constant;
@@ -34,7 +32,6 @@ import com.moneydesktop.finance.model.EventMessage.RefreshAccountEvent;
 import com.moneydesktop.finance.model.EventMessage.ReloadBannersEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.shared.Services.SyncService;
-import com.moneydesktop.finance.shared.fragment.PopupFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.Fonts;
@@ -98,7 +95,16 @@ public class AccountTypeChildView extends FrameLayout {
 		        	accountName.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
 		        	accountName.setText(account.getAccountName() == null ? "" : account.getAccountName());
 		        	accountSum.setText(account.getBalance() == null ? "" : mFormatter.format(account.getBalance()));
-		        	BankLogoManager.getBankImage(bankLogo, account.getInstitutionId());
+
+
+                    //If we have the image in memory cache, get it from there. Don't bother looking at the SD card.
+                    Bitmap bitmap = BankLogoManager.getBitmapFromMemCache(account.getInstitutionId());
+
+                    if (bitmap == null) {
+                        BankLogoManager.getBankImage(bankLogo, account.getInstitutionId());
+                    } else {
+                        bankLogo.setImageBitmap(bitmap);
+                    }
 
 		        	Fonts.applyPrimaryFont(accountName, 12);
 		        	Fonts.applyPrimaryBoldFont(accountSum, 16);

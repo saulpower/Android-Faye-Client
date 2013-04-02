@@ -1,6 +1,7 @@
 package com.moneydesktop.finance.handset.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -144,7 +145,15 @@ public class AccountTypesHandsetAdapter extends UltimateAdapter implements OnGro
 	        final View view = createChildView();
 	        
 	        ImageView bankLogo = (ImageView)view.findViewById(R.id.handset_account_types_bank_icon);
-	        BankLogoManager.getBankImage(bankLogo, bankAccount.getInstitutionId());
+
+            Bitmap bitmap = BankLogoManager.getBitmapFromMemCache(bankAccount.getInstitutionId());
+            if (bitmap == null) {
+                BankLogoManager.getBankImage(bankLogo, bankAccount.getInstitutionId());
+            } else {
+                bankLogo.setImageBitmap(bitmap);
+            }
+
+
 	        TextView accountName = (TextView)view.findViewById(R.id.handset_sub_account_type_name);
 	        TextView accountSum = (TextView)view.findViewById(R.id.handset_sub_account_type_sum);
 	        

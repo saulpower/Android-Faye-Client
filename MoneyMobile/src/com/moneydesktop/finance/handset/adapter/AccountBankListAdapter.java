@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,8 +89,16 @@ public class AccountBankListAdapter extends BaseAdapter {
         if (bank.getInstitution() != null) {
             logoId = bank.getInstitution().getInstitutionId();
         }
-		
-        BankLogoManager.getBankImage(bankImage, logoId);
+
+
+        //If we have the image in memory cache, get it from there. Don't bother looking at the SD card.
+        Bitmap bitmap = BankLogoManager.getBitmapFromMemCache(logoId);
+
+        if (bitmap == null) {
+            BankLogoManager.getBankImage(bankImage, logoId);
+        } else {
+            bankImage.setImageBitmap(bitmap);
+        }
 
 		return bankView;
 	}

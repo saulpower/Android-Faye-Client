@@ -71,7 +71,6 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 
-
         GroupViewHolder groupViewHolder;
 
         if (convertView == null) {
@@ -82,13 +81,14 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
             groupViewHolder = new GroupViewHolder();
             groupViewHolder.accountTypeName = (TextView)convertView.findViewById(R.id.account_type_group_name);
             groupViewHolder.accountTypeSum = (TextView)convertView.findViewById(R.id.account_type_group_sum);
+            groupViewHolder.accountTypeIndicator = (TextView)convertView.findViewById(R.id.account_type_group_indicator);
 
             convertView.setTag(groupViewHolder);
         } else {
             groupViewHolder = (GroupViewHolder) convertView.getTag();
         }
 
-        populateGroupView(groupViewHolder, mAccountTypes.get(groupPosition));
+        populateGroupView(groupViewHolder, mAccountTypes.get(groupPosition), isExpanded);
 
         return convertView;
     }
@@ -109,7 +109,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     }
 
 
-    private void populateGroupView(GroupViewHolder groupViewHolder, AccountType accountType) {
+    private void populateGroupView(GroupViewHolder groupViewHolder, AccountType accountType, boolean expanded) {
 
         groupViewHolder.accountTypeName.setText(accountType.getAccountTypeName()); //get the account name (Checking, savings, etc)
         double accountTypeSum = 0;
@@ -121,13 +121,19 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
         String formatedSum = NumberFormat.getCurrencyInstance().format(accountTypeSum);
 
         groupViewHolder.accountTypeSum.setText(formatedSum);
+
+        if (expanded) {
+            groupViewHolder.accountTypeIndicator.setText(mContext.getString(R.string.account_types_indicator_hide));
+        } else {
+            groupViewHolder.accountTypeIndicator.setText(mContext.getString(R.string.account_types_indicator_show));
+        }
     }
 
 
 
     static class GroupViewHolder
     {
-        TextView accountTypeName, accountTypeSum;
+        TextView accountTypeName, accountTypeSum, accountTypeIndicator;
     }
 
 }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -85,9 +86,6 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
 		sRightDrawer = (SlidingDrawerRightSide) mRoot.findViewById(R.id.account_slider);
 		sRightDrawer.open();
 
-
-
-
 		setupView();
 		
 		mHandler = new Handler();
@@ -102,11 +100,9 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
     }
 	
     private void setupView() {
-    	
-    	//clears out any previous adapter it had
-    	//mListView.setAdapter(null);
-    	
-    	if (mListView.getFooterViewsCount() > 0) {
+
+
+        if (mListView.getFooterViewsCount() > 0) {
     		mListView.removeFooterView(mFooter);
     	}
     	
@@ -176,6 +172,7 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
 
             mAdapter = new ExpandableListViewAdapter(mActivity, mAccountTypesFiltered);
             mListView.setAdapter(mAdapter);
+            mAdapter.notifyDataSetChanged();
 
             for (int i = 0; i < mAccountTypesFiltered.size(); i++) {
                 mListView.expandGroup(i);
@@ -429,8 +426,14 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
         
         status.setVisibility(View.VISIBLE);
         setBanner(bank, status);
-        BankLogoManager.getBankImage(bankImage, logoId);
-        
+
+        Bitmap bitmap = BankLogoManager.getBitmapFromMemCache(logoId);
+        if (bitmap == null) {
+            BankLogoManager.getBankImage(bankImage, logoId);
+        } else {
+            bankImage.setImageBitmap(bitmap);
+        }
+
         TextView bankName = (TextView)bankTypeAccountView.findViewById(R.id.account_bank_name);
         
         bankName.setEllipsize(TextUtils.TruncateAt.valueOf("END"));

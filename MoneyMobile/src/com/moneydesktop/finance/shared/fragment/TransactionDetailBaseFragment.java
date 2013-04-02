@@ -393,7 +393,13 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
         }
         
         if (mTransaction.getBankAccount() != null) {
-            BankLogoManager.getBankImage(mBankIcon, mTransaction.getBankAccount().getInstitutionId());
+
+            Bitmap bitmap = BankLogoManager.getBitmapFromMemCache(mTransaction.getBankAccount().getInstitutionId());
+            if (bitmap == null) {
+                BankLogoManager.getBankImage(mBankIcon, mTransaction.getBankAccount().getInstitutionId());
+            } else {
+                mBankIcon.setImageBitmap(bitmap);
+            }
         }
 
         mAccountName.setText(mTransaction.getBankAccount().getAccountName());

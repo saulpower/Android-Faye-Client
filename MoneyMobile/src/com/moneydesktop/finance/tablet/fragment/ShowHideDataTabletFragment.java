@@ -2,6 +2,7 @@ package com.moneydesktop.finance.tablet.fragment;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -100,9 +101,19 @@ public class ShowHideDataTabletFragment extends BaseFragment {
 	private void setupView() {
 		
 		if (mBankAccount.getBank().getInstitution() == null) {
-			BankLogoManager.getBankImage(mBankLogo, mBankAccount.getBank().getBankId());
+            Bitmap bitmap = BankLogoManager.getBitmapFromMemCache(mBankAccount.getBank().getBankId());
+            if (bitmap == null) {
+                BankLogoManager.getBankImage(mBankLogo, mBankAccount.getBank().getBankId());
+            } else {
+                mBankLogo.setImageBitmap(bitmap);
+            }
 		} else {
-			BankLogoManager.getBankImage(mBankLogo, mBankAccount.getBank().getInstitution().getInstitutionId());			
+            Bitmap bitmap = BankLogoManager.getBitmapFromMemCache(mBankAccount.getBank().getInstitution().getInstitutionId());
+            if (bitmap == null) {
+                BankLogoManager.getBankImage(mBankLogo, mBankAccount.getBank().getInstitution().getInstitutionId());
+            } else {
+                mBankLogo.setImageBitmap(bitmap);
+            }
 		}
 		
 		mAccountName.setText(mBankAccount.getAccountName());

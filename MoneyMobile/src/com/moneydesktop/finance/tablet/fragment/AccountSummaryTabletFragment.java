@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Handler;
@@ -409,7 +410,13 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                BankLogoManager.getBankImage(bankLogo, bankAccount.getInstitutionId());
+
+                Bitmap bitmap = BankLogoManager.getBitmapFromMemCache(bankAccount.getInstitutionId());
+                if (bitmap == null) {
+                    BankLogoManager.getBankImage(bankLogo, bankAccount.getInstitutionId());
+                } else {
+                    bankLogo.setImageBitmap(bitmap);
+                }
             }
         });
     }

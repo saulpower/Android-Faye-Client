@@ -1,6 +1,7 @@
 package com.moneydesktop.finance.handset.fragment;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -81,7 +82,13 @@ public class AccountOptionMfaQuestionHandsetFragment extends FixBankFragment{
 		mRoot = inflater.inflate(R.layout.handset_account_option_credentials_view, null);
 		
 		ImageView logo = (ImageView)mRoot.findViewById(R.id.handset_bank_options_credentials_logo);	
-		BankLogoManager.getBankImage(logo, mBank.getInstitution().getInstitutionId());
+
+        Bitmap bitmap = BankLogoManager.getBitmapFromMemCache(mBank.getInstitution().getInstitutionId());
+        if (bitmap == null) {
+            BankLogoManager.getBankImage(logo, mBank.getInstitution().getInstitutionId());
+        } else {
+            logo.setImageBitmap(bitmap);
+        }
 		
 		TextView bankName = (TextView)mRoot.findViewById(R.id.handset_bank_options_credentials_bank_name);
 		bankName.setText(mBank.getBankName());
