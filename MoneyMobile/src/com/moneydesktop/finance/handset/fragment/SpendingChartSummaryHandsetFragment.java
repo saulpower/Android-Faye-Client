@@ -2,6 +2,7 @@ package com.moneydesktop.finance.handset.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -86,7 +87,9 @@ public class SpendingChartSummaryHandsetFragment extends GrowFragment {
 	}
 	
 	public void onEvent(ChartImageEvent event) {
-		
+
+        Log.i(TAG, "Size: " + event.getImage().getWidth() + "x" + event.getImage().getHeight());
+
 		if (mChartImage != null) {
 			mChartImage.setImageBitmap(event.getImage());
 		}

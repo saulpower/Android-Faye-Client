@@ -1,5 +1,7 @@
 package com.moneydesktop.finance.views.piechart;
 
+import android.util.Log;
+
 public class PieChartChildAdapter extends BasePieChartAdapter {
     
     public final String TAG = this.getClass().getSimpleName();
@@ -12,7 +14,8 @@ public class PieChartChildAdapter extends BasePieChartAdapter {
 	}
 
 	public void setGroupPosition(int mGroupPosition) {
-		this.mGroupPosition = mGroupPosition;
+        Log.i(TAG, "New Group Position");
+        this.mGroupPosition = mGroupPosition;
 		notifyDataSetInvalidated();
 	}
 

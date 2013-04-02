@@ -134,6 +134,7 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
     public void isHiding() {
 
         mTransactionsList.setSelection(0);
+        mSearch.setText("");
     }
 	
 	@Override

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.ViewSwitcher;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums;
+import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.TransactionChartAdapter;
@@ -44,6 +46,8 @@ public class TransactionsChartTabletFragment extends SummaryTabletFragment imple
     private TextSwitcher mTitle;
 
     private int mTextPadding = 0;
+
+    private Handler mHandler;
 
     public static TransactionsChartTabletFragment newInstance(int position) {
 
@@ -107,6 +111,8 @@ public class TransactionsChartTabletFragment extends SummaryTabletFragment imple
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
+        mHandler = new Handler();
 
         mRoot = inflater.inflate(R.layout.tablet_transaction_summary_view, null);
 
@@ -224,11 +230,17 @@ public class TransactionsChartTabletFragment extends SummaryTabletFragment imple
         }
     }
 
-    public void onEvent(EventMessage.SyncEvent event) {
+    public void onEvent(final EventMessage.DatabaseSaveEvent event) {
 
-        if (event.isFinished() && !mBarChart.isTransitioning() && !mBarChart.isUpdating()) {
-            mAdapter.refreshAdapterData();
-        }
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+
+                if (event.didDatabaseChange() && event.getChangedClassesList().contains(Transactions.class) && !mBarChart.isTransitioning() && !mBarChart.isUpdating()) {
+                    mAdapter.refreshAdapterData();
+                }
+            }
+        });
     }
 
     private DateRange getDateRange() {

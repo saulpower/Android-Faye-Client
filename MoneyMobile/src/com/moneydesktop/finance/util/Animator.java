@@ -1,24 +1,39 @@
 package com.moneydesktop.finance.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Animator {
 
+    public static final String TAG = "Animator";
+
 	private static Map<View, Animation> animations = new HashMap<View, Animation>();
 	
-	public static void translateView(final View view, final float[] newPosition, long duration) {
+	public static void translateView(final View view, final int[] newPosition, long duration) {
 
-        final int newleft = (int) (view.getLeft() + newPosition[0]);
-        final int newTop = (int) (view.getTop() + newPosition[1]);
-        
+        int topMargin = newPosition[1];
+
+        if (topMargin < 0) {
+            topMargin = 0;
+        }
+
+        final RelativeLayout.LayoutParams newParams = new RelativeLayout.LayoutParams(view.getLayoutParams());
+        newParams.setMargins(0, topMargin, 0, 0);
+
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
+
+        for (int i = 0; i < params.getRules().length; i++) {
+            newParams.addRule(i, params.getRules()[i]);
+        }
+
 		Animation animation = new TranslateAnimation(0, newPosition[0], 0, newPosition[1]);
 		animation.setDuration(duration);
 		animation.setFillEnabled(true);
@@ -28,8 +43,8 @@ public class Animator {
 			public void onAnimationStart(Animation animation) {
 				
 				if (view instanceof TextView) {
-					((TextView) view).setEnabled(false);
-					((TextView) view).setFocusable(false);
+					view.setEnabled(false);
+					view.setFocusable(false);
 				}
 			}
 			
@@ -38,11 +53,11 @@ public class Animator {
 			public void onAnimationEnd(Animation animation) {
 				
 				if (view instanceof TextView) {
-					((TextView) view).setEnabled(true);
-					((TextView) view).setFocusable(true);
+					view.setEnabled(true);
+					view.setFocusable(true);
 				}
-				
-				view.layout(newleft, newTop, newleft + view.getMeasuredWidth(), newTop + view.getMeasuredHeight());
+
+                view.setLayoutParams(newParams);
 			}
 		});
 		

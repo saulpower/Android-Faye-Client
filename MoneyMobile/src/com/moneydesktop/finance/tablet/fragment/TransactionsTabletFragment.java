@@ -170,7 +170,7 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
 
     @Override
     public boolean onBackPressed() {
-        return false;
+        return mPageFragment.onBackPressed();
     }
 
     @Override

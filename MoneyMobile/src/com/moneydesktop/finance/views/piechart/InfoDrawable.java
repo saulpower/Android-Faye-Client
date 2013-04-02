@@ -22,7 +22,7 @@ public class InfoDrawable extends Drawable {
     
     public final String TAG = this.getClass().getSimpleName();
 	
-    private PieChartView mChart;
+    private ExpandablePieChartView mChart;
     
 	private Paint mTitlePaint, mAmountPaint, mSubTitlePaint;
 	private float mOffsetX;
@@ -86,7 +86,7 @@ public class InfoDrawable extends Drawable {
 		invalidateSelf();
 	}
 	
-	public InfoDrawable(PieChartView chart, Context context, Rect bounds, float radius) {
+	public InfoDrawable(ExpandablePieChartView chart, Context context, Rect bounds, float radius) {
 		
 		mChart = chart;
 		Resources resources = context.getResources();
@@ -136,11 +136,11 @@ public class InfoDrawable extends Drawable {
 				setAmount(amount);
 				setAmountColor(amountColor);
 				setTitle(title);
-				mChart.getDrawThread().setInfoAnimator(inAlpha);
+				mChart.setInfoAnimator(inAlpha);
 			}
 		});
 		
-		mChart.getDrawThread().setInfoAnimator(outAlpha);
+		mChart.setInfoAnimator(outAlpha);
 	}
 
 	@Override

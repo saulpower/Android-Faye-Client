@@ -1,6 +1,7 @@
 package com.moneydesktop.finance.tablet.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Transactions;
@@ -18,7 +18,6 @@ import com.moneydesktop.finance.shared.adapter.GrowPagerAdapter.OnScrollStateCha
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.piechart.ChartListBridge;
 import com.moneydesktop.finance.views.piechart.ExpandablePieChartView;
-
 import de.greenrobot.event.EventBus;
 
 public class SpendingChartTabletFragment extends SummaryTabletFragment implements OnScrollStateChangedListener {
@@ -33,6 +32,8 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
     private TextSwitcher mTotalAmount;
     
     private boolean mShowing = false;
+
+    private Handler mHandler;
 	
 	public static SpendingChartTabletFragment newInstance(int position) {
 		
@@ -56,7 +57,9 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 		super.onCreateView(inflater, container, savedInstanceState);
 		
 		mRoot = inflater.inflate(R.layout.tablet_spending_summary_view, null);
-		
+
+        mHandler = new Handler();
+
 		setupView();
 		
 		configureChart(false);
@@ -127,11 +130,18 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 		}
 	}
 	
-	public void onEvent(DatabaseSaveEvent event) {
-	    
-	    if (event.didDatabaseChange() && event.getChangedClassesList().contains(Transactions.class)) {
-	        mBridge.updateChart();
-	    }
+	public void onEvent(final DatabaseSaveEvent event) {
+
+        mHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                if (event.didDatabaseChange() && event.getChangedClassesList().contains(Transactions.class)) {
+                    mBridge.updateChart();
+                }
+            }
+        });
 	}
     
 	public void onEvent(NavigationEvent event) {

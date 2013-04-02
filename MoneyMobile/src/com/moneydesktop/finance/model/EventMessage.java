@@ -1,6 +1,7 @@
 package com.moneydesktop.finance.model;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.LockType;

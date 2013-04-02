@@ -224,7 +224,7 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 	
 	@Override
 	public int getCount() {
-		int count = 0;
+		int count;
 		
 		if (mExpanded) {
 			count = mAdapter.getChildrenCount(mGroupPosition);
@@ -238,7 +238,7 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 	@Override
 	public Object getItem(int position) {
 		
-		Object object = null;
+		Object object;
 		
 		if (mExpanded) {
 			object = mAdapter.getChild(mGroupPosition, position);
@@ -356,7 +356,7 @@ public class ChartListBridge extends BaseAdapter implements OnExpandablePieChart
 	private ArrayList<Long> getCategories(int groupPosition, int childPosition) {
 
 		ArrayList<Long> categories = new ArrayList<Long>();
-		Category cat = null;
+		Category cat;
 		
 		if (mExpanded) {
 		

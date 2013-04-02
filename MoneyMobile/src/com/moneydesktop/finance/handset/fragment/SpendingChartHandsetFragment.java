@@ -12,7 +12,6 @@ import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
 import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity.OnMenuChangeListener;
-import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.util.Fonts;
@@ -101,7 +100,6 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
             public void onPieChartReady() {
 
                 configureChart(true);
-                EventBus.getDefault().post(new EventMessage().new ChartImageEvent(mChart.getDrawingCache()));
             }
         });
 
@@ -130,17 +128,20 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
 	@Override
 	public void onResume() {
 		super.onResume();
-		
-		mPaused = false;
-		configureChart(true);
 	}
     
     @Override
     public void isShowing() {
         super.isShowing();
-		
-		mPaused = false;
-		configureChart(true);
+
+        mRoot.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                mPaused = false;
+                configureChart(true);
+            }
+        }, 500);
     }
 
     @Override

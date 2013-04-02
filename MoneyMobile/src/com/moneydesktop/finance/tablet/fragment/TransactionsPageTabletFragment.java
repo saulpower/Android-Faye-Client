@@ -411,6 +411,7 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
 
     @Override
     public boolean onBackPressed() {
+
         if (mParent != null && mParent.getDetailFragment() != null) {
             return mParent.getDetailFragment().onBackPressed();
         }
