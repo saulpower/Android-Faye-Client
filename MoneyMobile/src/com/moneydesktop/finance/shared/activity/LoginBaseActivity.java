@@ -1,13 +1,10 @@
 
 package com.moneydesktop.finance.shared.activity;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -19,41 +16,21 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.ViewFlipper;
-
-import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataBridge;
 import com.moneydesktop.finance.data.DemoData;
-import com.moneydesktop.finance.data.Preferences;
-import com.moneydesktop.finance.data.Enums.AccountExclusionFlags;
-import com.moneydesktop.finance.database.BankAccount;
-import com.moneydesktop.finance.database.BankAccountDao;
-import com.moneydesktop.finance.handset.activity.DashboardHandsetActivity;
-import com.moneydesktop.finance.handset.activity.IntroHandsetActivity;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.User;
-import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;
-import com.moneydesktop.finance.tablet.activity.IntroTabletActivity;
-import com.moneydesktop.finance.util.Animator;
-import com.moneydesktop.finance.util.DialogUtils;
-import com.moneydesktop.finance.util.EmailUtils;
-import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.util.*;
 import com.moneydesktop.finance.views.LabelEditText;
-
 import de.greenrobot.event.EventBus;
 
 public abstract class LoginBaseActivity extends BaseActivity {
 
-    private final String TAG = "LoginActivity";
-    private boolean mIsTablet = false;
+    public final String TAG = this.getClass().getSimpleName();
+
     private ViewFlipper mViewFlipper;
     private LinearLayout mButtonView, mCredentialView, mSignupView;
     private Button mLoginViewButton, mDemoButton, mLoginButton, mCancelButton, mSubmitButton,
@@ -62,7 +39,9 @@ public abstract class LoginBaseActivity extends BaseActivity {
     private ImageView mLogo;
     private TextView mSignupText, mLoginText, mMessageTitle, mMessageBody, mCancelText,
             mNeedAccount, mNagBank, mThankYou, mTryDemo;
+
     private Animation mInLeft, mInRight, mOutLeft, mOutRight, mInUp, mOutDown, mNoMovement;
+
     private boolean mFailed = false;
 
     @Override
@@ -80,6 +59,18 @@ public abstract class LoginBaseActivity extends BaseActivity {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(getContentResource());
+
+        setupAnimations();
+        setupView();
+    }
+
+    protected abstract int getContentResource();
+
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -92,11 +83,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
         if (User.getCurrentUser() != null) {
         	
-            Intent i = new Intent(this, DashboardHandsetActivity.class);
-            
-            if (isTablet(this)) {
-                i = new Intent(this, DashboardTabletActivity.class);
-            }
+            Intent i = getDashboardIntent();
             
             startActivity(i);
             overridePendingTransition(R.anim.fade_in_slow, R.anim.fade_out_slow);
@@ -105,10 +92,11 @@ public abstract class LoginBaseActivity extends BaseActivity {
         }
     }
 
+    protected abstract Intent getDashboardIntent();
+
     protected void setupView() {
-        if (isTablet(this)) {
-            mIsTablet = true;
-        }
+
+        isTablet(this);
         
         mViewFlipper = (ViewFlipper) findViewById(R.id.flipper);
         mButtonView = (LinearLayout) findViewById(R.id.button_view);
@@ -608,29 +596,32 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
                     EventBus eventBus = EventBus.getDefault();
                     eventBus.post(new EventMessage().new LoginEvent());
-                    if (mIsTablet == true) {
-                        Intent i = new Intent(LoginBaseActivity.this, IntroTabletActivity.class);
-                        startActivity(i);
-                        finish();
-                    }
-                    else {
-                        Intent i = new Intent(LoginBaseActivity.this, IntroHandsetActivity.class);
-                        startActivity(i);
-                        finish();
-                    }
+
+                    toIntro();
                 }
             }
 
         }.execute();
     }
 
+    private void toIntro() {
+
+        Intent i = getLoginIntent();
+
+        startActivity(i);
+        overridePendingTransition(R.anim.fade_in_fast, R.anim.none);
+        finish();
+    }
+
+    protected abstract Intent getLoginIntent();
+
     private void toggleAnimations(boolean reset) {
 
-        int offset = (int) (.20 * UiUtils.getScreenMeasurements(this)[1]) * (reset ? -1 : 1);
+        int offset = (int) (0.20f * UiUtils.getScreenMeasurements(this)[1]) * (reset ? -1 : 1);
         long duration = 400;
         long delay = reset ? 250 : 0;
 
-        Animator.translateView(mButtonView, new float[] {
+        Animator.translateView(mButtonView, new int[] {
                 0, offset
         }, duration);
         Animator.fadeView(mLoginText, !reset, duration, delay);
@@ -665,7 +656,9 @@ public abstract class LoginBaseActivity extends BaseActivity {
         mSignupName.setText("");
         mSignupEmail.setText("");
         mSignupBank.setText("");
+
         UiUtils.hideKeyboard(this, mViewFlipper);
+
         mViewFlipper.setOutAnimation(out);
         mViewFlipper.setInAnimation(in);
         mViewFlipper.setDisplayedChild(0);
@@ -673,7 +666,6 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
     @Override
     public String getActivityTitle() {
-
         return null;
     }
 

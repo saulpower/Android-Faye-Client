@@ -80,7 +80,7 @@
             android:windowSoftInputMode="adjustPan" />
         
         <activity
-            android:name="com.moneydesktop.finance.tablet.activity.IntroTabletActivity"
+            android:name=".tablet.activity.IntroTabletActivity"
             android:screenOrientation="landscape"/>
         
         <activity

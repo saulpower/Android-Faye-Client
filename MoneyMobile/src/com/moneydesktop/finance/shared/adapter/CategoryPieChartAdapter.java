@@ -63,7 +63,9 @@ public class CategoryPieChartAdapter extends BaseExpandablePieChartAdapter {
             
             @Override
             protected List<Pair<Category, List<Category>>> doInBackground(Integer... params) {
-            	
+
+                mTotal = 0f;
+
             	mRange = DateRange.forCurrentMonth();
             	
             	List<Pair<Category, List<Category>>> percents = new ArrayList<Pair<Category, List<Category>>>();

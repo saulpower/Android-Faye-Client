@@ -18,10 +18,9 @@ import java.util.*;
  * User: saulhoward
  * Date: 3/28/13
  *
- * Description:
+ * Description: Used for any report needed to be generated
  */
 public class Reports {
-
 
     /**
      * Returns the daily expense totals for the last x amount of days.
