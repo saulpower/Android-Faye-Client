@@ -44,17 +44,17 @@
         android:id="@+id/nav_wheel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="invisible" />
+        android:layout_marginTop="42dp"/>
 
-    <com.moneydesktop.finance.views.navigation.HomeButton
-        android:id="@+id/home_button"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        app:height="80dp"
-        app:width="80dp"
-        app:color="@color/gray7"
-        app:secondaryColor="@color/gray3" />
+    <!--<com.moneydesktop.finance.views.navigation.HomeButton-->
+        <!--android:id="@+id/home_button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--app:height="80dp"-->
+        <!--app:width="80dp"-->
+        <!--app:color="@color/gray7"-->
+        <!--app:secondaryColor="@color/gray3" />-->
 
 </RelativeLayout>

@@ -1,7 +1,5 @@
 package com.moneydesktop.finance.views.piechart;
 
-import android.util.Log;
-
 public class PieChartBridgeAdapter {
 
     public final String TAG = this.getClass().getSimpleName();
@@ -46,7 +44,6 @@ public class PieChartBridgeAdapter {
 		
 		if (mChildAdapter == null) {
 			mChildAdapter = new PieChartChildAdapter(mExpandableAdapter, groupPosition);
-            Log.i(TAG, "new Child Adapter");
         } else {
 			mChildAdapter.setGroupPosition(groupPosition);
 		}

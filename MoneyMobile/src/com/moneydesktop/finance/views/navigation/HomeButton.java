@@ -2,14 +2,9 @@ package com.moneydesktop.finance.views.navigation;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
+import android.graphics.*;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
@@ -17,27 +12,25 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.OvershootInterpolator;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.NavDirection;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.NavigationButtonEvent;
 import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
 import com.moneydesktop.finance.util.UiUtils;
-
 import de.greenrobot.event.EventBus;
 
-@TargetApi(11)
 public class HomeButton extends View {
 	
 	public final String TAG = this.getClass().getSimpleName();
 
 	private final float SCROLL_DISTANCE = 17.0f;
-	
+
+    private NavWheelView mNavWheel;
+    private float mStartDegree = 0;
+
 	// Animation
 	private static final long DURATION = 500;
-	
-	private float mScrollDistance;
 	
 	// Button
 	private Bitmap mHome;
@@ -58,11 +51,9 @@ public class HomeButton extends View {
 
     private float mPosY;
     
-    private float mLastTouchY, mLastTouchX, mLastDy, mLastDx;
+    private float mLastTouchY, mLastTouchX;
     
     // Scrolling
-    private float mScrollX = 0.0f, mScrollY = 0.0f;
-    private boolean mAbove = false;
     private float mMoveDistance, mStartPos;
     
 	// Touching
@@ -126,13 +117,16 @@ public class HomeButton extends View {
 	public void setTouchingSlider(boolean touchingSlider) {
 			
 		this.mTouchingSlider = touchingSlider && touchingSlider() && mShowSlider;
+
+        if (mTouchingSlider) {
+            mNavWheel.updateStartRotation();
+            mStartDegree = getDegree(mLastTouchX, mLastTouchY);
+        }
 	}
 
 	/**
 	 * Begins the animation of the home button and indicates
 	 * an animation is occurring.
-	 * 
-	 * @param animatingButton
 	 */
 	public void animateButtonBounce() {
         
@@ -146,7 +140,7 @@ public class HomeButton extends View {
 	 * Begins the animation of the slider and indicates
 	 * an animation is occurring.
 	 * 
-	 * @param animatingSlider
+	 * @param showSlider
 	 */
 	public void animateSlider(boolean showSlider) {
 	    
@@ -234,15 +228,11 @@ public class HomeButton extends View {
 	 *******************************************************************************/
 	
 	public HomeButton(Context context) {
-		super(context);
-		
-		init(null);
+		this(context, null);
 	}
 
 	public HomeButton(Context context, AttributeSet attrs) {
-		super(context, attrs);
-
-		init(attrs);
+		this(context, attrs, -1);
 	}
 
 	public HomeButton(Context context, AttributeSet attrs, int defStyle) {
@@ -250,6 +240,20 @@ public class HomeButton extends View {
 		
 		init(attrs);
 	}
+
+    public HomeButton(Context context, NavWheelView navWheel, int color, int secondaryColor, float width,
+                      float height) {
+        super(context);
+
+        mNavWheel = navWheel;
+
+        setColor(color);
+        setSecondaryColor(secondaryColor);
+        setButtonWidth(width);
+        setButtonHeight(height);
+
+        init(null);
+    }
 
 	/*******************************************************************************
 	 * Methods
@@ -264,8 +268,7 @@ public class HomeButton extends View {
 	private void init(AttributeSet attrs) {
 		
 		EventBus.getDefault().register(this);
-		
-		mScrollDistance = UiUtils.getDynamicPixels(getContext(), SCROLL_DISTANCE);
+
 		mHome = BitmapFactory.decodeResource(getResources(), R.drawable.ipad_button_home);
 		
 		if (attrs != null) {
@@ -429,41 +432,18 @@ public class HomeButton extends View {
 
         if (mTouchingSlider) {
 
-        	// Determine what part of the slider is being touched (top or bottom half)
-        	mAbove = mLastTouchY < mCenter;
-        	
-        	// If we have changed directions reset the movement sum
-        	if (Math.signum(mLastDy) != Math.signum(dy)) {
-        		mScrollY = 0.0f;
-        	}
-        	
-        	if (Math.signum(mLastDx) != Math.signum(dx)) {
-        		mScrollX = 0.0f;
-        	}
-        	
-        	// Sum movement in each direction
-        	mScrollX += dx;
-        	mScrollY += dy;
-        	
-        	// If movement was great enough fire off an event to move the navigation wheel
-        	if (Math.abs(mScrollX) >= mScrollDistance) {
-
-        		// X-axis scrolling changes depends on which half the user is touching
-        		mScrollX = mAbove ? -mScrollX : mScrollX;
-        		
-            	NavDirection dir = (mScrollX < 0) ? NavDirection.NEXT : NavDirection.PREVIOUS;
-            	
-            	navigate(dir);
-        		mScrollX = 0.0f;
-        		
-        	} else if (Math.abs(mScrollY) >= mScrollDistance) {
-
-            	NavDirection dir = (mScrollY >= 0) ? NavDirection.NEXT : NavDirection.PREVIOUS;
-            	
-            	navigate(dir);
-        		mScrollY = 0.0f;
-        	}
+            float degree = getDegree(dx, dy) - mStartDegree;
+            mNavWheel.rotateWheelBy(degree);
         }
+    }
+
+    private float getDegree(float x, float y) {
+
+        float centerY = getHeight() + mPosY;
+        float degree = 90f - (float) (Math.toDegrees(Math.atan2(centerY - y, x)));
+        degree *= 5f;
+
+        return degree;
     }
     
     private void navigate(NavDirection dir) {
@@ -504,8 +484,8 @@ public class HomeButton extends View {
         setMeasuredDimension((int) (getButtonWidth() * 3.5), MeasureSpec.getSize(heightMeasureSpec));
 		
 		mLeft = mHome.getWidth();
-		mTop = (int) (getHeight() - (mLeft * .2) - mHome.getHeight());
-		mMid = (int) (getHeight() - (mHome.getHeight() / 2));
+		mTop = (int) (getMeasuredHeight() - (mLeft * .2) - mHome.getHeight());
+		mMid = getMeasuredHeight() - (mHome.getHeight() / 2);
     }
     
     @Override
@@ -522,8 +502,6 @@ public class HomeButton extends View {
 	            // Remember where we started
 	            mLastTouchY = y;
 	            mLastTouchX = x;
-	            mLastDy = 0.0f;
-	            mLastDx = 0.0f;
 
 	            // Check if we are touching either the button or slider
 	        	setTouching(true);
@@ -548,13 +526,11 @@ public class HomeButton extends View {
 	            
 	            // Move the object if we are touching the button
 	            updateButtonPosition(dy);
-	            sliderNavigation(dy, dx);
+	            sliderNavigation(y, x);
 	            
 	            // Remember this touch position for the next move event
 	            mLastTouchY = y;
 	            mLastTouchX = x;
-	            mLastDy = dy;
-	            mLastDx = dx;
 	            
 	            break;
 	        }
@@ -619,8 +595,7 @@ public class HomeButton extends View {
 	    	
 	    	top = (int) (mTop - mPosY);
 	    	
-	    	if (top > mMid)
-	    		top = mMid;
+	    	if (top > mMid) top = mMid;
 	    }
 	    
 	    return top;

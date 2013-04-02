@@ -83,7 +83,6 @@ public class InfoDrawable extends Drawable {
 
 	public void setAmountColor(int color) {
 		mAmountPaint.setColor(color);
-		invalidateSelf();
 	}
 	
 	public InfoDrawable(ExpandablePieChartView chart, Context context, Rect bounds, float radius) {
@@ -162,7 +161,6 @@ public class InfoDrawable extends Drawable {
 		
 		mAmountPaint.setAlpha(alpha);
 		mTitlePaint.setAlpha(alpha);
-		invalidateSelf();
 	}
 
 	@Override

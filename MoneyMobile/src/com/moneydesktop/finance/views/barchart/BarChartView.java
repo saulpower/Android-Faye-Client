@@ -1053,8 +1053,8 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
     void initBarSpecs() {
 
         float barSpace = (float) getWidth() * 0.9f;
-        mBarWidth = (int) (barSpace / (float) mAdapter.getCount() + 0.5f);
-        mBarPadding = (int) ((getWidth() - mBarWidth * mAdapter.getCount()) / (float) (mAdapter.getCount() - 1) - 0.5f);
+        mBarWidth = (int) (barSpace / (float) mAdapter.getCount() - 0.5f);
+        mBarPadding = (int) ((getWidth() - mBarWidth * mAdapter.getCount()) / (float) (mAdapter.getCount() - 1) + 0.5f);
 
         mExtraSpace = getWidth() - (mBarWidth * mAdapter.getCount() + mBarPadding * (mAdapter.getCount() - 1));
 

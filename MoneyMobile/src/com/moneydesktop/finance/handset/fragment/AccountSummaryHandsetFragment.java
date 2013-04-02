@@ -1,16 +1,11 @@
 
 package com.moneydesktop.finance.handset.fragment;
 
-import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.List;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
@@ -19,6 +14,10 @@ import com.moneydesktop.finance.database.BankAccountDao;
 import com.moneydesktop.finance.shared.fragment.GrowFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.AccountBalanceItemView;
+
+import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.List;
 
 public class AccountSummaryHandsetFragment extends GrowFragment {
     private HashMap<String, Object> mAccountInfo;
@@ -74,7 +73,7 @@ public class AccountSummaryHandsetFragment extends GrowFragment {
         mAccountInfo = getAccountValues(bankList);
         TextView label = (TextView) v.findViewById(R.id.label_balance_view);
         label.setText(getResources().getString(R.string.label_balances));
-        Fonts.applySecondaryItalicFont(label, 10);
+        Fonts.applySecondaryItalicFont(label, 8);
         AccountBalanceItemView cashAccounts = (AccountBalanceItemView) v
                 .findViewById(R.id.account_balance_cash);
         cashAccounts.setAccountStatus(makeAccountsString((Integer) mAccountInfo

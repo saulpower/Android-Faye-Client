@@ -19,7 +19,7 @@
     <com.moneydesktop.finance.views.LineView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:lineColor="@color/gray4"
+        app:lineColor="@color/gray1"
 	    app:lineStrokeWidth="2dp"
 	    app:isVertical="true" />
 
@@ -50,7 +50,7 @@
     <com.moneydesktop.finance.views.LineView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" 
-        app:lineColor="@color/gray4"
+        app:lineColor="@color/gray1"
 	    app:lineStrokeWidth="2dp"
 	    app:isVertical="true" />
 

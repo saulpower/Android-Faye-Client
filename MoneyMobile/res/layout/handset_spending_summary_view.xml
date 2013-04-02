@@ -8,22 +8,23 @@
     <RelativeLayout
         android:id="@+id/root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white" >
+        android:layout_height="match_parent" >
         
 	     <LinearLayout
 	         android:layout_width="match_parent"
-	         android:layout_height="wrap_content"
-	         android:layout_alignParentTop="true"
-	         android:layout_marginTop="15dp"
+	         android:layout_height="match_parent"
+             android:background="@color/white"
+             android:weightSum="100"
 	         android:orientation="vertical" >
 	
 	         <TextView
 	             android:id="@+id/title"
-	             android:layout_width="match_parent"
-	             android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:layout_height="0dp"
+                 android:layout_weight="6"
 	             android:paddingLeft="10dp"
-	             android:gravity="left"
+                 android:paddingBottom="2dp"
+	             android:gravity="left|bottom"
 	             android:text="@string/label_spending_month"
 	             android:textColor="@color/gray4" />
 	
@@ -32,16 +33,17 @@
 	             android:layout_height="wrap_content"
 	             app:lineColor="@color/gray1"
 	             app:lineStrokeWidth="2dp" />
+
+             <ImageView
+                 android:id="@+id/chart_image"
+                 android:layout_width="match_parent"
+                 android:layout_height="0dp"
+                 android:layout_weight="94"
+                 android:layout_margin="10dp"
+                 android:scaleType="fitCenter"
+                 android:contentDescription="@string/description"/>
 	         
 	     </LinearLayout>
-        
-	    <ImageView 
-	        android:id="@+id/chart_image"
-	        android:layout_width="match_parent"
-	        android:layout_height="match_parent"
-	        android:layout_margin="10dp"
-	        android:scaleType="fitCenter"
-	        android:contentDescription="@string/description"/>
         
     </RelativeLayout>
 

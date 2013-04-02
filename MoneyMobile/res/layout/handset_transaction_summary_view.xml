@@ -15,15 +15,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white"
+            android:weightSum="100"
             android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/label_transactions_view"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginBottom="2dp"
-                android:layout_weight=".06"
+                android:layout_weight="6"
+                android:paddingLeft="10dp"
+                android:paddingBottom="2dp"
                 android:gravity="left|bottom"
                 android:text="@string/label_transactions"
                 android:textColor="@color/gray4" />
@@ -32,14 +33,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:isVertical="false"
-                app:lineColor="@color/gray2"
+                app:lineColor="@color/gray1"
                 app:lineStrokeWidth="2dp" />
 
             <LinearLayout
                 android:id="@+id/income_balance_summary_view"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight=".15"
+                android:layout_weight="15"
                 android:gravity="center_vertical"
                 android:orientation="horizontal" >
 
@@ -86,7 +87,7 @@
                 android:id="@+id/expense_balance_summary_view"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight=".15"
+                android:layout_weight="15"
                 android:gravity="center_vertical"
                 android:orientation="horizontal" >
 
@@ -134,7 +135,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_margin="10dp"
-                android:layout_weight=".23"
+                android:layout_weight="23"
                 android:orientation="vertical" >
 
                 <TextView
@@ -166,7 +167,7 @@
                 android:id="@+id/transactions_category_view"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight=".19"
+                android:layout_weight="19"
                 android:orientation="horizontal" >
 
                 <LinearLayout
@@ -238,7 +239,7 @@
                 android:id="@+id/uncategorized_transaction_view"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight=".17"
+                android:layout_weight="17"
                 android:gravity="center_vertical"
                 android:orientation="horizontal" >
 

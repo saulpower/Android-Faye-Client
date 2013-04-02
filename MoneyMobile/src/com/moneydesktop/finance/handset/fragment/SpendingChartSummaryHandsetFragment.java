@@ -2,20 +2,17 @@ package com.moneydesktop.finance.handset.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.model.EventMessage.ChartImageEvent;
 import com.moneydesktop.finance.shared.fragment.GrowFragment;
 import com.moneydesktop.finance.util.Fonts;
-
 import de.greenrobot.event.EventBus;
 
 public class SpendingChartSummaryHandsetFragment extends GrowFragment {
@@ -87,8 +84,6 @@ public class SpendingChartSummaryHandsetFragment extends GrowFragment {
 	}
 	
 	public void onEvent(ChartImageEvent event) {
-
-        Log.i(TAG, "Size: " + event.getImage().getWidth() + "x" + event.getImage().getHeight());
 
 		if (mChartImage != null) {
 			mChartImage.setImageBitmap(event.getImage());

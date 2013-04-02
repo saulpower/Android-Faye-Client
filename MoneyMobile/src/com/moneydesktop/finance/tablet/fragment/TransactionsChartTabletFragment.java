@@ -83,12 +83,12 @@ public class TransactionsChartTabletFragment extends SummaryTabletFragment imple
     @Override
     public View makeView() {
 
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
         params.setMargins(mTextPadding, 0, 0, 0);
 
         TextView textView = new TextView(mActivity);
         textView.setLayoutParams(params);
-        textView.setGravity(Gravity.CENTER);
+        textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
         textView.setTextColor(getResources().getColor(R.color.gray7));
         textView.setBackgroundColor(Color.TRANSPARENT);
 

@@ -329,11 +329,6 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
         if (transaction != null && mParent != null) {
 
             mParent.showTransactionDetails(view, mLocation[1], transaction);
-            
-            if (!transaction.getIsProcessed()) {
-                transaction.setIsProcessed(true);
-                transaction.updateSingle();
-            }
         }
     }
 
@@ -342,7 +337,9 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
         
         TransactionViewHolder holder = (TransactionViewHolder) view.getTag();
         Transactions transaction = (Transactions) parent.getItemAtPosition(position);
-        
+
+        if (holder == null || transaction == null) return false;
+
         int[] catLocation = new int[2];
         holder.category.getLocationOnScreen(catLocation);
         

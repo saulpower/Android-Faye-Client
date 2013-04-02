@@ -114,6 +114,10 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
         applyFonts();
         configureListeners();
     }
+
+    public Transactions getTransaction() {
+        return mTransaction;
+    }
     
     protected void setupViews() {
         

@@ -80,12 +80,13 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 		TextView total = (TextView) mRoot.findViewById(R.id.total);
 		mTotalAmount = (TextSwitcher) mRoot.findViewById(R.id.total_amount);
 		
-		Fonts.applySecondaryItalicFont(mTitle, 14);
+		Fonts.applySecondaryItalicFont(mTitle, 12);
 		Fonts.applyPrimaryBoldFont(mCategoryTitle, 12);
 		Fonts.applyPrimaryBoldFont(total, 12);
 		Fonts.applySecondaryItalicFont(mBackButton, 14);
 		
 		mCategoryTitle.setText(mCategoryTitle.getText().toString().toUpperCase());
+        mTitle.setText(getTitleText());
 	}
 	
 	@Override
@@ -107,7 +108,7 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 
     @Override
     public String getTitleText() {
-        return getString(R.string.title_fragment_spending_summary);
+        return getString(R.string.title_fragment_spending_summary).toUpperCase();
     }
 	
 	@Override

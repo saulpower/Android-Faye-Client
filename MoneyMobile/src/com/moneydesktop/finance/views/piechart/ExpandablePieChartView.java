@@ -312,25 +312,7 @@ public class ExpandablePieChartView extends SurfaceView implements SurfaceHolder
         mStrokePaint.setColor(Color.BLACK);
         mStrokePaint.setAlpha(50);
     }
-	
-	/**
-	 * Pause the SurfaceView thread from rendering so not
-	 * to impact UI thread performance.
-	 */
-	public void onPause() {
 
-        mDrawThread.onPause();
-	}
-	
-	/**
-	 * Resume the SurfaceView thread to render
-	 * the Pie Charts.
-	 */
-	public void onResume() {
-		
-		mDrawThread.onResume();
-	}
-	
 	/**
 	 * Provides a check to see if the child pie piechart is expanded
 	 * 
@@ -628,7 +610,6 @@ public class ExpandablePieChartView extends SurfaceView implements SurfaceHolder
 	
 	private void resetChart() {
 
-		invalidate();
 	}
 
 	public BaseExpandablePieChartAdapter getAdapter() {
@@ -732,6 +713,24 @@ public class ExpandablePieChartView extends SurfaceView implements SurfaceHolder
                 retry = false;
             } catch (InterruptedException e) {}
         }
+    }
+
+    /**
+     * Pause the SurfaceView thread from rendering so not
+     * to impact UI thread performance.
+     */
+    public void onPause() {
+
+        mDrawThread.onPause();
+    }
+
+    /**
+     * Resume the SurfaceView thread to render
+     * the Pie Charts.
+     */
+    public void onResume() {
+
+        mDrawThread.onResume();
     }
 
     public boolean isPaused() {

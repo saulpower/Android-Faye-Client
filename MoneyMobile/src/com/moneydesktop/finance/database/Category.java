@@ -670,6 +670,7 @@ public class Category extends BusinessObject  {
         List<Pair<Category, List<Category>>> data = new ArrayList<Pair<Category, List<Category>>>();
         
         CategoryDao categoryDao = (CategoryDao) DataController.getDao(Category.class);
+
         List<Category> sections = categoryDao.queryBuilder()
             .where(CategoryDao.Properties.ParentCategoryId.isNull())
             .orderAsc(CategoryDao.Properties.CategoryName)
@@ -678,6 +679,7 @@ public class Category extends BusinessObject  {
         for (Category category : sections) {
             
         	if (!onlySpending || (!category.isIncome() && !category.isTransfer())) {
+
 	            List<Category> items = categoryDao.queryBuilder()
 	                    .where(CategoryDao.Properties.ParentCategoryId.eq(category.getId()))
 	                    .orderAsc(CategoryDao.Properties.CategoryName)

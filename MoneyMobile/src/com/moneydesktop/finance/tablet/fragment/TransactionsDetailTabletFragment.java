@@ -96,10 +96,22 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
     public void viewShowing() {
         
         initializeContainer();
-        
-        mMenu.setVisibility(View.VISIBLE);
-        mMenu.startAnimation(mPushIn);
-        mMenuContainer.setVisibility(View.VISIBLE);
+
+        mMenu.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+
+                mMenu.setVisibility(View.VISIBLE);
+                mMenu.startAnimation(mPushIn);
+                mMenuContainer.setVisibility(View.VISIBLE);
+            }
+        }, 100);
+
+        if (!mTransaction.getIsProcessed()) {
+            mTransaction.setIsProcessed(true);
+            mTransaction.updateSingle();
+        }
     }
     
     public long viewWillDisappear() {

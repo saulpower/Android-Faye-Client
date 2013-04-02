@@ -1,19 +1,11 @@
 package com.moneydesktop.finance.views.navigation;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.DashPathEffect;
-import android.graphics.Paint;
-import android.graphics.PointF;
-import android.graphics.RectF;
+import android.graphics.*;
 import android.view.animation.OvershootInterpolator;
-
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.model.PointEvaluator;
 import com.moneydesktop.finance.util.UiUtils;
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
+import com.moneydesktop.finance.views.piechart.ThreadAnimator;
 
 /**
  * Used to draw the pointer for the Navigation Wheel indicating which
@@ -32,22 +24,25 @@ public class PointerDrawable extends NavItemDrawable {
 	private RectF oval;
 	
 	public PointerDrawable(Context context, PointF center, int count) {
-		super(context, -1, -1, center, center);
+		super(context, -1, -1, center, center, -1);
 		
 		sweepAngle = 360.0f / count;
 		startAngle = 270.0f - (sweepAngle / 2.0f);
 		
-		radiusDp = UiUtils.getDynamicPixels(context, CIRCLE_RADIUS);
-		
+		radiusDp = UiUtils.getDynamicPixels(context, CIRCLE_RADIUS) / 2.0f;
+
+        mScale = new PointF(0.0f, 0.0f);
+
 		initOval();
 		initPaints();
+
+        setAlpha(0);
 	}
 
 	@Override
 	public void setAlpha(int alpha) {
 		indicator.setAlpha(alpha);
 		circle.setAlpha(alpha);
-		invalidateSelf();
 	}
 	
 	public int getAlpha() {
@@ -87,62 +82,53 @@ public class PointerDrawable extends NavItemDrawable {
 	
 	@Override
 	public void draw(Canvas canvas) {
-		
+
+        updateAnimators();
+
 		canvas.save();
 		canvas.rotate(mRotation, mPosition.x, mPosition.y);
 		canvas.scale(mScale.x, mScale.y, mPosition.x, mPosition.y);
 		
 		canvas.drawArc(oval, startAngle, sweepAngle, false, indicator);
-		canvas.drawCircle(mCenter.x, mCenter.y, radiusDp/2.0f, circle);
+		canvas.drawCircle(mCenter.x, mCenter.y, radiusDp, circle);
 		
 		canvas.restore();
 	}
 
 	@Override
 	public void playIntro() {
-
-        if (mOutroSet != null) {
-            mOutroSet.cancel();
-        }
         
         reset();
 
-		ObjectAnimator fade = ObjectAnimator.ofInt(this, "alpha", 0, 255);
-		fade.setDuration(150);
+        mAlphaAnimator = ThreadAnimator.ofInt(0, 255);
+        mAlphaAnimator.setDuration(150);
 		
 		PointF orig = new PointF(0.0f, 0.0f);
 		PointF bigger = new PointF(1.0f, 1.0f);
-		
-		ObjectAnimator pop = ObjectAnimator.ofObject(this, "scale", new PointEvaluator(), orig, bigger);
-		pop.setInterpolator(new OvershootInterpolator(2.0f));
-		pop.setDuration(500);
 
-        mIntroSet = new AnimatorSet();
-        mIntroSet.play(pop).with(fade);
-        mIntroSet.setStartDelay(100);
-        mIntroSet.start();
+        mScaleAnimator = ThreadAnimator.ofPoint(orig, bigger);
+        mScaleAnimator.setInterpolator(new OvershootInterpolator(2.0f));
+        mScaleAnimator.setDuration(500);
+
+        mAlphaAnimator.start(100);
+        mScaleAnimator.start(100);
 	}
 	
 	@Override
 	public void playOutro(int selectedIndex) {
-        
-        if (mIntroSet != null) {
-            mIntroSet.cancel();
-        }
 
-		ObjectAnimator fade = ObjectAnimator.ofInt(this, "alpha", 255, 0);
-		fade.setDuration(400);
+        mAlphaAnimator = ThreadAnimator.ofInt(255, 0);
+        mAlphaAnimator.setDuration(400);
 
 		PointF orig = new PointF(1.0f, 1.0f);
 		PointF smaller = new PointF(0.0f, 0.0f);
-		
-		ObjectAnimator pop = ObjectAnimator.ofObject(this, "scale", new PointEvaluator(), orig, smaller);
-		pop.setInterpolator(new OvershootInterpolator(2.0f));
-		pop.setDuration(500);
 
-        mOutroSet = new AnimatorSet();
-        mOutroSet.play(fade).with(pop);
-		mOutroSet.start();
+        mScaleAnimator = ThreadAnimator.ofPoint(orig, smaller);
+        mScaleAnimator.setInterpolator(new OvershootInterpolator(2.0f));
+        mScaleAnimator.setDuration(500);
+
+        mAlphaAnimator.start();
+        mScaleAnimator.start();
 	}
 	
 	@Override

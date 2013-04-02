@@ -17,7 +17,6 @@ import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.piechart.ChartListBridge;
 import com.moneydesktop.finance.views.piechart.ExpandablePieChartView;
-import com.moneydesktop.finance.views.piechart.PieChartView.OnPieChartReadyListener;
 import de.greenrobot.event.EventBus;
 import net.simonvt.menudrawer.MenuDrawer;
 
@@ -94,14 +93,6 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
     private void configureChart() {
 
         mChart = (ExpandablePieChartView) mRoot.findViewById(R.id.chart);
-        mChart.setOnPieChartReadyListener(new OnPieChartReadyListener() {
-
-            @Override
-            public void onPieChartReady() {
-
-                configureChart(true);
-            }
-        });
 
         mBridge = new ChartListBridge(mActivity, mChart);
         mBridge.setFragmentManager(getFragmentManager());
@@ -123,11 +114,6 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
 	    if (event.didDatabaseChange() && event.getChangedClassesList().contains(Transactions.class)) {
 	        mBridge.updateChart();
 	    }
-	}
-	
-	@Override
-	public void onResume() {
-		super.onResume();
 	}
     
     @Override
@@ -153,14 +139,6 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
     }
 	
 	@Override
-	public void onPause() {
-		super.onPause();
-		
-		mPaused = true;
-		configureChart(false);
-	}
-	
-	@Override
 	public String getFragmentTitle() {
 		return getString(R.string.title_fragment_spending_summary).toUpperCase();
 	}
@@ -183,7 +161,7 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
 	}
 	
 	private void configureChart(boolean showChart) {
-		
+
 		if (showChart && mActivity.getCurrentFragmentType() == getType() && !mPaused) {
             mChart.onResume();
 		} else {

@@ -30,6 +30,8 @@ public class TransactionDetailController {
     public final String TAG = this.getClass().getSimpleName();
     
     private static final int MOVE_DURATION = 400;
+    private static final int FLIP_DOWN_DURATION = 800;
+    private static final int FLIP_UP_DURATION = 375;
 
     private RelativeLayout mBackground, mContainer;
     private FrameLayout mDetail;
@@ -130,9 +132,9 @@ public class TransactionDetailController {
         @Override
         public void onAnimationCancel(Animator animation) {}
     };
-    
+
     private Interpolator mInterpolator = new Interpolator() {
-        
+
         @Override
         public float getInterpolation(float t) {
             if ((t) < (1 / 2.75)) {
@@ -317,44 +319,44 @@ public class TransactionDetailController {
         return set;
     }
     
-    private Animation flipCell(boolean up) {
+    private Animation flipCell(boolean down) {
         
-        int duration = up ? 800 : 375;
+        int duration = down ? FLIP_DOWN_DURATION : FLIP_UP_DURATION;
         
-        FlipDirection dir = up ? FlipDirection.TOP_BOTTOM : FlipDirection.BOTTOM_TOP;
+        FlipDirection dir = down ? FlipDirection.TOP_BOTTOM : FlipDirection.BOTTOM_TOP;
         
         Animation flip = new FlipXAnimation(dir, (int) (mCenterX + mContainer.getX()), (int) mContainer.getY());
         flip.setDuration(duration);
         
-        if (up) {
+        if (down) {
             flip.setInterpolator(mInterpolator);
         }
         
         return flip;
     }
     
-    private Animation flipDetailView(boolean up) {
+    private Animation flipDetailView(boolean down) {
 
-        int duration = up ? 800 : 375;
+        int duration = down ? FLIP_DOWN_DURATION : FLIP_UP_DURATION;
         
-        FlipDirection dir = up ? FlipDirection.IN_TOP_BOTTOM : FlipDirection.OUT_BOTTOM_TOP;
+        FlipDirection dir = down ? FlipDirection.IN_TOP_BOTTOM : FlipDirection.OUT_BOTTOM_TOP;
         
         Animation flip = new FlipXAnimation(dir, (int) (mContainer.getWidth() / 2.0f), 0);
         flip.setDuration(duration);
         
-        if (up) {
+        if (down) {
             flip.setInterpolator(mInterpolator);
         }
         
         return flip;
     }
     
-    private ObjectAnimator shaderAnimation(boolean up) {
+    private ObjectAnimator shaderAnimation(boolean down) {
 
-        int duration = up ? 800 : 375;
-        ObjectAnimator fade = ObjectAnimator.ofFloat(mShader, "alpha", up ? 1 : 0, up ? 0 : 1);
+        int duration = down ? FLIP_DOWN_DURATION : FLIP_UP_DURATION;
+        ObjectAnimator fade = ObjectAnimator.ofFloat(mShader, "alpha", down ? 1 : 0, down ? 0 : 1);
         fade.setDuration(duration);
-        if (up) {
+        if (down) {
             fade.setInterpolator(mInterpolator);
         }
         

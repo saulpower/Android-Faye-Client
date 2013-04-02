@@ -98,11 +98,36 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 				}
 			});
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (mNavigation != null) {
+            mNavigation.onPause();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mNavigation != null) {
+            mNavigation.onResume();
+        }
 
         if (getCurrentFragmentType() == FragmentType.DASHBOARD) {
 
-            updateNavBar(getActivityTitle());
-            setupTitleBar();
+            mNavBar.post(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    updateNavBar(getActivityTitle());
+                    setupTitleBar();
+                }
+            });
         }
     }
 

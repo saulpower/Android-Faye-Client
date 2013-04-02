@@ -65,6 +65,9 @@ public class PieChartView extends View {
 
     /** User is rotating the piechart */
     public static final int TOUCH_STATE_ROTATE = 2;
+
+    /** Current touch state */
+    private int mTouchState = TOUCH_STATE_RESTING;
     
     public static final int CHART_HIDDEN = 0;
     public static final int CHART_SHOWING = 1;
@@ -72,9 +75,6 @@ public class PieChartView extends View {
     
     /** Default degree to snap to */
     private static final float DEFAULT_SNAP_DEGREE = 0f;
-
-    /** Current touch state */
-    private int mTouchState = TOUCH_STATE_RESTING;
     
     /** Distance to drag before we intercept touch events */
     private int mScrollThreshold;
@@ -726,12 +726,16 @@ public class PieChartView extends View {
 	@Override
 	public void onLayout(boolean changed, int left, int top, int right, int bottom) {
 		super.onLayout(changed, left, top, right, bottom);
-        
+
+        if (changed) {
+            resetChart();
+        }
+
 		// Get the center coordinates of the view
 		mCenter.x = (float) Math.abs(left - right) / 2;
 		mCenter.y = (float) Math.abs(top - bottom) / 2;
 
-        if (mDrawables.size() == 0 && mAdapter != null) {
+        if (mDrawables.size() == 0 && mAdapter != null && getWidth() != 0 && getHeight() != 0) {
             addPieSlices();
             buildDrawingCache();
             snapTo();

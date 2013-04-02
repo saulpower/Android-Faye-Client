@@ -1,26 +1,18 @@
 package com.moneydesktop.finance.views.navigation;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.PixelFormat;
-import android.graphics.PointF;
+import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.view.animation.AnticipateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.piechart.ThreadAnimator;
 
-import com.moneydesktop.finance.model.PointEvaluator;
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
-
-@TargetApi(11)
 public class NavItemDrawable extends Drawable {
 	
 	public final String TAG = this.getClass().getSimpleName();
+
+    private final static int PADDING = 25;
 
 	protected int mIndex;
 
@@ -33,16 +25,29 @@ public class NavItemDrawable extends Drawable {
 	protected PointF mCenter;
 	protected float mRotation = 0.0f;
 	protected PointF mScale;
-	protected AnimatorSet mOutroSet, mIntroSet;
+
+    protected int mPadding;
+
+    private double mDegree;
+
+    /** Animator objects used to animate the rotation, scale, and info panel */
+    protected ThreadAnimator mRotateAnimator, mScaleAnimator, mAlphaAnimator, mPositionAnimator;
 	
 	public int getIndex() {
 		return mIndex;
 	}
+
+    public double getDegree() {
+        return mDegree;
+    }
 	
-	public NavItemDrawable(Context context, int resource, int index, PointF position, PointF center) {
+	public NavItemDrawable(Context context, int resource, int index, PointF position, PointF center, double degree) {
 		
 		this.mContext = context;
-		
+        this.mDegree = degree;
+
+        mPadding = (int) (UiUtils.getDynamicPixels(context, PADDING) + 0.5f);
+
 		if (resource != -1)
 			mImage = BitmapFactory.decodeResource(context.getResources(), resource);
 		
@@ -61,12 +66,14 @@ public class NavItemDrawable extends Drawable {
 	
 	@Override
 	public void draw(Canvas canvas) {
-		
+
+        updateAnimators();
+
 		canvas.save();
 		canvas.rotate(mRotation, mPosition.x, mPosition.y);
 		canvas.scale(mScale.x, mScale.y, mPosition.x, mPosition.y);
 		
-		canvas.drawBitmap(mImage, getBounds().left, getBounds().top, mPaint);
+		canvas.drawBitmap(mImage, getBounds().left + mPadding, getBounds().top + mPadding, mPaint);
 		
 		canvas.restore();
 	}
@@ -79,7 +86,6 @@ public class NavItemDrawable extends Drawable {
 	@Override
 	public void setAlpha(int alpha) {
 		mPaint.setAlpha(alpha);
-		invalidateSelf();
 	}
 	
 	public int getAlpha() {
@@ -101,7 +107,6 @@ public class NavItemDrawable extends Drawable {
 
 	public void setRotation(float rotation) {
 		this.mRotation = rotation;
-		invalidateSelf();
 	}
 	
 	public void fixRotation(float rotation) {
@@ -117,7 +122,6 @@ public class NavItemDrawable extends Drawable {
 
 	public void setScale(PointF scale) {
 		this.mScale = scale;
-		invalidateSelf();
 	}
 
 	// Updates the drawables bounds when it has been translated
@@ -125,14 +129,12 @@ public class NavItemDrawable extends Drawable {
 
 		if (mImage != null) {
 			
-			int left = (int) (mPosition.x - (mImage.getWidth()/2));
-			int top = (int) (mPosition.y - (mImage.getHeight()/2));
-			int right = left + mImage.getWidth();
-			int bottom = top + mImage.getHeight();
+			int left = (int) (mPosition.x - ((float) mImage.getWidth() / 2f) - mPadding);
+			int top = (int) (mPosition.y - ((float) mImage.getHeight() / 2f) - mPadding);
+			int right = left + mImage.getWidth() + mPadding;
+			int bottom = top + mImage.getHeight() + mPadding;
 			
 			setBounds(left, top, right, bottom);
-			
-			invalidateSelf();
 		}
 	}
 	
@@ -141,24 +143,19 @@ public class NavItemDrawable extends Drawable {
 	 * first displayed.
 	 */
 	public void playIntro() {
-
-        if (mOutroSet != null) {
-            mOutroSet.cancel();
-        }
         
 	    reset();
-	    
-		ObjectAnimator fade = ObjectAnimator.ofInt(this, "alpha", 0, 255);
-		fade.setDuration(150);
-		
-		ObjectAnimator translate = ObjectAnimator.ofObject(this, "position", new PointEvaluator(), mCenter, mTargetPosition);
-		translate.setDuration(300);
-		translate.setInterpolator(new OvershootInterpolator());
 
-		mIntroSet = new AnimatorSet();
-		mIntroSet.play(translate).with(fade);
-		mIntroSet.setStartDelay(100 + 50 * mIndex);
-		mIntroSet.start();
+        mAlphaAnimator = ThreadAnimator.ofInt(0, 255);
+        mAlphaAnimator.setDuration(150);
+
+        mPositionAnimator = ThreadAnimator.ofPoint(mCenter, mTargetPosition);
+        mPositionAnimator.setDuration(300);
+        mPositionAnimator.setInterpolator(new OvershootInterpolator());
+
+        long offset = 100 + 50 * mIndex;
+        mAlphaAnimator.start(offset);
+        mPositionAnimator.start(offset);
 	}
 	
 	/**
@@ -169,42 +166,88 @@ public class NavItemDrawable extends Drawable {
 	 * @param selectedIndex
 	 */
 	public void playOutro(int selectedIndex) {
-		
-	    if (mIntroSet != null) {
-	        mIntroSet.cancel();
-	    }
-	    
-		ObjectAnimator fade = ObjectAnimator.ofInt(this, "alpha", 255, 0);
-		fade.setDuration(1000);
-		
-		ObjectAnimator translate = ObjectAnimator.ofObject(this, "position", new PointEvaluator(), mTargetPosition, mCenter);
-		translate.setDuration(500);
-		translate.setInterpolator(new AnticipateInterpolator(2.0f));
-		
-		ObjectAnimator rotate = ObjectAnimator.ofFloat(this, "rotation", 0, 180);
-		rotate.setDuration(500);
+
+        boolean selected = mIndex == selectedIndex;
+
+        mAlphaAnimator = ThreadAnimator.ofInt(255, 0);
+        mAlphaAnimator.setDuration(1000);
+
+        mPositionAnimator = ThreadAnimator.ofPoint(mTargetPosition, mCenter);
+        mPositionAnimator.setDuration(selected ? 500 : 600);
+        mPositionAnimator.setInterpolator(new AnticipateInterpolator(2.0f));
+
+        mRotateAnimator = ThreadAnimator.ofFloat(0, 180);
+        mRotateAnimator.setDuration(500);
 
 		PointF orig = new PointF(1.0f, 1.0f);
 		PointF bigger = new PointF(3.0f, 3.0f);
-		
-		ObjectAnimator pop = ObjectAnimator.ofObject(this, "scale", new PointEvaluator(), orig, bigger);
-		pop.setDuration(1000);
 
-		mOutroSet = new AnimatorSet();
+        mScaleAnimator = ThreadAnimator.ofPoint(orig, bigger);
+        mScaleAnimator.setDuration(1000);
 		
 		if (mIndex == selectedIndex) {
-			
-		    mOutroSet.play(fade).with(pop);
+
+            mAlphaAnimator.start();
+            mScaleAnimator.start();
 			
 		} else {
-			
-			fade.setDuration(600);
-			mOutroSet.play(fade).with(translate).with(rotate);
-	        mOutroSet.setStartDelay(mIndex * 50);
-		}
 
-		mOutroSet.start();
+            long offset = mIndex * 50;
+
+            mAlphaAnimator.start(offset);
+            mRotateAnimator.start(offset);
+            mPositionAnimator.start(offset);
+		}
 	}
+
+    /**
+     * Update our animators that control animating the
+     * rotation, scale, and info panel alpha
+     */
+    protected void updateAnimators() {
+
+        if (mRotateAnimator != null && mRotateAnimator.isRunning()) {
+            setRotation(mRotateAnimator.floatUpdate());
+        }
+
+        if (mScaleAnimator != null && mScaleAnimator.isRunning()) {
+            setScale(mScaleAnimator.pointUpdate());
+        }
+
+        if (mAlphaAnimator != null && mAlphaAnimator.isRunning()) {
+            setAlpha(mAlphaAnimator.intUpdate());
+        }
+
+        if (mPositionAnimator != null && mPositionAnimator.isRunning()) {
+            setPosition(mPositionAnimator.pointUpdate());
+        }
+    }
+
+    public void popIcon() {
+
+        PointF orig = new PointF(1.0f, 1.0f);
+        PointF bigger = new PointF(1.3f, 1.3f);
+
+        mScaleAnimator = ThreadAnimator.ofPoint(orig, bigger);
+        mScaleAnimator.setAnimationListener(new ThreadAnimator.AnimationListener() {
+            @Override
+            public void onAnimationEnded() {
+                unpopIcon();
+            }
+        });
+        mScaleAnimator.setDuration(125);
+        mScaleAnimator.start();
+    }
+
+    private void unpopIcon() {
+
+        PointF orig = new PointF(1.0f, 1.0f);
+        PointF bigger = new PointF(1.3f, 1.3f);
+
+        mScaleAnimator = ThreadAnimator.ofPoint(bigger, orig);
+        mScaleAnimator.setDuration(125);
+        mScaleAnimator.start();
+    }
 	
 	/**
 	 * Reset the drawable to a beginning scale and rotation.
