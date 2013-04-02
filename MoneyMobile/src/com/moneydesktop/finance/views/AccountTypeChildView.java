@@ -6,18 +6,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
+import com.moneydesktop.finance.data.Util;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.Bank;
@@ -148,7 +145,7 @@ public class AccountTypeChildView extends FrameLayout {
 									intent.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.ACCOUNT_SETTINGS);
 									intent.putExtra(Constant.KEY_ACCOUNT_TYPE, account.getAccountType().getAccountTypeName());
 									intent.putExtra(Constant.KEY_ACCOUNT_NAME, account.getAccountName());
-									intent.putExtra(Constant.KEY_BANK_ACCOUNT_ID, account.getAccountId());
+									intent.putExtra(Constant.KEY_BANK_ACCOUNT_ID, account.getId());
 							        mActivity.startActivity(intent);
 								}
 							});
@@ -174,8 +171,16 @@ public class AccountTypeChildView extends FrameLayout {
 							});
 							
 							RelativeLayout parentView = (RelativeLayout)((Activity)mContext).findViewById(R.id.account_types_container);
-							
-						    mPopup = new PopupWindowAtLocation(mContext, parentView, (int)view.getLeft() + view.getWidth(), (int)mParent.getTop() + (int)UiUtils.convertDpToPixel(62, mContext), 
+
+                            DisplayMetrics dm = new DisplayMetrics();
+                            ((Activity)mContext).getWindowManager().getDefaultDisplay().getMetrics(dm);
+                            int topOffset = dm.heightPixels - mParent.getMeasuredHeight();
+
+
+                            int[] location = new int[2];
+                            view.getLocationOnScreen(location);
+
+						    mPopup = new PopupWindowAtLocation(mContext, parentView, view.getLeft() + view.getWidth(), location[1] - topOffset - (int)UiUtils.convertDpToPixel(5, mContext),
 									mContext.getResources().getStringArray(R.array.account_selection_popup), onClickListeners, view);
 						}
 					});
@@ -204,8 +209,7 @@ public class AccountTypeChildView extends FrameLayout {
 	    return propertyTypeList.get(0).getAccountTypeName();
     	
     }
-    
-    
+
 	private void deleteAccount(BankAccount account, View view) {
 		mBankAccountContainer.removeView(view);
 		removeInstancesOfAccount(account);

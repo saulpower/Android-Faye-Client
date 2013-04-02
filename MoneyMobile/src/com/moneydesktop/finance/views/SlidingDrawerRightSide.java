@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.VelocityTracker;
@@ -43,16 +44,14 @@ public class SlidingDrawerRightSide extends ViewGroup {
      private static final int TAP_THRESHOLD = 6;
      private static final float MAXIMUM_TAP_VELOCITY = 100.0f;
      private static final float MAXIMUM_MINOR_VELOCITY = 150.0f;
-     private static final float MAXIMUM_MAJOR_VELOCITY = 200.0f;
+     private static final float MAXIMUM_MAJOR_VELOCITY = 3500.0f;
      private static final float MAXIMUM_ACCELERATION = 2000.0f;
      private static final int VELOCITY_UNITS = 1000;
      private static final int MSG_ANIMATE = 1000;
-     private static final int ANIMATION_FRAME_DURATION = 1000 / 60;
+     private static final int ANIMATION_FRAME_DURATION = 1000 / 90;
 
      private static final int EXPANDED_FULL_OPEN = -10001;
      private static final int COLLAPSED_FULL_CLOSED = -10002;
-
-//     private static final int LEFT_HANDLE_OFFSET_PX = 10;
 
      private final int mHandleId;
      private final int mContentId;
@@ -370,7 +369,7 @@ public class SlidingDrawerRightSide extends ViewGroup {
 
          handle.setPressed(true);
          // Must be called before prepareTracking()
-         prepareContent();
+      //   prepareContent();
 
          // Must be called after prepareContent()
          if (mOnDrawerScrollListener != null) {
@@ -441,11 +440,9 @@ public class SlidingDrawerRightSide extends ViewGroup {
 
                      if (Math.abs(velocity) < mMaximumTapVelocity) {
                          if (vertical ? (mExpanded && top < mTapThreshold + mTopOffset) ||
-                                 (!mExpanded && top > mBottomOffset + getHeight() -
-                                         mHandleHeight - mTapThreshold) :
-                                 (mExpanded && left < mTapThreshold + mTopOffset) ||
-                                         (!mExpanded && left > mBottomOffset + getWidth() -
-                                                 mHandleWidth - mTapThreshold)) {
+                                 (!mExpanded && top > mBottomOffset + getHeight() - mHandleHeight - mTapThreshold) :
+                                    (mExpanded && left < mTapThreshold + mTopOffset) ||
+                                         (!mExpanded && left > mBottomOffset + getWidth() - mHandleWidth - mTapThreshold)) {
 
                              if (mAllowSingleTap) {
                                  playSoundEffect(SoundEffectConstants.CLICK);
@@ -470,16 +467,16 @@ public class SlidingDrawerRightSide extends ViewGroup {
              }
          }
 
-         return mTracking || mAnimating || super.onTouchEvent(event);
+         return mTracking;
      }
 
      private void animateClose(int position) {
-         prepareTracking(position);
+         //prepareTracking(position);
          performFling(position, mMaximumAcceleration, true);
      }
 
      private void animateOpen(int position) {
-         prepareTracking(position);
+   //      prepareTracking(position);
          performFling(position, -mMaximumAcceleration, true);
      }
 
@@ -628,36 +625,36 @@ public class SlidingDrawerRightSide extends ViewGroup {
              return;
          }
 
-         // Something changed in the content, we need to honor the layout request
-         // before creating the cached bitmap
-         final View content = mContent;
-         if (content.isLayoutRequested()) {
-             if (mVertical) {
-                 final int childHeight = mHandleHeight;
-                 int height = getHeight() - childHeight - mTopOffset;
-                 content.measure(MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
-                         MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
-                 content.layout(0, mTopOffset + childHeight, content.getMeasuredWidth(),
-                         mTopOffset + childHeight + content.getMeasuredHeight());
-             } else {
-                 final int childWidth = mHandle.getWidth();
-                 int width = getWidth() - childWidth - mTopOffset;
-                 content.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                         MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
-                 content.layout(childWidth + mTopOffset, 0,
-                         mTopOffset + childWidth + content.getMeasuredWidth(),
-                         content.getMeasuredHeight());
-             }
-         }
-         // Try only once... we should really loop but it's not a big deal
-         // if the draw was cancelled, it will only be temporary anyway
-         content.getViewTreeObserver().dispatchOnPreDraw();
-         
-         // TODO: Fix this so compatible with API Level 10
-//         if (Build.VERSION.SDK_INT >= 12 && !content.isHardwareAccelerated())
-//        	 content.buildDrawingCache();
-
-         content.setVisibility(View.GONE);
+//         // Something changed in the content, we need to honor the layout request
+//         // before creating the cached bitmap
+//         final View content = mContent;
+//         if (content.isLayoutRequested()) {
+//             if (mVertical) {
+//                 final int childHeight = mHandleHeight;
+//                 int height = getHeight() - childHeight - mTopOffset;
+//                 content.measure(MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
+//                         MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+//                 content.layout(0, mTopOffset + childHeight, content.getMeasuredWidth(),
+//                         mTopOffset + childHeight + content.getMeasuredHeight());
+//             } else {
+//                 final int childWidth = mHandle.getWidth();
+//                 int width = getWidth() - childWidth - mTopOffset;
+//                 content.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+//                         MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
+//                 content.layout(childWidth + mTopOffset, 0,
+//                         mTopOffset + childWidth + content.getMeasuredWidth(),
+//                         content.getMeasuredHeight());
+//             }
+//         }
+//         // Try only once... we should really loop but it's not a big deal
+//         // if the draw was cancelled, it will only be temporary anyway
+//         content.getViewTreeObserver().dispatchOnPreDraw();
+//
+//         // TODO: Fix this so compatible with API Level 10
+////         if (Build.VERSION.SDK_INT >= 12 && !content.isHardwareAccelerated())
+////        	 content.buildDrawingCache();
+//
+//         content.setVisibility(View.GONE);
      }
 
      private void stopTracking() {
@@ -719,7 +716,7 @@ public class SlidingDrawerRightSide extends ViewGroup {
              closeDrawer();
          }
          invalidate();
-         requestLayout();
+        // requestLayout();
      }
 
      /**
@@ -749,7 +746,7 @@ public class SlidingDrawerRightSide extends ViewGroup {
      public void open() {
          openDrawer();
          invalidate();
-         requestLayout();
+      //   requestLayout();
 
          sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
      }
@@ -764,7 +761,7 @@ public class SlidingDrawerRightSide extends ViewGroup {
      public void close() {
          closeDrawer();
          invalidate();
-         requestLayout();
+       //  requestLayout();
      }
 
      /**
@@ -799,7 +796,7 @@ public class SlidingDrawerRightSide extends ViewGroup {
       * @see #toggle()
       */
      public void animateOpen() {
-         prepareContent();
+       //  prepareContent();
          final OnDrawerScrollListener scrollListener = mOnDrawerScrollListener;
          if (scrollListener != null) {
              scrollListener.onScrollStarted();
@@ -831,6 +828,7 @@ public class SlidingDrawerRightSide extends ViewGroup {
      private void openDrawer() {
          moveHandle(EXPANDED_FULL_OPEN);
          mContent.setVisibility(View.VISIBLE);
+
 
          if (mExpanded) {
              return;

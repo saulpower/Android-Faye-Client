@@ -10,9 +10,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,6 +33,7 @@ import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.SlidingDrawerRightSide;
+import com.moneydesktop.finance.views.VerticalScrollView;
 import de.greenrobot.event.EventBus;
 
 public class AccountSummaryTabletFragment extends SummaryTabletFragment {
@@ -47,6 +50,7 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
 	protected QueryProperty mOrderByName = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName);
 
     private ImageView mBankImage;
+    private TextView mBankImageTxtView;
     private TextView mPropertyLogo;
     private TextView mLastUpdatedLabel;
     private TextView mLastUpdatedValue;
@@ -87,9 +91,9 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		mRoot = inflater.inflate(R.layout.tablet_account_summarry_fragment, null);
-		
-		setupView();
-		
+
+        setupView();
+
 		return mRoot;
 	}
 
@@ -108,6 +112,7 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
 		getBaseAccountTypes();		
 		getAssetsAndLiabilitiesValue();
         populateAccountTypeRows();
+
     }
 
     private void populateAccountTypeRows() {
@@ -132,7 +137,6 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
             setAccountTypeRowBackgroundColor(accountType, sliderContent, handle, container, iconContainer);
 
             accountTypeName.setText(accountType.getAccountTypeName());
-
 
             //SET ACCOUNT TYPE SUM
             double accountTypeBalance = 0;
@@ -163,6 +167,7 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
                     return true;
                 }
             });
+
 
             //SET ACCOUNT TYPE ICON
             setIconText(accountType, icon);
@@ -205,6 +210,7 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
             View view = layoutInflater.inflate(R.layout.tablet_account_summary_bank_account_item, null);
 
             mBankImage = (ImageView)view.findViewById(R.id.tablet_account_summary_bank_account_logo);
+            mBankImageTxtView = (TextView)view.findViewById(R.id.tablet_account_summary_bank_account_logo_txtview);
             mPropertyLogo = (TextView)view.findViewById(R.id.tablet_account_summary_property_logo);
             mLastUpdatedLabel = (TextView)view.findViewById(R.id.tablet_account_summary_last_updated_label);
             mLastUpdatedValue = (TextView)view.findViewById(R.id.tablet_account_summary_last_updated_value);
@@ -212,19 +218,21 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
             mAccountName = (TextView)view.findViewById(R.id.tablet_account_summary_type_name);
             mAccountSum = (TextView)view.findViewById(R.id.tablet_account_summary_account_sum);
 
-            populateBankAccountContainer(bankAccount);
+            if (bankAccount.getBank() != null) {
+                populateBankAccountContainer(bankAccount);
 
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(mActivity, DropDownTabletActivity.class);
-                    i.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.BANK_ACCOUNT_BALANCE_HISTORY);
-                    i.putExtra(Constant.EXTRA_ACCOUNT_ID, bankAccount.getAccountId());
-                    mActivity.startActivity(i);
-                }
-            });
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(mActivity, DropDownTabletActivity.class);
+                        i.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.BANK_ACCOUNT_BALANCE_HISTORY);
+                        i.putExtra(Constant.EXTRA_ACCOUNT_ID, bankAccount.getId());
+                        mActivity.startActivity(i);
+                    }
+                });
 
-            bankAccountContainer.addView(view);
+                bankAccountContainer.addView(view);
+            }
         }
     }
 
@@ -356,13 +364,19 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
     private void populateBankAccountContainer(BankAccount bankAccount) {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)UiUtils.getScaledPixels(mActivity, 50), (int)UiUtils.getScaledPixels(mActivity, 50));
         mBankImage.setLayoutParams(layoutParams);
+        mBankImageTxtView.setLayoutParams(layoutParams);
         mAccountName.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
         mAccountName.setText(bankAccount.getAccountName());
         mAccountSum.setText(NumberFormat.getCurrencyInstance().format(bankAccount.getBalance()));
 
         if (!bankAccount.getAccountType().getAccountTypeName().toLowerCase().equals(Constant.KEY_PROPERTY)) {
             mPropertyLogo.setVisibility(View.GONE);
-            setBankLogo(mBankImage, bankAccount);
+            if (!bankAccount.getBank().getBankName().toLowerCase().equals("manual institution")) {
+                setBankLogo(mBankImage, bankAccount);
+            } else {
+                setIconText(bankAccount.getAccountType(), mBankImageTxtView);
+                Fonts.applyGlyphFont(mBankImageTxtView, 30);
+            }
         } else {
             setPropertyLogo(mPropertyLogo, bankAccount);
         }
@@ -395,9 +409,7 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                if (!bankAccount.getBank().getBankName().toLowerCase().equals("manual institution")) {
-                    BankLogoManager.getBankImage(bankLogo, bankAccount.getInstitutionId());
-                }
+                BankLogoManager.getBankImage(bankLogo, bankAccount.getInstitutionId());
             }
         });
     }

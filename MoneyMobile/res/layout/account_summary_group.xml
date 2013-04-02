@@ -6,7 +6,7 @@
 
         <LinearLayout
             android:id="@+id/tablet_account_summary_type_group_container"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="90dip"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -44,8 +44,7 @@
                     android:id="@+id/tablet_account_summary_bank_accounts_scroll_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="15dip"
-                    android:layout_marginRight="35dip"
+                    android:layout_marginRight="30dip"
                     android:scrollbars="none"
                     android:layout_marginTop="5dip"
                     android:layout_marginBottom="5dip">
@@ -54,6 +53,8 @@
                 <LinearLayout
                     android:id="@+id/tablet_account_summary_bank_accounts_container"
                     android:layout_width="wrap_content"
+                    android:paddingLeft="15dip"
+                    android:paddingRight="5dip"
                     android:layout_height="match_parent" />
 
 

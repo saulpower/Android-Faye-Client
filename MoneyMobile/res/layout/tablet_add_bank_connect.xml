@@ -202,7 +202,7 @@
 	            android:layout_marginLeft="10dip"
 	            android:layout_marginRight="10dip"
 	            android:layout_marginTop="10dip"
-	            android:background="@drawable/perf_paper"
+	            android:background="@drawable/perf_paper_selector"
 	            android:minHeight="50dip"
 	            android:text="@string/connect"
 	            android:textColor="@color/primaryColor" />

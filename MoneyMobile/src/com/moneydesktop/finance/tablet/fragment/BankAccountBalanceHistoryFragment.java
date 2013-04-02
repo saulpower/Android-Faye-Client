@@ -15,8 +15,11 @@ import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.*;
 import com.moneydesktop.finance.shared.fragment.TransactionsFragment;
 import com.moneydesktop.finance.tablet.adapter.AccountBalanceAdapter;
+import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.views.barchart.BarChartView;
+import com.moneydesktop.finance.views.barchart.BarViewModel;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -26,6 +29,7 @@ public class BankAccountBalanceHistoryFragment extends TransactionsFragment impl
 	private BankAccount mBankAccount;
     private BarChartView mBarChart;
     private AccountBalanceAdapter mChartAdapter;
+    private TextView mMessage;
     protected QueryProperty mOrderBy = new QueryProperty(TransactionsDao.TABLENAME, TransactionsDao.Properties.Date);
 
     @Override
@@ -44,7 +48,7 @@ public class BankAccountBalanceHistoryFragment extends TransactionsFragment impl
         Calendar cal = new GregorianCalendar();
         Date today = new Date();
         cal.setTime(today);
-        cal.add(Calendar.DATE, -30);
+        cal.add(Calendar.DATE, -60);
         Date startDate = cal.getTime();
         return startDate;
     }
@@ -69,10 +73,10 @@ public class BankAccountBalanceHistoryFragment extends TransactionsFragment impl
 
         BankAccountBalanceHistoryFragment fragment = new BankAccountBalanceHistoryFragment();
 
-        String accountId = intent.getExtras().getString(Constant.EXTRA_ACCOUNT_ID);
+        Long accountId = intent.getExtras().getLong(Constant.EXTRA_ACCOUNT_ID);
 		
         BankAccountDao bankAccountDAO = ApplicationContext.getDaoSession().getBankAccountDao();
-        fragment.setbankAccount(bankAccountDAO.load(Long.valueOf(accountId.hashCode())));
+        fragment.setbankAccount(bankAccountDAO.load(accountId));
 		
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -111,6 +115,7 @@ public class BankAccountBalanceHistoryFragment extends TransactionsFragment impl
         
         mRoot = inflater.inflate(R.layout.tablet_bank_account_balance_history, null);
         mBarChart = (BarChartView) mRoot.findViewById(R.id.tablet_bank_account_balance_chart);
+        mMessage = (TextView) mRoot.findViewById(R.id.no_historical_data_available);
 
         mBankAccountID = mBankAccount.getId().toString();
 
@@ -134,10 +139,42 @@ public class BankAccountBalanceHistoryFragment extends TransactionsFragment impl
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                //NOTE: Since one object is in ASC order, and the other DESC order, we have to reverse to position clicked in order to get the transaction list to animate in the correct direction
-                mTransactionsList.smoothScrollToPosition(mBarChart.getAdapter().getCount() - position);
+                BarViewModel barModel = mChartAdapter.getBarModel(position);
+                Date selectedDate = barModel.getDate();
+
+                SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+                String barDate = formatter.format(selectedDate);
+
+                //We don't have easy access to know what transaction position corresponds to the barview position, so we had to do some nested looping to find matches on dates.
+                for (int i = 0; i < mAdapter.getSections().length; i++) {
+                    String titleText = (String)(mAdapter.getSections()[i]);
+                    if (titleText.equals(barDate)) {
+
+                        for (int x = 0; x < mAdapter.getCount(); x++) {
+
+                            Transactions transactions = mAdapter.getItem(x);
+
+                            Date transDate = transactions.getDate();
+                            String transactionDate = formatter.format(transDate);
+
+                            if (transactionDate.equals(barDate)) {
+                                mTransactionsList.smoothScrollToPosition(x);
+                                break;
+                            }
+
+                        }
+                    }
+                }
             }
         });
+
+        if (mChartAdapter.getCount() == 0) {
+            mMessage.setVisibility(View.VISIBLE);
+
+            Fonts.applySecondaryItalicFont(mMessage, 18);
+
+            mBarChart.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void selectReport(Enums.AccountBalanceReport report) {

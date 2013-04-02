@@ -27,8 +27,8 @@ class SlideExpandableListView extends ListView {
 		super(context, attrs, defStyle);
 	}
 
-    public void setAdapter(ListAdapter adapter, Context context) {
-		super.setAdapter(new SlideExpandableListAdapter(adapter, context));
-	}
+//    public void setAdapter(ListAdapter adapter, Context context) {
+//		super.setAdapter(new SlideExpandableListAdapter(adapter, context));
+//	}
 
 }

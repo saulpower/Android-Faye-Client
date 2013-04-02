@@ -37,8 +37,8 @@ public class EventMessage {
     }
     
 	public class AuthEvent extends EventMessage {}
-	
-	public class UpdateSpecificBankStatus extends EventMessage {	
+
+	public class UpdateSpecificBankStatus extends EventMessage {
 		private Bank mBank;
 		
 		public UpdateSpecificBankStatus(Bank bank) {

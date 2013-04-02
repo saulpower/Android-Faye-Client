@@ -3,9 +3,13 @@ package com.moneydesktop.finance.tablet.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import com.moneydesktop.finance.ApplicationContext;
@@ -13,6 +17,7 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.SlideFrom;
+import com.moneydesktop.finance.data.Util;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.BankAccount;
@@ -24,23 +29,28 @@ import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.AccountSettingsTypesAdapter;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.LabelEditCurrency;
 import com.moneydesktop.finance.views.SlidingView;
+import crittercism.android.d;
 import de.greenrobot.event.EventBus;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
+import java.util.Locale;
 
 
 public class AccountSettingsTabletFragment extends BaseFragment {
 
 	private static String mAccountName;
-	private static String mAccountId;
+	private static Long mAccountId;
 	private static String mAccountTypeName;
 	
 	private EditText mField1;
 	private EditText mField2;
 	private EditText mField3;
-	private EditText mField4;
+	private LabelEditCurrency mField4;
 	private EditText mField5;
 	private TextView mField1Label;
 	private TextView mField2Label;
@@ -55,6 +65,7 @@ public class AccountSettingsTabletFragment extends BaseFragment {
 	private static BankAccount mBankAccount;
 	private AccountType mSelectedAccountType;
 	private String mSelectedAccountTypeName;
+    private String mPrevious;
 	
 	@Override
 	public String getFragmentTitle() {
@@ -81,9 +92,9 @@ public class AccountSettingsTabletFragment extends BaseFragment {
 		AccountSettingsTabletFragment fragment = new AccountSettingsTabletFragment();
         
 		mAccountName = intent.getExtras().getString(Constant.KEY_ACCOUNT_NAME);
-		mAccountId = intent.getExtras().getString(Constant.KEY_BANK_ACCOUNT_ID);
+		mAccountId = intent.getExtras().getLong(Constant.KEY_BANK_ACCOUNT_ID);
 		mAccountTypeName = intent.getExtras().getString(Constant.KEY_ACCOUNT_TYPE);
-			
+
         Bundle args = new Bundle();
         fragment.setArguments(args);
         
@@ -95,14 +106,14 @@ public class AccountSettingsTabletFragment extends BaseFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         
         mRoot = inflater.inflate(R.layout.tablet_account_settings, null);
-  
+
         BankAccountDao bankAccountDAO = ApplicationContext.getDaoSession().getBankAccountDao();
-        mBankAccount = bankAccountDAO.load(Long.valueOf(mAccountId.hashCode()));
-        
+        mBankAccount = bankAccountDAO.load(mAccountId);
+
         mField1 = (EditText) mRoot.findViewById(R.id.account_settings_option1_edittxt);
         mField2 = (EditText) mRoot.findViewById(R.id.account_settings_option2_edittxt);
         mField3 = (EditText) mRoot.findViewById(R.id.account_settings_option3_edittxt);
-        mField4 = (EditText) mRoot.findViewById(R.id.account_settings_option4_edittxt);
+        mField4 = (LabelEditCurrency) mRoot.findViewById(R.id.account_settings_option4_edittxt);
         mField5 = (EditText) mRoot.findViewById(R.id.account_settings_option5_edittxt);
         mField1Label = (TextView) mRoot.findViewById(R.id.account_settings_option1_title_txt);
         mField2Label = (TextView) mRoot.findViewById(R.id.account_settings_option2_title_txt);
@@ -283,9 +294,13 @@ public class AccountSettingsTabletFragment extends BaseFragment {
 			}
 			mField3Label.setText(getString(R.string.label_account_property_type));
 			
-			mField4Label.setVisibility(View.GONE);
-			mField4.setVisibility(View.GONE);
-			
+			mField4Label.setVisibility(View.VISIBLE);
+			mField4.setVisibility(View.VISIBLE);
+
+            mField4Label.setText(getString(R.string.label_account_current_balance));
+            mField4.setText(mBankAccount.getBalance().toString());
+
+
 			mField5Label.setVisibility(View.GONE);
 			mField5.setVisibility(View.GONE);
 			
@@ -322,21 +337,33 @@ public class AccountSettingsTabletFragment extends BaseFragment {
 				}
 			});
 			
-			
-		} else {
+		} else if (mBankAccount.getBank().getBankName().toLowerCase().equals("manual institution")) {
+            mField3Label.setVisibility(View.GONE);
+            mField3.setVisibility(View.GONE);
+
+            mField4Label.setVisibility(View.VISIBLE);
+            mField4.setVisibility(View.VISIBLE);
+
+            mField4Label.setText(getString(R.string.label_account_current_balance));
+            mField4.setText(mBankAccount.getBalance().toString());
+
+            mField5Label.setVisibility(View.GONE);
+            mField5.setVisibility(View.GONE);
+
+        } else {
 			mField3Label.setVisibility(View.GONE);
 			mField3.setVisibility(View.GONE);
-			
+
 			mField4Label.setVisibility(View.GONE);
 			mField4.setVisibility(View.GONE);
 			
 			mField5Label.setVisibility(View.GONE);
 			mField5.setVisibility(View.GONE);
 		}
-		
-	}
-	
-	private void setupOnClickListeners() {
+
+    }
+
+    private void setupOnClickListeners() {
 		
 		mField2.setOnClickListener(new View.OnClickListener() {	
 			@Override
@@ -391,7 +418,6 @@ public class AccountSettingsTabletFragment extends BaseFragment {
         ((DropDownTabletActivity) mActivity).dismissDropdown();
     }
 
-
     private void setBankAccountValues() {
 		//If mSelectedAccountType is null, that means a new account type wasn't selected. No need to save.
 		if (mSelectedAccountType != null) {
@@ -428,14 +454,22 @@ public class AccountSettingsTabletFragment extends BaseFragment {
 					
 					String[] splitID = accountType.getAccountTypeId().split("\\.");
 					Integer typeID = Integer.valueOf(splitID[1]);
+
+                    AccountTypeDao accountTypeDAO = ApplicationContext.getDaoSession().getAccountTypeDao();
+                    AccountType subAccountType = accountTypeDAO.load(accountType.getId());
 					
 					mBankAccount.setPropertyType(typeID);
+                    mBankAccount.setSubAccountTypeId(accountType.getId());
+                    mBankAccount.setSubAccountType(subAccountType);
 					mBankAccount.setInterestRate(0.0);
 					mBankAccount.setDueDay(0);
 					mBankAccount.setCreditLimit(0.0);
 					mBankAccount.setBeginningBalance(0.0);
+                    mBankAccount.setBalance(Double.parseDouble(mField4.getText().toString().substring(1)));
 				}
 			}
-		}
+		} else {
+            mBankAccount.setBalance(Double.parseDouble(mField4.getText().toString().substring(1)));
+        }
 	}
 }

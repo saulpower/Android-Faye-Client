@@ -368,6 +368,7 @@
     <string name="new_sub_category_hint">type your new category here</string>
     <string name="new_sub_category">ADD NEW SUBCATEGORY</string>
     <string name="new_tag">(Select to Add)</string>
+    <string name="no_account_history_available">~No account history available~</string>
     <string name="panel_title">MY INSTITUTIONS</string>
     <string name="password">Password</string>
     <string name="plus">+</string>
@@ -399,7 +400,7 @@
     <string name="spending_quarterly">SPENDING BY QUARTER</string>
     <string name="spending_yearly">SPENDING BY YEAR</string>
     <string name="status_description_4">An unknown error occurred. Just refresh this bank to try again.</string>
-    <string name="status_description_5">Invalid username and password. Click on the button below to try again.</string>
+    <string name="status_description_5">Ivalid username and password. Click on the button below to try again.</string>
     <string name="status_description_6">Multifactor Authentication Required. Click on the button below to give us these additional pieces of information.</string>
     <string name="status_description_7">This bank needs to be refreshed to get the most up to date data. Please refresh this bank.</string>
     <string name="tag_search">Search for a tag (or create a new one)</string>
