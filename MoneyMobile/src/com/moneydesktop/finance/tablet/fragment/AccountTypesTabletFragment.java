@@ -31,13 +31,11 @@ import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.*;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.shared.Services.SyncService;
-import com.moneydesktop.finance.shared.adapter.AccountsExpandableListAdapter;
 import com.moneydesktop.finance.shared.fragment.AccountTypesFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.ExpandableListViewAdapter;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.views.AnimatedListView.SlideExpandableListAdapter;
 import com.moneydesktop.finance.views.PopupWindowAtLocation;
 import com.moneydesktop.finance.views.SlidingDrawerRightSide;
 import com.moneydesktop.finance.views.navigation.NavBarButtons;
@@ -100,7 +98,6 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
     }
 	
     private void setupView() {
-
 
         if (mListView.getFooterViewsCount() > 0) {
     		mListView.removeFooterView(mFooter);

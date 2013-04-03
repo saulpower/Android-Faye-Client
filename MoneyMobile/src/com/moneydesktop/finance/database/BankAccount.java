@@ -639,7 +639,7 @@ public class BankAccount extends BusinessObject  {
             bankAccount.getBusinessObjectBase().setVersion(serverVersion);
 
         if (!json.optString(Constant.KEY_FLAGS).equals(Constant.VALUE_NULL))
-            bankAccount.getBusinessObjectBase().setFlags(json.optInt(Constant.KEY_FLAGS));
+            bankAccount.setExclusionFlags(json.optInt(Constant.KEY_FLAGS));
 
         if (!json.optString(Constant.KEY_IS_HIDDEN).equals(Constant.VALUE_NULL))
             bankAccount.setIsExcluded(json.optBoolean(Constant.KEY_IS_HIDDEN));

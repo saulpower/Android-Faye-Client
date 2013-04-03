@@ -162,7 +162,7 @@ public class AccountTypeChildView extends FrameLayout {
 									mPopup.fadeOutTransparency();
 			                        Intent i = new Intent(mActivity, DropDownTabletActivity.class);
 		                            i.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.SHOW_HIDE_DATA);
-		                            i.putExtra(Constant.KEY_BANK_ACCOUNT_ID, account.getAccountId());
+		                            i.putExtra(Constant.KEY_BANK_ACCOUNT_ID, account.getId());
 			                        mContext.startActivity(i);
 								}
 							});

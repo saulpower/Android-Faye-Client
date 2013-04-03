@@ -24,9 +24,7 @@ import android.widget.*;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.data.BankLogoManager;
-import com.moneydesktop.finance.data.Constant;
-import com.moneydesktop.finance.data.Enums;
+import com.moneydesktop.finance.data.*;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.*;
 import com.moneydesktop.finance.model.EventMessage;
@@ -36,6 +34,8 @@ import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.SlidingDrawerRightSide;
 import com.moneydesktop.finance.views.VerticalScrollView;
 import de.greenrobot.event.EventBus;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 public class AccountSummaryTabletFragment extends SummaryTabletFragment {
 
@@ -50,6 +50,8 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
 	protected QueryProperty mOrderByType = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.FinancialAccountType);
 	protected QueryProperty mOrderByName = new QueryProperty(AccountTypeDao.TABLENAME, AccountTypeDao.Properties.AccountTypeName);
 
+    private ArrayList<String> mSummaryAccountExclusions;
+
     private ImageView mBankImage;
     private TextView mBankImageTxtView;
     private TextView mPropertyLogo;
@@ -58,6 +60,7 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
     private TextView mBankLinked;
     private TextView mAccountName;
     private TextView mAccountSum;
+    private LinearLayout mBankAccountContainer;
 
 	public static AccountSummaryTabletFragment newInstance(int position) {
 
@@ -109,16 +112,16 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
 		mNetWorthLabel = (TextView)mRoot.findViewById(R.id.networth_label);
 		mNetWorthValue = (TextView)mRoot.findViewById(R.id.networth_value);
 
+        mSummaryAccountExclusions = Util.getExcludedAccountsFromPrefs(Preferences.getString(Constant.PREFS_EXCLUSIONS_ACCOUNTS_LIST, ""));
+
         setupFonts();
 		getBaseAccountTypes();		
 		getAssetsAndLiabilitiesValue();
         populateAccountTypeRows();
-
     }
 
     private void populateAccountTypeRows() {
         for (AccountType accountType : mBaseAccountTypes) {
-
             final LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View view = inflater.inflate(R.layout.account_summary_group, null);
 
@@ -126,14 +129,14 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
             TextView accountTypeSum = (TextView)view.findViewById(R.id.tablet_account_summary_account_sum);
             TextView accountTypeCount = (TextView)view.findViewById(R.id.tablet_account_summary_account_count);
             TextView icon = (TextView)view.findViewById(R.id.tablet_account_summary_type_icon);
-            LinearLayout bankAccountContainer = (LinearLayout)view.findViewById(R.id.tablet_account_summary_bank_accounts_container);
+            mBankAccountContainer = (LinearLayout)view.findViewById(R.id.tablet_account_summary_bank_accounts_container);
             final SlidingDrawerRightSide draggableView = (SlidingDrawerRightSide) view.findViewById(R.id.slider);
             LinearLayout sliderContent = (LinearLayout) view.findViewById(R.id.tablet_account_summary_drag_view_container);
             RelativeLayout handle = (RelativeLayout) view.findViewById(R.id.handle);
             LinearLayout container = (LinearLayout) view.findViewById(R.id.tablet_account_summary_drag_view_container);
             LinearLayout iconContainer = (LinearLayout)view.findViewById(R.id.tablet_account_summary_type_group_container);
 
-            setupBankAccounts(accountType.getBankAccounts(), bankAccountContainer);
+            setupBankAccounts(accountType.getBankAccounts());
 
             setAccountTypeRowBackgroundColor(accountType, sliderContent, handle, container, iconContainer);
 
@@ -151,6 +154,18 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
 
             //SET BANK ACCOUNT COUNT
             int bankCount = accountType.getBankAccounts().size();
+            int counter = 0;
+
+            for (BankAccount bankAccount: accountType.getBankAccounts()) {
+                for (String id : mSummaryAccountExclusions) {
+                    if (id.equals(bankAccount.getId().toString())) {
+                        counter++;
+                    }
+                }
+            }
+
+            bankCount = bankCount - counter;
+
             if (bankCount > 1 || bankCount == 0) {
                 accountTypeCount.setText(bankCount + " " + mActivity.getString(R.string.account_types_title));
             } else {
@@ -203,36 +218,45 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
         }
     }
 
-    private void setupBankAccounts(List<BankAccount> bankAccounts, LinearLayout bankAccountContainer) {
+    private void setupBankAccounts(List<BankAccount> bankAccounts) {
+        boolean isExcluded;
 
         for (final BankAccount bankAccount : bankAccounts) {
+            isExcluded = false;
+            for (String id : mSummaryAccountExclusions) {
+                if (id.equals(bankAccount.getId().toString())) {
+                    isExcluded = true;
+                }
+            }
 
-            LayoutInflater layoutInflater = mActivity.getLayoutInflater();
-            View view = layoutInflater.inflate(R.layout.tablet_account_summary_bank_account_item, null);
+            if (!isExcluded) {
+                LayoutInflater layoutInflater = mActivity.getLayoutInflater();
+                View view = layoutInflater.inflate(R.layout.tablet_account_summary_bank_account_item, null);
 
-            mBankImage = (ImageView)view.findViewById(R.id.tablet_account_summary_bank_account_logo);
-            mBankImageTxtView = (TextView)view.findViewById(R.id.tablet_account_summary_bank_account_logo_txtview);
-            mPropertyLogo = (TextView)view.findViewById(R.id.tablet_account_summary_property_logo);
-            mLastUpdatedLabel = (TextView)view.findViewById(R.id.tablet_account_summary_last_updated_label);
-            mLastUpdatedValue = (TextView)view.findViewById(R.id.tablet_account_summary_last_updated_value);
-            mBankLinked = (TextView)view.findViewById(R.id.tablet_account_summary_linked);
-            mAccountName = (TextView)view.findViewById(R.id.tablet_account_summary_type_name);
-            mAccountSum = (TextView)view.findViewById(R.id.tablet_account_summary_account_sum);
+                mBankImage = (ImageView)view.findViewById(R.id.tablet_account_summary_bank_account_logo);
+                mBankImageTxtView = (TextView)view.findViewById(R.id.tablet_account_summary_bank_account_logo_txtview);
+                mPropertyLogo = (TextView)view.findViewById(R.id.tablet_account_summary_property_logo);
+                mLastUpdatedLabel = (TextView)view.findViewById(R.id.tablet_account_summary_last_updated_label);
+                mLastUpdatedValue = (TextView)view.findViewById(R.id.tablet_account_summary_last_updated_value);
+                mBankLinked = (TextView)view.findViewById(R.id.tablet_account_summary_linked);
+                mAccountName = (TextView)view.findViewById(R.id.tablet_account_summary_type_name);
+                mAccountSum = (TextView)view.findViewById(R.id.tablet_account_summary_account_sum);
 
-            if (bankAccount.getBank() != null) {
-                populateBankAccountContainer(bankAccount);
+                if (bankAccount.getBank() != null) {
+                    populateBankAccountContainer(bankAccount);
 
-                view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent i = new Intent(mActivity, DropDownTabletActivity.class);
-                        i.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.BANK_ACCOUNT_BALANCE_HISTORY);
-                        i.putExtra(Constant.EXTRA_ACCOUNT_ID, bankAccount.getId());
-                        mActivity.startActivity(i);
-                    }
-                });
+                    view.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent i = new Intent(mActivity, DropDownTabletActivity.class);
+                            i.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.BANK_ACCOUNT_BALANCE_HISTORY);
+                            i.putExtra(Constant.EXTRA_ACCOUNT_ID, bankAccount.getId());
+                            mActivity.startActivity(i);
+                        }
+                    });
 
-                bankAccountContainer.addView(view);
+                    mBankAccountContainer.addView(view);
+                }
             }
         }
     }
@@ -298,9 +322,7 @@ public class AccountSummaryTabletFragment extends SummaryTabletFragment {
             updateSummary.post(new Runnable() {
                 public void run()
                 {
-                  //  mListAdapter.setGroupExpandPosition(RESET);
-                  //  mListAdapter.notifyDataSetChanged();
-                  //  getAssetsAndLiabilitiesValue();
+                    getAssetsAndLiabilitiesValue();
                 }
             });
         }

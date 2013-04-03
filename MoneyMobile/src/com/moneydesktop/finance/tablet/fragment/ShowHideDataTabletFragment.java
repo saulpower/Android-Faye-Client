@@ -17,8 +17,10 @@ import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.AccountExclusionFlags;
 import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BankAccountDao;
+import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.Fonts;
@@ -29,8 +31,7 @@ import java.util.List;
 @TargetApi(11)
 public class ShowHideDataTabletFragment extends BaseFragment {
 	
-	private static String mAccountId;
-	
+	private Long mAccountId;
 	private Button mSaveChanges;
 	private static BankAccount mBankAccount;
 	private TextView mAccountName, mBankName, mAccountSum, mBankRefreshStatus, mExcludeFromIncomeTxt, mExcludeFromExpensesTxt, mExcludeTransactionsFromListsTxt, mExcludeFromReportsTxt, mExcludeFromAccountSummaryTxt, mExcludeFromBudgetsTxt;
@@ -48,12 +49,17 @@ public class ShowHideDataTabletFragment extends BaseFragment {
 		return false;
 	}
 
+    public void setAccountId(long accountId) {
+        mAccountId = accountId;
+    }
+
 	public static ShowHideDataTabletFragment newInstance(Intent intent) {
 		
 		ShowHideDataTabletFragment fragment = new ShowHideDataTabletFragment();
-        
-		mAccountId = intent.getExtras().getString(Constant.KEY_BANK_ACCOUNT_ID);
-			
+
+
+        fragment.setAccountId(intent.getExtras().getLong(Constant.KEY_BANK_ACCOUNT_ID));
+
         Bundle args = new Bundle();
         fragment.setArguments(args);
         
@@ -67,7 +73,7 @@ public class ShowHideDataTabletFragment extends BaseFragment {
         mRoot = inflater.inflate(R.layout.tablet_show_hide_data, null);
   
         BankAccountDao bankAccountDAO = ApplicationContext.getDaoSession().getBankAccountDao();
-        mBankAccount = bankAccountDAO.load(Long.valueOf(mAccountId.hashCode()));
+        mBankAccount = bankAccountDAO.load(mAccountId);
    
         mAccountName = (TextView)mRoot.findViewById(R.id.tablet_account_linear_summary_account_name);
         mBankName = (TextView)mRoot.findViewById(R.id.tablet_account_linear_summary_bank_name);
@@ -99,22 +105,19 @@ public class ShowHideDataTabletFragment extends BaseFragment {
     }
 
 	private void setupView() {
-		
-		if (mBankAccount.getBank().getInstitution() == null) {
-            Bitmap bitmap = BankLogoManager.getBitmapFromMemCache(mBankAccount.getBank().getBankId());
-            if (bitmap == null) {
-                BankLogoManager.getBankImage(mBankLogo, mBankAccount.getBank().getBankId());
-            } else {
-                mBankLogo.setImageBitmap(bitmap);
-            }
-		} else {
-            Bitmap bitmap = BankLogoManager.getBitmapFromMemCache(mBankAccount.getBank().getInstitution().getInstitutionId());
-            if (bitmap == null) {
-                BankLogoManager.getBankImage(mBankLogo, mBankAccount.getBank().getInstitution().getInstitutionId());
-            } else {
-                mBankLogo.setImageBitmap(bitmap);
-            }
-		}
+
+        String logoId = mBankAccount.getBank().getBankId();
+
+        if (mBankAccount.getBank().getInstitution() != null) {
+            logoId = mBankAccount.getBank().getInstitution().getInstitutionId();
+        }
+
+        Bitmap bitmap = BankLogoManager.getBitmapFromMemCache(logoId);
+        if (bitmap == null) {
+            BankLogoManager.getBankImage(mBankLogo, logoId);
+        } else {
+            mBankLogo.setImageBitmap(bitmap);
+        }
 		
 		mAccountName.setText(mBankAccount.getAccountName());
 		mBankName.setText(mBankAccount.getBank().getBankName());
@@ -191,7 +194,11 @@ public class ShowHideDataTabletFragment extends BaseFragment {
 				
 				mBankAccount.setExclusionFlags(flag);
 				mBankAccount.updateSingle();
-				((DropDownTabletActivity)mActivity).dismissDropdown();
+
+                Intent intent = new Intent(getActivity(), SyncService.class);
+                getActivity().startService(intent);
+
+                ((DropDownTabletActivity) mActivity).dismissDropdown();
 			}
 
 		});

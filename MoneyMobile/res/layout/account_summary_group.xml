@@ -34,6 +34,7 @@
                     moneydesktop:lineStrokeWidth="2dp" />
 
         <RelativeLayout
+                android:id="@+id/tablet_account_summary_bank_account_parent_container"
                 android:layout_height="match_parent"
                 android:layout_width="0dip"
                 android:background="@color/gray1"
