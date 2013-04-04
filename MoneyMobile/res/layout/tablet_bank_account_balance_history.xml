@@ -4,13 +4,12 @@
                 android:layout_height="match_parent"
                 android:background="@color/gray3">
 
-    <LinearLayout
+    <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="3dip"
             android:layout_marginRight="3dip"
-            android:background="@drawable/gray_border_with_white_background"
-            android:orientation="vertical">
+            android:background="@drawable/gray_border_with_white_background">
 
         <LinearLayout
                 android:layout_width="match_parent"
@@ -29,19 +28,20 @@
                 android:layout_height="match_parent"
                 android:duplicateParentState="false"
                 android:layout_marginBottom="25dip"
+                android:soundEffectsEnabled="false"
                 android:layout_marginLeft="15dip"
                 android:layout_weight=".65"/>
 
 
             <RelativeLayout
-                    android:layout_width="0dip"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/gray_border_with_white_background_transparent"
-                    android:layout_marginTop="25dip"
-                    android:layout_marginBottom="25dip"
-                    android:layout_marginLeft="15dip"
-                    android:layout_marginRight="15dip"
-                    android:layout_weight=".35">
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:background="@drawable/gray_border_with_white_background_transparent"
+                android:layout_marginTop="25dip"
+                android:layout_marginBottom="25dip"
+                android:layout_marginLeft="15dip"
+                android:layout_marginRight="15dip"
+                android:layout_weight=".35">
 
                 <com.moneydesktop.finance.views.AmazingListView
                     android:id="@+id/transactions"
@@ -56,6 +56,38 @@
 
         </LinearLayout>
 
-    </LinearLayout>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dip"
+                android:layout_marginRight="3dip"
+                android:layout_marginTop="3dip"
+                android:layout_marginBottom="3dip"
+                android:background="@color/transparent"
+                android:clickable="false"
+                android:focusable="false"
+                android:weightSum="1">
+
+
+            <TextView
+                    android:id="@+id/no_historical_data_available"
+                    android:layout_width="0dip"
+                    android:layout_height="match_parent"
+                    android:text="@string/no_account_history_available"
+                    android:layout_toLeftOf="@id/transactions"
+                    android:visibility="gone"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:gravity="center"
+                    android:layout_weight=".65"/>
+
+            <View
+                android:layout_height="match_parent"
+                android:layout_width="0dip"
+                android:layout_weight=".35"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </RelativeLayout>

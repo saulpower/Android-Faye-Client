@@ -27,9 +27,9 @@ public class SlideExpandableListAdapter extends AbstractSlideExpandableListAdapt
         this.mAccountTypesFiltered = accountTypesFiltered;
 	}
 	
-    public SlideExpandableListAdapter(ListAdapter wrapped, Context context) {
-        this(wrapped, R.id.account_type_group_container, R.id.expandable, context, mAccountTypesFiltered);
-    }
+//    public SlideExpandableListAdapter(ListAdapter wrapped, Context context) {
+//        this(wrapped, R.id.account_type_group_container, R.id.expandable, context, mAccountTypesFiltered);
+//    }
 
 	@Override
 	public View getExpandToggleButton(View parent) {

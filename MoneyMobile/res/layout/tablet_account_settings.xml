@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray3"
@@ -137,7 +138,7 @@
 	                android:textColor="@color/gray5"
 	                android:background="@drawable/edit_text_border" />
 	                
-	            <EditText
+	            <com.moneydesktop.finance.views.LabelEditCurrency
 	                android:id="@+id/account_settings_option4_edittxt"
 	                android:layout_width="fill_parent"
 	                android:layout_height="55dip"
@@ -149,8 +150,11 @@
 	                android:paddingLeft="10dip"
 	                android:gravity="left|center_vertical"
 	                android:textColor="@color/gray5"
-	                android:background="@drawable/edit_text_border"  />
-	            
+	                android:background="@drawable/edit_text_border"
+                    app:labelColor="@drawable/gray3_to_white_text"
+                    app:labelSize="8"
+                    app:labelText="@string/label_amount"/>
+
 	            <EditText
 	                android:id="@+id/account_settings_option5_edittxt"
 	                android:layout_width="fill_parent"
@@ -164,7 +168,7 @@
 	                android:gravity="left|center_vertical"
 	                android:textColor="@color/gray5"
 	                android:background="@drawable/edit_text_border"  />
-	            
+
 	        </RelativeLayout>
 	
 	        <Button
@@ -174,7 +178,7 @@
 	            android:layout_marginLeft="10dip"
 	            android:layout_marginRight="10dip"
 	            android:layout_marginTop="10dip"
-	            android:background="@drawable/perf_paper"
+                android:background="@drawable/perf_paper_selector"
 	            android:minHeight="50dip"
 	            android:textColor="@color/primaryColor" />
 	    </LinearLayout>

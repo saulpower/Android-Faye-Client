@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -30,12 +31,11 @@ import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.*;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.shared.Services.SyncService;
-import com.moneydesktop.finance.shared.adapter.AccountsExpandableListAdapter;
 import com.moneydesktop.finance.shared.fragment.AccountTypesFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
+import com.moneydesktop.finance.tablet.adapter.ExpandableListViewAdapter;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.views.AnimatedListView.SlideExpandableListAdapter;
 import com.moneydesktop.finance.views.PopupWindowAtLocation;
 import com.moneydesktop.finance.views.SlidingDrawerRightSide;
 import com.moneydesktop.finance.views.navigation.NavBarButtons;
@@ -45,18 +45,16 @@ import java.util.*;
 
 public class AccountTypesTabletFragment extends AccountTypesFragment {
 	
-    private ListView mListView;
+    private ExpandableListView mListView;
     private static SlidingDrawerRightSide sRightDrawer;
     private View mFooter;
     private PopupWindowAtLocation mPopup;
     private List<Bank> mBanksForDeletion;
     LinearLayout mPanelLayoutHolder;
     private List<AccountType> mAccountTypesFiltered;
-    private Handler mHandler;    
-    private SlideExpandableListAdapter mAdapter;
-    private AccountsExpandableListAdapter mAdapter1;
+    private Handler mHandler;
+    private ExpandableListViewAdapter mAdapter;
     private int mAccountCounter = 0;
-    private HashMap<Integer, Boolean> mOpenState;
     private Boolean mIsInitialization;
 	
 	public static AccountTypesTabletFragment newInstance() {	
@@ -82,11 +80,9 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
 		
 		mRoot = inflater.inflate(R.layout.tablet_account_types, null);
 		mFooter = inflater.inflate(R.layout.account_type_list_footer, null);
-		mListView = (ListView) mRoot.findViewById(R.id.accounts_expandable_list_view);
+		mListView = (ExpandableListView) mRoot.findViewById(R.id.accounts_expandable_list_view);
 		sRightDrawer = (SlidingDrawerRightSide) mRoot.findViewById(R.id.account_slider);
 		sRightDrawer.open();
-		mOpenState = new HashMap<Integer, Boolean>();
-
 
 		setupView();
 		
@@ -102,11 +98,8 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
     }
 	
     private void setupView() {
-    	
-    	//clears out any previous adapter it had
-    	mListView.setAdapter(null);
-    	
-    	if (mListView.getFooterViewsCount() > 0) {
+
+        if (mListView.getFooterViewsCount() > 0) {
     		mListView.removeFooterView(mFooter);
     	}
     	
@@ -159,7 +152,6 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
 	        	for (BankAccount bankAccount : accountType.getBankAccounts()) {	        		
 	        		if (bankAccount.getBank() == null) {
 	        			counter++;
-//	        			bankAccount.softDeleteSingle();
 	        		}
 	        	}
 	        	if (counter == accountType.getBankAccounts().size()) {
@@ -174,31 +166,13 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
         
         if (!mAccountTypesFiltered.isEmpty() && mAccountTypesFiltered != null) {        	
             mListView.addFooterView(mFooter);
-            
-            //This sets the GroupView
-            mAdapter1 = new AccountsExpandableListAdapter((getActivity() != null) ? getActivity() : mActivity,  
-                    R.layout.account_type_group, 
-                    R.id.account_type_group_name, 
-                    mAccountTypesFiltered);
-            
-            mAdapter = new SlideExpandableListAdapter(
-                    mAdapter1, 
-                    R.id.account_type_group_container, 
-                    R.id.expandable,
-                    (getActivity() != null) ? getActivity() : mActivity,
-                    mAccountTypesFiltered); 
-            
-            //this animates and sets the ChildView
+
+            mAdapter = new ExpandableListViewAdapter(mActivity, mAccountTypesFiltered);
             mListView.setAdapter(mAdapter);
-            mAdapter1.notifyDataSetChanged();
-            
-            mOpenState = mAdapter.getOpenStateList();
-            
-            if (mOpenState.isEmpty()) {
-            	for (int i = 0; i < mAccountTypesFiltered.size(); i++) {
-        			mOpenState.put(i, true);
-        		}
-            	mAdapter.setOpenStateList(mOpenState);
+            mAdapter.notifyDataSetChanged();
+
+            for (int i = 0; i < mAccountTypesFiltered.size(); i++) {
+                mListView.expandGroup(i);
             }
             
         } else {
@@ -449,8 +423,14 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
         
         status.setVisibility(View.VISIBLE);
         setBanner(bank, status);
-        BankLogoManager.getBankImage(bankImage, logoId);
-        
+
+        Bitmap bitmap = BankLogoManager.getBitmapFromMemCache(logoId);
+        if (bitmap == null) {
+            BankLogoManager.getBankImage(bankImage, logoId);
+        } else {
+            bankImage.setImageBitmap(bitmap);
+        }
+
         TextView bankName = (TextView)bankTypeAccountView.findViewById(R.id.account_bank_name);
         
         bankName.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
@@ -706,7 +686,7 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
         final AccountType accountType = event.getAccountType();
         if (!mAccountTypesFiltered.isEmpty()){
 	        mAccountTypesFiltered.remove(accountType);
-	        mAdapter1.notifyDataSetChanged();
+	        mAdapter.notifyDataSetChanged();
         }
     }
     

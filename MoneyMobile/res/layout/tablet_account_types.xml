@@ -6,12 +6,13 @@
     android:layout_height="fill_parent"
     android:background="@drawable/wood_dark_background" >
 
-    <com.moneydesktop.finance.views.AnimatedListView.SlideExpandableListView
+    <ExpandableListView
         android:id="@+id/accounts_expandable_list_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:cacheColorHint="#00000000"
         android:dividerHeight="0dip"
+        android:groupIndicator="@null"
         android:listSelector="@android:color/transparent" />
 
     <com.moneydesktop.finance.views.SlidingDrawerRightSide

@@ -31,6 +31,7 @@ import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.AddNewInstitutionAdapter;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.views.LabelEditCurrency;
 import com.moneydesktop.finance.views.navigation.AnimatedNavView;
 import com.moneydesktop.finance.views.navigation.AnimatedNavView.NavigationListener;
 import de.greenrobot.event.EventBus;
@@ -66,7 +67,8 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 	private EditText mEdit1, mEdit2, mEdit3;
 	private Button mSaveInstitution;
 	private JSONObject objectToSendToAddInstitution;
-	private TextView mCurrentBalance, mAccountName;
+	private TextView mAccountName;
+    private LabelEditCurrency mCurrentBalance;
 	
 	private List<String> mLoginLabels;
 	private HashMap<String, String> mCredentialsHash = new HashMap<String, String>();
@@ -345,7 +347,7 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 		TextView accountNameLabel = (TextView)mRoot.findViewById(R.id.tablet_add_bank_manually_account_name_title_txt);
 		TextView currentBalanceLabel = (TextView)mRoot.findViewById(R.id.tablet_add_bank_manually_current_balance_title_txt);
 		mAccountName = (EditText)mRoot.findViewById(R.id.tablet_add_bank_manually_account_name);
-		mCurrentBalance = (EditText)mRoot.findViewById(R.id.tablet_add_bank_manually_current_balance_edittext);
+		mCurrentBalance = (LabelEditCurrency)mRoot.findViewById(R.id.tablet_add_bank_manually_current_balance_edittext);
 		TextView save = (TextView)mRoot.findViewById(R.id.tablet_add_bank_manually_save);
 
 		Fonts.applyPrimaryBoldFont(accountNameLabel, 14);
@@ -365,8 +367,13 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
 	}
 
     private void createManualBankAccount(AccountType selectedAccountType) {
+        double balance;
+        if (mCurrentBalance.getText().toString().equals("$")) {
+            balance = 0.00;
+        } else {
+            balance = Double.parseDouble(mCurrentBalance.getText().toString().substring(1));
+        }
 
-        double balance = Double.parseDouble(mCurrentBalance.getText().toString());
         String name = mAccountName.getText().toString();
 
         BankAccount bankAccount = BankAccount.createBankAccount(selectedAccountType, balance, name);
@@ -375,6 +382,7 @@ public class AddBankTabletFragment extends BaseFragment implements NavigationLis
         SyncEngine.sharedInstance().syncBankAccount(bankAccount, mForNewTransaction);
 
         if (mDropDownActivity != null) {
+
             mDropDownActivity.dismissDropdown();
         } else {
             mActivity.clearBackStack();
