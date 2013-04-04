@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.view.View;
+import android.widget.TextView;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums;
 import com.moneydesktop.finance.data.Reports;
@@ -164,7 +165,7 @@ public class AccountBalanceAdapter extends BaseBarAdapter {
 
         if (useDefaults) {
             mCurrentDate = new Date();
-            mCurrentCount = 30;
+            mCurrentCount = 60;
         }
 
         showDaily(invalidate, true, mCurrentDate, mCurrentCount);

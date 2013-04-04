@@ -13,7 +13,7 @@
        android:layout_margin="10dip"
        android:gravity="center"
        android:layout_alignParentBottom="true"
-       android:background="@drawable/perf_paper"/>
+       android:background="@drawable/perf_paper_selector"/>
     
 	<ListView 
 	    android:id="@+id/handset_exclusions_list"

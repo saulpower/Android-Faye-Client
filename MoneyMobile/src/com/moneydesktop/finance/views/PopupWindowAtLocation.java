@@ -96,109 +96,102 @@ public class PopupWindowAtLocation extends FrameLayout {
         populateView();
     }
 
-    public PopupWindowAtLocation(Context context, ViewGroup parentView,
-                                 int positionX, int positionY, View touchedView,
-                                 ViewGroup inflatedView) {
-        super(context);
+//    public PopupWindowAtLocation(Context context, ViewGroup parentView,
+//                                 int positionX, int positionY, View touchedView,
+//                                 ViewGroup inflatedView) {
+//        super(context);
+//
+//        mContext = context;
+//        mX = positionX;
+//        mY = positionY;
+//        mParentView = parentView;
+//        mTouchedView = touchedView;
+//
+//
+//        mRoot = inflatedView;
+//        mScreenHeight = UiUtils.getScreenHeight((Activity) mContext);
+//        mScreenWidth = UiUtils.getScreenWidth((Activity) mContext);
+//
+//        Animation backgroundFadeIn = new ScaleAnimation((float) .5, 1, (float) .5, 1, mX+UiUtils.convertDpToPixel(120,mContext), mY+UiUtils.convertDpToPixel(50,mContext));
+//        //backgroundFadeIn.initialize(mRoot.getWidth(), mRoot.getHeight(), this.getWidth(), this.getHeight());
+//        backgroundFadeIn.setDuration(200);
+//        backgroundFadeIn.setInterpolator(new OvershootInterpolator());
+//        mRoot.startAnimation(backgroundFadeIn);
+//
+//        mParentView.addView(mRoot);
+//        populateInflatedView();
+//
+//    }
+//
+//    public boolean popupWillDisplayOffScreenBottom() {
+//        return ((mY + (1 * UiUtils
+//                .convertDpToPixel(78, mContext))) > mScreenHeight) ? true
+//                : false;
+//    }
+//
+//    public boolean popupWillDisplayOffScreenTop() {
+//        return (mY < 0) ? true : false;
+//    }
+//
+//    public boolean popupWillDisplayOffScreenLeft() {
+//        return (mX < 0) ? true : false;
+//    }
+//
+//    public boolean popupWillDisplayOffScreenRight() {
+//        return (mX + UiUtils.getDynamicPixels(mContext, 240) > mParentView.getRight()) ? true
+//                : false;
+//
+//    }
 
-        mContext = context;
-        mX = positionX;
-        mY = positionY;
-        mParentView = parentView;
-        mTouchedView = touchedView;
-
-
-        mRoot = inflatedView;
-        mScreenHeight = UiUtils.getScreenHeight((Activity) mContext);
-        mScreenWidth = UiUtils.getScreenWidth((Activity) mContext);
-
-        Animation backgroundFadeIn = new ScaleAnimation((float) .5, 1, (float) .5, 1, mX+UiUtils.convertDpToPixel(120,mContext), mY+UiUtils.convertDpToPixel(50,mContext));
-        //backgroundFadeIn.initialize(mRoot.getWidth(), mRoot.getHeight(), this.getWidth(), this.getHeight());
-        backgroundFadeIn.setDuration(200);
-        backgroundFadeIn.setInterpolator(new OvershootInterpolator());
-        mRoot.startAnimation(backgroundFadeIn);
-
-        mParentView.addView(mRoot);
-        populateInflatedView();
-
-    }
-
-    public boolean popupWillDisplayOffScreenBottom() {
-        return ((mY + (1 * UiUtils
-                .convertDpToPixel(78, mContext))) > mScreenHeight) ? true
-                : false;
-    }
-
-    public boolean popupWillDisplayOffScreenTop() {
-        return (mY < 0) ? true : false;
-    }
-
-    public boolean popupWillDisplayOffScreenLeft() {
-        return (mX < 0) ? true : false;
-    }
-
-    public boolean popupWillDisplayOffScreenRight() {
-        return (mX + UiUtils.getDynamicPixels(mContext, 240) > mParentView.getRight()) ? true
-                : false;
-
-    }
-
-    private void populateInflatedView() {
-        RelativeLayout popup = (RelativeLayout) mRoot
-                .findViewById(R.id.bar_graph_pop_up_relative);
-
-        RelativeLayout.LayoutParams overlayParams = (RelativeLayout.LayoutParams) popup
-                .getLayoutParams();
-
-        overlayParams.leftMargin = mX;
-        overlayParams.topMargin = mY;
-
-        if (popupWillDisplayOffScreenBottom()) {
-            overlayParams.topMargin = (int) (mScreenHeight
-                    * UiUtils.convertDpToPixel(76, mContext));
-        }
-        if (popupWillDisplayOffScreenTop()) {
-            overlayParams.topMargin = 0;
-        }
-        if (popupWillDisplayOffScreenRight()) {
-            overlayParams.leftMargin = (int) (mParentView.getWidth() - UiUtils.convertDpToPixel(240, mContext));
-        }
-        if (popupWillDisplayOffScreenLeft()) {
-            overlayParams.leftMargin = popup.getWidth();
-        }
-
-        popup.setLayoutParams(overlayParams);
-        popup.requestLayout();
-    }
+//    private void populateInflatedView() {
+//        RelativeLayout popup = (RelativeLayout) mRoot
+//                .findViewById(R.id.bar_graph_pop_up_relative);
+//
+//        RelativeLayout.LayoutParams overlayParams = (RelativeLayout.LayoutParams) popup
+//                .getLayoutParams();
+//
+//        overlayParams.leftMargin = mX;
+//        overlayParams.topMargin = mY;
+//
+//        if (popupWillDisplayOffScreenBottom()) {
+//            overlayParams.topMargin = (int) (mScreenHeight
+//                    * UiUtils.convertDpToPixel(76, mContext));
+//        }
+//        if (popupWillDisplayOffScreenTop()) {
+//            overlayParams.topMargin = 0;
+//        }
+//        if (popupWillDisplayOffScreenRight()) {
+//            overlayParams.leftMargin = (int) (mParentView.getWidth() - UiUtils.convertDpToPixel(240, mContext));
+//        }
+//        if (popupWillDisplayOffScreenLeft()) {
+//            overlayParams.leftMargin = popup.getWidth();
+//        }
+//
+//        popup.setLayoutParams(overlayParams);
+//        popup.requestLayout();
+//    }
 
     private void populateView() {
-        RelativeLayout overlay = (RelativeLayout) mRoot
-                .findViewById(R.id.popup_overlay);
-        RelativeLayout subOverlay = (RelativeLayout) mRoot
-                .findViewById(R.id.popup_sub_overlay);
-        LinearLayout buttonContainer = (LinearLayout) mRoot
-                .findViewById(R.id.popup_container);
+        RelativeLayout overlay = (RelativeLayout) mRoot.findViewById(R.id.popup_overlay);
+        RelativeLayout subOverlay = (RelativeLayout) mRoot.findViewById(R.id.popup_sub_overlay);
+        LinearLayout buttonContainer = (LinearLayout) mRoot.findViewById(R.id.popup_container);
 
         for (int i = 0; i < mButtonTitles.length; i++) {
 
-            View popupButton = mInflater.inflate(R.layout.popup_button_layout,
-                    null);
+            View popupButton = mInflater.inflate(R.layout.popup_button_layout, null);
 
-            TextView button = (TextView) popupButton
-                    .findViewById(R.id.popup_button);
+            TextView button = (TextView) popupButton.findViewById(R.id.popup_button);
             button.setText(mButtonTitles[i]);
             button.setOnClickListener(mButtonClickListeners.get(i));
 
             buttonContainer.addView(popupButton);
         }
 
-        RelativeLayout.LayoutParams subOverlayParams = (RelativeLayout.LayoutParams) subOverlay
-                .getLayoutParams();
+        RelativeLayout.LayoutParams subOverlayParams = (RelativeLayout.LayoutParams) subOverlay.getLayoutParams();
         subOverlayParams.leftMargin = mX;
         subOverlayParams.topMargin = mY;
 
-        mTransparentView = (TransparentView) mRoot
-                .findViewById(R.id.transparent_account_view);
+        mTransparentView = (TransparentView) mRoot.findViewById(R.id.transparent_account_view);
         mTransparentView.setViewVisibility(View.VISIBLE);
         mTransparentView.setTransparentArea(
                 mX - (int) UiUtils.convertDpToPixel(5, mContext),
@@ -211,28 +204,19 @@ public class PopupWindowAtLocation extends FrameLayout {
          * Should the popup get drawn off the screen, compensate for that based
 		 * upon the number of buttons being drawn.
 		 */
-        boolean popupWillDisplayOffScreenBottom = ((mY + (mButtonTitles.length * UiUtils
-                .convertDpToPixel(78, mContext))) > mScreenHeight) ? true
-                : false;
+        boolean popupWillDisplayOffScreenBottom = ((mY + (mButtonTitles.length * UiUtils.convertDpToPixel(78, mContext))) > mScreenHeight) ? true : false;
         boolean popupWillDisplayOffScreenTop = (mY < 0) ? true : false;
-        boolean popupWillDisplayOffScreenRight = ((mX
-                + UiUtils.getMinimumPanalWidth((Activity) mContext) + 100) > mScreenWidth) ? true
-                : false;
+        boolean popupWillDisplayOffScreenRight = ((mX + UiUtils.getMinimumPanalWidth((Activity) mContext) + 100) > mScreenWidth) ? true : false;
 
         if (popupWillDisplayOffScreenBottom) {
-            subOverlayParams.topMargin = (int) (mScreenHeight - mButtonTitles.length
-                    * UiUtils.convertDpToPixel(76, mContext));
+            subOverlayParams.topMargin = (int) (mScreenHeight - mButtonTitles.length * UiUtils.convertDpToPixel(76, mContext));
         }
         if (popupWillDisplayOffScreenTop) {
             subOverlayParams.topMargin = 0;
         }
         if (popupWillDisplayOffScreenRight) {
-            subOverlayParams.leftMargin = (int) (mScreenWidth - (UiUtils
-                    .getMinimumPanalWidth((Activity) mContext) * 2.2));
-            mTransparentView.setTransparentArea(subOverlayParams.leftMargin
-                    + subOverlayParams.width + mTouchedView.getWidth()
-                    + (int) UiUtils.convertDpToPixel(8, mContext), mY,
-                    mTouchedView.getWidth() + 10, mTouchedView.getHeight());
+            subOverlayParams.leftMargin = (int) (mScreenWidth - (UiUtils.getMinimumPanalWidth((Activity) mContext) * 2.2));
+            mTransparentView.setTransparentArea(subOverlayParams.leftMargin + subOverlayParams.width + mTouchedView.getWidth() + (int) UiUtils.convertDpToPixel(8, mContext), mY, mTouchedView.getWidth() + 10, mTouchedView.getHeight());
         }
 
         subOverlay.setLayoutParams(subOverlayParams);

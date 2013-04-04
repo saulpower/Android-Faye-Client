@@ -3,6 +3,7 @@ package com.moneydesktop.finance.tablet.adapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.graphics.Bitmap;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.BankLogoManager;
@@ -181,8 +182,13 @@ public class AddNewInstitutionAdapter extends AmazingAdapter {
 		} else {
 			holder = (AddInstitutionListHolder) convertView.getTag();
 		}
+            Bitmap bitmap = BankLogoManager.getBitmapFromMemCache(mInstitutions.get(position).getInstitutionId());
+            if (bitmap == null) {
+                BankLogoManager.getBankImage(holder.imageLogo, mInstitutions.get(position).getInstitutionId());
+            } else {
+                holder.imageLogo.setImageBitmap(bitmap);
+            }
 
-			BankLogoManager.getBankImage(holder.imageLogo, mInstitutions.get(position).getInstitutionId());			
 			holder.txtTitle.setText(mInstitutions.get(position).getName());			
 			Fonts.applyPrimaryBoldFont(holder.txtTitle, 14);
 			

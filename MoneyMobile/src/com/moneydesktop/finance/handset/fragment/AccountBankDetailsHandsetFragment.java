@@ -3,6 +3,7 @@ package com.moneydesktop.finance.handset.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -161,8 +162,13 @@ public class AccountBankDetailsHandsetFragment extends FixBankFragment{
         if (mBankAccount.getBank().getInstitution() != null) {
             logoId = mBankAccount.getBank().getInstitution().getInstitutionId();
         }
-		
-		BankLogoManager.getBankImage(mLogo, logoId);		
+
+        Bitmap bitmap = BankLogoManager.getBitmapFromMemCache(logoId);
+        if (bitmap == null) {
+            BankLogoManager.getBankImage(mLogo, logoId);
+        } else {
+            mLogo.setImageBitmap(bitmap);
+        }
 		
 		mAccountName.setText(mBankAccount.getBank().getBankName());
 		mAccountName.setLabelText(mBankAccount.getAccountName());

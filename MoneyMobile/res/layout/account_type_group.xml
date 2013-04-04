@@ -84,9 +84,9 @@
 
     <!-- This is the container for children views that expand open -->
 
-    <HorizontalScrollView
-        android:id="@+id/expandable"
-        android:layout_width="fill_parent"
-        android:layout_height="200dip" />
+    <!--<HorizontalScrollView-->
+        <!--android:id="@+id/expandable"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="200dip" />-->
 
 </LinearLayout>

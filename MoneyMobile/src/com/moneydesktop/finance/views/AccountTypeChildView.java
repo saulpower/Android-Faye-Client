@@ -4,16 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
@@ -21,8 +18,6 @@ import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.Bank;
-import com.moneydesktop.finance.database.BankDao;
-import com.moneydesktop.finance.database.BusinessObjectBase;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.database.QueryProperty;
 import com.moneydesktop.finance.data.Constant;
@@ -37,7 +32,6 @@ import com.moneydesktop.finance.model.EventMessage.RefreshAccountEvent;
 import com.moneydesktop.finance.model.EventMessage.ReloadBannersEvent;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.shared.Services.SyncService;
-import com.moneydesktop.finance.shared.fragment.PopupFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.Fonts;
@@ -101,7 +95,16 @@ public class AccountTypeChildView extends FrameLayout {
 		        	accountName.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
 		        	accountName.setText(account.getAccountName() == null ? "" : account.getAccountName());
 		        	accountSum.setText(account.getBalance() == null ? "" : mFormatter.format(account.getBalance()));
-		        	BankLogoManager.getBankImage(bankLogo, account.getInstitutionId());
+
+
+                    //If we have the image in memory cache, get it from there. Don't bother looking at the SD card.
+                    Bitmap bitmap = BankLogoManager.getBitmapFromMemCache(account.getInstitutionId());
+
+                    if (bitmap == null) {
+                        BankLogoManager.getBankImage(bankLogo, account.getInstitutionId());
+                    } else {
+                        bankLogo.setImageBitmap(bitmap);
+                    }
 
 		        	Fonts.applyPrimaryFont(accountName, 12);
 		        	Fonts.applyPrimaryBoldFont(accountSum, 16);
@@ -148,7 +151,7 @@ public class AccountTypeChildView extends FrameLayout {
 									intent.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.ACCOUNT_SETTINGS);
 									intent.putExtra(Constant.KEY_ACCOUNT_TYPE, account.getAccountType().getAccountTypeName());
 									intent.putExtra(Constant.KEY_ACCOUNT_NAME, account.getAccountName());
-									intent.putExtra(Constant.KEY_BANK_ACCOUNT_ID, account.getAccountId());
+									intent.putExtra(Constant.KEY_BANK_ACCOUNT_ID, account.getId());
 							        mActivity.startActivity(intent);
 								}
 							});
@@ -159,7 +162,7 @@ public class AccountTypeChildView extends FrameLayout {
 									mPopup.fadeOutTransparency();
 			                        Intent i = new Intent(mActivity, DropDownTabletActivity.class);
 		                            i.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.SHOW_HIDE_DATA);
-		                            i.putExtra(Constant.KEY_BANK_ACCOUNT_ID, account.getAccountId());
+		                            i.putExtra(Constant.KEY_BANK_ACCOUNT_ID, account.getId());
 			                        mContext.startActivity(i);
 								}
 							});
@@ -174,8 +177,16 @@ public class AccountTypeChildView extends FrameLayout {
 							});
 							
 							RelativeLayout parentView = (RelativeLayout)((Activity)mContext).findViewById(R.id.account_types_container);
-							
-						    mPopup = new PopupWindowAtLocation(mContext, parentView, (int)view.getLeft() + view.getWidth(), (int)mParent.getTop() + (int)UiUtils.convertDpToPixel(62, mContext), 
+
+                            DisplayMetrics dm = new DisplayMetrics();
+                            ((Activity)mContext).getWindowManager().getDefaultDisplay().getMetrics(dm);
+                            int topOffset = dm.heightPixels - mParent.getMeasuredHeight();
+
+
+                            int[] location = new int[2];
+                            view.getLocationOnScreen(location);
+
+						    mPopup = new PopupWindowAtLocation(mContext, parentView, view.getLeft() + view.getWidth(), location[1] - topOffset - (int)UiUtils.convertDpToPixel(5, mContext),
 									mContext.getResources().getStringArray(R.array.account_selection_popup), onClickListeners, view);
 						}
 					});
@@ -204,8 +215,7 @@ public class AccountTypeChildView extends FrameLayout {
 	    return propertyTypeList.get(0).getAccountTypeName();
     	
     }
-    
-    
+
 	private void deleteAccount(BankAccount account, View view) {
 		mBankAccountContainer.removeView(view);
 		removeInstancesOfAccount(account);

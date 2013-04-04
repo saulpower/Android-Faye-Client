@@ -1,4 +1,3 @@
-
 package com.moneydesktop.finance.shared.activity;
 
 import android.content.Intent;
@@ -15,18 +14,21 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
+import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.AccountExclusionFlags;
+import com.moneydesktop.finance.data.Preferences;
+import com.moneydesktop.finance.data.Util;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BankAccountDao;
 import com.moneydesktop.finance.model.EventMessage.SyncEvent;
 import com.moneydesktop.finance.views.FixedSpeedScroller;
 import com.moneydesktop.finance.views.SmallSpinnerView;
 import com.viewpagerindicator.CirclePageIndicator;
+import org.json.JSONArray;
 
 import java.lang.reflect.Field;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public abstract class IntroBaseActivity extends BaseActivity {
 
@@ -194,57 +196,63 @@ public abstract class IntroBaseActivity extends BaseActivity {
         overridePendingTransition(R.anim.fade_in_fast, R.anim.none);
         finish();
     }
-    
+
     private void saveBankExclusions() {
-		BankAccountDao dao = ApplicationContext.getDaoSession().getBankAccountDao();
-		List<BankAccount> bankAccountList = dao.loadAll();
-		    
-		Set<String> transactionsList = new HashSet<String>();
-		Set<String> reports = new HashSet<String>();
-		Set<String> accountList = new HashSet<String>();
-		Set<String> budgets = new HashSet<String>();
-		Set<String> transfersFromIncome = new HashSet<String>();
-		Set<String> transfersFromExpenses = new HashSet<String>();
-		Set<String> all = new HashSet<String>();
-		
-		
-		for (BankAccount bankAccount : bankAccountList) {
-			List<AccountExclusionFlags> exclusionListForAccount = BankAccount.getExclusionsForAccount(bankAccount);
-			
-			for (AccountExclusionFlags exclusions : exclusionListForAccount) {
-				
-				if (exclusions == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ALL) {
-					all.add(String.valueOf(bankAccount.getBankAccountId()));
-					
-				} else if (exclusions == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES) {
-					transfersFromExpenses.add(String.valueOf(bankAccount.getBankAccountId()));
-					
-				} else if (exclusions == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME) {
-					transfersFromIncome.add(String.valueOf(bankAccount.getBankAccountId()));
-					
-				} else if (exclusions == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_BUDGETS) {
-					budgets.add(String.valueOf(bankAccount.getBankAccountId()));
-					
-				} else if (exclusions == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ACCOUNT_LIST) {
-					accountList.add(String.valueOf(bankAccount.getBankAccountId()));
-					
-				} else if (exclusions == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_REPORTS) {
-					reports.add(String.valueOf(bankAccount.getBankAccountId()));
-					
-				} else if (exclusions == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSACTION_LIST) {
-					transactionsList.add(String.valueOf(bankAccount.getBankAccountId()));
-				}
-			}
-		}
-		
-//		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_ALL, all);
-//		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_TRANSFERS_FROM_EXPENSES, transfersFromExpenses);
-//		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_TRANSFERS_FROM_INCOME, transfersFromIncome);
-//		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_BUDGETS, budgets);
-//		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_ACCOUNTS_LIST, accountList);
-//		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_REPORTS, reports);
-//		Preferences.saveStringSet(Constant.PREFS_EXCLUSIONS_TRANSACTIONS_LIST, transactionsList);
-	}
+
+        ApplicationContext.getDaoSession().clear();
+        BankAccountDao dao = ApplicationContext.getDaoSession().getBankAccountDao();
+        List<BankAccount> bankAccountList = dao.loadAll();
+
+//        ArrayList<String> transactionsList = new ArrayList<String>();
+//        ArrayList<String> reports = new ArrayList<String> ();
+//        ArrayList<String> accountList = new ArrayList<String> ();
+//        ArrayList<String> budgets = new ArrayList<String> ();
+//        ArrayList<String> transfersFromIncome = new ArrayList<String> ();
+//        ArrayList<String> transfersFromExpenses = new ArrayList<String> ();
+//        ArrayList<String> all = new ArrayList<String> ();
+
+        JSONArray transactionsList = new JSONArray();
+        JSONArray reports = new JSONArray();
+        JSONArray accountList = new JSONArray();
+        JSONArray budgets = new JSONArray();
+        JSONArray transfersFromIncome = new JSONArray();
+        JSONArray transfersFromExpenses = new JSONArray();
+        JSONArray all = new JSONArray();
+
+
+        for (BankAccount bankAccount : bankAccountList) {
+
+            List<AccountExclusionFlags> exclusionListForAccount = BankAccount.getExclusionsForAccount(bankAccount);
+            for (AccountExclusionFlags exclusions : exclusionListForAccount) {
+                if (exclusions == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ALL) {
+                    all.put(String.valueOf(bankAccount.getId()));
+                    //all.add(String.valueOf(bankAccount.getId()));
+                } else if (exclusions == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_EXPENSES) {
+                    //transfersFromExpenses.add(String.valueOf(bankAccount.getId()));
+                    transfersFromExpenses.put(String.valueOf(bankAccount.getId()));
+                } else if (exclusions == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSFERS_FROM_INCOME) {
+                    transfersFromIncome.put(String.valueOf(bankAccount.getId()));
+                } else if (exclusions == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_BUDGETS) {
+                    budgets.put(String.valueOf(bankAccount.getId()));
+                } else if (exclusions == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_ACCOUNT_LIST) {
+                    accountList.put(String.valueOf(bankAccount.getId()));
+                } else if (exclusions == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_REPORTS) {
+                    reports.put(String.valueOf(bankAccount.getId()));
+                } else if (exclusions == AccountExclusionFlags.ACCOUNT_EXCLUSION_FLAGS_TRANSACTION_LIST) {
+                    transactionsList.put(String.valueOf(bankAccount.getId()));
+                }
+            }
+        }
+
+        Preferences.saveString(Constant.PREFS_EXCLUSIONS_ALL, all.toString());
+        Preferences.saveString(Constant.PREFS_EXCLUSIONS_TRANSFERS_FROM_EXPENSES, transfersFromExpenses.toString());
+        Preferences.saveString(Constant.PREFS_EXCLUSIONS_TRANSFERS_FROM_INCOME, transfersFromIncome.toString());
+        Preferences.saveString(Constant.PREFS_EXCLUSIONS_BUDGETS, budgets.toString());
+        Preferences.saveString(Constant.PREFS_EXCLUSIONS_ACCOUNTS_LIST, accountList.toString());
+        Preferences.saveString(Constant.PREFS_EXCLUSIONS_REPORTS, reports.toString());
+        Preferences.saveString(Constant.PREFS_EXCLUSIONS_TRANSACTIONS_LIST, transactionsList.toString());
+    }
+
 
     @Override
     public String getActivityTitle() {
