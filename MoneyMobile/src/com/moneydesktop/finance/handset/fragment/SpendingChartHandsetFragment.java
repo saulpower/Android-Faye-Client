@@ -120,6 +120,8 @@ public class SpendingChartHandsetFragment extends BaseFragment implements OnMenu
     public void isShowing() {
         super.isShowing();
 
+        ((DashboardHandsetActivity) mActivity).resetRightMenu();
+
         mRoot.postDelayed(new Runnable() {
             @Override
             public void run() {

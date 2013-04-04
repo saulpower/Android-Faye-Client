@@ -29,6 +29,7 @@ import com.moneydesktop.finance.shared.adapter.FilterAdapter;
 import com.moneydesktop.finance.shared.fragment.TransactionsFragment;
 import com.moneydesktop.finance.tablet.fragment.BankListTabletFragment;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.UltimateListView;
 import de.greenrobot.event.EventBus;
 
@@ -300,7 +301,9 @@ public class TransactionsHandsetFragment extends TransactionsFragment implements
 	}
 
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		
+
+        UiUtils.hideKeyboard(mActivity, mSearch);
+
 		Transactions transaction = (Transactions) parent.getItemAtPosition(position);
 		
 		if (transaction != null) {

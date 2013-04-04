@@ -281,7 +281,7 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
     	return mMenuDrawerRight;
     }
 	
-	private void resetRightMenu() {
+	public void resetRightMenu() {
 		
     	if (mMenuFlipper == null) return;
 

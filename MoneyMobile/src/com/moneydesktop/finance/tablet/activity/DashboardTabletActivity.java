@@ -3,6 +3,7 @@ package com.moneydesktop.finance.tablet.activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -17,6 +18,7 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
 import com.moneydesktop.finance.model.User;
@@ -26,12 +28,10 @@ import com.moneydesktop.finance.tablet.adapter.TabletGrowPagerAdapter;
 import com.moneydesktop.finance.tablet.fragment.AccountTypesTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.SettingsTabletFragment;
 import com.moneydesktop.finance.tablet.fragment.TransactionsTabletFragment;
-import com.moneydesktop.finance.util.EmailUtils;
-import com.moneydesktop.finance.util.FileIO;
-import com.moneydesktop.finance.util.Fonts;
-import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.util.*;
 import com.moneydesktop.finance.views.FixedSpeedScroller;
 import com.moneydesktop.finance.views.GrowViewPager;
+import com.moneydesktop.finance.views.HelpView;
 import com.moneydesktop.finance.views.navigation.NavBarButtons;
 import com.moneydesktop.finance.views.navigation.NavWheelView;
 import com.moneydesktop.finance.views.navigation.NavWheelView.onNavigationChangeListener;
@@ -49,6 +49,8 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 	private ImageView mHomeButton;
 	private TextSwitcher mNavTitle;
     private RelativeLayout mNavBar;
+
+    private HelpView mDashHelp, mSpendingHelp;
 	
 	@Override
 	public void onBackPressed() {
@@ -129,6 +131,16 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
                 }
             });
         }
+
+        mPager.post(new Runnable() {
+            @Override
+            public void run() {
+
+                if (Preferences.getBoolean(Preferences.KEY_SHOW_TIPS, true)) {
+                    DialogUtils.showHelp(DashboardTabletActivity.this, getHelpView());
+                }
+            }
+        });
     }
 
     private void setupDashboard() {
@@ -276,7 +288,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(DashboardTabletActivity.this, "help", Toast.LENGTH_LONG).show();
+                DialogUtils.showHelp(DashboardTabletActivity.this, getHelpView());
 			}
 		});
 
@@ -290,6 +302,56 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 
 		new NavBarButtons(this, icons, onClickListeners);
 	}
+
+    private HelpView getHelpView() {
+
+        View root = mPager.getChildAt(mPager.getCurrentItem());
+
+        switch (mPager.getCurrentItem()) {
+            case 0:
+                return getDashboardHelp(root);
+            case 2:
+                return getSpendingHelp(root);
+        }
+
+        return null;
+    }
+
+    private HelpView getSpendingHelp(View root) {
+
+        if (mSpendingHelp != null) return mSpendingHelp;
+
+        View chart = root.findViewById(R.id.chart);
+
+        int distance = 35;
+        int width = 300;
+
+        mSpendingHelp = new HelpView(this);
+        mSpendingHelp.addHelp(chart, new Point(0, -chart.getHeight() * 3 / 20), HelpView.Direction.UP,
+                distance, R.string.help_spending_1, width);
+        mSpendingHelp.addHelp(chart, new Point(0, chart.getHeight() / 3), HelpView.Direction.RIGHT, distance, R.string.help_spending_2, width);
+
+        return mSpendingHelp;
+    }
+
+    private HelpView getDashboardHelp(View root) {
+
+        if (mDashHelp != null) return mDashHelp;
+
+        int width = 300;
+
+        mDashHelp = new HelpView(this);
+        mDashHelp.addHelp(mNavBar, new Point(mNavBar.getWidth() / 4, 0), HelpView.Direction.LEFT,
+                50, R.string.help_dashboard_1, width);
+        mDashHelp.addHelp(root, new Point(-root.getWidth() * 3 / 10, -root.getHeight() * 3 / 10),
+                HelpView.Direction.RIGHT,
+                50, R.string.help_dashboard_2, width);
+        mDashHelp.addHelp(mFlipper, new Point(mFlipper.getWidth() * 9 / 20, 0), HelpView.Direction.DOWN,
+                75, R.string.help_dashboard_3, width);
+        mDashHelp.addHelp(mNavigation, new Point(-mNavigation.getWidth() * 9 / 20, mNavigation.getHeight() * 9 / 20), HelpView.Direction.UP, 40, R.string.help_dashboard_4, width);
+
+        return mDashHelp;
+    }
 	
 	private void sendEmail() {
 

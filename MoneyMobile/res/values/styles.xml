@@ -121,6 +121,11 @@
         <item name="android:windowAnimationStyle">@style/MyAnimationWindow</item>
     </style>
 
+    <style name="HelpDialog" parent="android:Theme.Dialog">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/MyAnimationWindow</item>
+    </style>
+
     <style name="ActivityDialog" parent="android:Theme.Dialog">
         <item name="android:windowBackground">@color/transparent</item>
         <item name="android:windowAnimationStyle">@style/MyAnimationWindow</item>

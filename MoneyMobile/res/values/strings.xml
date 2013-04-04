@@ -204,6 +204,25 @@
     <string name="handset_intro_title_2">DROPDOWNS ARE AWESOME</string>
     <string name="handset_intro_title_3">TRANSACTION FOLDERS</string>
     <string name="hello_world">Hello world!</string>
+    <string name="help">Don\'t show me any more tips.</string>
+    <string name="help_accounts_1">We\'ve organized your accounts into account types. Tap on an account type
+        to see the accounts in that section</string>
+    <string name="help_accounts_2">Slide the tray in and out to view all your financial institutions.</string>
+    <string name="help_accounts_3">Tap on an account to view its details, and edit its settings.</string>
+    <string name="help_dashboard_1">Your action items are up here. Email, help, etc.</string>
+    <string name="help_dashboard_2">We\'ve organized your accounts into account types. Tap on an account type
+        to see the accounts in that section.</string>
+    <string name="help_dashboard_3">Swipe to the left to move to the next dashboard card.</string>
+    <string name="help_dashboard_4">The main menu gives you quck access to any section from anywhere in the
+        app.</string>
+    <string name="help_spending_1">Tap on the center circle to view the transactions for the selected
+        category.</string>
+    <string name="help_spending_2">Tap on the highlighted category to drill down to its sub-categories.</string>
+    <string name="help_transactions_1">Press and hold to edit the category in-line.</string>
+    <string name="help_transactions_2">Tap on a transaction to view its details</string>
+    <string name="help_transactions_3">View your transactions by preset filters: By account, category, tags,
+        etc.</string>
+    <string name="help_transactions_4">Switch between months by using the date navigation down here.</string>
     <string name="hint_search_transactions">Search For Transactions</string>
     <string name="icon_accounts">O</string>
     <string name="icon_add">A</string>

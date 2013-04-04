@@ -3,6 +3,7 @@ package com.moneydesktop.finance.tablet.fragment;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,10 +34,7 @@ import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
 import com.moneydesktop.finance.util.DateRange;
 import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
-import com.moneydesktop.finance.views.DateRangeView;
-import com.moneydesktop.finance.views.HeaderView;
-import com.moneydesktop.finance.views.HorizontalScroller;
-import com.moneydesktop.finance.views.LineView;
+import com.moneydesktop.finance.views.*;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -458,4 +456,18 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
 	protected Object getChildInstance() {
 		return this;
 	}
+
+    public void addHelpView(HelpView helpView) {
+
+        int distance = 40;
+        int width = 300;
+
+        View cell1 = mTransactionsList.getChildAt(0);
+
+        if (cell1 == null) return;
+
+        helpView.addHelp(cell1, new Point(cell1.getWidth() / 5, cell1.getHeight() * 1), HelpView.Direction.UP, HelpView.TextSide.LEFT, distance, R.string.help_transactions_1, width);
+        helpView.addHelp(cell1, new Point(-cell1.getWidth() / 4, cell1.getHeight() * 3), HelpView.Direction.DOWN, distance, R.string.help_transactions_2, width);
+        helpView.addHelp(mScroller, new Point(-mScroller.getWidth() / 4, 0), HelpView.Direction.UP, distance, R.string.help_transactions_4, width);
+    }
 }

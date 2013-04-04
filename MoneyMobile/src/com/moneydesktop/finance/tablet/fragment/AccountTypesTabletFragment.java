@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -24,6 +25,7 @@ import com.moneydesktop.finance.data.BankLogoManager;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.BankRefreshStatus;
 import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.data.SyncEngine;
 import com.moneydesktop.finance.database.*;
 import com.moneydesktop.finance.model.EventMessage;
@@ -36,6 +38,7 @@ import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.AnimatedListView.SlideExpandableListAdapter;
+import com.moneydesktop.finance.views.HelpView;
 import com.moneydesktop.finance.views.PopupWindowAtLocation;
 import com.moneydesktop.finance.views.SlidingDrawerRightSide;
 import com.moneydesktop.finance.views.navigation.NavBarButtons;
@@ -46,7 +49,7 @@ import java.util.*;
 public class AccountTypesTabletFragment extends AccountTypesFragment {
 	
     private ListView mListView;
-    private static SlidingDrawerRightSide sRightDrawer;
+    private SlidingDrawerRightSide mRightDrawer;
     private View mFooter;
     private PopupWindowAtLocation mPopup;
     private List<Bank> mBanksForDeletion;
@@ -58,6 +61,8 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
     private int mAccountCounter = 0;
     private HashMap<Integer, Boolean> mOpenState;
     private Boolean mIsInitialization;
+
+    private HelpView mHelpView;
 	
 	public static AccountTypesTabletFragment newInstance() {	
 		AccountTypesTabletFragment frag = new AccountTypesTabletFragment();
@@ -83,8 +88,8 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
 		mRoot = inflater.inflate(R.layout.tablet_account_types, null);
 		mFooter = inflater.inflate(R.layout.account_type_list_footer, null);
 		mListView = (ListView) mRoot.findViewById(R.id.accounts_expandable_list_view);
-		sRightDrawer = (SlidingDrawerRightSide) mRoot.findViewById(R.id.account_slider);
-		sRightDrawer.open();
+		mRightDrawer = (SlidingDrawerRightSide) mRoot.findViewById(R.id.account_slider);
+		mRightDrawer.open();
 		mOpenState = new HashMap<Integer, Boolean>();
 
 
@@ -99,6 +104,16 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
     public void isShowing() {
 
         setupTitleBar();
+
+        mRoot.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (Preferences.getBoolean(Preferences.KEY_SHOW_TIPS, true) && mActivity.getCurrentFragmentType() == getType()) {
+                    DialogUtils.showHelp(mActivity, getHelpView());
+                }
+            }
+        }, 1500);
     }
 	
     private void setupView() {
@@ -265,7 +280,7 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
         onClickListeners.add(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mActivity, "help", Toast.LENGTH_LONG).show();
+                DialogUtils.showHelp(mActivity, getHelpView());
             }
         });
 	    
@@ -549,7 +564,7 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
 		        
 		        mPopup = new PopupWindowAtLocation(getActivity(), 
                         parentView, 
-                        sRightDrawer.getLeft() + mPanelLayoutHolder.getWidth(), 
+                        mRightDrawer.getLeft() + mPanelLayoutHolder.getWidth(),
                         location[1] - topOffset, 
                         titles, 
                         onClickListeners, 
@@ -815,14 +830,14 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
 	 * @return the drawer
 	 */
     public SlidingDrawerRightSide setupDrawer (final ViewGroup.LayoutParams layoutParams) {
-        final ViewGroup.LayoutParams drawerLayoutParams = sRightDrawer.getLayoutParams();
+        final ViewGroup.LayoutParams drawerLayoutParams = mRightDrawer.getLayoutParams();
 
         //this is here so we can adjust for the handle on the panel...without it, sizing is a little off.
         drawerLayoutParams.width = (int) (layoutParams.width + UiUtils.convertDpToPixel(7, (getActivity() != null) ? getActivity() : mActivity));
         drawerLayoutParams.height = UiUtils.getScreenHeight((getActivity() != null) ? getActivity() : mActivity) ;
-        sRightDrawer.setLayoutParams(drawerLayoutParams);
+        mRightDrawer.setLayoutParams(drawerLayoutParams);
 
-        return sRightDrawer;
+        return mRightDrawer;
     }
 	
 	@Override
@@ -836,7 +851,6 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
     }
 
     public void isShowing(boolean fromBackstack) {
-
         setupTitleBar();
     }
 
@@ -854,5 +868,21 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
 		
 		//remove bank from view
 		mPanelLayoutHolder.removeView(bankView);
-	}   
+	}
+
+    private HelpView getHelpView() {
+
+        if (mHelpView != null) return mHelpView;
+
+        if (mListView == null || mListView.getChildAt(0) == null) return null;
+
+        int width = 300;
+
+        mHelpView = new HelpView(mActivity);
+        mHelpView.addHelp(mListView, new Point(-mListView.getWidth() * 2 / 5, -mListView.getHeight() * 9 / 20), HelpView.Direction.RIGHT, 100, R.string.help_accounts_1, width);
+        mHelpView.addHelp(mRightDrawer, new Point(0, -mRightDrawer.getHeight() / 3), HelpView.Direction.LEFT, 150, R.string.help_accounts_2, width);
+        mHelpView.addHelp(mListView.getChildAt(0), new Point(-mListView.getChildAt(0).getWidth() * 9 / 20, mListView.getChildAt(0).getHeight() * 2 / 5), HelpView.Direction.DOWN, 50, R.string.help_accounts_3, width);
+
+        return mHelpView;
+    }
 }

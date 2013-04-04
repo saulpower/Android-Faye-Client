@@ -5,7 +5,6 @@ import android.annotation.TargetApi;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.shared.fragment.GrowFragment;
 import com.moneydesktop.finance.tablet.activity.DashboardTabletActivity;

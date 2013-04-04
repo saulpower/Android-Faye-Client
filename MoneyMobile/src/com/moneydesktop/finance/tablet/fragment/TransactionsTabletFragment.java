@@ -10,14 +10,16 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.Toast;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
+import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.shared.FilterViewHolder;
 import com.moneydesktop.finance.shared.adapter.FilterAdapter;
+import com.moneydesktop.finance.util.DialogUtils;
+import com.moneydesktop.finance.views.HelpView;
 import com.moneydesktop.finance.views.UltimateListView;
 import com.moneydesktop.finance.views.navigation.NavBarButtons;
 import de.greenrobot.event.EventBus;
@@ -34,6 +36,8 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
     private FilterAdapter mAdapter;
 
     private TransactionsPageTabletFragment mPageFragment;
+
+    private HelpView mHelpView;
 	
 	public static TransactionsTabletFragment newInstance() {
 			
@@ -83,6 +87,16 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
         if (mPageFragment != null) {
             mPageFragment.isShowing();
         }
+
+        mRoot.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (Preferences.getBoolean(Preferences.KEY_SHOW_TIPS, true) && mActivity.getCurrentFragmentType() == getType()) {
+                    DialogUtils.showHelp(mActivity, getHelpView());
+                }
+            }
+        }, 1500);
     }
     
     @Override
@@ -156,11 +170,24 @@ public class TransactionsTabletFragment extends ParentTransactionFragment implem
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(mActivity, "help", Toast.LENGTH_LONG).show();
+                DialogUtils.showHelp(mActivity, getHelpView());
             }
         });
 
         new NavBarButtons(mActivity, icons, onClickListeners);
+    }
+
+    private HelpView getHelpView() {
+
+        if (mHelpView != null) return mHelpView;
+
+        mHelpView = new HelpView(mActivity);
+
+        mPageFragment.addHelpView(mHelpView);
+
+        mHelpView.addHelp(mFiltersList, HelpView.Direction.DOWN, HelpView.TextSide.LEFT, 100, R.string.help_spending_2, 300);
+
+        return mHelpView;
     }
 
     @Override

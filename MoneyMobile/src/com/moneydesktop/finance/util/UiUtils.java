@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import com.moneydesktop.finance.ApplicationContext;
@@ -85,6 +86,13 @@ public class UiUtils {
         
         return values;
 	}
+
+    public static int getStatusBarHeight(Window window) {
+
+        int contentViewTop = window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
+
+        return contentViewTop;
+    }
    
     public static float getDynamicPixels(Context context, float pixels) {
     	return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixels, context.getResources().getDisplayMetrics());
