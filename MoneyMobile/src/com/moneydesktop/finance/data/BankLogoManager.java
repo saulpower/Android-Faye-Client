@@ -4,9 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.util.LruCache;
-import android.util.Log;
 import android.widget.ImageView;
-
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.CacheUtils;
 
@@ -120,7 +118,6 @@ public class BankLogoManager {
         return mMemoryCache.get(key);
     }
 
-
     private static void setupMemoryCache() {
         // Get max available VM memory, exceeding this amount will throw an
         // OutOfMemory exception. Stored in kilobytes as LruCache takes an
@@ -135,7 +132,7 @@ public class BankLogoManager {
             protected int sizeOf(String key, Bitmap bitmap) {
                 // The cache size will be measured in kilobytes rather than
                 // number of items.
-                return bitmap.getByteCount() / 1024;
+                return bitmap.getRowBytes() * bitmap.getHeight() / 1024;
             }
         };
     }

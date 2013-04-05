@@ -131,6 +131,10 @@ public class ThreadAnimator {
         mRunning = true;
         mStartTime = AnimationUtils.currentAnimationTimeMillis() + delay;
     }
+
+    public void cancel() {
+        mRunning = false;
+    }
 	
 	public interface AnimationListener {
 		public void onAnimationEnded();

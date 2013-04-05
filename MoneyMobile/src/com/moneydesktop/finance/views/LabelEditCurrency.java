@@ -2,6 +2,7 @@ package com.moneydesktop.finance.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.inputmethod.EditorInfo;
 
 import java.text.DecimalFormat;
@@ -21,6 +22,12 @@ public class LabelEditCurrency extends LabelEditText {
     private Currency mCurrency;
     private String mPrevious;
 
+    private boolean mIsIncome;
+
+    public void setIsIncome(boolean mIsIncome) {
+        this.mIsIncome = mIsIncome;
+    }
+
     public LabelEditCurrency(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -34,19 +41,29 @@ public class LabelEditCurrency extends LabelEditText {
 
             String value = text.toString();
 
+            Log.i(TAG, String.format("Value: %s", value));
+
             if (value == null || mCurrency == null) return;
 
+            if (mIsIncome && value.indexOf("(") == -1) {
+                setText("(" + value + ")");
+                return;
+            }
+
+            // Makes sure the currency symbol is included
             if (!value.contains(mCurrency.getSymbol())) {
                 setText(String.format("%s%s", mCurrency.getSymbol(), value));
                 return;
             }
 
+            // Makes sure the currency symbol is the first character
             if (value.indexOf(mCurrency.getSymbol()) != 0) {
                 setText(value.substring(value.indexOf(mCurrency.getSymbol())));
                 return;
             }
 
-            if (value.indexOf(".") != -1 && (value.length() - value.indexOf(".") - 1) > 2) {
+            // Makes sure that you cannot add multiple dots
+            if (value.indexOf(".") != -1 && (value.length() - value.indexOf(".") - 1) > (mIsIncome ? 3 : 2)) {
                 setText(mPrevious);
                 return;
             }
@@ -75,9 +92,13 @@ public class LabelEditCurrency extends LabelEditText {
         }
 
         if (actionCode == EditorInfo.IME_ACTION_DONE && !value.equals("")) {
-            setText(mFormatter.format(Double.parseDouble(value.replace(",", ""))));
+            setText(mFormatter.format(Double.parseDouble(cleanValue(value))));
         }
 
         super.onEditorAction(actionCode);
+    }
+
+    private String cleanValue(String value) {
+        return value.replace(",", "").replace("(", "").replace(")", "");
     }
 }

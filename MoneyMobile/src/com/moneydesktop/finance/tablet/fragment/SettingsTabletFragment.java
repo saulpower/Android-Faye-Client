@@ -94,7 +94,7 @@ public class SettingsTabletFragment extends BaseFragment {
 	private void configureView() {
         setupListeners();
 	}
-	
+
 	private void setupListeners() {
 		
 		mLock.setOnClickListener(new OnClickListener() {

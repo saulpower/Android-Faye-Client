@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.util.Pair;
 import android.view.View;
 import android.view.animation.Animation;
+import com.flurry.android.FlurryAgent;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.DataController;
@@ -65,6 +66,10 @@ public abstract class DashboardBaseActivity extends BaseActivity {
     }
 
     public void setCurrentFragmentType(FragmentType fragmentType) {
+
+        // Create analytics of where people are spending time in the app
+        FlurryAgent.logEvent(fragmentType + "");
+
         mPreviousFragmentType = mCurrentFragmentType;
         mCurrentFragmentType = fragmentType;
 

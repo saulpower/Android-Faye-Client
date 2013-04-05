@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.database.Transactions;
+import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
 import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
 import com.moneydesktop.finance.shared.adapter.GrowPagerAdapter.OnScrollStateChangedListener;
@@ -32,6 +33,7 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
     private TextSwitcher mTotalAmount;
     
     private boolean mShowing = false;
+    private boolean mVisible = true;
 
     private Handler mHandler;
 	
@@ -48,7 +50,7 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 
 	@Override
 	public FragmentType getType() {
-		return FragmentType.ACCOUNT_SUMMARY;
+		return FragmentType.SPENDING_SUMMARY;
 	}
 	
 	@Override
@@ -114,7 +116,7 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 	@Override
 	public void transitionFragment(float percent, float scale) {
 		super.transitionFragment(percent, scale);
-		
+
 		mShowing = percent < 0.01f;
 	}
 
@@ -130,6 +132,14 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
 			configureChart(false);
 		}
 	}
+
+    public void onEvent(final EventMessage.VisibilityEvent event) {
+
+        if (event.getType() == FragmentType.DASHBOARD) {
+            mVisible = event.isVisible();
+            configureChart(mVisible);
+        }
+    }
 	
 	public void onEvent(final DatabaseSaveEvent event) {
 
@@ -147,20 +157,16 @@ public class SpendingChartTabletFragment extends SummaryTabletFragment implement
     
 	public void onEvent(NavigationEvent event) {
 		
-		if (event.isShowing() != null && event.getDirection() == null) {
+		if (event.isShowing() != null) {
 			
 			configureChart(!event.isShowing());
 			return;
-		}
-		
-		if (event.getMovingHome() != null) {
-			configureChart(event.getMovingHome());
 		}
 	}
 	
 	private void configureChart(boolean showChart) {
 		
-		if (showChart && mShowing && mActivity.isOnHome()) {
+		if (showChart && mShowing && mActivity.isOnHome() && mVisible) {
 			mChart.onResume();
 		} else {
 			mChart.onPause();

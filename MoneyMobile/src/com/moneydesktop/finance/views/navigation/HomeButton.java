@@ -1,30 +1,45 @@
 package com.moneydesktop.finance.views.navigation;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.*;
+import android.os.Handler;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.SoundEffectConstants;
-import android.view.View;
+import android.view.*;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.OvershootInterpolator;
 import com.moneydesktop.finance.R;
-import com.moneydesktop.finance.data.Enums.NavDirection;
-import com.moneydesktop.finance.model.EventMessage;
-import com.moneydesktop.finance.model.EventMessage.NavigationButtonEvent;
-import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
 import com.moneydesktop.finance.util.UiUtils;
-import de.greenrobot.event.EventBus;
+import com.moneydesktop.finance.views.Dynamics;
+import com.moneydesktop.finance.views.FrictionDynamics;
+import com.moneydesktop.finance.views.piechart.ThreadAnimator;
 
 public class HomeButton extends View {
 	
 	public final String TAG = this.getClass().getSimpleName();
 
-	private final float SCROLL_DISTANCE = 17.0f;
+    /** Unit used for the velocity tracker */
+    private static final int PIXELS_PER_SECOND = 1000;
+
+    /** Tolerance for the velocity */
+    private static final float VELOCITY_TOLERANCE = 40f;
+
+    /** User is not touching the piechart */
+    public static final int TOUCH_STATE_RESTING = 0;
+
+    /** User is touching the list and right now it's still a "click" */
+    private static final int TOUCH_STATE_CLICK = 1;
+
+    /** User is rotating the piechart */
+    public static final int TOUCH_STATE_ROTATE = 2;
+
+    /** Current touch state */
+    private int mTouchState = TOUCH_STATE_RESTING;
+
+    /** Distance to drag before we intercept touch events */
+    private int mClickThreshold;
 
     private NavWheelView mNavWheel;
     private float mStartDegree = 0;
@@ -52,13 +67,33 @@ public class HomeButton extends View {
     private float mPosY;
     
     private float mLastTouchY, mLastTouchX;
+
+    /** X-coordinate of the down event */
+    private int mTouchStartX;
+
+    /** Y-coordinate of the down event */
+    private int mTouchStartY;
+
+    // Trigger timer that the exit animations have completed
+    private Handler mHandler;
+
+    /** Velocity tracker used to get fling velocities */
+    private VelocityTracker mVelocityTracker;
+
+    /** Dynamics object used to handle fling and snap */
+    private Dynamics mDynamics;
+
+    /** Runnable used to animate fling and snap */
+    private Runnable mDynamicsRunnable;
+
+    /** The pixel density of the current device */
+    private float mPixelDensity;
     
     // Scrolling
     private float mMoveDistance, mStartPos;
     
 	// Touching
 	private boolean mTouching = false, mTouchingSlider = false;
-    private float mDistance = 0.0f;
 
 	/*******************************************************************************
 	 * Accessory Methods
@@ -70,7 +105,6 @@ public class HomeButton extends View {
 
     public void setRadius(float radius) {
         this.mRadius = radius;
-        invalidate();
     }
 
     /**
@@ -84,7 +118,6 @@ public class HomeButton extends View {
 		
 		this.mShowSlider = showSlider;
 		animateSlider(showSlider);
-		invalidate();
 	}
 	
 	/**
@@ -120,7 +153,7 @@ public class HomeButton extends View {
 
         if (mTouchingSlider) {
             mNavWheel.updateStartRotation();
-            mStartDegree = getDegree(mLastTouchX, mLastTouchY);
+            mStartDegree = getDegree(mTouchStartX, mTouchStartY);
         }
 	}
 
@@ -129,12 +162,15 @@ public class HomeButton extends View {
 	 * an animation is occurring.
 	 */
 	public void animateButtonBounce() {
-        
-        ObjectAnimator button = ObjectAnimator.ofFloat(this, "radius", mTouching ? mWidth : mWidth + 15, mTouching ? mWidth + 15 : mWidth);
-        button.setDuration(DURATION);
-        button.setInterpolator(new BounceInterpolator());
-        button.start();
+
+        mRadiusAnimator = ThreadAnimator.ofFloat(mTouching ? mWidth : mWidth + 15, mTouching ? mWidth + 15 : mWidth);
+        mRadiusAnimator.setDuration(DURATION);
+        mRadiusAnimator.setInterpolator(new BounceInterpolator());
+        mRadiusAnimator.start();
 	}
+
+    /** Animator objects used to animate the rotation, scale, and info panel */
+    private ThreadAnimator mAlphaSlider, mAlphaSliderStroke, mSliderRadiusAnimator, mRadiusAnimator, mPositionAnimator;
 
 	/**
 	 * Begins the animation of the slider and indicates
@@ -143,21 +179,48 @@ public class HomeButton extends View {
 	 * @param showSlider
 	 */
 	public void animateSlider(boolean showSlider) {
-	    
-	    ObjectAnimator slider = ObjectAnimator.ofFloat(this, "sliderRadius", showSlider ? 0 : mSliderMaxRadius, showSlider ? mSliderMaxRadius : 0);
-        slider.setDuration(DURATION);
-        slider.setInterpolator(new OvershootInterpolator());
 
-        ObjectAnimator alpha = ObjectAnimator.ofInt(this, "alphaSlider", showSlider ? 0 : 190, showSlider ? 190 : 0);
-        alpha.setDuration(DURATION);
-        
-        ObjectAnimator stroke = ObjectAnimator.ofInt(this, "alphaSliderStroke", showSlider ? 0 : 255, showSlider ? 255 : 0);
-        stroke.setDuration(DURATION);
-        
-        AnimatorSet set = new AnimatorSet();
-        set.play(slider).with(alpha).with(stroke);
-        set.start();
+        mSliderRadiusAnimator = ThreadAnimator.ofFloat(showSlider ? 0 : mSliderMaxRadius, showSlider ? mSliderMaxRadius : 0);
+        mSliderRadiusAnimator.setDuration(DURATION);
+        mSliderRadiusAnimator.setInterpolator(new OvershootInterpolator());
+
+        mAlphaSlider = ThreadAnimator.ofInt(showSlider ? 0 : 190, showSlider ? 190 : 0);
+        mAlphaSlider.setDuration(DURATION);
+
+        mAlphaSliderStroke = ThreadAnimator.ofInt(showSlider ? 0 : 255, showSlider ? 255 : 0);
+        mAlphaSliderStroke.setDuration(DURATION);
+
+        mSliderRadiusAnimator.start();
+        mAlphaSlider.start();
+        mAlphaSliderStroke.start();
 	}
+
+    /**
+     * Update our animators that control animating the
+     * rotation, scale, and info panel alpha
+     */
+    private void updateAnimators() {
+
+        if (mPositionAnimator != null && mPositionAnimator.isRunning()) {
+            setPosY(mPositionAnimator.floatUpdate());
+        }
+
+        if (mRadiusAnimator != null && mRadiusAnimator.isRunning()) {
+            setRadius(mRadiusAnimator.floatUpdate());
+        }
+
+        if (mSliderRadiusAnimator != null && mSliderRadiusAnimator.isRunning()) {
+            setSliderRadius(mSliderRadiusAnimator.floatUpdate());
+        }
+
+        if (mAlphaSlider != null && mAlphaSlider.isRunning()) {
+            setAlphaSlider(mAlphaSlider.intUpdate());
+        }
+
+        if (mAlphaSliderStroke != null && mAlphaSliderStroke.isRunning()) {
+            setAlphaSliderStroke(mAlphaSliderStroke.intUpdate());
+        }
+    }
 
 	public void setColor(int color) {
 		this.mColor = color;
@@ -195,7 +258,6 @@ public class HomeButton extends View {
 
     public void setSliderRadius(float sliderRadius) {
         this.mSliderRadius = sliderRadius;
-        invalidate();
     }
 
     public int getAlphaSlider() {
@@ -220,7 +282,21 @@ public class HomeButton extends View {
     
     public void setPosY(float posY) {
         mPosY = posY;
-        invalidate();
+    }
+
+    /**
+     * Set the dynamics object used for fling and snap behavior.
+     *
+     * @param dynamics The dynamics object
+     */
+    public void setDynamics(final Dynamics dynamics) {
+
+        if (mDynamics != null) {
+            dynamics.setState(mNavWheel.getRotationDegree(), mDynamics.getVelocity(), AnimationUtils
+                    .currentAnimationTimeMillis());
+        }
+
+        mDynamics = dynamics;
     }
 
     /*******************************************************************************
@@ -266,11 +342,15 @@ public class HomeButton extends View {
 	 * @param attrs
 	 */
 	private void init(AttributeSet attrs) {
-		
-		EventBus.getDefault().register(this);
 
+        mHandler = new Handler();
+
+        mClickThreshold = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+        mPixelDensity = UiUtils.getDisplayMetrics(getContext()).density;
 		mHome = BitmapFactory.decodeResource(getResources(), R.drawable.ipad_button_home);
-		
+
+        setDynamics(new FrictionDynamics(0.95f));
+
 		if (attrs != null) {
 			
 			TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CaretView);
@@ -297,11 +377,11 @@ public class HomeButton extends View {
 			
 			mMoveDistance = Math.abs(mPosY);
 			mStartPos = mPosY;
-			
-	        ObjectAnimator button = ObjectAnimator.ofFloat(this, "posY", mStartPos, mStartPos + mMoveDistance);
-	        button.setDuration(DURATION);
-	        button.setInterpolator(new AccelerateDecelerateInterpolator());
-	        button.start();
+
+            mPositionAnimator = ThreadAnimator.ofFloat(mStartPos, mStartPos + mMoveDistance);
+            mPositionAnimator.setDuration(DURATION);
+            mPositionAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+            mPositionAnimator.start();
 		}
 	}
 	
@@ -386,14 +466,17 @@ public class HomeButton extends View {
 	 * Used to see if the touches by the user can be
 	 * considered a click.
 	 */
-    public void clickCheck() {
+    public boolean clickCheck() {
         
-    	if (mDistance < (mRadius * 0.5f) && (touchingButton() || touchingSlider())) {
-        	
-        	mDistance = 0.0f;
+    	if (mTouchState == TOUCH_STATE_CLICK && (touchingButton() || touchingSlider())) {
+
             playSoundEffect(SoundEffectConstants.CLICK);
-        	EventBus.getDefault().post(new EventMessage().new NavigationEvent());
+        	mNavWheel.toggleNav();
+
+            return true;
     	}
+
+        return false;
     }
     
     /**
@@ -416,8 +499,6 @@ public class HomeButton extends View {
             if (Math.abs(mPosY) > (getHeight() - mRadius)) {
             	mPosY = -1 * (getHeight() - mRadius);
             }
-        	
-            invalidate();
         }
     }
     
@@ -428,10 +509,15 @@ public class HomeButton extends View {
      * @param dy
      * @param dx
      */
-    private void sliderNavigation(float dy, float dx) {
+    private void sliderNavigation(MotionEvent event, float dy, float dx) {
 
-        if (mTouchingSlider) {
+        if (mTouchState == TOUCH_STATE_CLICK) {
+            startRotationIfNeeded(event);
+        }
 
+        if (mTouchingSlider && mTouchState == TOUCH_STATE_ROTATE) {
+
+            mVelocityTracker.addMovement(event);
             float degree = getDegree(dx, dy) - mStartDegree;
             mNavWheel.rotateWheelBy(degree);
         }
@@ -445,32 +531,6 @@ public class HomeButton extends View {
 
         return degree;
     }
-    
-    private void navigate(NavDirection dir) {
-    	
-    	EventBus.getDefault().post(new EventMessage().new NavigationEvent(dir));
-    }
-
-	/*******************************************************************************
-	 * Event Methods
-	 *******************************************************************************/
-
-    /**
-     * Receives the event that the navigation wheel is showing and the
-     * slider should not be displayed.
-     * 
-     * @param event
-     */
-	public void onEvent(NavigationEvent event) {
-		
-		if (event.isShowing() != null) {
-			setShowSlider(event.isShowing());
-		}
-	}
-	
-	public void onEvent(NavigationButtonEvent event) {
-		setShowSlider(false);
-	}
 
 	/*******************************************************************************
 	 * Overridden Methods
@@ -492,6 +552,7 @@ public class HomeButton extends View {
     public boolean onTouchEvent(MotionEvent ev) {
 
         final int action = ev.getAction();
+        boolean clicked = false;
         
         switch (action) {
 	        case MotionEvent.ACTION_DOWN: {
@@ -500,15 +561,22 @@ public class HomeButton extends View {
 	            final float x = ev.getX();
 	            
 	            // Remember where we started
-	            mLastTouchY = y;
-	            mLastTouchX = x;
+                mTouchStartX = (int) x;
+	            mTouchStartY = (int) y;
+
+                // Remember this touch position for the next move event
+                mLastTouchY = y;
+                mLastTouchX = x;
+
+                // obtain a velocity tracker and feed it its first event
+                mVelocityTracker = VelocityTracker.obtain();
+                mVelocityTracker.addMovement(ev);
+
+                mTouchState = TOUCH_STATE_CLICK;
 
 	            // Check if we are touching either the button or slider
 	        	setTouching(true);
 	        	setTouchingSlider(true);
-	        	
-	        	// Reset the distance traveled
-	        	mDistance = 0.0f;
 	            
 	            break;
 	        }
@@ -520,13 +588,10 @@ public class HomeButton extends View {
 	            
 	            // Calculate the distance moved
 	            final float dy = y - mLastTouchY;
-	            final float dx = x - mLastTouchX;
-	            
-	            mDistance += Math.abs(dy);
 	            
 	            // Move the object if we are touching the button
 	            updateButtonPosition(dy);
-	            sliderNavigation(y, x);
+	            sliderNavigation(ev, y, x);
 	            
 	            // Remember this touch position for the next move event
 	            mLastTouchY = y;
@@ -543,24 +608,129 @@ public class HomeButton extends View {
 	            // Remember where we finished
 	            mLastTouchY = y;
 	            mLastTouchX = x;
-	        	
+
+                if (mTouchingSlider) {
+
+                    mVelocityTracker.addMovement(ev);
+                    mVelocityTracker.computeCurrentVelocity(PIXELS_PER_SECOND);
+
+                    float velocity = calculateVelocity();
+//                    endTouch(velocity);
+                }
+
 	            // Update that the user is no longer touching the screen
 	        	setTouching(false);
 	        	setTouchingSlider(false);
 	            
 	        	// Check to see if a click was performed
-	        	clickCheck();
+	        	clicked = clickCheck();
 	            
 	        	break;
 	        }
         }
         
-        return mTouching || mTouchingSlider;
+        return mTouching || mTouchingSlider || clicked;
+    }
+
+    /**
+     * Checks if the user has moved far enough for this to be a scroll and if
+     * so, sets the list in scroll mode
+     *
+     * @param event The (move) event
+     * @return true if scroll was started, false otherwise
+     */
+    private boolean startRotationIfNeeded(final MotionEvent event) {
+
+        final int xPos = (int) event.getX();
+        final int yPos = (int) event.getY();
+
+        if (isEnabled()
+                && (xPos < mTouchStartX - mClickThreshold
+                || xPos > mTouchStartX + mClickThreshold
+                || yPos < mTouchStartY - mClickThreshold
+                || yPos > mTouchStartY + mClickThreshold)) {
+
+            mTouchState = TOUCH_STATE_ROTATE;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Calculates the overall vector velocity given both the x and y
+     * velocities and normalized to be pixel independent.
+     *
+     * @return the overall vector velocity
+     */
+    private float calculateVelocity() {
+
+        int direction = mNavWheel.getRotatingClockwise() ? 1 : -1;
+
+        float velocityX = mVelocityTracker.getXVelocity() / mPixelDensity;
+        float velocityY = mVelocityTracker.getYVelocity() / mPixelDensity;
+        float velocity = (float) Math.sqrt(velocityX * velocityX + velocityY * velocityY) * direction / 2;
+
+        return velocity;
+    }
+
+    /**
+     * Resets and recycles all things that need to when we end a touch gesture
+     */
+    private void endTouch(final float velocity) {
+
+        // recycle the velocity tracker
+        if (mVelocityTracker != null) {
+            mVelocityTracker.recycle();
+            mVelocityTracker = null;
+        }
+
+        // create the dynamics runnable if we haven't before
+        if (mDynamicsRunnable == null) {
+
+            mDynamicsRunnable = new Runnable() {
+
+                public void run() {
+
+                    // if we don't have any dynamics set we do nothing
+                    if (mDynamics == null) {
+                        return;
+                    }
+
+                    // we pretend that each frame of the fling/snap animation is
+                    // one touch gesture and therefore set the start position
+                    // every time
+                    mDynamics.update(AnimationUtils.currentAnimationTimeMillis());
+
+                    // Keep the rotation amount between 0 - 360
+                    mNavWheel.rotateWheelBy(mDynamics.getPosition() % 360);
+
+                    if (!mDynamics.isAtRest(VELOCITY_TOLERANCE)) {
+
+                        // the list is not at rest, so schedule a new frame
+                        mHandler.postDelayed(this, 8);
+                    } else {
+                        mNavWheel.snapTo();
+                    }
+
+                }
+            };
+        }
+
+        if (mDynamics != null && Math.abs(velocity) > ViewConfiguration.get(getContext()).getScaledMinimumFlingVelocity()) {
+            // update the dynamics with the correct position and start the runnable
+            mDynamics.setState(mNavWheel.getRotationDegree(), velocity, AnimationUtils.currentAnimationTimeMillis());
+            mHandler.post(mDynamicsRunnable);
+
+        }
     }
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
-        
+
+        updateAnimators();
+
         // Draw the vertical change in position of the button
         canvas.save();
         canvas.translate(0, mPosY);

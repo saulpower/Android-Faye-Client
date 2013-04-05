@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.flurry.android.FlurryAgent;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.LockType;
@@ -237,7 +238,8 @@ public class LockCodeFragment extends BaseFragment implements ProcessCodeListene
 			confirmationCode(code);
 			
 		} else if (code.equals(mConfirmation)) {
-			
+
+            FlurryAgent.logEvent("Lock Code Set");
 			Preferences.saveString(Preferences.KEY_LOCK_CODE, code);
 			dismissModal();
 		

@@ -1,6 +1,7 @@
 package com.moneydesktop.finance.shared.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
+import com.flurry.android.FlurryAgent;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.SplashActivity;
@@ -17,12 +19,16 @@ import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.LockType;
 import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.handset.activity.PopupHandsetActivity;
+import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.model.EventMessage.BackEvent;
 import com.moneydesktop.finance.model.EventMessage.FeedbackEvent;
 import com.moneydesktop.finance.model.EventMessage.LockEvent;
+import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.shared.fragment.LockCodeFragment;
 import com.moneydesktop.finance.tablet.activity.LockCodeTabletActivity;
+import com.moneydesktop.finance.util.DialogUtils;
+import com.moneydesktop.finance.util.EmailUtils;
 import com.moneydesktop.finance.util.UiUtils;
 import de.greenrobot.event.EventBus;
 
@@ -95,6 +101,25 @@ abstract public class BaseActivity extends FragmentActivity {
     public SharedPreferences getSharedPreferences () {
         return mPreferences;
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FlurryAgent.onStartSession(this, "VFKHRRQ66TDPX99838M5");
+
+        if (User.getCurrentUser() != null && User.getCurrentUser().getCanSync()) {
+            FlurryAgent.setUserId(User.getCurrentUser().getUserId());
+            FlurryAgent.setVersionName(ApplicationContext.isTablet() ? "TABLET" : "HANDSET");
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        FlurryAgent.onEndSession(this);
+    }
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +137,8 @@ abstract public class BaseActivity extends FragmentActivity {
 		EventBus.getDefault().register(this);
 		
 		lockScreenCheck();
+
+        crashCheck();
 	}
 	
 	@Override
@@ -122,6 +149,38 @@ abstract public class BaseActivity extends FragmentActivity {
 		if (!(this instanceof SplashActivity)) sPause = System.currentTimeMillis();
 		EventBus.getDefault().unregister(this);
 	}
+
+    private void crashCheck() {
+
+        final String crashId = Preferences.getString(Preferences.KEY_CRASH, "");
+
+        if (!crashId.equals("")) {
+
+            Preferences.saveString(Preferences.KEY_CRASH, "");
+
+            DialogUtils.alertDialog(getString(R.string.crash_title).toUpperCase(), getString(R.string.crash_message), getString(R.string.crash_no).toUpperCase(), getString(R.string.crash_yes).toUpperCase(), this,
+                    new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    switch (which) {
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            sendCrashEmail(crashId);
+                            break;
+                    }
+
+                    DialogUtils.dismissAlert();
+                }
+            });
+        }
+    }
+
+    private void sendCrashEmail(String crashId) {
+        EmailUtils.sendEmail(this, String.format("%s%s", getString(R.string.crash_email_subject), crashId),
+                getString(R.string.crash_email_text),
+                new String[] { getString(R.string.crash_email_address) });
+    }
 	
 	/**
 	 * Update the navigation bar with the passed in title.  Configure the
@@ -157,6 +216,8 @@ abstract public class BaseActivity extends FragmentActivity {
 
         if (mFragments.containsKey(fragmentType)) {
             mFragments.get(fragmentType).isShowing();
+        } else {
+            EventBus.getDefault().post(new EventMessage().new VisibilityEvent(fragmentType, true));
         }
     }
 
@@ -164,6 +225,8 @@ abstract public class BaseActivity extends FragmentActivity {
 
         if (mFragments.containsKey(fragmentType)) {
             mFragments.get(fragmentType).isHiding();
+        } else {
+            EventBus.getDefault().post(new EventMessage().new VisibilityEvent(fragmentType, false));
         }
     }
 	

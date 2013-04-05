@@ -14,6 +14,7 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import com.flurry.android.FlurryAgent;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataController;
@@ -58,7 +59,7 @@ public class CategoriesFragment extends PopupFragment implements OnChildClickLis
 
 	@Override
 	public FragmentType getType() {
-		return null;
+		return FragmentType.CATEGORIES;
 	}
     
     @Override
@@ -78,6 +79,9 @@ public class CategoriesFragment extends PopupFragment implements OnChildClickLis
         mTransaction = (Transactions) DataController.getDao(Transactions.class).load(id);
 
         setupView();
+
+        // Log the user has set the category of a transaction
+        FlurryAgent.logEvent("" + getType());
         
         return mRoot;
     }

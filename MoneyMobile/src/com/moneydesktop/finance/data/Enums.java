@@ -216,8 +216,8 @@ public class Enums {
         TRANSACTIONS(2),
         SETTINGS(3), 
         SPENDING(4),
-        POPUP_TAGS(10),
-        POPUP_CATEGORIES(11),
+        TAGS(10),
+        CATEGORIES(11),
         LOCK_SCREEN(12),
         TRANSACTIONS_PAGE(13),
         ACCOUNT_SUMMARY(14),
@@ -232,7 +232,7 @@ public class Enums {
         UPDATE_USERNAME_PASSWORD(23),
         MANUAL_BANK_LIST(24),
         TRANSACTIONS_SUB(25),
-        POPUP_CALENDAR(26),
+        CALENDAR(26),
         TRANSACTION_DETAIL(27),
         BANK_ACCOUNT_BALANCE_HISTORY(28);
         
@@ -256,9 +256,9 @@ public class Enums {
             case 4:
             	return SPENDING;
             case 10:
-                return POPUP_TAGS;
+                return TAGS;
             case 11:
-                return POPUP_CATEGORIES;
+                return CATEGORIES;
             case 12:
                 return LOCK_SCREEN;
             case 13:
@@ -288,7 +288,7 @@ public class Enums {
             case 25:
                 return TRANSACTIONS_SUB;
             case 26:
-                return POPUP_CALENDAR;
+                return CALENDAR;
             case 27:
                 return TRANSACTION_DETAIL;
             case 28:

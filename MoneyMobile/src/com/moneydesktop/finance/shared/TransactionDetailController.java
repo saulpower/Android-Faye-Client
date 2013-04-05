@@ -18,6 +18,7 @@ import com.moneydesktop.finance.animation.FlipXAnimation;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.database.Transactions;
 import com.moneydesktop.finance.tablet.fragment.TransactionsDetailTabletFragment;
+import com.moneydesktop.finance.util.PerformanceUtils;
 import com.moneydesktop.finance.util.UiUtils;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
@@ -203,6 +204,8 @@ public class TransactionDetailController {
             
         } else return;
 
+        PerformanceUtils.finish();
+
         mCellView = view;
 
         new AsyncTask<Void, Void, Bitmap>() {
@@ -253,14 +256,9 @@ public class TransactionDetailController {
             
             mCellView.setVisibility(View.INVISIBLE);
             mFakeCell.setVisibility(View.VISIBLE);
-            mFakeCell.post(new Runnable() {
-                
-                @Override
-                public void run() {
-                    mBackground.setVisibility(View.VISIBLE);
-                    set.start();
-                }
-            });
+
+            mBackground.setVisibility(View.VISIBLE);
+            set.start();
             
         } else {
 

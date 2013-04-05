@@ -150,10 +150,10 @@ public class NavItemDrawable extends Drawable {
         mAlphaAnimator.setDuration(150);
 
         mPositionAnimator = ThreadAnimator.ofPoint(mCenter, mTargetPosition);
-        mPositionAnimator.setDuration(300);
-        mPositionAnimator.setInterpolator(new OvershootInterpolator());
+        mPositionAnimator.setDuration(500);
+        mPositionAnimator.setInterpolator(new OvershootInterpolator(2.5f));
 
-        long offset = 100 + 50 * mIndex;
+        long offset = 200 + 50 * mIndex;
         mAlphaAnimator.start(offset);
         mPositionAnimator.start(offset);
 	}
@@ -170,7 +170,7 @@ public class NavItemDrawable extends Drawable {
         boolean selected = mIndex == selectedIndex;
 
         mAlphaAnimator = ThreadAnimator.ofInt(255, 0);
-        mAlphaAnimator.setDuration(1000);
+        mAlphaAnimator.setDuration(700);
 
         mPositionAnimator = ThreadAnimator.ofPoint(mTargetPosition, mCenter);
         mPositionAnimator.setDuration(selected ? 500 : 600);
@@ -183,10 +183,11 @@ public class NavItemDrawable extends Drawable {
 		PointF bigger = new PointF(3.0f, 3.0f);
 
         mScaleAnimator = ThreadAnimator.ofPoint(orig, bigger);
-        mScaleAnimator.setDuration(1000);
+        mScaleAnimator.setDuration(1200);
 		
 		if (mIndex == selectedIndex) {
 
+            mAlphaAnimator.setDuration(1200);
             mAlphaAnimator.start();
             mScaleAnimator.start();
 			
@@ -253,6 +254,14 @@ public class NavItemDrawable extends Drawable {
 	 * Reset the drawable to a beginning scale and rotation.
 	 */
 	public void reset() {
+
+        if (mRotateAnimator != null) {
+            mRotateAnimator.cancel();
+            mScaleAnimator.cancel();
+            mAlphaAnimator.cancel();
+            mPositionAnimator.cancel();
+        }
+
 		setRotation(0);
 		setScale(new PointF(1.0f, 1.0f));
 	}

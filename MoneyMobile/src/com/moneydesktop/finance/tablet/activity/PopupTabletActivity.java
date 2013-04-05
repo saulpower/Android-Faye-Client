@@ -228,11 +228,11 @@ public class PopupTabletActivity extends DialogBaseActivity implements OnKeyboar
         mWidth = UiUtils.getDynamicPixels(this, 350);
         
         switch (fragment) {
-            case POPUP_CATEGORIES:
+            case CATEGORIES:
                 return CategoriesFragment.newInstance(getIntent().getLongExtra(Constant.EXTRA_ID, -1));
-            case POPUP_TAGS:
+            case TAGS:
                 return TagsFragment.newInstance(getIntent().getLongExtra(Constant.EXTRA_ID, -1));
-            case POPUP_CALENDAR:
+            case CALENDAR:
                 return CalendarFragment.newInstance(getIntent().getLongExtra(Constant.EXTRA_ID, -1));
             default:
                 dismissPopup();

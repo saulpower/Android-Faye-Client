@@ -47,8 +47,6 @@ public class DashboardHandsetActivity extends DashboardBaseActivity implements O
 	public static final String TAG = "DashboardActivity";
 	
 	private static final String STATE_MENUDRAWER = "menuDrawer";
-
-	private static final int DEFAULT_FRAGMENTS = 8;
 	
 	private ViewFlipper mMenuFlipper;
 	private ViewAnimator mFlipper;

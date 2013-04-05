@@ -29,6 +29,7 @@ public class Preferences {
 	public static final String KEY_IS_LARGE_TABLET = "md_large_tablet";
 	public static final String KEY_IS_TABLET = "md_tablet";
     public static final String KEY_SHOW_TIPS = "md_tips";
+    public static final String KEY_CRASH = "md_crash";
 
 	private static final String PASSWORD = "m0n3y_d3skt0p";
 

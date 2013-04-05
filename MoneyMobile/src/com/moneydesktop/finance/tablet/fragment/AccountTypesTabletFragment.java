@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Point;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -38,17 +38,21 @@ import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.adapter.ExpandableListViewAdapter;
 import com.moneydesktop.finance.util.DialogUtils;
 import com.moneydesktop.finance.util.UiUtils;
+import com.moneydesktop.finance.views.HelpView;
 import com.moneydesktop.finance.views.PopupWindowAtLocation;
 import com.moneydesktop.finance.views.SlidingDrawerRightSide;
 import com.moneydesktop.finance.views.navigation.NavBarButtons;
 import de.greenrobot.event.EventBus;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class AccountTypesTabletFragment extends AccountTypesFragment {
 	
     private ExpandableListView mListView;
-    private static SlidingDrawerRightSide sRightDrawer;
+    private SlidingDrawerRightSide mRightDrawer;
     private View mFooter;
     private PopupWindowAtLocation mPopup;
     private List<Bank> mBanksForDeletion;
@@ -85,8 +89,8 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
 		mRoot = inflater.inflate(R.layout.tablet_account_types, null);
 		mFooter = inflater.inflate(R.layout.account_type_list_footer, null);
 		mListView = (ExpandableListView) mRoot.findViewById(R.id.accounts_expandable_list_view);
-		sRightDrawer = (SlidingDrawerRightSide) mRoot.findViewById(R.id.account_slider);
-		sRightDrawer.open();
+		mRightDrawer = (SlidingDrawerRightSide) mRoot.findViewById(R.id.account_slider);
+		mRightDrawer.open();
 
 		setupView();
 		
@@ -858,9 +862,9 @@ public class AccountTypesTabletFragment extends AccountTypesFragment {
         int width = 300;
 
         mHelpView = new HelpView(mActivity);
-        mHelpView.addHelp(mListView, new Point(-mListView.getWidth() * 2 / 5, -mListView.getHeight() * 9 / 20), HelpView.Direction.RIGHT, 100, R.string.help_accounts_1, width);
-        mHelpView.addHelp(mRightDrawer, new Point(0, -mRightDrawer.getHeight() / 3), HelpView.Direction.LEFT, 150, R.string.help_accounts_2, width);
-        mHelpView.addHelp(mListView.getChildAt(0), new Point(-mListView.getChildAt(0).getWidth() * 9 / 20, mListView.getChildAt(0).getHeight() * 2 / 5), HelpView.Direction.DOWN, 50, R.string.help_accounts_3, width);
+        mHelpView.addHelp(mListView.getChildAt(0), new Point(-mListView.getChildAt(0).getWidth() / 4, 0), HelpView.Direction.RIGHT, 100, R.string.help_accounts_1, width);
+        mHelpView.addHelp(mRightDrawer, new Point(0, -mRightDrawer.getHeight() / 4), HelpView.Direction.LEFT, 150, R.string.help_accounts_2, width);
+        mHelpView.addHelp(mListView.getChildAt(1), new Point(-mListView.getChildAt(1).getWidth() * 9 / 20, mListView.getChildAt(1).getHeight() / 4), HelpView.Direction.DOWN, 50, R.string.help_accounts_3, width);
 
         return mHelpView;
     }

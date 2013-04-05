@@ -84,7 +84,7 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
     private int[] mPreviousColors;
     private float[] mTransitionOffsets;
 
-    private ArgbEvaluator colorEvaluator;
+    private ArgbEvaluator mColorEvaluator;
 
     private int mDirection = 1;
     private float mOffset = 0f;
@@ -156,7 +156,7 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
         mPopupWidth = (int) UiUtils.getDynamicPixels(getContext(), POPUP_WIDTH);
         mPopupHeight = (int) UiUtils.getDynamicPixels(getContext(), POPUP_HEIGHT);
 
-        colorEvaluator = new ArgbEvaluator();
+        mColorEvaluator = new ArgbEvaluator();
         mInterpolator = new DecelerateInterpolator();
 
         invalidate();
@@ -571,7 +571,7 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
 
                     float percent = (float) (AnimationUtils.currentAnimationTimeMillis() - mLongStart) / (float) ViewConfiguration.getLongPressTimeout() * 0.75f;
 
-                    Integer color = (Integer) colorEvaluator.evaluate(percent, mStartColor, Color.WHITE);
+                    Integer color = (Integer) mColorEvaluator.evaluate(percent, mStartColor, Color.WHITE);
 
                     BarView bar = (BarView) getChildAt(mSelectedIndex);
                     bar.setBarColor(color);
@@ -854,7 +854,7 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
         float change = (model.getAmount() - previous) * percent;
 
         int currentColor = model.getColors().getColorForState(barView.getDrawableState(), model.getColor());
-        Integer color = (Integer) colorEvaluator.evaluate(percent, mPreviousColors[index], currentColor);
+        Integer color = (Integer) mColorEvaluator.evaluate(percent, mPreviousColors[index], currentColor);
 
         barView.setBarAmount(previous + change);
         barView.setBarColor(color.intValue());
@@ -1003,7 +1003,7 @@ public class BarChartView extends AdapterView<BaseBarAdapter> implements BarDril
         // Select the first bar with a non-zero amount
         int position = mAdapter.getCount() - 1;
 
-        while (mAdapter.getBarModel(position).getAmount() == 0 && position >= 0) {
+        while (mAdapter.getBarModel(position).getAmount() == 0 && position > 0) {
             position--;
         }
 

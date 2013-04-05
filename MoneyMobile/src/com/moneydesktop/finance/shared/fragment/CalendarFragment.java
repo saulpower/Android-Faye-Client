@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.flurry.android.FlurryAgent;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.DataController;
@@ -35,7 +36,7 @@ public class CalendarFragment extends PopupFragment {
 
 	@Override
 	public FragmentType getType() {
-		return FragmentType.POPUP_CALENDAR;
+		return FragmentType.CALENDAR;
 	}
 
     @Override
@@ -49,6 +50,9 @@ public class CalendarFragment extends PopupFragment {
 
         setupView();
         setupCalendar();
+
+        // Log the user has set the date of a transaction
+        FlurryAgent.logEvent("" + getType());
         
         return mRoot;
     }

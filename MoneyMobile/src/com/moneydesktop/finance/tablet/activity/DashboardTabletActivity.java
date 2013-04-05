@@ -20,7 +20,6 @@ import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Preferences;
 import com.moneydesktop.finance.data.SyncEngine;
-import com.moneydesktop.finance.model.EventMessage.NavigationEvent;
 import com.moneydesktop.finance.model.User;
 import com.moneydesktop.finance.shared.activity.DashboardBaseActivity;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
@@ -57,7 +56,7 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
 		
 		if (mNavigation.isShowing()) {
 			
-			toggleNavigation();
+			mNavigation.toggleNav();
 			return;
 			
 		} else if (mFragment != null && mFragment.onBackPressed()) {
@@ -130,17 +129,17 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
                     setupTitleBar();
                 }
             });
-        }
 
-        mPager.post(new Runnable() {
-            @Override
-            public void run() {
+            mPager.post(new Runnable() {
+                @Override
+                public void run() {
 
-                if (Preferences.getBoolean(Preferences.KEY_SHOW_TIPS, true)) {
-                    DialogUtils.showHelp(DashboardTabletActivity.this, getHelpView());
+                    if (Preferences.getBoolean(Preferences.KEY_SHOW_TIPS, true)) {
+                        DialogUtils.showHelp(DashboardTabletActivity.this, getHelpView());
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void setupDashboard() {
@@ -172,13 +171,6 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
             mNavTitle.setText(titleString);
         }
     }
-    
-	public void onEvent(NavigationEvent event) {
-		
-		if (event.getToggleNavigation() != null) {
-			toggleNavigation();
-		}
-	}
 
 	private void setupView() {
 		
@@ -254,15 +246,6 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
         });
     }
 	
-	public void toggleNavigation() {
-		
-		if (!mNavigation.isShowing()) {
-			mNavigation.showNav();
-		} else {
-			mNavigation.hideNav();
-		}
-	}
-	
 	public void showDropdownFragment(FragmentType fragment) {
 
 	    Intent i = new Intent(this, DropDownTabletActivity.class);
@@ -306,6 +289,8 @@ public class DashboardTabletActivity extends DashboardBaseActivity implements on
     private HelpView getHelpView() {
 
         View root = mPager.getChildAt(mPager.getCurrentItem());
+
+        if (root == null) return null;
 
         switch (mPager.getCurrentItem()) {
             case 0:

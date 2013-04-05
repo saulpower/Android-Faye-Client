@@ -17,9 +17,9 @@
     <orderEntry type="module" module-name="MenuDrawerLibrary" />
     <orderEntry type="module" module-name="ViewPagerIndicator" />
     <orderEntry type="library" name="libs" level="project" />
-    <orderEntry type="module" module-name="android-websockets" />
-    <orderEntry type="module" module-name="main" />
-    <orderEntry type="module" module-name="TimesSquare" />
+    <orderEntry type="module" module-name="android-times-square" />
+    <orderEntry type="module" module-name="Communication" />
+    <orderEntry type="module" module-name="FayeClient" />
   </component>
 </module>
 

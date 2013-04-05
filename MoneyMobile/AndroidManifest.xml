@@ -23,8 +23,6 @@
         <service android:name=".shared.Services.SyncService" />
         <service android:name=".shared.Services.WebSocketService" />
         
-        <activity android:name="com.crittercism.NotificationActivity" />
-        
         <activity
             android:name=".shared.activity.DebugActivity"
             android:screenOrientation="portrait" />

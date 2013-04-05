@@ -43,7 +43,7 @@ public class SpendingChartSummaryHandsetFragment extends GrowFragment {
 
 	@Override
 	public FragmentType getType() {
-		return null;
+		return FragmentType.SPENDING_SUMMARY;
 	}
 	
 	@Override

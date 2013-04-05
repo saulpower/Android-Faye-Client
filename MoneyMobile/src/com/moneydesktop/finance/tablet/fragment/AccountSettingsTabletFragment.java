@@ -3,13 +3,9 @@ package com.moneydesktop.finance.tablet.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import com.moneydesktop.finance.ApplicationContext;
@@ -17,12 +13,10 @@ import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.SlideFrom;
-import com.moneydesktop.finance.data.Util;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.AccountTypeDao;
 import com.moneydesktop.finance.database.BankAccount;
 import com.moneydesktop.finance.database.BankAccountDao;
-import com.moneydesktop.finance.model.EventMessage;
 import com.moneydesktop.finance.shared.Services.SyncService;
 import com.moneydesktop.finance.shared.fragment.BaseFragment;
 import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
@@ -31,14 +25,9 @@ import com.moneydesktop.finance.util.Fonts;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.LabelEditCurrency;
 import com.moneydesktop.finance.views.SlidingView;
-import crittercism.android.d;
-import de.greenrobot.event.EventBus;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
-import java.util.Locale;
 
 
 public class AccountSettingsTabletFragment extends BaseFragment {

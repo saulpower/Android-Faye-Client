@@ -1,10 +1,9 @@
 package com.moneydesktop.finance.exception;
 
-import android.content.Intent;
 import android.util.Log;
-
-import com.moneydesktop.finance.ApplicationContext;
-import com.moneydesktop.finance.SplashActivity;
+import com.flurry.android.FlurryAgent;
+import com.moneydesktop.finance.data.DataController;
+import com.moneydesktop.finance.data.Preferences;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 
@@ -21,11 +20,15 @@ public class CustomExceptionHandler implements UncaughtExceptionHandler {
     }
 
     public void uncaughtException(Thread t, Throwable e) {
-    	
+
         Log.e(TAG, "Error", e);
-        
-    	Intent i = new Intent(ApplicationContext.getContext(), SplashActivity.class);
-		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		ApplicationContext.getContext().startActivity(i);
+
+        String errorId = DataController.createRandomGuid();
+
+        Preferences.saveString(Preferences.KEY_CRASH, errorId);
+
+        FlurryAgent.onError(errorId, e.getMessage(), Log.getStackTraceString(e));
+
+        android.os.Process.killProcess(android.os.Process.myPid());
     }
 }

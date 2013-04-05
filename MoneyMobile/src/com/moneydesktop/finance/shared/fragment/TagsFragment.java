@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import com.flurry.android.FlurryAgent;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.data.Constant;
 import com.moneydesktop.finance.data.Enums.FragmentType;
@@ -69,7 +70,7 @@ public class TagsFragment extends PopupFragment {
 
 	@Override
 	public FragmentType getType() {
-		return null;
+		return FragmentType.TAGS;
 	}
 
     @Override
@@ -91,6 +92,9 @@ public class TagsFragment extends PopupFragment {
         
         loadAnimations();
         setupView();
+
+        // Log the user has set the tag of a transaction
+        FlurryAgent.logEvent("" + getType());
         
         return mRoot;
     }

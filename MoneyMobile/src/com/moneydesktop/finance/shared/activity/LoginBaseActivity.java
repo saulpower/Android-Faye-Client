@@ -467,18 +467,20 @@ public abstract class LoginBaseActivity extends BaseActivity {
     }
 
     private void signup() {
+
         if (signupCheck() && EmailUtils.validateEmail(mSignupEmail.getText().toString())) {
             submit();
         }
 
         else if (!signupCheck()) {
-            DialogUtils.alertDialog(getString(R.string.error_title),
-                    getString(R.string.error_login_incomplete), this, null);
-        }
 
-        else if (!EmailUtils.validateEmail(mSignupEmail.getText().toString())) {
-            DialogUtils.alertDialog(getString(R.string.error_title),
-                    getString(R.string.error_email_invalid), this, null);
+            DialogUtils.alertDialog(getString(R.string.error_title), getString(R.string.error_login_incomplete),
+                    this, null);
+
+        } else if (!EmailUtils.validateEmail(mSignupEmail.getText().toString())) {
+
+            DialogUtils.alertDialog(getString(R.string.error_title), getString(R.string.error_email_invalid), this,
+                    null);
         }
     }
 
@@ -509,13 +511,14 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
             return;
         }
-        if (!EmailUtils.validateEmail(mUsername.getText().toString()))
-        {
+
+        if (!EmailUtils.validateEmail(mUsername.getText().toString())) {
             mPassword.setText("");
             DialogUtils.alertDialog(getString(R.string.error_title),
                     getString(R.string.error_email_invalid), this, null);
             return;
         }
+
         if (loginCheck()) {
 
             authenticate();
@@ -563,8 +566,7 @@ public abstract class LoginBaseActivity extends BaseActivity {
 
                 try {
 
-                    dataBridge.authenticateUser(mUsername.getText().toString(), mPassword.getText()
-                            .toString());
+                    dataBridge.authenticateUser(mUsername.getText().toString(), mPassword.getText().toString());
 
                 } catch (Exception e) {
 
@@ -668,5 +670,4 @@ public abstract class LoginBaseActivity extends BaseActivity {
     public String getActivityTitle() {
         return null;
     }
-
 }

@@ -1,6 +1,8 @@
 package com.moneydesktop.finance.util;
 
+import android.os.Debug;
 import android.util.Log;
+import android.view.animation.AnimationUtils;
 
 public class PerformanceUtils {
     
@@ -14,20 +16,23 @@ public class PerformanceUtils {
 		sCount++;
 		
 		if (sFrameStart == 0) {
-			sFrameStart = System.currentTimeMillis();
-		} else if (System.currentTimeMillis() - sFrameStart >= 1000) {
+			sFrameStart = AnimationUtils.currentAnimationTimeMillis();
+		} else if (AnimationUtils.currentAnimationTimeMillis() - sFrameStart >= 1000) {
 			Log.i(TAG, "FPS: " + sCount);
-			sFrameStart = System.currentTimeMillis();
+			sFrameStart = AnimationUtils.currentAnimationTimeMillis();
 			sCount = 0;
 		}
 	}
 	
-	public static void start() {
-		sStart = System.currentTimeMillis();
+	public static void start(String traceName) {
+        Debug.startMethodTracing(traceName);
+		sStart = AnimationUtils.currentAnimationTimeMillis();
 	}
 	
 	public static void finish() {
-		long total = System.currentTimeMillis() - sStart;
-		Log.i(TAG, "Time: " + total);
+		long total = AnimationUtils.currentAnimationTimeMillis() - sStart;
+        Log.i(TAG, "Time: " + total);
+
+        Debug.stopMethodTracing();
 	}
 }

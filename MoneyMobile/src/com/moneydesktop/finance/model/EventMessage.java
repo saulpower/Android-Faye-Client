@@ -1,16 +1,12 @@
 package com.moneydesktop.finance.model;
 
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.view.MotionEvent;
 import com.moneydesktop.finance.data.Enums.FragmentType;
 import com.moneydesktop.finance.data.Enums.LockType;
-import com.moneydesktop.finance.data.Enums.NavDirection;
 import com.moneydesktop.finance.database.AccountType;
 import com.moneydesktop.finance.database.Bank;
 import com.moneydesktop.finance.database.PowerQuery;
 import com.moneydesktop.finance.views.AnchorView;
-import com.moneydesktop.finance.views.BarView;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -199,41 +195,14 @@ public class EventMessage {
             return ((mGroupPosition << 8) + mChildPosition);
         }
 	}
-	
-	public class NavigationButtonEvent extends EventMessage {}
+
 	public class NavigationEvent extends EventMessage {
 		
 		protected Boolean mShowing;
-		protected NavDirection mDirection;
-		protected Boolean mMovingHome;
-		protected Boolean mToggleNavigation;
 		protected FragmentType mType;
-		
-		public Boolean getMovingHome() {
-			return mMovingHome;
-		}
-
-		public void setMovingHome(Boolean mMovingHome) {
-			this.mMovingHome = mMovingHome;
-			this.mToggleNavigation = null;
-		}
-
-		public NavigationEvent() {
-			this.mToggleNavigation = true;
-		}
-		
-		public NavigationEvent(FragmentType type) {
-			mType = type;
-		}
 		
 		public NavigationEvent(boolean showing) {
 			this.mShowing = showing;
-			this.mDirection = null;
-		}
-		
-		public NavigationEvent(NavDirection direction) {
-			this.mShowing = null;
-			this.mDirection = direction;
 		}
 		
 		public FragmentType getType() {
@@ -243,42 +212,24 @@ public class EventMessage {
 		public Boolean isShowing() {
 			return mShowing;
 		}
-		
-		public Boolean getToggleNavigation() {
-			return mToggleNavigation;
-		}
-		
-		public NavDirection getDirection() {
-			return mDirection;
-		}
 	}
 
-    public class ParentAnimationEvent extends EventMessage {
-        protected Boolean mOutAnimation;
-        protected Boolean mFinished;
-        protected boolean mIsNav = false;
+    public class VisibilityEvent extends EventMessage {
 
-        public ParentAnimationEvent(boolean outAnimation, boolean finished) {
-            mOutAnimation = outAnimation;
-            mFinished = finished;
+        private FragmentType mType;
+        private boolean mVisible;
+
+        public VisibilityEvent(FragmentType type, boolean visible) {
+            mType = type;
+            mVisible = visible;
         }
-        
-        public ParentAnimationEvent(boolean outAnimation, boolean finished, boolean isNav) {
-            mOutAnimation = outAnimation;
-            mFinished = finished;
-            mIsNav = isNav;
+
+        public FragmentType getType() {
+            return mType;
         }
-        
-        public boolean isNavigation() {
-            return mIsNav;
-        }
-        
-        public boolean isOutAnimation() {
-            return mOutAnimation;
-        }
-        
-        public boolean isFinished() {
-            return mFinished;
+
+        public boolean isVisible() {
+            return mVisible;
         }
     }
 	
@@ -298,40 +249,6 @@ public class EventMessage {
 			this.mFinished = finished;
 		}
 	}
-    public class GraphDataZoomEvent extends EventMessage {
-        private long mStartDate;
-        private int mType;
-
-        public long getDate() {
-            return mStartDate;
-        }
-
-        public void setDate(long d) {
-            mStartDate = d;
-        }
-
-        public int getType() {
-            return mType;
-        }
-
-        public void setType(int type) {
-            this.mType = type;
-        }
-
-    }
-
-    public class GraphBarTouchEvent extends EventMessage {
-        private MotionEvent mMotion;
-        private BarView mBar;
-
-        public void setBar(BarView v) {
-            mBar = v;
-        }
-
-        public BarView getBar() {
-            return mBar;
-        }
-    }
 
     public class BankStatusUpdateEvent extends EventMessage {
         

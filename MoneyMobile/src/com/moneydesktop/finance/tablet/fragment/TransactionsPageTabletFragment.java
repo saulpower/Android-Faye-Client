@@ -33,6 +33,7 @@ import com.moneydesktop.finance.tablet.activity.DropDownTabletActivity;
 import com.moneydesktop.finance.tablet.activity.PopupTabletActivity;
 import com.moneydesktop.finance.util.DateRange;
 import com.moneydesktop.finance.util.Fonts;
+import com.moneydesktop.finance.util.PerformanceUtils;
 import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.*;
 
@@ -321,7 +322,9 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
     }
 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        
+
+        PerformanceUtils.start("details");
+
         Transactions transaction = (Transactions) parent.getItemAtPosition(position);
         
         if (transaction != null && mParent != null) {
@@ -347,7 +350,7 @@ public class TransactionsPageTabletFragment extends TransactionsFragment impleme
         Intent intent = new Intent(getActivity(), PopupTabletActivity.class);
         intent.putExtra(Constant.EXTRA_POSITION_X, adjustedX);
         intent.putExtra(Constant.EXTRA_POSITION_Y, adjustedY);
-        intent.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.POPUP_CATEGORIES);
+        intent.putExtra(Constant.EXTRA_FRAGMENT, FragmentType.CATEGORIES);
         intent.putExtra(Constant.EXTRA_ID, transaction.getId());
         
         startActivity(intent);

@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
-
-import com.crittercism.app.Crittercism;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +24,6 @@ import com.moneydesktop.finance.model.EventMessage.LoginEvent;
 import com.moneydesktop.finance.model.EventMessage.LogoutEvent;
 import com.moneydesktop.finance.shared.Services.WebSocketService;
 import com.moneydesktop.finance.shared.activity.BaseActivity;
-
 import de.greenrobot.event.EventBus;
 
 public class ApplicationContext extends Application {
@@ -72,7 +69,6 @@ public class ApplicationContext extends Application {
 	public void onCreate() {
 		super.onCreate();
 
-        Crittercism.init(this, "50258d166c36f91a1b000004");
         Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler());
 
         startFayeClient();
@@ -90,7 +86,7 @@ public class ApplicationContext extends Application {
 	@Override
 	public void onTerminate() {
 		super.onTerminate();
-		
+
 		EventBus.getDefault().unregister(this);
 
 		stopFayeClient();

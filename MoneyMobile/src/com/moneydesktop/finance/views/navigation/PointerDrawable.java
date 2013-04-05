@@ -2,6 +2,7 @@ package com.moneydesktop.finance.views.navigation;
 
 import android.content.Context;
 import android.graphics.*;
+import android.view.animation.AnticipateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.util.UiUtils;
@@ -101,17 +102,17 @@ public class PointerDrawable extends NavItemDrawable {
         reset();
 
         mAlphaAnimator = ThreadAnimator.ofInt(0, 255);
-        mAlphaAnimator.setDuration(150);
+        mAlphaAnimator.setDuration(250);
 		
 		PointF orig = new PointF(0.0f, 0.0f);
 		PointF bigger = new PointF(1.0f, 1.0f);
 
         mScaleAnimator = ThreadAnimator.ofPoint(orig, bigger);
-        mScaleAnimator.setInterpolator(new OvershootInterpolator(2.0f));
+        mScaleAnimator.setInterpolator(new OvershootInterpolator(2.5f));
         mScaleAnimator.setDuration(500);
 
-        mAlphaAnimator.start(100);
-        mScaleAnimator.start(100);
+        mAlphaAnimator.start(300);
+        mScaleAnimator.start(300);
 	}
 	
 	@Override
@@ -124,7 +125,7 @@ public class PointerDrawable extends NavItemDrawable {
 		PointF smaller = new PointF(0.0f, 0.0f);
 
         mScaleAnimator = ThreadAnimator.ofPoint(orig, smaller);
-        mScaleAnimator.setInterpolator(new OvershootInterpolator(2.0f));
+        mScaleAnimator.setInterpolator(new AnticipateInterpolator());
         mScaleAnimator.setDuration(500);
 
         mAlphaAnimator.start();

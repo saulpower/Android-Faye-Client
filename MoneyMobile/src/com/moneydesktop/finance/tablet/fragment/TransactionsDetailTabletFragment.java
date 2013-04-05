@@ -63,7 +63,7 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
 
 	@Override
 	public FragmentType getType() {
-		return null;
+		return FragmentType.TRANSACTION_DETAIL;
 	}
     
     @Override
@@ -94,7 +94,7 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
     }
     
     public void viewShowing() {
-        
+
         initializeContainer();
 
         mMenu.postDelayed(new Runnable() {
@@ -283,19 +283,19 @@ public class TransactionsDetailTabletFragment extends TransactionDetailBaseFragm
     
     private void showCategoryPopup(View view) {
         
-        showPopup(FragmentType.POPUP_CATEGORIES, view, mTransaction.getId());
+        showPopup(FragmentType.CATEGORIES, view, mTransaction.getId());
     }
     
     private void showTagPopup(View view) {
         
-        showPopup(FragmentType.POPUP_TAGS, view, mTransaction.getBusinessObjectId());
+        showPopup(FragmentType.TAGS, view, mTransaction.getBusinessObjectId());
     }
 
     @Override
     protected void selectDate(View view) {
 
         view.setSelected(true);
-        showPopup(FragmentType.POPUP_CALENDAR, view, mTransaction.getId());
+        showPopup(FragmentType.CALENDAR, view, mTransaction.getId());
     }
     
     private void showPopup(FragmentType type, View view, long id) {

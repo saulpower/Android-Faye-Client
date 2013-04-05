@@ -125,7 +125,15 @@
     <string name="category_search">Start typing to search for a category</string>
     <string name="credentials">Credentials</string>
     <string name="connect">Connect</string>
-    <string name="connecting">Connecting to bank</string>    
+    <string name="connecting">Connecting to bank</string>
+    <string name="crash_title">Crash Detected</string>
+    <string name="crash_message">Something seems to have gone wrong! To improve our app and better server you would
+        you mind providing a brief description of what happened when the app crashed?</string>
+    <string name="crash_yes">Report</string>
+    <string name="crash_no">Ignore</string>
+    <string name="crash_email_subject">MoneyMobile Android Crash Report - </string>
+    <string name="crash_email_text">When the app crashed I was:\n\n</string>
+    <string name="crash_email_address">android@moneydesktop.com</string>
     <string name="ct_asst">Asset</string>
     <string name="ct_bal">Balance</string>
     <string name="ct_equity">Equity</string>

@@ -14,6 +14,8 @@ import com.moneydesktop.finance.util.UiUtils;
 import com.moneydesktop.finance.views.Dynamics;
 import com.moneydesktop.finance.views.FrictionDynamics;
 import com.moneydesktop.finance.views.piechart.ThreadAnimator;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.ObjectAnimator;
 import de.greenrobot.event.EventBus;
 
 import java.util.ArrayList;
@@ -83,7 +85,7 @@ public class NavWheelView extends SurfaceView implements SurfaceHolder.Callback 
     private float mPixelDensity;
 
     /** Animator objects used to animate the rotation, scale, and info panel */
-    private ThreadAnimator mRotateAnimator, mAlphaAnimator;
+    private ThreadAnimator mRotateAnimator;
 	
 	private PointF mCenter;
 
@@ -94,8 +96,6 @@ public class NavWheelView extends SurfaceView implements SurfaceHolder.Callback 
 	private List<Integer> mItems;
 
 	private Paint mBackgroundPaint;
-
-    private Color mBackgroundColor;
 
 	private PointerDrawable mPointer;
 
@@ -120,6 +120,7 @@ public class NavWheelView extends SurfaceView implements SurfaceHolder.Callback 
 
 	public void setBackgroundAlpha(int mAlpha) {
 		mBackgroundPaint.setAlpha(mAlpha);
+        invalidate();
 	}
 
 	public void setItems(List<Integer> items) {
@@ -193,6 +194,10 @@ public class NavWheelView extends SurfaceView implements SurfaceHolder.Callback 
         mRotatingClockwise = (change > 0 && Math.abs(change) < 300) || (Math.abs(change) > 300 && mRotatingClockwise);
     }
 
+    public boolean getRotatingClockwise() {
+        return mRotatingClockwise;
+    }
+
     /**
      * Sets the currently selected index item and rotates
      * the cursor to point at that item.
@@ -235,6 +240,8 @@ public class NavWheelView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     private void init() {
+
+        setWillNotDraw(false);
 
         mHandler = new Handler();
 
@@ -426,6 +433,15 @@ public class NavWheelView extends SurfaceView implements SurfaceHolder.Callback 
 	private void growIcon(NavItemDrawable item) {
 		item.popIcon();
 	}
+
+    public void toggleNav() {
+
+        if (!isShowing()) {
+            showNav();
+        } else {
+            hideNav();
+        }
+    }
 	
 	/**
 	 * Show the navigation wheel on screen with the appropriate animations
@@ -433,10 +449,11 @@ public class NavWheelView extends SurfaceView implements SurfaceHolder.Callback 
 	public void showNav() {
 
 	    mShowing = true;
+        mHomeButton.setShowSlider(true);
 
-        mAlphaAnimator = ThreadAnimator.ofInt(0, ALPHA);
-        mAlphaAnimator.setDuration(250);
-        mAlphaAnimator.start();
+        ObjectAnimator fade = ObjectAnimator.ofInt(this, "backgroundAlpha", 0, ALPHA);
+        fade.setDuration(250);
+        fade.start();
 		
 		for (NavItemDrawable item : mDrawables) {
 			item.playIntro();
@@ -451,49 +468,52 @@ public class NavWheelView extends SurfaceView implements SurfaceHolder.Callback 
 	 */
 	public void hideNav() {
 
-        mHandler.post(new Runnable() {
-
-            @Override
-            public void run() {
-                EventBus.getDefault().post(new EventMessage().new NavigationButtonEvent());
-            }
-        });
+        mHomeButton.setShowSlider(false);
 
         mShowing = false;
 
-        mAlphaAnimator = ThreadAnimator.ofInt(ALPHA, 0);
-        mAlphaAnimator.setDuration(250);
-        mAlphaAnimator.setAnimationListener(new ThreadAnimator.AnimationListener() {
+        ObjectAnimator fade = ObjectAnimator.ofInt(this, "backgroundAlpha", ALPHA, 0);
+        fade.setDuration(250);
+        fade.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+            }
 
             @Override
-            public void onAnimationEnded() {
+            public void onAnimationEnd(Animator animation) {
+
+                // Update any mOnNavigationChangeListener of the index change
+                if (mOnNavigationChangeListener != null) {
+
+                    mHandler.post(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            mOnNavigationChangeListener.onNavigationChanged(mCurrentIndex);
+                        }
+                    });
+                }
 
                 mHandler.post(new Runnable() {
-
                     @Override
                     public void run() {
-                        // Notify the system the navigation is no longer showing
                         EventBus.getDefault().post(new EventMessage().new NavigationEvent(false));
                     }
                 });
             }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+            }
         });
-        mAlphaAnimator.start();
+        fade.start();
 		
 		for (NavItemDrawable item : mDrawables) {
 			item.playOutro(mCurrentIndex);
-		}
-
-		// Update any mOnNavigationChangeListener of the index change
-		if (mOnNavigationChangeListener != null) {
-
-            mHandler.post(new Runnable() {
-
-                @Override
-                public void run() {
-                    mOnNavigationChangeListener.onNavigationChanged(mCurrentIndex);
-                }
-            });
 		}
 	}
 
@@ -755,7 +775,7 @@ public class NavWheelView extends SurfaceView implements SurfaceHolder.Callback 
     /**
      * Snaps the piechart rotation to a given snap degree
      */
-    private void snapTo() {
+    public void snapTo() {
         snapTo(true);
     }
 
@@ -818,7 +838,14 @@ public class NavWheelView extends SurfaceView implements SurfaceHolder.Callback 
 
                 if (mClicked) {
                     mClicked = false;
-                    hideNav();
+
+                    mHandler.post(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            hideNav();
+                        }
+                    });
                 }
             }
         });
@@ -840,22 +867,26 @@ public class NavWheelView extends SurfaceView implements SurfaceHolder.Callback 
 
 	@Override
 	protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        // Draw the pointer and background
+        canvas.drawColor(mBackgroundPaint.getColor());
+	}
+
+    private void doDraw(Canvas canvas) {
 
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
         updateAnimators();
 
-        // Draw the pointer and background
-        canvas.drawColor(mBackgroundPaint.getColor());
-
         mHomeButton.draw(canvas);
-		mPointer.draw(canvas);
-		
-		// Draw all of the navigation items
-		for (NavItemDrawable item : mDrawables) {
-			item.draw(canvas);
+        mPointer.draw(canvas);
+
+        // Draw all of the navigation items
+        for (NavItemDrawable item : mDrawables) {
+            item.draw(canvas);
         }
-	}
+    }
 
     /**
      * Update our animators that control animating the
@@ -865,10 +896,6 @@ public class NavWheelView extends SurfaceView implements SurfaceHolder.Callback 
 
         if (mRotateAnimator != null && mRotateAnimator.isRunning()) {
             setRotationDegree(mRotateAnimator.floatUpdate());
-        }
-
-        if (mAlphaAnimator != null && mAlphaAnimator.isRunning()) {
-            setBackgroundAlpha(mAlphaAnimator.intUpdate());
         }
     }
 
@@ -1031,7 +1058,7 @@ public class NavWheelView extends SurfaceView implements SurfaceHolder.Callback 
 
                         if (canvas != null && !mPaused) {
 
-                            onDraw(canvas);
+                            doDraw(canvas);
                         }
                     }
 

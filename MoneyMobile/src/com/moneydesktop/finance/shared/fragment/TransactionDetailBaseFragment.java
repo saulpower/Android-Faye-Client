@@ -13,6 +13,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView.OnEditorActionListener;
+import com.flurry.android.FlurryAgent;
 import com.moneydesktop.finance.ApplicationContext;
 import com.moneydesktop.finance.R;
 import com.moneydesktop.finance.animation.AnimationFactory;
@@ -345,6 +346,9 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
             return;
         }
 
+        // Log the user has looked at a transactions' details
+        FlurryAgent.logEvent("" + getType());
+
         mDao = (TransactionsDao) DataController.getDao(Transactions.class);
         mTransaction = mDao.load(guid);
         
@@ -371,7 +375,9 @@ public abstract class TransactionDetailBaseFragment extends BaseFragment {
         mFlagged.setChecked(isFlagged);
 
         boolean income = mTransaction.getTransactionType() == 1;
-        String amount = (income ? "(" : "") + mFormatter.format(mTransaction.normalizedAmount()) + (income ? ")" : "");
+        mAmount.setIsIncome(income);
+
+        String amount = mFormatter.format(mTransaction.normalizedAmount());
 
         if (isUpdate) {
 

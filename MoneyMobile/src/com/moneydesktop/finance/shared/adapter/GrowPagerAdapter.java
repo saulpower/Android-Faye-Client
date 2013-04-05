@@ -4,6 +4,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import com.flurry.android.FlurryAgent;
 import com.moneydesktop.finance.shared.fragment.GrowFragment;
 import com.moneydesktop.finance.views.GrowViewPager;
 import com.moneydesktop.finance.views.GrowViewPager.OnScrollChangedListener;
@@ -54,6 +55,11 @@ public abstract class GrowPagerAdapter extends FragmentPagerAdapter implements O
 
     @Override
     public void onPageScrollStateChanged(int state) {
+
+        // Log the summary screen the user is viewing
+        if (state == ViewPager.SCROLL_STATE_IDLE) {
+            FlurryAgent.logEvent("" + mFragments[getCurrentPage()].getType());
+        }
 
         if (mDisablePaging && mPager != null && state == ViewPager.SCROLL_STATE_IDLE) {
             mPager.setPagingEnabled(false);
