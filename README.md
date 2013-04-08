@@ -1,21 +1,14 @@
-# Faye Client for Android
+# Faye client for Android
 
-A simple Faye client for Android. Supports Android 2.1 (Eclair / API 7) and up.  There is a bug in Android 2.1/2.2 that causes issues with SSL connections. 
+A simple Faye client for Android.
 
 ## Credits
 
-### Faye
-Faye is a simple JSON based Pub-Sub server which has support for node.js and Ruby (using Rack).
+The hybi parser is based on code from the [faye project](https://github.com/faye/faye-websocket-node). Faye is Copyright (c) 2009-2012 James Coglan. Many thanks for the great open-source library!
 
-Check out the [Faye project](http://faye.jcoglan.com) for more information.
+Websockets ported from JavaScript to Java by [Eric Butler](https://twitter.com/codebutler) <eric@codebutler.com>.
 
-### Android Websockets
-The hybi parser is based on code from the [faye project](https://github.com/faye/faye-websocket-node).
-
-Websockets ported from JavaScript to Java by [Eric Butler](eric@codebutler.com).
-
-### FayeObjC
-Faye client ported from Paul Crawford's [FayeObjC](https://github.com/pcrawfor/FayeObjC) to Java by [Saul Howard](saulpower1@gmail.com).
+Faye client ported from Objective-C to Java by [Saul Howard](https://twitter.com/Saul_Howard) <saulpower1@gmail.com>.
 
 ## Usage
 
@@ -34,6 +27,9 @@ Here is a some sample code to create the client as a service in Android:
 	
 		@Override
 		protected void onHandleIntent(Intent intent) {
+	
+			// SSL bug in pre-Gingerbread devices makes websockets currently unusable
+			if (android.os.Build.VERSION.SDK_INT <= 8) return;
 			
 			Log.i(TAG, "Starting Web Socket");
 			

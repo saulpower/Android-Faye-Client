@@ -1,5 +1,19 @@
 package com.saulpower.fayeclient;
 
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.text.TextUtils;
+import android.util.Log;
+import org.apache.http.*;
+import org.apache.http.client.HttpResponseException;
+import org.apache.http.message.BasicLineParser;
+import org.apache.http.message.BasicNameValuePair;
+
+import javax.net.SocketFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -10,26 +24,6 @@ import java.security.KeyManagementException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-
-import javax.net.SocketFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-
-import org.apache.http.Header;
-import org.apache.http.HttpException;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpResponseException;
-import org.apache.http.message.BasicLineParser;
-import org.apache.http.message.BasicNameValuePair;
-
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.text.TextUtils;
-import android.util.Log;
 
 public class WebSocketClient {
 	
@@ -92,6 +86,7 @@ public class WebSocketClient {
                     URI origin = new URI(originScheme, "//" + mURI.getHost(), null);
                     
                     SocketFactory factory = mURI.getScheme().equals("wss") ? getSSLSocketFactory() : SocketFactory.getDefault();
+
                     mSocket = factory.createSocket(mURI.getHost(), port);
 
                     String secret = createSecret();
@@ -156,8 +151,7 @@ public class WebSocketClient {
                     mParser.start(stream);
 
                 } catch (EOFException ex) {
-                	
-                	
+
                     Log.e(TAG, "WebSocket EOF!", ex);
                     onError(ex);
 
@@ -203,7 +197,7 @@ public class WebSocketClient {
     }
 
     public void disconnect() {
-    	
+
         if (mSocket != null) {
         	
             mHandler.post(new Runnable() {
@@ -212,8 +206,12 @@ public class WebSocketClient {
                 public void run() {
                 	
                     try {
+
                         mSocket.close();
                         mSocket = null;
+
+                        Log.i(TAG, "socket closed");
+
                     } catch (IOException ex) {
                         Log.e(TAG, "Error while disconnecting", ex);
                         onError(ex);
@@ -299,7 +297,7 @@ public class WebSocketClient {
                             outputStream.flush();
                         }
                         
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         onError(e);
                     }
                 }
@@ -316,10 +314,10 @@ public class WebSocketClient {
     }
 
     private SSLSocketFactory getSSLSocketFactory() throws NoSuchAlgorithmException, KeyManagementException {
-    	
+
         SSLContext context = SSLContext.getInstance("TLS");
         context.init(null, sTrustManagers, null);
-        
+
         return context.getSocketFactory();
     }
 }
