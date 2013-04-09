@@ -105,6 +105,16 @@ Finally, to start the service simply call:
     startService(intent);
 ```
 
+For Maven users:
+
+```xml
+	<dependency>
+		<groupId>com.saulpower.fayeclient</groupId>
+		<artifactId>library</artifactId>
+		<version>1.0</version>
+	</dependency>
+```
+
 ## License
 
 (The MIT License)
