@@ -33,3 +33,4 @@ proguard/
 
 # Maven files
 target/
+settings.xml

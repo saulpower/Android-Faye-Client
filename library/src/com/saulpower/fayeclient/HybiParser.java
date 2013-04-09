@@ -41,7 +41,7 @@ import java.util.List;
 import android.util.Log;
 
 public class HybiParser {
-	
+
     private static final String TAG = "HybiParser";
 
     private WebSocketClient mClient;
@@ -110,11 +110,11 @@ public class HybiParser {
     }
 
     public void start(HappyDataInputStream stream) throws IOException {
-		
+
         while (true) {
-        	
+
             if (stream.available() == -1) break;
-            
+
             switch (mStage) {
                 case 0:
                     parseOpcode(stream.readByte());
@@ -134,14 +134,16 @@ public class HybiParser {
                     emitFrame();
                     mStage = 0;
                     break;
+                default:
+                    break;
             }
         }
-        
+
         mClient.getListener().onDisconnect(0, "EOF");
     }
 
     private void parseOpcode(byte data) throws ProtocolError {
-    	
+
         boolean rsv1 = (data & RSV1) == RSV1;
         boolean rsv2 = (data & RSV2) == RSV2;
         boolean rsv3 = (data & RSV3) == RSV3;
@@ -167,7 +169,7 @@ public class HybiParser {
     }
 
     private void parseLength(byte data) {
-    	
+
         mMasked = (data & MASK) == MASK;
         mLength = (data & LENGTH);
 
@@ -193,15 +195,15 @@ public class HybiParser {
     }
 
     private byte[] frame(byte[] data, int opcode, int errorCode)  {
-        return frame((Object)data, opcode, errorCode);
+        return frame((Object) data, opcode, errorCode);
     }
 
     private byte[] frame(String data, int opcode, int errorCode) {
-        return frame((Object)data, opcode, errorCode);
+        return frame((Object) data, opcode, errorCode);
     }
 
     private byte[] frame(Object data, int opcode, int errorCode) {
-    	
+
         if (mClosed) return null;
 
 //        Log.i(TAG, "Creating frame for: " + data + " op: " + opcode + " err: " + errorCode);
@@ -214,20 +216,20 @@ public class HybiParser {
         int masked = mMasking ? MASK : 0;
         byte[] frame = new byte[length + offset];
 
-        frame[0] = (byte) ((byte)FIN | (byte)opcode);
+        frame[0] = (byte) ((byte) FIN | (byte) opcode);
 
         if (length <= 125) {
-        	
+
             frame[1] = (byte) (masked | length);
-            
+
         } else if (length <= 65535) {
-        	
+
             frame[1] = (byte) (masked | 126);
             frame[2] = (byte) Math.floor(length / 256);
             frame[3] = (byte) (length & BYTE);
-            
+
         } else {
-        	
+
             frame[1] = (byte) (masked | 127);
             frame[2] = (byte) (((int) Math.floor(length / Math.pow(2, 56))) & BYTE);
             frame[3] = (byte) (((int) Math.floor(length / Math.pow(2, 48))) & BYTE);
@@ -241,20 +243,20 @@ public class HybiParser {
 
         if (errorCode > 0) {
             frame[offset] = (byte) (((int) Math.floor(errorCode / 256)) & BYTE);
-            frame[offset+1] = (byte) (errorCode & BYTE);
+            frame[offset + 1] = (byte) (errorCode & BYTE);
         }
-        
+
         System.arraycopy(buffer, 0, frame, offset + insert, buffer.length);
 
         if (mMasking) {
-        	
+
             byte[] mask = {
                 (byte) Math.floor(Math.random() * 256), (byte) Math.floor(Math.random() * 256),
                 (byte) Math.floor(Math.random() * 256), (byte) Math.floor(Math.random() * 256)
             };
-            
+
             System.arraycopy(mask, 0, frame, header, mask.length);
-            
+
             mask(frame, mask, offset);
         }
 
@@ -266,41 +268,41 @@ public class HybiParser {
     }
 
     public void close(int code, String reason) {
-    	
+
         if (mClosed) return;
-        
+
         mClient.send(frame(reason, OP_CLOSE, code));
         mClosed = true;
     }
 
     private void emitFrame() throws IOException {
-    	
+
         byte[] payload = mask(mPayload, mMask, 0);
         int opcode = mOpcode;
 
         if (opcode == OP_CONTINUATION) {
-        	
+
             if (mMode == 0) {
                 throw new ProtocolError("Mode was not set.");
             }
-            
+
             mBuffer.write(payload);
-            
+
             if (mFinal) {
-            	
+
                 byte[] message = mBuffer.toByteArray();
-                
+
                 if (mMode == MODE_TEXT) {
                     mClient.getListener().onMessage(encode(message));
                 } else {
                     mClient.getListener().onMessage(message);
                 }
-                
+
                 reset();
             }
 
         } else if (opcode == OP_TEXT) {
-        	
+
             if (mFinal) {
                 String messageText = encode(payload);
                 mClient.getListener().onMessage(messageText);
@@ -310,7 +312,7 @@ public class HybiParser {
             }
 
         } else if (opcode == OP_BINARY) {
-        	
+
             if (mFinal) {
                 mClient.getListener().onMessage(payload);
             } else {
@@ -319,24 +321,24 @@ public class HybiParser {
             }
 
         } else if (opcode == OP_CLOSE) {
-        	
+
             int    code   = (payload.length >= 2) ? 256 * payload[0] + payload[1] : 0;
             String reason = (payload.length >  2) ? encode(slice(payload, 2))     : null;
-            
+
             Log.i(TAG, "Got close op! " + code + " " + reason);
-            
+
             mClient.getListener().onDisconnect(code, reason);
 
         } else if (opcode == OP_PING) {
-        	
+
             if (payload.length > 125) throw new ProtocolError("Ping payload too large");
-            
+
             Log.i(TAG, "Sending pong!!");
-            
+
             mClient.sendFrame(frame(payload, OP_PONG, -1));
 
         } else if (opcode == OP_PONG) {
-        	
+
             String message = encode(payload);
             // FIXME: Fire callback...
             Log.i(TAG, "Got pong! " + message);
@@ -349,106 +351,107 @@ public class HybiParser {
     }
 
     private String encode(byte[] buffer) {
-    	
+
         try {
-        	
+
             return new String(buffer, "UTF-8");
-            
+
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }
 
     private byte[] decode(String string) {
-    	
+
         try {
-        	
+
             return (string).getBytes("UTF-8");
-            
+
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }
 
     private int getInteger(byte[] bytes) throws ProtocolError {
-    	
+
         long i = byteArrayToLong(bytes, 0, bytes.length);
-        
+
         if (i < 0 || i > Integer.MAX_VALUE) {
             throw new ProtocolError("Bad integer: " + i);
         }
-        
+
         return (int) i;
     }
 
     private byte[] slice(byte[] array, int start) {
         return copyOfRange(array, start, array.length);
     }
-    
+
     private byte[] copyOfRange(byte[] original, int from, int to) {
-    	
+
         int newLength = to - from;
-        
+
         if (newLength < 0) throw new IllegalArgumentException(from + " > " + to);
-        
+
         byte[] copy = new byte[newLength];
         System.arraycopy(original, from, copy, 0,
                          Math.min(original.length - from, newLength));
-        
+
         return copy;
     }
 
     public static class ProtocolError extends IOException {
 
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
-		public ProtocolError(String detailMessage) {
+        public ProtocolError(String detailMessage) {
             super(detailMessage);
         }
     }
 
     private static long byteArrayToLong(byte[] b, int offset, int length) {
-    	
+
         if (b.length < length) {
             throw new IllegalArgumentException("length must be less than or equal to b.length");
         }
-        
+
         long value = 0;
-        
+
         for (int i = 0; i < length; i++) {
-        	
+
             int shift = (length - 1 - i) * 8;
             value += (b[i + offset] & 0x000000FF) << shift;
         }
-        
+
         return value;
     }
 
     public static class HappyDataInputStream extends DataInputStream {
-    	
+
         public HappyDataInputStream(InputStream in) {
             super(in);
         }
 
         public byte[] readBytes(int length) throws IOException {
-        	
+
             byte[] buffer = new byte[length];
 
             int total = 0;
 
             while (total < length) {
-            	
+
                 int count = read(buffer, total, length - total);
-                
+
                 if (count == -1) {
                     break;
                 }
-                
+
                 total += count;
             }
 
             if (total != length) {
-                throw new IOException(String.format("Read wrong number of bytes. Got: %s, Expected: %s.", total, length));
+                throw new IOException(String.format("Read wrong number of bytes. Got: %s, Expected: %s.",
+                        total, length));
             }
 
             return buffer;
