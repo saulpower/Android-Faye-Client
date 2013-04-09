@@ -34,3 +34,5 @@ proguard/
 # Maven files
 target/
 settings.xml
+*.releaseBackup
+release.properties
