@@ -25,15 +25,15 @@
         <item>REMOVE</item>
         <item>UPDATE USERNAME AND PASSWORD</item>
     </string-array>
-   	<string-array name="fix_bank_options">
+       <string-array name="fix_bank_options">
         <item>@string/fix_bank_more_info_needed</item>
         <item>@string/credentials</item>
-		<item>@string/delete_institution</item>
+        <item>@string/delete_institution</item>
     </string-array>
-  	<string-array name="fix_bank_exception_options">
+      <string-array name="fix_bank_exception_options">
         <item>@string/fix_bank_somethings_wrong</item>
         <item>@string/credentials</item>
-		<item>@string/delete_institution</item>
+        <item>@string/delete_institution</item>
     </string-array>         
     <string-array name="account_types_bank_options">
         <item>@string/icon_lock</item>
@@ -201,10 +201,10 @@
     <string name="generate_email">Generating Email&#8230;</string>
     <string name="handset_account_exclusion_from_transaction_lists">Exclude transations from lists</string>
     <string name="handset_account_exclusion_from_reports_charts">Exclude from reports/charts</string>      
-   	<string name="handset_account_exclusion_from_account_listings">Exclude from all account listings</string>
+       <string name="handset_account_exclusion_from_account_listings">Exclude from all account listings</string>
     <string name="handset_account_exclusion_from_budgets">Exclude from budgets</string>
     <string name="handset_account_exclusion_from_transfers_in">Exclude transfers in</string>
-	<string name="handset_account_exclusion_from_transfers_out">Exclude transfers out</string>
+    <string name="handset_account_exclusion_from_transfers_out">Exclude transfers out</string>
     <string name="handset_intro_desc_1">No matter where you are in the app, you can always press this home button to take you right back to the dashboard.</string>
     <string name="handset_intro_desc_2">We fill our dropdown menus chuck full of useful tools like \"Add another Account\", or \"Print this Transaction\", or \"Call Mom.\" Seriously, call her.</string>
     <string name="handset_intro_desc_3">Giving a little sideways swipe on the transactions list will open up the transactions folders. Think of the folders as preset filters.</string>
@@ -290,17 +290,17 @@
     <string name="label_account_name">Account Name</string>
     <string name="label_account_original_balance">Original Balance (Optional)</string>
     <string name="label_account_property_type">Property Type</string>
-	<string name="label_account_type">Account Type</string>
-	<string name="label_add_account">ADD AN ACCOUNT</string>
-	<string name="label_account_detail">ACCOUNT DETAIL</string>
-	<string name="label_account_details_delete_account">DELETE ACCOUNT</string>
-	<string name="label_account_details_menu">ACCOUNT DETAIL MENU</string>		
-	<string name="label_account_details_view_transactions">VIEW TRANSACTIONS</string>
+    <string name="label_account_type">Account Type</string>
+    <string name="label_add_account">ADD AN ACCOUNT</string>
+    <string name="label_account_detail">ACCOUNT DETAIL</string>
+    <string name="label_account_details_delete_account">DELETE ACCOUNT</string>
+    <string name="label_account_details_menu">ACCOUNT DETAIL MENU</string>
+    <string name="label_account_details_view_transactions">VIEW TRANSACTIONS</string>
     <string name="label_account_add_institution">Add An Institution</string>
-	<string name="label_add_linked_account">Add a Linked Account</string>
-	<string name="label_add_linked_account_description">With a linked account, your account data (including transactions) are automatically downloaded straight to your phone. Manual data entry is so last year.</string>	
-	<string name="label_add_manual_account">Add a Manual Account</string>
-	<string name="label_add_manual_account_description">If you hate clouds (or just love typing) then you can add a manual account. These accounts aren\'t linked to any data feeds, so you have to enter every balance and transaction by hand.</string>
+    <string name="label_add_linked_account">Add a Linked Account</string>
+    <string name="label_add_linked_account_description">With a linked account, your account data (including transactions) are automatically downloaded straight to your phone. Manual data entry is so last year.</string>
+    <string name="label_add_manual_account">Add a Manual Account</string>
+    <string name="label_add_manual_account_description">If you hate clouds (or just love typing) then you can add a manual account. These accounts aren\'t linked to any data feeds, so you have to enter every balance and transaction by hand.</string>
     <string name="label_add_transaction">Add Transaction</string>
     <string name="label_amount">Amount</string>
     <string name="label_app_lock">APP LOCK</string>

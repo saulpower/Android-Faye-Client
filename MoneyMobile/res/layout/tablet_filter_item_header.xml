@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    xmlns:app="    http://schemas.android.com/apk/res/main.java.com.moneydesktop.finance"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical">
-    
-	<LinearLayout
-	    android:id="@+id/header_cell"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:gravity="center_vertical"
-	    android:orientation="horizontal"
-	    android:background="@color/gray7">
-	    
-		<TextView 
-		    android:id="@+id/header_title"
-		    android:layout_width="0dp"
-		    android:layout_weight="9"
-		    android:layout_height="wrap_content"
-		    android:padding="15dp"
-		    android:text="@string/default_header"
-		    android:textColor="@color/white"
-		    android:textStyle="bold"
-		    android:textSize="12sp" />
-			    
-	    <com.moneydesktop.finance.views.CaretView
-	        android:id="@+id/caret"
-		    android:layout_width="0dp"
-		    android:layout_weight="1"
-	        android:layout_height="wrap_content"
-	        android:layout_gravity="center"
-	        android:layout_marginRight="10dp"
-	        app:color="@color/white"
-	        app:width="10dp"
-	        app:height="10dp"
-	        app:rotation="0" />
-		
-	</LinearLayout>
-	
-	<com.moneydesktop.finance.views.LineView
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_below="@id/header_cell"
-	    app:lineColor="@color/white"
-	    app:lineStrokeWidth="2dp" />
-	
+
+    <LinearLayout
+        android:id="@+id/header_cell"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:background="@color/gray7">
+
+        <TextView
+            android:id="@+id/header_title"
+            android:layout_width="0dp"
+            android:layout_weight="9"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:text="@string/default_header"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="12sp" />
+
+        <com.moneydesktop.finance.views.CaretView
+            android:id="@+id/caret"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
+            app:color="@color/white"
+            app:width="10dp"
+            app:height="10dp"
+            app:rotation="0" />
+
+    </LinearLayout>
+
+    <com.moneydesktop.finance.views.LineView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/header_cell"
+        app:lineColor="@color/white"
+        app:lineStrokeWidth="2dp" />
+
 </RelativeLayout>

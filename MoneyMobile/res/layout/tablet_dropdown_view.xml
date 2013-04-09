@@ -8,58 +8,58 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-    	android:background="@color/transparent50percent" />
+        android:background="@color/transparent50percent" />
     
-	<RelativeLayout
-	    android:id="@+id/dropdown"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-	    android:layout_centerHorizontal="true"
-	    android:background="@drawable/white_border">
-	    
-	    <LinearLayout
-	        android:id="@+id/container"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal">
-		    
-		    <com.moneydesktop.finance.views.navigation.AnimatedNavView 
-		        android:id="@+id/nav_view"
-		        android:layout_width="match_parent"
-		        android:layout_height="80dp"
-	        	android:paddingLeft="20dp"
-	        	android:paddingRight="20dp"
-	        	android:paddingTop="10dp"
-	        	android:paddingBottom="10dp" />
-	    
-	    </LinearLayout>
-	
-	    <FrameLayout
-	        android:id="@+id/fragment"
-	        android:layout_width="match_parent"
-	        android:layout_height="match_parent"
-	        android:layout_marginTop="80dp"
-	        android:layout_marginLeft="20dp"
-	        android:layout_marginRight="20dp"
-	        android:layout_marginBottom="20dp" />
+    <RelativeLayout
+        android:id="@+id/dropdown"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/white_border">
 
-	</RelativeLayout>
+        <LinearLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.moneydesktop.finance.views.navigation.AnimatedNavView
+                android:id="@+id/nav_view"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="80dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp" />
+
+    </RelativeLayout>
     
     <View
         android:layout_width="match_parent"
         android:layout_height="7dp"
-    	android:background="@drawable/shadow_bottom" />
-	    
+        android:background="@drawable/shadow_bottom" />
+
     <FrameLayout
         android:id="@+id/detail_fragment"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent" />
-	
-	<ImageView 
-	    android:id="@+id/cell"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:contentDescription="@string/description"
-	    android:visibility="invisible" />
-	
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@+id/cell"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/description"
+        android:visibility="invisible" />
+
 </RelativeLayout>

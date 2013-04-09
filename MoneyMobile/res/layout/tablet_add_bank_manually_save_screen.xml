@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+                xmlns:app="    http://schemas.android.com/apk/res/main.java.com.moneydesktop.finance"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray3"
     android:orientation="vertical" >
 
-       
+
     <LinearLayout
         android:id="@+id/account_settings_container"
         android:layout_width="fill_parent"
@@ -88,8 +88,8 @@
                 app:labelColor="@drawable/gray3_to_white_text"
                 app:labelSize="6"
                 app:labelText=""/>
-                
-           
+
+
         </RelativeLayout>
 
         <TextView
@@ -102,7 +102,7 @@
             android:background="@drawable/perf_paper_selector"
             android:minHeight="50dip"
             android:textColor="@color/primaryColor"
-            android:text="@string/save" 
+            android:text="@string/save"
             android:gravity="center"/>
     </LinearLayout>
 

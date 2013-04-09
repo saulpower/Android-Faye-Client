@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:moneydesktop="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    xmlns:moneydesktop="    http://schemas.android.com/apk/res/main.java.com.moneydesktop.finance"
     android:id="@+id/account_types_container"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -30,7 +30,7 @@
             android:layout_marginTop="3dip"
             android:layout_height="fill_parent"
             android:layout_alignParentRight="true"
-			android:background="@drawable/fade_shadow" />
+            android:background="@drawable/fade_shadow" />
 
         <RelativeLayout
             android:id="@+id/panel_frame"
@@ -62,4 +62,4 @@
         </RelativeLayout>
     </com.moneydesktop.finance.views.SlidingDrawerRightSide>
 
-</RelativeLayout>	
+</RelativeLayout>

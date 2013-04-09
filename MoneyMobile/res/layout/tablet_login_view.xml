@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    xmlns:app="    http://schemas.android.com/apk/res/main.java.com.moneydesktop.finance"
     android:id="@+id/flipper"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -108,16 +108,16 @@
                 android:background="@color/white"
                 android:gravity="center"
                 android:orientation="vertical"
-			    android:focusable="true" 
-			    android:focusableInTouchMode="true" >
-        
-		        <com.moneydesktop.finance.views.LineView
-		            android:layout_width="450dp"
-		            android:layout_height="wrap_content"
-		            app:lineColor="@color/gray2"
-		            app:lineStrokeWidth="2dp"
-		            app:isDashed="true"
-		            app:dashLength="2dp"  />
+                android:focusable="true"
+                android:focusableInTouchMode="true" >
+
+                <com.moneydesktop.finance.views.LineView
+                    android:layout_width="450dp"
+                    android:layout_height="wrap_content"
+                    app:lineColor="@color/gray2"
+                    app:lineStrokeWidth="2dp"
+                    app:isDashed="true"
+                    app:dashLength="2dp"  />
 
                 <com.moneydesktop.finance.views.LabelEditText
                     android:id="@+id/username_field"
@@ -129,14 +129,14 @@
                     app:labelColor="@drawable/gray3_to_white_text"
                     app:labelSize="8"
                     app:labelText="@string/label_email" />
-        
-		        <com.moneydesktop.finance.views.LineView
-		            android:layout_width="450dp"
-		            android:layout_height="wrap_content"
-		            app:lineColor="@color/gray2"
-		            app:lineStrokeWidth="2dp"
-		            app:isDashed="true"
-		            app:dashLength="2dp"  />
+
+                <com.moneydesktop.finance.views.LineView
+                    android:layout_width="450dp"
+                    android:layout_height="wrap_content"
+                    app:lineColor="@color/gray2"
+                    app:lineStrokeWidth="2dp"
+                    app:isDashed="true"
+                    app:dashLength="2dp"  />
 
                 <com.moneydesktop.finance.views.LabelEditText
                     android:id="@+id/password_field"
@@ -149,15 +149,15 @@
                     app:labelColor="@drawable/gray3_to_white_text"
                     app:labelSize="8"
                     app:labelText="@string/label_password" />
-        
-		        <com.moneydesktop.finance.views.LineView
-		            android:layout_width="450dp"
-		            android:layout_height="wrap_content"
-		            app:lineColor="@color/gray2"
-		            app:lineStrokeWidth="2dp"
-		            app:isDashed="true"
-		            app:dashLength="2dp"  />
-		        
+
+                <com.moneydesktop.finance.views.LineView
+                    android:layout_width="450dp"
+                    android:layout_height="wrap_content"
+                    app:lineColor="@color/gray2"
+                    app:lineStrokeWidth="2dp"
+                    app:isDashed="true"
+                    app:dashLength="2dp"  />
+
             </LinearLayout>
 
             <LinearLayout
@@ -236,16 +236,16 @@
                 android:background="@color/white"
                 android:gravity="center"
                 android:orientation="vertical"
-			    android:focusable="true" 
-			    android:focusableInTouchMode="true" >
-        
-		        <com.moneydesktop.finance.views.LineView
-		            android:layout_width="550dp"
-		            android:layout_height="wrap_content"
-		            app:lineColor="@color/gray2"
-		            app:lineStrokeWidth="2dp"
-		            app:isDashed="true"
-		            app:dashLength="2dp"  />
+                android:focusable="true"
+                android:focusableInTouchMode="true" >
+
+                <com.moneydesktop.finance.views.LineView
+                    android:layout_width="550dp"
+                    android:layout_height="wrap_content"
+                    app:lineColor="@color/gray2"
+                    app:lineStrokeWidth="2dp"
+                    app:isDashed="true"
+                    app:dashLength="2dp"  />
 
                 <com.moneydesktop.finance.views.LabelEditText
                     android:id="@+id/signup_name"
@@ -257,14 +257,14 @@
                     app:labelColor="@drawable/gray3_to_white_text"
                     app:labelSize="8"
                     app:labelText="@string/signup_name" />
-        
-		        <com.moneydesktop.finance.views.LineView
-		            android:layout_width="550dp"
-		            android:layout_height="wrap_content"
-		            app:lineColor="@color/gray2"
-		            app:lineStrokeWidth="2dp"
-		            app:isDashed="true"
-		            app:dashLength="2dp"  />
+
+                <com.moneydesktop.finance.views.LineView
+                    android:layout_width="550dp"
+                    android:layout_height="wrap_content"
+                    app:lineColor="@color/gray2"
+                    app:lineStrokeWidth="2dp"
+                    app:isDashed="true"
+                    app:dashLength="2dp"  />
 
                 <com.moneydesktop.finance.views.LabelEditText
                     android:id="@+id/signup_email"
@@ -276,14 +276,14 @@
                     app:labelColor="@drawable/gray3_to_white_text"
                     app:labelSize="8"
                     app:labelText="@string/signup_email" />
-        
-		        <com.moneydesktop.finance.views.LineView
-		            android:layout_width="550dp"
-		            android:layout_height="wrap_content"
-		            app:lineColor="@color/gray2"
-		            app:lineStrokeWidth="2dp"
-		            app:isDashed="true"
-		            app:dashLength="2dp"  />
+
+                <com.moneydesktop.finance.views.LineView
+                    android:layout_width="550dp"
+                    android:layout_height="wrap_content"
+                    app:lineColor="@color/gray2"
+                    app:lineStrokeWidth="2dp"
+                    app:isDashed="true"
+                    app:dashLength="2dp"  />
 
                 <com.moneydesktop.finance.views.LabelEditText
                     android:id="@+id/signup_bank"
@@ -295,15 +295,15 @@
                     app:labelColor="@drawable/gray3_to_white_text"
                     app:labelSize="8"
                     app:labelText="@string/signup_bank" />
-        
-		        <com.moneydesktop.finance.views.LineView
-		            android:layout_width="550dp"
-		            android:layout_height="wrap_content"
-		            app:lineColor="@color/gray2"
-		            app:lineStrokeWidth="2dp"
-		            app:isDashed="true"
-		            app:dashLength="2dp"  />
-		        
+
+                <com.moneydesktop.finance.views.LineView
+                    android:layout_width="550dp"
+                    android:layout_height="wrap_content"
+                    app:lineColor="@color/gray2"
+                    app:lineStrokeWidth="2dp"
+                    app:isDashed="true"
+                    app:dashLength="2dp"  />
+
             </LinearLayout>
 
             <LinearLayout

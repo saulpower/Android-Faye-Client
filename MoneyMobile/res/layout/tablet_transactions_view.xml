@@ -4,46 +4,46 @@
     android:layout_height="match_parent"
     android:background="@color/gray1">
     
-	<LinearLayout
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-	    android:orientation="horizontal"
-	    android:baselineAligned="true" >
-	
-	    <FrameLayout
-	        android:id="@+id/fragment"
-		    android:layout_width="0dp"
-		    android:layout_height="match_parent"
-		    android:layout_weight="74"
-    		android:background="@color/gray1" />
-	
-	    <RelativeLayout
-	        android:layout_width="0dp"
-	        android:layout_height="match_parent"
-	        android:layout_weight="26"
-            android:layout_marginLeft="4dp"
-	        android:background="@color/gray4" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:baselineAligned="true" >
 
-		    <com.moneydesktop.finance.views.UltimateListView
-		        android:id="@+id/filters"
-	            android:layout_width="match_parent"
-	            android:layout_height="match_parent"
-	            android:groupIndicator="@null" />
-	        
-	    </RelativeLayout>
-	
-	</LinearLayout>
-	    
+        <FrameLayout
+            android:id="@+id/fragment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="74"
+            android:background="@color/gray1" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="26"
+            android:layout_marginLeft="4dp"
+            android:background="@color/gray4" >
+
+            <com.moneydesktop.finance.views.UltimateListView
+                android:id="@+id/filters"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:groupIndicator="@null" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
     <FrameLayout
         android:id="@+id/detail_fragment"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent" />
-	
-	<ImageView 
-	    android:id="@+id/cell"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:contentDescription="@string/description"
-	    android:visibility="invisible" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@+id/cell"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/description"
+        android:visibility="invisible" />
 
 </RelativeLayout>

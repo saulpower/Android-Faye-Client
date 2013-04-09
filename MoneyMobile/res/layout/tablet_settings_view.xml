@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    xmlns:app="    http://schemas.android.com/apk/res/main.java.com.moneydesktop.finance"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/tablet_wood" >
@@ -50,7 +50,7 @@
             app:text="@string/setting_unlink_text"
             app:icon="@string/icon_logout"
             app:iconSize="100sp" />
-        
+
     </LinearLayout>
 
 </RelativeLayout>

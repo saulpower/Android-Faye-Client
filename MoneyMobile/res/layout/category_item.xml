@@ -9,75 +9,75 @@
     android:outAnimation="@anim/fade_out_fast"
     android:background="@drawable/white_to_primary" >
     
-	<LinearLayout
-	    android:id="@+id/info"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_gravity="center_vertical"
-	    android:orientation="horizontal"
-	    android:paddingTop="8dp"
-	    android:paddingBottom="8dp" >
-	
-	    <TextView
-	        android:id="@+id/sub_category"
-	        android:layout_width="wrap_content"
-	        android:layout_height="match_parent"
-	        android:layout_marginRight="5dp"
-	        android:gravity="center_vertical"
-	        android:textColor="@drawable/primary_to_white_text"
-		    android:text="@string/plus"
-	        android:visibility="gone" />
-		
-	    <TextView
-	        android:id="@+id/item_title"
-	        android:layout_width="wrap_content"
-	        android:layout_height="match_parent"
-		    android:text="@string/default_header"
-		    android:textColor="@drawable/gray9_to_white_text"
-	        android:gravity="center_vertical" />
-	    
-	</LinearLayout>
+    <LinearLayout
+        android:id="@+id/info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp" >
+
+        <TextView
+            android:id="@+id/sub_category"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="5dp"
+            android:gravity="center_vertical"
+            android:textColor="@drawable/primary_to_white_text"
+            android:text="@string/plus"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/default_header"
+            android:textColor="@drawable/gray9_to_white_text"
+            android:gravity="center_vertical" />
+
+    </LinearLayout>
     
-	<LinearLayout
-	    android:id="@+id/add"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="horizontal"
-	    android:background="@drawable/dotted_gray_border"
-	    android:padding="8dp" >
-	
-	    <EditText
-	        android:id="@+id/new_category"
-	        android:layout_width="0dp"
-	        android:layout_weight="85"
-	        android:layout_height="match_parent"
-	        android:layout_marginRight="5dp"
-	        android:gravity="center_vertical"
-	        android:inputType="textCapWords"
-	        android:imeOptions="actionDone"
-	        android:textColor="@color/primaryColor"
-	        android:textColorHint="@color/gray4"
-	        android:singleLine="true"
-	        android:background="@null"
-		    android:hint="@string/new_sub_category_hint" />
-	    
-	    <RelativeLayout
-	        android:layout_width="0dp"
-	        android:layout_weight="15"
-	        android:layout_height="match_parent" >
-	        
-		    <TextView
-		        android:id="@+id/cancel"
-		        android:layout_width="wrap_content"
-		        android:layout_height="match_parent"
-		        android:layout_alignParentRight="true"
-			    android:text="@string/icon_cancel"
-			    android:textColor="@color/white"
-			    android:background="@color/primaryColor"
-		        android:gravity="center_vertical" />
-	        
-	    </RelativeLayout>
-	    
-	</LinearLayout>
+    <LinearLayout
+        android:id="@+id/add"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/dotted_gray_border"
+        android:padding="8dp" >
+
+        <EditText
+            android:id="@+id/new_category"
+            android:layout_width="0dp"
+            android:layout_weight="85"
+            android:layout_height="match_parent"
+            android:layout_marginRight="5dp"
+            android:gravity="center_vertical"
+            android:inputType="textCapWords"
+            android:imeOptions="actionDone"
+            android:textColor="@color/primaryColor"
+            android:textColorHint="@color/gray4"
+            android:singleLine="true"
+            android:background="@null"
+            android:hint="@string/new_sub_category_hint" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_weight="15"
+            android:layout_height="match_parent" >
+
+            <TextView
+                android:id="@+id/cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:text="@string/icon_cancel"
+                android:textColor="@color/white"
+                android:background="@color/primaryColor"
+                android:gravity="center_vertical" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </ViewFlipper>

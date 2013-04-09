@@ -1,0 +1,271 @@
+package main.java.com.moneydesktop.finance.shared.fragment;
+
+import android.app.Activity;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Pair;
+import android.view.*;
+import android.view.View.OnFocusChangeListener;
+import android.view.inputmethod.EditorInfo;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
+import com.flurry.android.FlurryAgent;
+import main.java.com.moneydesktop.finance.R;
+import main.java.com.moneydesktop.finance.data.Constant;
+import main.java.com.moneydesktop.finance.data.DataController;
+import main.java.com.moneydesktop.finance.data.Enums.FragmentType;
+import main.java.com.moneydesktop.finance.database.Category;
+import main.java.com.moneydesktop.finance.database.Transactions;
+import main.java.com.moneydesktop.finance.model.EventMessage.DatabaseSaveEvent;
+import main.java.com.moneydesktop.finance.shared.adapter.CategoryAdapter;
+import main.java.com.moneydesktop.finance.util.Fonts;
+import main.java.com.moneydesktop.finance.util.UiUtils;
+import main.java.com.moneydesktop.finance.views.ClearEditText;
+import main.java.com.moneydesktop.finance.views.SpinnerView;
+import main.java.com.moneydesktop.finance.views.UltimateListView;
+import de.greenrobot.event.EventBus;
+
+import java.util.List;
+
+public class CategoriesFragment extends PopupFragment implements OnChildClickListener, OnGroupClickListener {
+
+    public final String TAG = this.getClass().getSimpleName();
+
+    private UltimateListView mCategoryList;
+    private CategoryAdapter mAdapter;
+    private ClearEditText mSearch;
+    private SpinnerView mSpinner;
+
+    private Transactions mTransaction;
+
+    private boolean mLoading = true;
+    private boolean mShowing = false;
+
+    public static CategoriesFragment newInstance(long transactionId) {
+
+        CategoriesFragment fragment = new CategoriesFragment();
+
+        Bundle args = new Bundle();
+        args.putLong(Constant.KEY_ID, transactionId);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+    @Override
+    public FragmentType getType() {
+        return FragmentType.CATEGORIES;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+
+        mRoot = inflater.inflate(R.layout.category_view, null);
+
+        long id = getArguments().getLong(Constant.KEY_ID);
+        mTransaction = (Transactions) DataController.getDao(Transactions.class).load(id);
+
+        setupView();
+
+        // Log the user has set the category of a transaction
+        FlurryAgent.logEvent("" + getType());
+
+        return mRoot;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        setupCategoryList();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void isShowing() {
+        super.isShowing();
+
+        mShowing = true;
+        configureView();
+    }
+
+    @Override
+    public void popupVisible() {
+
+        mShowing = true;
+        configureView();
+    }
+
+    public void onEvent(DatabaseSaveEvent event) {
+
+        if (mAdapter != null && event.didDatabaseChange() && event.getChangedClassesList().contains(Category.class)) {
+            setupCategoryList();
+        }
+    }
+
+    private void setupView() {
+
+        mCategoryList = (UltimateListView) mRoot.findViewById(R.id.categories);
+        mCategoryList.setDividerHeight(0);
+        mCategoryList.setDivider(null);
+        mCategoryList.setChildDivider(null);
+        mCategoryList.setOnChildClickListener(this);
+        mCategoryList.setOnGroupClickListener(this);
+
+        mSearch = (ClearEditText) mRoot.findViewById(R.id.search);
+
+        mSearch.setOnFocusChangeListener(new OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                if (hasFocus && mPopupActivity != null) {
+                    mPopupActivity.setEditText(null);
+                }
+            }
+        });
+
+        mSearch.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mAdapter.getFilter().filter(mSearch.getText().toString());
+            }
+        });
+
+        mSearch.setOnEditorActionListener(new OnEditorActionListener() {
+
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    UiUtils.hideKeyboard(getActivity(), v);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        mSpinner = (SpinnerView) mRoot.findViewById(R.id.spinner);
+
+        applyFonts();
+    }
+
+    private void applyFonts() {
+
+        Fonts.applyPrimaryFont(mSearch, 10);
+    }
+
+    private void setupCategoryList() {
+
+        new AsyncTask<Void, Void, List<Pair<Category, List<Category>>>>() {
+
+            @Override
+            protected List<Pair<Category, List<Category>>> doInBackground(Void... params) {
+
+                if (isCancelled()) {
+                    return null;
+                }
+
+                List<Pair<Category, List<Category>>> data = Category.loadCategoryData();
+
+                return data;
+            }
+
+            @Override
+            protected void onPostExecute(List<Pair<Category, List<Category>>> data) {
+
+                if (isCancelled()) {
+                    return;
+                }
+
+                if (mAdapter == null) {
+                    mAdapter = new CategoryAdapter(getActivity(), CategoriesFragment.this, mCategoryList, data, mSearch);
+                    mCategoryList.setAdapter(mAdapter);
+                } else {
+                    mAdapter.updateData(data);
+                }
+
+                mCategoryList.expandAll();
+
+                mLoading = false;
+
+                configureView();
+            }
+
+        }.execute();
+    }
+
+    private void configureView() {
+
+        if (!mLoading && mShowing && mCategoryList.getVisibility() != View.VISIBLE) {
+
+            mCategoryList.setVisibility(View.VISIBLE);
+            mSpinner.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public String getFragmentTitle() {
+        return getString(R.string.filter_cats).toUpperCase();
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
+    @Override
+    public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
+            int childPosition, long id) {
+
+        Category category = (Category) mAdapter.getChild(groupPosition, childPosition);
+        dismissPopup(category);
+
+        return true;
+    }
+
+    @Override
+    public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+        mRoot.playSoundEffect(SoundEffectConstants.CLICK);
+
+        dismissPopup((Category) mAdapter.getGroup(groupPosition));
+
+        return true;
+    }
+
+    public void dismissPopup(Category category) {
+
+        UiUtils.hideKeyboard(getActivity(), mSearch);
+
+        mTransaction.setCategoryId(category.getId());
+        mTransaction.updateSingle();
+
+        dismissPopup();
+    }
+}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    xmlns:app="    http://schemas.android.com/apk/res/main.java.com.moneydesktop.finance"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center|top" >
@@ -151,8 +151,8 @@
                             android:paddingRight="10dip"
                             android:textColor="@color/primaryColor" />
                     </RelativeLayout>
-                    
-                   	<RelativeLayout
+
+                       <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="7dip" >
@@ -185,41 +185,41 @@
                             android:paddingRight="10dip"
                             android:textColor="@color/secondaryColor"/>
                     </RelativeLayout>
-                    
-	            	<com.moneydesktop.finance.views.LineView
-	                    android:layout_width="match_parent"
-	                    android:layout_height="wrap_content"
-	                    android:layout_marginTop="5dip"
-	                    app:lineColor="@color/gray5"
-			            app:isDashed="true"
-			            app:dashLength="3dp"
-			            app:lineStrokeWidth="2dp" />
-	            	
-                  	<RelativeLayout
+
+                    <com.moneydesktop.finance.views.LineView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dip"
+                        app:lineColor="@color/gray5"
+                        app:isDashed="true"
+                        app:dashLength="3dp"
+                        app:lineStrokeWidth="2dp" />
+
+                      <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dip" >
-	            	
-	                  	<TextView
-	                        android:id="@+id/networth_label"
-	                        android:layout_width="wrap_content"
-	                        android:layout_height="wrap_content"
-	                        android:gravity="center_vertical"
-	                        android:paddingLeft="35dip"
-	                        android:text="@string/label_net_worth"
-	                        android:textColor="@color/gray7"/>
-	                  	
-	                	<TextView
-	                        android:id="@+id/networth_value"
-	                        android:layout_width="match_parent"
-	                        android:layout_height="wrap_content"
-	                        android:paddingRight="10dip"
-	                        android:layout_gravity="right"
-	                        android:gravity="right|center_vertical"
-	                        android:text="@string/label_net_worth"
-	                        android:textColor="@color/gray7"/>
-                	</RelativeLayout>
-                                        
+
+                          <TextView
+                            android:id="@+id/networth_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:paddingLeft="35dip"
+                            android:text="@string/label_net_worth"
+                            android:textColor="@color/gray7"/>
+
+                        <TextView
+                            android:id="@+id/networth_value"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingRight="10dip"
+                            android:layout_gravity="right"
+                            android:gravity="right|center_vertical"
+                            android:text="@string/label_net_worth"
+                            android:textColor="@color/gray7"/>
+                    </RelativeLayout>
+
                 </LinearLayout>
             </RelativeLayout>
         </LinearLayout>

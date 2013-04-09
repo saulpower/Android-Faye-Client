@@ -17,12 +17,12 @@
         />
         
     <com.moneydesktop.finance.views.BankRefreshIcon 
-		                android:id="@+id/handset_account_types_bank_status_update"
-					    android:layout_height="wrap_content"
-					    android:layout_width="wrap_content"
-				        android:gravity="center"
-				        android:textColor="@color/white"
-				        android:text="@string/icon_refresh"/>
+                        android:id="@+id/handset_account_types_bank_status_update"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:text="@string/icon_refresh"/>
     
         
 </RelativeLayout>

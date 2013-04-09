@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.moneydesktop.finance.views.CheckableLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    xmlns:app="    http://schemas.android.com/apk/res/main.java.com.moneydesktop.finance"
     android:id="@+id/item"
     android:layout_width="fill_parent"
     android:layout_height="50dp"
@@ -42,7 +42,7 @@
             android:gravity="center_vertical|right"
             android:text="@string/default_header"
             android:textColor="@color/gray7" />
-        
+
     </LinearLayout>
 
     <com.moneydesktop.finance.views.LineView

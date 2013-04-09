@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    xmlns:app="http://schemas.android.com/apk/res/main.java.com.moneydesktop.finance"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
     <LinearLayout
         android:id="@+id/tablet_account_summary_row_container"
-	    android:layout_width="match_parent"
-	    android:layout_height="50dp"
-	    android:orientation="horizontal"
-	    android:baselineAligned="false" >
-	
-	    <!-- Left Side Grey -->
-	    <RelativeLayout
-	        android:layout_width="0dp"
-	        android:layout_height="match_parent"
-	        android:layout_weight=".07"
-	        android:background="@color/gray2" />
-	
-	    <!-- Bank logo -->
-	    <RelativeLayout
-	        android:id="@+id/account_summary_bank_logo_container"
-	        android:layout_width="0dp"
-	        android:layout_height="match_parent"
-	        android:layout_gravity="center"
-	        android:layout_weight=".07" >
-	
-	        <ImageView
-	            android:id="@+id/account_summary_child_bank_logo"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:contentDescription="@string/description" />
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:baselineAligned="false" >
+
+        <!-- Left Side Grey -->
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".07"
+            android:background="@color/gray2" />
+
+        <!-- Bank logo -->
+        <RelativeLayout
+            android:id="@+id/account_summary_bank_logo_container"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight=".07" >
+
+            <ImageView
+                android:id="@+id/account_summary_child_bank_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/description" />
 
             <TextView
                 android:id="@+id/account_summary_child_property_logo"
@@ -41,70 +41,70 @@
                 android:textColor="@color/gray5"
                 android:visibility="gone"/>
         </RelativeLayout>
-	
-	    <!-- Bank name and linked status -->
-	    <RelativeLayout
-	        android:layout_width="0dp"
-	        android:layout_height="match_parent"
-	        android:layout_weight=".60" >
-	
-	        <!-- Account Name -->
-	        <TextView
-	            android:id="@+id/account_summary_child_bank_account_name"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_alignParentTop="true"
+
+        <!-- Bank name and linked status -->
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".60" >
+
+            <!-- Account Name -->
+            <TextView
+                android:id="@+id/account_summary_child_bank_account_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
                 android:gravity="center_vertical"
-	            android:layout_marginLeft="10dp"
-	            android:layout_marginTop="5dip"
-	            android:textColor="@color/gray4" />
-	
-	        <!-- Account Linked Status -->
-	        <TextView
-	            android:id="@+id/account_summary_child_bank_account_linked_status"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_below="@id/account_summary_child_bank_account_name"
-	            android:layout_marginLeft="10dp"
-	            android:textColor="@color/gray2" />
-	
-	        <!-- Last Updated label -->
-	        <TextView
-	            android:id="@+id/account_summary_child_bank_account_last_updated_label"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_toRightOf="@id/account_summary_child_bank_account_linked_status"
-	            android:layout_marginLeft="5dip"
-	            android:layout_below="@id/account_summary_child_bank_account_name"
-	            android:textColor="@color/gray2" />
-	
-	        <!-- Last updated value -->
-	        <TextView
-	            android:id="@+id/account_summary_child_bank_account_last_updated_value"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_below="@id/account_summary_child_bank_account_name"
-	            android:layout_toRightOf="@id/account_summary_child_bank_account_last_updated_label"
-	            android:layout_marginLeft="5dip"
-	            android:textColor="@color/primaryColor" />
-	    </RelativeLayout>
-	
-	    <!-- Bank Account sum -->
-	    <RelativeLayout
-	        android:layout_width="0dp"
-	        android:layout_height="match_parent"
-	        android:layout_weight=".26" >
-	
-	        <!-- Bank Account sum value -->
-	        <TextView
-	            android:id="@+id/account_summary_child_bank_account_balance"
-	            android:layout_width="match_parent"
-	            android:layout_height="match_parent"
-	            android:layout_marginRight="10dp"
-	            android:gravity="center_vertical|right"
-	            android:textColor="@color/gray4" />
-	    </RelativeLayout>
-	</LinearLayout>
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dip"
+                android:textColor="@color/gray4" />
+
+            <!-- Account Linked Status -->
+            <TextView
+                android:id="@+id/account_summary_child_bank_account_linked_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/account_summary_child_bank_account_name"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/gray2" />
+
+            <!-- Last Updated label -->
+            <TextView
+                android:id="@+id/account_summary_child_bank_account_last_updated_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/account_summary_child_bank_account_linked_status"
+                android:layout_marginLeft="5dip"
+                android:layout_below="@id/account_summary_child_bank_account_name"
+                android:textColor="@color/gray2" />
+
+            <!-- Last updated value -->
+            <TextView
+                android:id="@+id/account_summary_child_bank_account_last_updated_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/account_summary_child_bank_account_name"
+                android:layout_toRightOf="@id/account_summary_child_bank_account_last_updated_label"
+                android:layout_marginLeft="5dip"
+                android:textColor="@color/primaryColor" />
+        </RelativeLayout>
+
+        <!-- Bank Account sum -->
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".26" >
+
+            <!-- Bank Account sum value -->
+            <TextView
+                android:id="@+id/account_summary_child_bank_account_balance"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
+                android:gravity="center_vertical|right"
+                android:textColor="@color/gray4" />
+        </RelativeLayout>
+    </LinearLayout>
 
 
     <LinearLayout
@@ -200,8 +200,8 @@
         </LinearLayout>
     </LinearLayout>
 
-    
-    <View 
+
+    <View
         android:layout_width="match_parent"
         android:layout_height="1dip"
         android:background="@color/gray2"/>

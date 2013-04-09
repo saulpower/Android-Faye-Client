@@ -4,19 +4,19 @@
     android:layout_height="match_parent"
     android:background="@drawable/tablet_wood"
     android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance">
-    
+    xmlns:app="    http://schemas.android.com/apk/res/main.java.com.moneydesktop.finance">
+
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="fill_parent"
-        android:layout_height="0dp" 
+        android:layout_height="0dp"
         android:layout_weight="10"/>
 
-	<com.viewpagerindicator.CirclePageIndicator
-	    android:id="@+id/titles"
-	    android:layout_width="fill_parent"
-	    android:layout_height="0dp"
-	    android:layout_weight=".5"
+    <com.viewpagerindicator.CirclePageIndicator
+        android:id="@+id/titles"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".5"
         app:radius="5dp"
         app:pageColor="#FFAAAAAA"
         app:fillColor="#FF00ACED"
@@ -28,22 +28,22 @@
         android:layout_height="0dp"
         android:layout_weight="1.5"
         android:background="@color/white">
-		<TextView
-		    android:id="@+id/get_started"
-		    android:layout_width="300dp"
-		    android:layout_height="60dp"
-		    android:background="@drawable/primary_to_gray"
-		    android:text="@string/get_started"
-		    android:textColor="@color/white"
-		    android:gravity="center"
-		    android:layout_marginLeft="75dp"
-		    android:visibility="gone"/>
-		    
+        <TextView
+            android:id="@+id/get_started"
+            android:layout_width="300dp"
+            android:layout_height="60dp"
+            android:background="@drawable/primary_to_gray"
+            android:text="@string/get_started"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_marginLeft="75dp"
+            android:visibility="gone"/>
+
         <com.moneydesktop.finance.views.SmallSpinnerView
             android:id="@+id/loading_spinner"
             android:layout_width="wrap_content"
-      		android:layout_height="wrap_content"
-      		android:layout_marginLeft="75dp"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="75dp"
             android:layout_gravity="center_vertical"/>
 
         <TextView
@@ -55,5 +55,5 @@
             android:layout_gravity="center_vertical"
             android:textColor="@color/gray9"/>
 
-	</LinearLayout>
+    </LinearLayout>
 </LinearLayout>

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-	<item
-		android:state_pressed="true"
-		android:color="@color/primaryColor" />
-	<item
-		android:state_focused="true"
-		android:color="@color/primaryColor" />
-	<item
-		android:state_selected="true"
-		android:color="@color/primaryColor" />
+    <item
+        android:state_pressed="true"
+        android:color="@color/primaryColor" />
+    <item
+        android:state_focused="true"
+        android:color="@color/primaryColor" />
+    <item
+        android:state_selected="true"
+        android:color="@color/primaryColor" />
     <item
         android:state_selected="false"
         android:color="@color/gray5" />
-	<item
-		android:color="@color/gray5" />
+    <item
+        android:color="@color/gray5" />
 </selector>

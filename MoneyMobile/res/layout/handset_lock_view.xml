@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/phone_wood" >
-	    
+
     <com.moneydesktop.finance.views.WheelToggle
         android:id="@+id/toggle"
         android:layout_width="wrap_content"

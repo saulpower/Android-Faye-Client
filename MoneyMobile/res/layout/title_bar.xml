@@ -8,7 +8,7 @@
         android:id="@+id/nav_bg"
         android:layout_width="match_parent"
         android:layout_height="42dp"
-    	android:background="@drawable/nav_wood_background"/>
+        android:background="@drawable/nav_wood_background"/>
     
     <View 
         android:layout_width="match_parent"

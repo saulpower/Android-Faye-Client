@@ -1,0 +1,218 @@
+package main.java.com.moneydesktop.finance.views.AnimatedListView;
+
+import android.content.Context;
+import android.database.DataSetObserver;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.widget.BaseAdapter;
+import android.widget.HorizontalScrollView;
+import android.widget.ListAdapter;
+import android.widget.TextView;
+import de.greenrobot.event.EventBus;
+import main.java.com.moneydesktop.finance.R;
+import main.java.com.moneydesktop.finance.database.AccountType;
+import main.java.com.moneydesktop.finance.model.EventMessage;
+import main.java.com.moneydesktop.finance.model.User;
+import main.java.com.moneydesktop.finance.views.AccountTypeChildView;
+
+import java.util.HashMap;
+import java.util.List;
+
+/**
+ * Wraps a ListAdapter to give it expandable list view functionality.
+ * The main thing it does is add a listener to the getToggleButton
+ * which expands the getExpandableView for each list item.
+ *
+ * @author tjerk
+ * @date 6/9/12 4:41 PM
+ */
+public abstract class AbstractSlideExpandableListAdapter extends BaseAdapter{
+    private ListAdapter wrapped;
+    private static Context mContext;
+    private static List<AccountType> mAccountTypesFiltered;
+    private static HashMap<Integer, Boolean> mOpenState;
+
+    public AbstractSlideExpandableListAdapter(ListAdapter wrapped, Context context, List<AccountType> accountTypesFiltered) {
+        this.wrapped = wrapped;
+        this.mContext = context;
+        this.mAccountTypesFiltered = accountTypesFiltered;
+    }
+
+    @Override
+    public boolean areAllItemsEnabled() {
+        return wrapped.areAllItemsEnabled();
+    }
+
+    @Override
+    public boolean isEnabled(int i) {
+        return wrapped.isEnabled(i);
+    }
+
+    @Override
+    public void registerDataSetObserver(DataSetObserver dataSetObserver) {
+        wrapped.registerDataSetObserver(dataSetObserver);
+    }
+
+    @Override
+    public void unregisterDataSetObserver(DataSetObserver dataSetObserver) {
+        wrapped.unregisterDataSetObserver(dataSetObserver);
+    }
+
+    @Override
+    public int getCount() {
+        return wrapped.getCount();
+    }
+
+    @Override
+    public Object getItem(int i) {
+        return wrapped.getItem(i);
+    }
+
+    @Override
+    public long getItemId(int i) {
+        return wrapped.getItemId(i);
+    }
+
+    @Override
+    public boolean hasStableIds() {
+        return wrapped.hasStableIds();
+    }
+
+    @Override
+    public View getView(int position, View view, ViewGroup viewGroup) {
+        view = wrapped.getView(position, view, viewGroup);
+        enableFor(view, position);
+        return view;
+    }
+
+    @Override
+    public int getItemViewType(int i) {
+        return wrapped.getItemViewType(i);
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return wrapped.getViewTypeCount();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return wrapped.isEmpty();
+    }
+
+    private static View lastOpen = null;
+
+    /**
+     * This method is used to get the Button view that should
+     * expand or collapse the Expandable View.
+     * <br/>
+     * Normally it will be implemented as:
+     * <pre>
+     * return (Button)parent.findViewById(R.id.expand_toggle_button)
+     * </pre>
+     *
+     * A listener will be attached to the button which will
+     * either expand or collapse the expandable view
+     *
+     * @param parent the list view item
+     * @return a child of parent which is a button
+     */
+    public abstract View getExpandToggleButton(View parent);
+
+    /**
+     * This method is used to get the view that will be hidden
+     * initially and expands or collapse when the ExpandToggleButton
+     * is pressed @see getExpandToggleButton
+     * <br/>
+     * Normally it will be implemented as:
+     * <pre>
+     * return parent.findViewById(R.id.expandable)
+     * </pre>
+     *
+     * @param parent the list view item
+     * @return a child of parent which is a view (or often ViewGroup)
+     *  that can be collapsed and expanded
+     */
+    public abstract View getExpandableView(View parent);
+
+    private static void setOpenState(int position) {
+        if (mOpenState.containsKey(position)) {
+            boolean previousValue = mOpenState.get(position);
+            mOpenState.remove(position);
+            mOpenState.put(position, !previousValue);
+        } else {
+            mOpenState.put(position, true);
+        }
+    }
+
+    public static HashMap<Integer, Boolean> getOpenStateList() {
+        if (mOpenState == null) {
+            mOpenState = new HashMap<Integer, Boolean>();
+            for (int i = 0; i < mAccountTypesFiltered.size(); i++) {
+                mOpenState.put(i, true);
+            }
+        }
+
+        if (mOpenState.size() != mAccountTypesFiltered.size()) {
+            mOpenState = new HashMap<Integer, Boolean>();
+            for (int i = 0; i < mAccountTypesFiltered.size(); i++) {
+                mOpenState.put(i, true);
+            }
+        }
+        return mOpenState;
+    }
+
+    public void setOpenStateList(HashMap<Integer, Boolean> openState) {
+        mOpenState = openState;
+    }
+
+    public void enableFor(View parent, int position) {
+        View toggleButton = getExpandToggleButton(parent);
+
+        HorizontalScrollView horizontalScrollContainer = (HorizontalScrollView) getExpandableView(parent);
+        AccountType accountType = mAccountTypesFiltered.get(position);
+        accountType.resetBankAccounts(); //pulls fresh from the DB
+        AccountTypeChildView accountTypeChildView = new AccountTypeChildView(mContext, accountType.getBankAccounts(),
+                parent);
+        horizontalScrollContainer.addView(accountTypeChildView);
+
+        if (User.getCurrentUser().getCanSync()) {
+            EventBus.getDefault().post(new EventMessage().new ReloadBannersEvent());
+        }
+
+        enableFor(toggleButton, horizontalScrollContainer, position);
+    }
+
+    public static void enableFor(View button, final View horizontalScrollContainer, final int position) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setOpenState(position);
+                view.setAnimation(null);
+                int type = horizontalScrollContainer.getVisibility() == View.VISIBLE ? ExpandCollapseAnimation.COLLAPSE
+                        : ExpandCollapseAnimation.EXPAND;
+                Animation anim = new ExpandCollapseAnimation(horizontalScrollContainer, type);
+                ((TextView) view.findViewById(R.id.account_type_group_indicator))
+                        .setText(mContext.getResources().getString(R.string.account_types_indicator_show));
+                if (type == ExpandCollapseAnimation.EXPAND) {
+                    ((TextView) view.findViewById(R.id.account_type_group_indicator))
+                            .setText(mContext.getResources().getString(R.string.account_types_indicator_hide));
+                }
+                view.startAnimation(anim);
+            }
+
+        });
+
+        if (!mOpenState.containsKey(position)) {
+            getOpenStateList();
+        }
+
+        if (mOpenState.get(position)) {
+            horizontalScrollContainer.setVisibility(View.VISIBLE);
+        } else {
+            horizontalScrollContainer.setVisibility(View.GONE);
+        }
+    }
+
+}

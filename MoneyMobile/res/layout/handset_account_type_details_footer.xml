@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    xmlns:app="    http://schemas.android.com/apk/res/main.java.com.moneydesktop.finance"
     android:id="@+id/handset_account_type"
     android:layout_width="fill_parent"
     android:layout_height="80dip"
@@ -48,20 +48,20 @@
                 android:gravity="center_vertical" />
 
             <com.moneydesktop.finance.views.LineView
-		        android:layout_width="0dip"
-		        android:layout_height="fill_parent"
-		        android:background="@color/white"
-		        app:isDashed="false"
-		        app:isVertical="true"
-		        app:lineColor="@color/gray1"
-		        app:lineStrokeWidth="3dp" 
-		        android:layout_weight=".01"/>
-            
+                android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:background="@color/white"
+                app:isDashed="false"
+                app:isVertical="true"
+                app:lineColor="@color/gray1"
+                app:lineStrokeWidth="3dp"
+                android:layout_weight=".01"/>
+
             <TextView
                 android:id="@+id/handset_sub_account_type_sum"
                 android:layout_width="0dip"
                 android:layout_height="fill_parent"
-                android:layout_weight=".325" 
+                android:layout_weight=".325"
                 android:paddingRight="5dip"
                 android:gravity="right|center_vertical"/>
         </LinearLayout>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    xmlns:app="    http://schemas.android.com/apk/res/main.java.com.moneydesktop.finance"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -33,13 +33,13 @@
             android:id="@+id/settings_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-        
+
     </ViewFlipper>
 
     <include
         android:id="@+id/navigation"
         layout="@layout/title_bar" />
-    
+
     <com.moneydesktop.finance.views.navigation.NavWheelView
         android:id="@+id/nav_wheel"
         android:layout_width="match_parent"

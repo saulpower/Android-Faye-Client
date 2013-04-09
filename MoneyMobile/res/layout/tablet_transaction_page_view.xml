@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    xmlns:app="    http://schemas.android.com/apk/res/main.java.com.moneydesktop.finance"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white" >
-    
-	<EditText
+
+    <EditText
         android:layout_width="0dp"
-    	android:layout_height="0dp"
-    	android:inputType="none" />
+        android:layout_height="0dp"
+        android:inputType="none" />
 
     <View
         android:layout_width="42dp"
@@ -64,15 +64,15 @@
                 app:clearText="@string/icon_cancel"
                 android:hint="@string/hint_search_transactions"
                 android:imeOptions="actionSearch"/>
-	        
-	        <com.moneydesktop.finance.views.LineView
-	            android:id="@+id/line_bug"
-	            android:layout_width="wrap_content"
-	            android:layout_height="match_parent"
-	            android:layout_marginLeft="2dp"
-	            app:lineColor="@color/gray3"
-	            app:lineStrokeWidth="2dp"
-	            app:isVertical="true" />
+
+            <com.moneydesktop.finance.views.LineView
+                android:id="@+id/line_bug"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="2dp"
+                app:lineColor="@color/gray3"
+                app:lineStrokeWidth="2dp"
+                app:isVertical="true" />
 
             <LinearLayout
                 android:id="@+id/button_container"
@@ -82,7 +82,7 @@
                 android:layout_weight="51"
                 android:background="@color/white"
                 android:gravity="center_vertical|right" >
-                
+
                 <ImageView
                     android:id="@+id/sum"
                     android:layout_width="wrap_content"
@@ -92,7 +92,7 @@
                     android:src="@drawable/tablet_txns_sumicon"
                     android:scaleType="fitCenter"
                     android:contentDescription="@string/description" />
-                
+
                 <ImageView
                     android:id="@+id/email"
                     android:layout_width="wrap_content"
@@ -102,7 +102,7 @@
                     android:src="@drawable/tablet_txns_emailicon"
                     android:scaleType="fitCenter"
                     android:contentDescription="@string/description" />
-                
+
                 <ImageView
                     android:id="@+id/print"
                     android:layout_width="wrap_content"
@@ -113,7 +113,7 @@
                     android:scaleType="fitCenter"
                     android:contentDescription="@string/description"
                     android:visibility="gone" />
-                
+
                 <ImageView
                     android:id="@+id/report"
                     android:layout_width="wrap_content"
@@ -124,7 +124,7 @@
                     android:scaleType="fitCenter"
                     android:contentDescription="@string/description"
                     android:visibility="gone" />
-                
+
                 <ImageView
                     android:id="@+id/add"
                     android:layout_width="wrap_content"
@@ -134,11 +134,11 @@
                     android:src="@drawable/tablet_txns_plusicon"
                     android:scaleType="fitCenter"
                     android:contentDescription="@string/description" />
-                
+
            </LinearLayout>
-            
+
         </LinearLayout>
-	        
+
         <com.moneydesktop.finance.views.LineView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -168,13 +168,13 @@
                 android:textColor="@drawable/gray2_to_white_text"
                 android:background="@drawable/transparent_to_primary"
                 android:clickable="true" />
-	        
-	        <com.moneydesktop.finance.views.LineView
-	            android:layout_width="wrap_content"
-	            android:layout_height="match_parent"
-	            app:lineColor="@color/gray3"
-	            app:lineStrokeWidth="2dp"
-	            app:isVertical="true" />
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:lineColor="@color/gray3"
+                app:lineStrokeWidth="2dp"
+                app:isVertical="true" />
 
             <com.moneydesktop.finance.views.HeaderView
                 android:id="@+id/payee_header"
@@ -187,13 +187,13 @@
                 android:textColor="@drawable/gray2_to_white_text"
                 android:background="@drawable/transparent_to_primary"
                 android:clickable="true" />
-	        
-	        <com.moneydesktop.finance.views.LineView
-	            android:layout_width="wrap_content"
-	            android:layout_height="match_parent"
-	            app:lineColor="@color/gray3"
-	            app:lineStrokeWidth="2dp"
-	            app:isVertical="true" />
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:lineColor="@color/gray3"
+                app:lineStrokeWidth="2dp"
+                app:isVertical="true" />
 
             <com.moneydesktop.finance.views.HeaderView
                 android:id="@+id/category_header"
@@ -206,13 +206,13 @@
                 android:textColor="@drawable/gray2_to_white_text"
                 android:background="@drawable/transparent_to_primary"
                 android:clickable="true" />
-	        
-	        <com.moneydesktop.finance.views.LineView
-	            android:layout_width="wrap_content"
-	            android:layout_height="match_parent"
-	            app:lineColor="@color/gray3"
-	            app:lineStrokeWidth="2dp"
-	            app:isVertical="true" />
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:lineColor="@color/gray3"
+                app:lineStrokeWidth="2dp"
+                app:isVertical="true" />
 
             <com.moneydesktop.finance.views.HeaderView
                 android:id="@+id/amount_header"
@@ -225,13 +225,13 @@
                 android:textColor="@drawable/gray2_to_white_text"
                 android:background="@drawable/transparent_to_primary"
                 android:clickable="true" />
-	        
-	        <com.moneydesktop.finance.views.LineView
-	            android:layout_width="wrap_content"
-	            android:layout_height="match_parent"
-	            app:lineColor="@color/gray3"
-	            app:lineStrokeWidth="2dp"
-	            app:isVertical="true" />
+
+            <com.moneydesktop.finance.views.LineView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:lineColor="@color/gray3"
+                app:lineStrokeWidth="2dp"
+                app:isVertical="true" />
 
             <View
                 android:layout_width="0dp"
@@ -256,7 +256,7 @@
         android:dividerHeight="1dp"
         android:background="@color/white"
         android:visibility="gone" />
-    
+
     <View
         android:layout_width="match_parent"
         android:layout_height="55dp"
@@ -269,13 +269,13 @@
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:background="@color/white" >
-        
+
         <com.moneydesktop.finance.views.DateRangeView
             android:id="@+id/date_range"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-        	android:paddingLeft="80dp" />
-        
+            android:paddingLeft="80dp" />
+
     </com.moneydesktop.finance.views.HorizontalScroller>
 
 </RelativeLayout>

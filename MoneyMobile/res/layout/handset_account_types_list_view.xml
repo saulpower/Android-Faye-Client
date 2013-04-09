@@ -4,10 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-   	<ListView 
-	    android:id="@+id/handset_account_types_list"
-	    android:layout_height="wrap_content"
-	    android:layout_width="match_parent"
-	    android:background="@color/gray1"/>
+       <ListView
+        android:id="@+id/handset_account_types_list"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:background="@color/gray1"/>
     
 </LinearLayout>

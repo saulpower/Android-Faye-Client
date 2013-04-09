@@ -11,14 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
        
-       	<include layout="@layout/handset_account_details" android:id="@+id/view1"/>
-       	<include layout="@layout/handset_account_details_types" android:id="@+id/view2"/>
-       	<include layout="@layout/handset_account_details_property_types" android:id="@+id/view3"/>
-       	<include layout="@layout/handset_account_details_exclusions" android:id="@+id/view4"/>
+           <include layout="@layout/handset_account_details" android:id="@+id/view1"/>
+           <include layout="@layout/handset_account_details_types" android:id="@+id/view2"/>
+           <include layout="@layout/handset_account_details_property_types" android:id="@+id/view3"/>
+           <include layout="@layout/handset_account_details_exclusions" android:id="@+id/view4"/>
            
-	</ViewFlipper>
+    </ViewFlipper>
     
     
   
-  	
+
 </LinearLayout>

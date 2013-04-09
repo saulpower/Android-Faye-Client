@@ -8,17 +8,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="20dp"
-    	android:background="@drawable/box">
+        android:background="@drawable/box">
         
-	    <TextView
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_marginTop="5dp"
-	        android:gravity="center"
-	        android:textStyle="bold"
-	        android:textSize="48sp"
-	        android:textColor="@color/gray7"
-	        android:text="@string/title_activity_budget" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="48sp"
+            android:textColor="@color/gray7"
+            android:text="@string/title_activity_budget" />
         
     </RelativeLayout>
 

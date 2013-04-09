@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    xmlns:app="    http://schemas.android.com/apk/res/main.java.com.moneydesktop.finance"
     android:layout_width="match_parent"
     android:layout_height="100dip" >
 
@@ -47,7 +47,7 @@
         android:layout_marginLeft="5dip"
         android:layout_marginTop="10dip"
         android:layout_toRightOf="@id/divider"
-        android:textColor="@color/primaryColor" 
+        android:textColor="@color/primaryColor"
         android:layout_alignBottom="@id/divider"
         android:layout_marginBottom="5dip"/>
 
@@ -56,7 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dip"
         android:layout_below="@id/divider"
-        android:background="@color/gray4" 
+        android:background="@color/gray4"
         android:layout_marginTop="2dip"/>
 
     <TextView
@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dip"
         android:layout_marginTop="5dip"
-        android:layout_below="@id/horizontal_divider" 
+        android:layout_below="@id/horizontal_divider"
         android:textColor="@color/gray7"/>
 
 </RelativeLayout>

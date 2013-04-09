@@ -1,112 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.moneydesktop.finance"
+    xmlns:app="    http://schemas.android.com/apk/res/main.java.com.moneydesktop.finance"
     android:id="@id/cell"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
 
-	<LinearLayout
-	    android:layout_width="match_parent"
-	    android:layout_height="@dimen/tablet_transaction_item"
-	    android:background="@drawable/transaction_item"
-	    android:orientation="horizontal" >
-	
-	    <com.moneydesktop.finance.views.VerticalTextView
-	        android:id="@+id/text_new"
-	        android:layout_width="0dp"
-	        android:layout_weight="3"
-	        android:layout_height="match_parent"
-	        android:gravity="center"
-	        android:text="@string/text_new"
-	        android:textColor="@drawable/white_to_primary_text"
-       		android:background="@drawable/primary_to_white"
-	        app:isLeft="false" />
-	    
-	    <RelativeLayout 
-	        android:layout_width="0dp"
-	        android:layout_height="match_parent"
-	        android:layout_weight="11" >
-	
-		    <TextView
-		        android:id="@+id/date"
-		        style="@style/tablet_txn_text"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_centerInParent="true" />
-	        
-	    </RelativeLayout>
-	        
-        <com.moneydesktop.finance.views.LineView
-            android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/tablet_transaction_item"
+        android:background="@drawable/transaction_item"
+        android:orientation="horizontal" >
+
+        <com.moneydesktop.finance.views.VerticalTextView
+            android:id="@+id/text_new"
+            android:layout_width="0dp"
+            android:layout_weight="3"
             android:layout_height="match_parent"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp"
-            app:lineColor="@drawable/primary_to_white_text"
-            app:lineStrokeWidth="2dp"
-            app:dashLength="3dp"
-            app:isVertical="true" />
-	
-	    <TextView
-	        android:id="@+id/payee"
-	        style="@style/tablet_txn_text"
-	        android:layout_width="0dp"
-	        android:layout_height="match_parent"
-	        android:layout_weight="35"
-	        android:gravity="center_vertical|left" />
-	        
-        <com.moneydesktop.finance.views.LineView
-            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:text="@string/text_new"
+            android:textColor="@drawable/white_to_primary_text"
+               android:background="@drawable/primary_to_white"
+            app:isLeft="false" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp"
-            app:lineColor="@drawable/primary_to_white_text"
-            app:lineStrokeWidth="2dp"
-            app:dashLength="3dp"
-            app:isVertical="true" />
-	
-	    <TextView
-	        android:id="@+id/category"
-	        style="@style/tablet_txn_text"
-	        android:layout_width="0dp"
-	        android:layout_height="match_parent"
-	        android:layout_weight="26"
-	        android:gravity="center_vertical|left" />
-	        
-        <com.moneydesktop.finance.views.LineView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp"
-            app:lineColor="@drawable/primary_to_white_text"
-            app:lineStrokeWidth="2dp"
-            app:dashLength="3dp"
-            app:isVertical="true" />
-	
-	    <RelativeLayout
-	        android:layout_width="0dp"
-	        android:layout_height="match_parent"
-	        android:layout_weight="15">
-		    
-	        <com.moneydesktop.finance.views.CaretView
-	            android:id="@+id/caret"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            app:color="@color/primaryColor"
-	            app:width="10dp"
-	            app:height="10dp"
-	            app:rotation="135" />
-	        
-	        <TextView
-		        android:id="@+id/amount"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_alignParentRight="true"
-		        android:layout_centerVertical="true"
-		        style="@style/tablet_txn_text"
-		        android:textColor="@drawable/primary_to_white_text" />
-	        
+            android:layout_weight="11" >
+
+            <TextView
+                android:id="@+id/date"
+                style="@style/tablet_txn_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
         </RelativeLayout>
-	        
+
         <com.moneydesktop.finance.views.LineView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -116,36 +45,107 @@
             app:lineStrokeWidth="2dp"
             app:dashLength="3dp"
             app:isVertical="true" />
-	
-	    <RelativeLayout
-	        android:layout_width="0dp"
-	        android:layout_height="match_parent"
-	        android:layout_weight="10" >
-		    
-	        <ImageView
-	            android:id="@+id/type"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_centerVertical="true"
-	            android:layout_alignParentLeft="true"
-	            android:layout_margin="8dp"
-	            android:contentDescription="@string/description"
-	            android:scaleType="fitCenter"
-	            android:src="@drawable/ipad_txndetail_icon_personal_grey" />
-		    
-	        <ImageView
-	            android:id="@+id/flag"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_alignParentTop="true"
-	            android:layout_alignParentRight="true"
-	            android:contentDescription="@string/description"
-	            android:scaleType="fitCenter"
-	            android:src="@drawable/tablet_txns_flag"
-	            android:visibility="invisible" />
-	        
+
+        <TextView
+            android:id="@+id/payee"
+            style="@style/tablet_txn_text"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="35"
+            android:gravity="center_vertical|left" />
+
+        <com.moneydesktop.finance.views.LineView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            app:lineColor="@drawable/primary_to_white_text"
+            app:lineStrokeWidth="2dp"
+            app:dashLength="3dp"
+            app:isVertical="true" />
+
+        <TextView
+            android:id="@+id/category"
+            style="@style/tablet_txn_text"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="26"
+            android:gravity="center_vertical|left" />
+
+        <com.moneydesktop.finance.views.LineView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            app:lineColor="@drawable/primary_to_white_text"
+            app:lineStrokeWidth="2dp"
+            app:dashLength="3dp"
+            app:isVertical="true" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="15">
+
+            <com.moneydesktop.finance.views.CaretView
+                android:id="@+id/caret"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:color="@color/primaryColor"
+                app:width="10dp"
+                app:height="10dp"
+                app:rotation="135" />
+
+            <TextView
+                android:id="@+id/amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                style="@style/tablet_txn_text"
+                android:textColor="@drawable/primary_to_white_text" />
+
         </RelativeLayout>
-	
-	</LinearLayout>
+
+        <com.moneydesktop.finance.views.LineView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            app:lineColor="@drawable/primary_to_white_text"
+            app:lineStrokeWidth="2dp"
+            app:dashLength="3dp"
+            app:isVertical="true" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="10" >
+
+            <ImageView
+                android:id="@+id/type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_margin="8dp"
+                android:contentDescription="@string/description"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ipad_txndetail_icon_personal_grey" />
+
+            <ImageView
+                android:id="@+id/flag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:contentDescription="@string/description"
+                android:scaleType="fitCenter"
+                android:src="@drawable/tablet_txns_flag"
+                android:visibility="invisible" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

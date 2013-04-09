@@ -20,7 +20,7 @@
         android:layout_height="fill_parent"
         android:textColor="@color/primaryColor"
         android:layout_marginLeft="20dip"
-		android:gravity="center_vertical"/>
+        android:gravity="center_vertical"/>
 
  
 </LinearLayout>

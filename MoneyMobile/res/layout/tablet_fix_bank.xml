@@ -13,6 +13,6 @@
            <include layout="@layout/tablet_fix_bank_credentials" android:id="@+id/tablet_fix_bank_credentials"/>
            <include layout="@layout/tablet_add_bank_connect" android:id="@+id/tablet_fix_bank_login_failed"/>
            
-	</ViewFlipper>
+    </ViewFlipper>
 
 </RelativeLayout>

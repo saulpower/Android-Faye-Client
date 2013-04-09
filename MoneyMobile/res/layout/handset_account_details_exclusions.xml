@@ -15,14 +15,14 @@
        android:layout_alignParentBottom="true"
        android:background="@drawable/perf_paper_selector"/>
     
-	<ListView 
-	    android:id="@+id/handset_exclusions_list"
-	    android:layout_height="wrap_content"
-	    android:layout_width="match_parent"
-	    android:divider="@null"
-	    android:layout_alignParentTop="true"
-	    android:layout_above="@id/handset_save_exclusions"
-	    android:background="@color/gray1"/>
+    <ListView
+        android:id="@+id/handset_exclusions_list"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:divider="@null"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/handset_save_exclusions"
+        android:background="@color/gray1"/>
 
-	
+
 </RelativeLayout>
