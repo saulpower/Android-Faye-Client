@@ -5,13 +5,13 @@
     <parent>
         <groupId>com.saulpower.fayeclient</groupId>
         <artifactId>parent</artifactId>
-        <version>1.1</version>
+        <version>1.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>com.saulpower.fayeclient</groupId>
     <artifactId>library</artifactId>
-  <version>1.1</version>
+  <version>1.0.1</version>
     <name>Android Faye Client</name>
     <packaging>jar</packaging>
 
