@@ -11,7 +11,7 @@
 
     <groupId>com.saulpower.fayeclient</groupId>
     <artifactId>library</artifactId>
-  <version>1.0</version>
+  <version>1.0.1</version>
     <name>Android Faye Client</name>
     <packaging>jar</packaging>
 
@@ -32,6 +32,22 @@
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
                 <extensions>true</extensions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>${project.basedir}/../checkstyle.xml</configLocation>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>checkstyle</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>

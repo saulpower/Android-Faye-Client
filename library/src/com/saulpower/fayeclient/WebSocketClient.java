@@ -32,24 +32,17 @@ import java.util.List;
 public class WebSocketClient {
 
     private static final String TAG = "WebSocketClient";
-
-    private URI                      mURI;
-    private Listener                 mListener;
-    private Socket                   mSocket;
-    private Thread                   mThread;
-    private HandlerThread            mHandlerThread;
-    private Handler                  mHandler;
-    private Handler                  mUiHandler;
-    private List<BasicNameValuePair> mExtraHeaders;
-    private HybiParser               mParser;
-
-    private final Object mSendLock = new Object();
-
     private static TrustManager[] sTrustManagers;
-
-    public static void setTrustManagers(TrustManager[] tm) {
-        sTrustManagers = tm;
-    }
+    private final Object mSendLock = new Object();
+    private URI mURI;
+    private Listener mListener;
+    private Socket mSocket;
+    private Thread mThread;
+    private HandlerThread mHandlerThread;
+    private Handler mHandler;
+    private Handler mUiHandler;
+    private List<BasicNameValuePair> mExtraHeaders;
+    private HybiParser mParser;
 
     public WebSocketClient(Handler uiHandler, URI uri, Listener listener, List<BasicNameValuePair> extraHeaders) {
         mUiHandler = uiHandler;
@@ -61,6 +54,10 @@ public class WebSocketClient {
         mHandlerThread = new HandlerThread("websocket-thread");
         mHandlerThread.start();
         mHandler = new Handler(mHandlerThread.getLooper());
+    }
+
+    public static void setTrustManagers(TrustManager[] tm) {
+        sTrustManagers = tm;
     }
 
     public Listener getListener() {
@@ -213,6 +210,8 @@ public class WebSocketClient {
 
                     try {
 
+                        if (mSocket == null) return;
+
                         mSocket.close();
                         mSocket = null;
 
@@ -311,19 +310,23 @@ public class WebSocketClient {
         }
     }
 
-    public interface Listener {
-        void onConnect();
-        void onMessage(String message);
-        void onMessage(byte[] data);
-        void onDisconnect(int code, String reason);
-        void onError(Exception error);
-    }
-
     private SSLSocketFactory getSSLSocketFactory() throws NoSuchAlgorithmException, KeyManagementException {
 
         SSLContext context = SSLContext.getInstance("TLS");
         context.init(null, sTrustManagers, null);
 
         return context.getSocketFactory();
+    }
+
+    public interface Listener {
+        void onConnect();
+
+        void onMessage(String message);
+
+        void onMessage(byte[] data);
+
+        void onDisconnect(int code, String reason);
+
+        void onError(Exception error);
     }
 }
